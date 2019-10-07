@@ -8,14 +8,14 @@ THE SCRIPTS ARE PROVIDED AS IS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR I
 ## General
 | Script        | Link           |
 |:------------------------------------------------ |:-------------|
-| Availability Zones - Latency Test                | [link](AvZone-Latency-Test/README.md) |
+| Availability Zones - Latency Test                | [link](./AvZone-Latency-Test/Readme.md) |
 
 
 ## VM operation
 | Script        | Link           |
 |:------------------------------------------------ |:-------------|
-| Move VM to PPG                                   | [link](Move-VM-to-PPG/README.md)      |
-| Move VM to AvSet                                 | [link](Move-VM-to-AvSet/README.md)      |
+| Move VM to PPG                                   | [link](./Move-VM-to-PPG/README.md)      |
+| Move VM to AvSet                                 | [link](./Move-VM-to-AvSet/README.md)      |
 
 
 # Contributing
