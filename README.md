@@ -1,3 +1,22 @@
+# Scripts
+
+This repository contains scripts published byt the AzureCAT SAP Deployment team.
+
+## Disclaimer
+THE SCRIPTS ARE PROVIDED AS IS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
+
+## General
+| Script        | Link           |
+|:------------------------------------------------ |:-------------|
+| Availability Zones - Latency Test                | [link](AvZone-Latency-Test/README.md) |
+
+
+## VM operation
+| Script        | Link           |
+|:------------------------------------------------ |:-------------|
+| Move VM to PPG                                   | [link](Move-VM-to-PPG/README.md)      |
+| Move VM to AvSet                                 | [link](Move-VM-to-AvSet/README.md)      |
+
 
 # Contributing
 
