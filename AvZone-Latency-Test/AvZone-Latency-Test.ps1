@@ -45,6 +45,10 @@
          - adding logon check
 
 #>
+<#
+Copyright (c) Microsoft Corporation.
+Licensed under the MIT license.
+#>
 
 #Requires -Modules Posh-SSH
 #Requires -Modules Az.Compute

@@ -21,6 +21,10 @@
     v0.1 - Initial version
 
 #>
+<#
+Copyright (c) Microsoft Corporation.
+Licensed under the MIT license.
+#>
 
 #Requires -Modules Az.Compute
 #Requires -Version 5.1
