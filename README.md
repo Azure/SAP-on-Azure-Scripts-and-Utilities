@@ -17,7 +17,7 @@ THE SCRIPTS ARE PROVIDED AS IS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR I
 |:------------------------------------------------ |:-------------|
 | Move VM to PPG                                   | [link](./Move-VM-to-PPG/README.md)      |
 | Move VM to AvSet                                 | [link](./Move-VM-to-AvSet/README.md)      |
-| Create Proximity Placement Group and Availability Set | [link](./PPG-AvSet-Creation/README.md)      |
+| Create Proximity Placement Group and Availability Set | [link](./PPG-AvSet-creation/README.md)      |
 
 
 # Contributing
