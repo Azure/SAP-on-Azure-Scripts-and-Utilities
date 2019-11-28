@@ -25,4 +25,5 @@ The script creates a proximity placement group and an availability set which wil
 
 ### Example
 
-.\Create-AvSet-with-PPG.ps1 -SubscriptionName "mysubscription" -region westeurope -ResourceGroupName test-rg -newAvailabilitySetName AvSet1 -newProximityPlacementGroupName PPG1```
+.\Create-AvSet-with-PPG.ps1 -SubscriptionName "mysubscription" -region westeurope -ResourceGroupName test-rg -newAvailabilitySetName AvSet1 -newProximityPlacementGroupName #
+"PPG1"
