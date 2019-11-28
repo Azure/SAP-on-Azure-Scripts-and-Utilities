@@ -22,5 +22,5 @@ _important: the script does not preserve tags or extensions, you need to manuall
 
 ### Example
 
-.\Move-VM-to-AvSet.ps1 -SubscriptionName mysubscription -region westeurope -ResourceGroupName Move-VM-Test-RG -VirtualMachineName vm1 -newAvailabilitySetName AvSet1
+    .\Move-VM-to-AvSet.ps1 -SubscriptionName mysubscription -region westeurope -ResourceGroupName Move-VM-Test-RG -VirtualMachineName vm1 -newAvailabilitySetName AvSet1
 

@@ -23,6 +23,6 @@ If the PPG doesn't exist it is created.
 
 ### Example
 
-.\Move-VM-to-PPG.ps1 -SubscriptionName mysubscription -region westeurope -ResourceGroupName Move-VM-Test-RG -VirtualMachineName vm1 -newProximityPlacementGroupName PPG1
+    .\Move-VM-to-PPG.ps1 -SubscriptionName mysubscription -region westeurope -ResourceGroupName Move-VM-Test-RG -VirtualMachineName vm1 -newProximityPlacementGroupName PPG1
 ```
 
