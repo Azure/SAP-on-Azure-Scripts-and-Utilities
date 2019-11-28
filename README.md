@@ -7,22 +7,22 @@ This repository contains scripts published byt the AzureCAT SAP Deployment team.
 THE SCRIPTS ARE PROVIDED AS IS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 
 ## General
-| Script        | Link           |
-|:------------------------------------------------ |:-------------|
-| Availability Zones - Latency Test                | [link](./AvZone-Latency-Test/Readme.md) |
 
+| Script                            | Link                                    |
+| :-------------------------------- | :-------------------------------------- |
+| Availability Zones - Latency Test | [link](./AvZone-Latency-Test/Readme.md) |
 
 ## VM operations
-| Script        | Link           |
-|:------------------------------------------------ |:-------------|
-| Move VM to PPG                                   | [link](./Move-VM-to-PPG/README.md)      |
-| Move VM to AvSet                                 | [link](./Move-VM-to-AvSet/README.md)      |
-| Create Proximity Placement Group and Availability Set | [link](./PPG-AvSet-creation/README.md)      |
 
+| Script                                                | Link                                   |
+| :---------------------------------------------------- | :------------------------------------- |
+| Move VM to PPG                                        | [link](./Move-VM-to-PPG/README.md)     |
+| Move VM to AvSet                                      | [link](./Move-VM-to-AvSet/README.md)   |
+| Create Proximity Placement Group and Availability Set | [link](./PPG-AvSet-creation/README.md) |
 
-# Contributing
+## Contributing
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
+This project welcomes contributions and suggestions. Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
 the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
 

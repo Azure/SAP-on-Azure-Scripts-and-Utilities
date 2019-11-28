@@ -15,6 +15,7 @@ As Azure regions consist of multiple datacenters in an area the network latency 
 To provide an easy way of testing you can use this script.
 
 **requirements:**
+
 * Azure Subscription
 * Core quota assigned to the subscription incl zone deployment (we recommend to use D8s_v3 or bigger, so at least 24 cores required)
 * possibility to connect to the VMs using SSH (Public IP addresses or existing VNET with private IP addresses)
@@ -29,7 +30,6 @@ We use qperf as it utilizes TCP and UDP traffic. ICMP traffic is not prioritized
 
 ### Sample Output
 
-```
         Region:  westeurope
         VM Type:  Standard_D8s_v3
         Latency:
@@ -49,5 +49,6 @@ We use qperf as it utilizes TCP and UDP traffic. ICMP traffic is not prioritized
         | zone 2 |   xxx MB/sec |              |   xxx MB/sec |
         | zone 3 |   xxx MB/sec |   xxx MB/sec |              |
         -------------------------------------------------------
+
 ```
 Based on the output you can decide which zones to use.

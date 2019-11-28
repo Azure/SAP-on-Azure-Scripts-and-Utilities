@@ -34,22 +34,22 @@ Licensed under the MIT license.
 param(
 
     #Azure Subscription Name
-    [Parameter(Mandatory=$true)][string]$SubscriptionName,
+    [Parameter(Mandatory = $true)][string]$SubscriptionName,
     #Azure Region, use Get-AzLocation to get region names
-    [Parameter(Mandatory=$true)][string]$region,
+    [Parameter(Mandatory = $true)][string]$region,
     #Resource Group Name that will be created
-    [Parameter(Mandatory=$true)][string]$ResourceGroupName, 
+    [Parameter(Mandatory = $true)][string]$ResourceGroupName, 
     #Name of new Availability Set
-    [Parameter(Mandatory=$true)][string]$newAvailabilitySetName, 
+    [Parameter(Mandatory = $true)][string]$newAvailabilitySetName, 
     #Name of new Proximity Placement Group
-    [Parameter(Mandatory=$true)][string]$newProximityPlacementGroupName,
+    [Parameter(Mandatory = $true)][string]$newProximityPlacementGroupName,
     #Number of Fault Domains
     [int]$AvailabilitySetFaultDomains = 3,
     #Number of Fault Domains
     [int]$AvailabilitySetUpdateDomains = 5
 
     
-    )
+)
 
 # select subscription
 
@@ -83,10 +83,10 @@ if (-Not $ppg) {
 # Create a new Availability Set if it does not exist
 
 Write-Host -ForegroundColor green "Checking if the Availability Set exists"
-    $AvailSet = Get-AzAvailabilitySet `
-        -ResourceGroupName $ResourceGroupName `
-        -Name $newAvailabilitySetName `
-        -ErrorAction Ignore
+$AvailSet = Get-AzAvailabilitySet `
+    -ResourceGroupName $ResourceGroupName `
+    -Name $newAvailabilitySetName `
+    -ErrorAction Ignore
 if (-Not $AvailSet) {
     Write-Host -ForegroundColor green "Availability Set not found, now creating and associating it with the Proximity Placement Group"
     $AvailSet = New-AzAvailabilitySet `

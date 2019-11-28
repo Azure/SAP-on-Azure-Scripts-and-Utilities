@@ -9,19 +9,20 @@ The Proximity Placement Group needs to be specified during VM creation. If you w
 ## Moving the VM into a Proximity Placement Group (PPG)
 
 **requirements:**
+
 * Azure Subscription
 * PowerShell 5.1 or newer
 * PowerShell module Az
 
 ### What the script does
 
-The script deletes and recreates it. It preserves networking and disk configuration. There is no need to reinstall the operating system.
+The script deletes and recreates the Virtual Machine. It preserves networking and disk configuration. There is no need to reinstall the operating system.
 If the PPG doesn't exist it is created.
 
 *important: the script does not preserve tags or extensions, you need to manually add these again.*
 
 ### Example
 
-```
 .\Move-VM-to-PPG.ps1 -SubscriptionName mysubscription -region westeurope -ResourceGroupName Move-VM-Test-RG -VirtualMachineName vm1 -newProximityPlacementGroupName PPG1
 ```
+
