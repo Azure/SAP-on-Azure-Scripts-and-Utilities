@@ -26,7 +26,7 @@ This function returns the pertinent Virtual Machine information.
 | ---       | ---                                   |
 | Name      | The name of the virtual machine       |
 | Resourcegroup      | The name of the resource group in which the Virtual Machine is deployed       |
-| Operating System      | Theoperating system of the Virtual Machine       |
+| Operating System      | The operating system of the Virtual Machine       |
 | Zone      | The availability zone (if any) in which the Virtual Machine is deployed       |
 | Size      | The Virtual Machine SKU       |
 | AvailabilitySet      | The availability set (if any) in which the Virtual Machine is deployed       |
