@@ -11,6 +11,8 @@ THE SCRIPTS ARE PROVIDED AS IS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR I
 | Script                            | Link                                    |
 | :-------------------------------- | :-------------------------------------- |
 | Availability Zones - Latency Test | [link](./AvZone-Latency-Test/Readme.md) |
+| Assessment module | [link](./AssessmentScripts/README.MD) |
+
 
 ## VM operations
 
