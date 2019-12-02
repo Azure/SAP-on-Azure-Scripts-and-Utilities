@@ -113,17 +113,14 @@ Licensed under the MIT license.
             $VMInfo | add-member -MemberType NoteProperty -Name "ProximityPlacementGroup" -Value "None"    
         }
             
-
-
         $networkStatus = Get-NetworkInfo -VirtualMachineName $VirtualMachineName -ResourceGroupName $ResourceGroupName
         $VMInfo | add-member  -MemberType NoteProperty -Name "Private IP" -Value $networkStatus."Private IP"
         $VMInfo | add-member  -MemberType NoteProperty -Name "Public IP" -Value $networkStatus."Public IP"
         $VMInfo | add-member  -MemberType NoteProperty -Name "VNet" -Value $networkStatus.VNet
         $VMInfo | add-member  -MemberType NoteProperty -Name "Subnet" -Value $networkStatus.Subnet
         $VMInfo | add-member  -MemberType NoteProperty -Name "Accelerated Networking" -Value $networkStatus."Accelerated Networking"
-            
 
-        $colocationStatus = DiskColocationStatus -VirtualMachineName $VirtualMachineName-db-0 -ResourceGroupName $ResourceGroupName
+        $colocationStatus = DiskColocationStatus -VirtualMachineName $VirtualMachineName -ResourceGroupName $ResourceGroupName
         $VMInfo | add-member -MemberType NoteProperty -Name "Disk Colocation" -Value $colocationStatus
     }
     else {
@@ -224,7 +221,6 @@ Licensed under the MIT license.
             $Disk_Temp | add-member -MemberType NoteProperty -Name "Caching" -Value $disk.Caching
             $Disk_Temp | add-member -MemberType NoteProperty -Name "OSDisk" -Value $true
             $Disk_Temp | add-member -MemberType NoteProperty -Name "WriteAcceleratorEnabled" -Value $disk.WriteAcceleratorEnabled
-
             
             $disk2 = Get-AzDisk -ResourceGroupName $ResourceGroupName -DiskName $disk.Name 
             if ($disk2) {
@@ -313,7 +309,6 @@ Licensed under the MIT license.
             }
 
         }
-
     
     }
     else {
