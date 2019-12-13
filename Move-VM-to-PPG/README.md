@@ -14,15 +14,15 @@ The Proximity Placement Group needs to be specified during VM creation. If you w
 * PowerShell 5.1 or newer
 * PowerShell module Az
 
-### What the script does
+## Option 1 - Script
 
-The script deletes and recreates the Virtual Machine. It preserves networking and disk configuration. There is no need to reinstall the operating system.
-If the PPG doesn't exist it is created.
+    $vm = Get-AzVM -name <vmname> -ResourceGroupName <rgname>
+    $ppg = Get-AzProximityPlacementGroup -Name <ppgname> -ResourceGroupName <rgnameppg>
+    $vm.ProximityPlacementGroup=$ppg.Id
+    $vm | Update-AzVM
 
-*important: the script does not preserve tags or extensions, you need to manually add these again.*
 
-### Example
+## Option 2 - GUI
+![Move VM to PPG](Update-VM-PPG.png)
 
-    .\Move-VM-to-PPG.ps1 -SubscriptionName mysubscription -region westeurope -ResourceGroupName Move-VM-Test-RG -VirtualMachineName vm1 -newProximityPlacementGroupName PPG1
-```
 
