@@ -58,11 +58,11 @@ This function returns the network information for a Virtual Machine.
 | Accelerated Networking| Indicates if accelerated networking is configured |
 
 ### Example
-
+```PowerShell
     Import the module
     Import-Module "./VMUtilities.psd1"
     Get-NetworkInfo -ResourceGroupName test-rg -VirtualMachineName vm1 
-
+```
 ## Get Disk information for a Virtual Machine
 
 This function returns the disk information for a Virtual Machine.
@@ -82,20 +82,21 @@ This function returns the disk information for a Virtual Machine.
 
 ### Example
 
+```PowerShell
     Import the module
     Import-Module "./VMUtilities.psd1"
     Get-DiskInfo -ResourceGroupName test-rg -VirtualMachineName vm1 
-
+```
 ## Combining the modules and persisting the output
 
 In order to get a more comprehensive overview of the settings you can use the code snippet below. The information will be persisted in 2 .csv files in the directory specified by the $outputDiroctory variable.
 
 ### Example
-
+```PowerShell
     Import-Module .\VMUtilities.psd1
 
-    $ResourceGroupName = "SAPTestNE"
-    $subscriptionName = "Kimforss's Azure"
+    $ResourceGroupName = "RGName"
+    $subscriptionName = "My Azure"
 
     $suffix = (Get-Date).ToString("yyyyddMM_HHmm")
     $outputDirectory = "c:\work\code\sap\"
@@ -145,3 +146,4 @@ In order to get a more comprehensive overview of the settings you can use the co
     Write-Host  $status -ForegroundColor Yellow
     Write-Output $DiskInfos | Format-Table
     $DiskInfos | export-csv -Path $csvFileNameDisks -NoTypeInformation
+```
