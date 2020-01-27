@@ -1,0 +1,109 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "metadata": {
+                "description": "The location of the resource"
+            },
+            "defaultValue": ""
+        },
+        "sapSystemId": {
+            "type": "string",
+            "metadata": {
+                "description": "The SAP System ID"
+            },
+            "defaultValue": ""
+        }
+
+    },
+    "variables": {
+        "sapSystemIdLower": "[toLower(parameters('sapSystemId'))]",
+        "avSetName": "[concat(variables('sapSystemIdLower'),'-app-avset')]",
+        "avSetNameASCS": "[concat(variables('sapSystemIdLower'),'-ascs-avset')]",
+        "avSetNameDB": "[concat(variables('sapSystemIdLower'),'-db-avset')]",
+        "ppgName": "[concat(variables('sapSystemIdLower'),'-ppg')]",
+        "locationName": "[if(empty(parameters('location')) , resourceGroup().location,parameters('location'))]" 
+    },
+    "resources": [
+        {
+            "apiVersion": "2018-04-01",
+            "type": "Microsoft.Compute/proximityPlacementGroups",
+            "name": "[variables('ppgName')]",
+            "location": "[variables('locationName')]"
+        },
+        {
+            "type": "Microsoft.Compute/availabilitySets",
+            "name": "[variables('avSetName')]",
+            "apiVersion": "2018-10-01",
+            "location": "[variables('locationName')]",
+            "sku": {
+                "name": "Aligned"
+            },
+            "properties": {
+                "platformFaultDomainCount": 2,
+                "platformUpdateDomainCount": 10,
+                "proximityPlacementGroup": {
+                    "id": "[resourceId('Microsoft.Compute/proximityPlacementGroups',variables('ppgName'))]"
+                }
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Compute/proximityPlacementGroups/', variables('ppgName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Compute/availabilitySets",
+            "name": "[variables('avSetNameDB')]",
+            "apiVersion": "2018-10-01",
+            "location": "[variables('locationName')]",
+            "sku": {
+                "name": "Aligned"
+            },
+            "properties": {
+                "platformFaultDomainCount": 2,
+                "platformUpdateDomainCount": 10,
+                "proximityPlacementGroup": {
+                    "id": "[resourceId('Microsoft.Compute/proximityPlacementGroups',variables('ppgName'))]"
+                }
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Compute/proximityPlacementGroups/', variables('ppgName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Compute/availabilitySets",
+            "name": "[variables('avSetNameASCS')]",
+            "apiVersion": "2018-10-01",
+            "location": "[variables('locationName')]",
+            "sku": {
+                "name": "Aligned"
+            },
+            "properties": {
+                "platformFaultDomainCount": 2,
+                "platformUpdateDomainCount": 10,
+                "proximityPlacementGroup": {
+                    "id": "[resourceId('Microsoft.Compute/proximityPlacementGroups',variables('ppgName'))]"
+                }
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Compute/proximityPlacementGroups/', variables('ppgName'))]"
+            ]
+        }
+
+    ],
+    "outputs": {
+        "Proximity Placement Group Name": {
+            "type": "string",
+            "value": "[variables('ppgName')]"
+        },
+        "Proximity Placement Group ID": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Compute/proximityPlacementGroups',variables('ppgName'))]"
+        },
+        "Availability Set Name": {
+            "type": "string",
+            "value": "[variables('avSetName')]"
+        }
+    }
+}

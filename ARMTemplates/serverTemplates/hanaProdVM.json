@@ -1,0 +1,2292 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sapSystemId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 3,
+            "metadata": {
+                "description": "The SAP System ID"
+            }
+        },
+        "adminUsername": {
+            "type": "string"
+        },
+        "adminPasswordOrKey": {
+            "type": "securestring"
+        },
+        "authenticationType": {
+            "type": "string",
+            "defaultValue": "password",
+            "allowedValues": [
+                "password",
+                "sshPublicKey"
+            ],
+            "metadata": {
+                "description": "Type of authentication to use on the Virtual Machine."
+            }
+        },
+        "location": {
+            "type": "string",
+            "metadata": {
+                "description": "The location of the resource"
+            },
+            "defaultValue": ""
+        },
+        "virtualMachineName": {
+            "type": "string"
+        },
+        "virtualMachineSize": {
+            "type": "string",
+            "allowedValues": [
+                "Standard_M32ts",
+                "Standard_M32ls",
+                "Standard_M64ls",
+                "Standard_M64ms",
+                "Standard_M64s",
+                "Standard_M128s",
+                "Standard_M128ms",
+                "Standard_M208s_v2",
+                "Standard_M208ms_v2",
+                "Standard_M416s_v2",
+                "Standard_M416ms_v2"
+            ]
+        },
+        "availabilitySetName": {
+            "type": "string"
+        },
+        "proximityPlacementGroupName": {
+            "type": "string"
+        },
+        "imageReference": {
+            "type": "object"
+        },
+        "imageID": {
+            "type": "string"
+        },
+        "applicationSecurityGroupName": {
+            "type": "string",
+            "defaultValue": "sap-db-asg"
+        },
+        "virtualNetworkResourceGroupName": {
+            "type": "string"
+        },
+        "virtualNetworkName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the vnet"
+            },
+            "defaultValue": ""
+        },
+        "subnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the subnet"
+            },
+            "defaultValue": "default"
+        },
+        "PrivateIP": {
+            "type": "string"
+        },
+        "HasPublicIP": {
+            "type": "bool"
+        },
+        "vmTagValues": {
+            "type": "object"
+        },
+        "diskTagValues": {
+            "type": "object",
+            "defaultValue": {
+                "$perfOptimizationLevel": "1"
+            }
+        }
+    },
+    "variables": {
+        "sapSystemIdLower": "[toLower(parameters('sapSystemId'))]",
+        "sapMachineName": "[concat(variables('sapSystemIdLower'),'-',parameters('virtualMachineName'))]",
+        "locationName": "[if(empty(parameters('location')) , resourceGroup().location,parameters('location'))]",
+        "avSetName": "[if(empty(parameters('availabilitySetName')), concat(variables('sapSystemIdLower'),'-db-avset'),parameters('availabilitySetName'))]",
+        "ppgName": "[if(empty(parameters('proximityPlacementGroupName')), concat(variables('sapSystemIdLower'),'-ppg'),parameters('proximityPlacementGroupName'))]",
+        "vnetID": "[resourceid(parameters('virtualNetworkResourceGroupName') ,'Microsoft.Network/virtualNetworks',parameters('virtualNetworkName'))]",
+        "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
+        "networkInterfaceName": "[concat(variables('sapMachineName'),'-nic')]",
+        "publicIpAddressName": "[concat(variables('sapMachineName'),'-pip')]",
+        "linuxConfiguration": {
+            "disablePasswordAuthentication": true,
+            "ssh": {
+                "publicKeys": [
+                    {
+                        "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
+                        "keyData": "[parameters('adminPasswordOrKey')]"
+                    }
+                ]
+            }
+        },
+        "sidTag": {
+            "SID": "[parameters('sapSystemId')]"
+        },
+        "allDiskTags": "[union(parameters('diskTagValues'),variables('sidTag'))]",
+        "allVMTags": "[union(parameters('vmTagValues'),variables('sidTag'))]",
+        "diskSizes": {
+            "Standard_M32ts": {
+                "disks": [
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-shared",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 1,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-sap",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 2,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 3,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 4,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 5,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": true,
+                        "id": null,
+                        "name": "-log1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 6,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": true,
+                        "id": null,
+                        "name": "-log2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 7,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+                ]
+            },
+            "Standard_M32ls": {
+                "disks": [
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-shared",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 1,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-sap",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 2,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 3,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 4,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 5,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": true,
+                        "id": null,
+                        "name": "-log1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 6,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": true,
+                        "id": null,
+                        "name": "-log2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 7,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+                ]
+            },
+            "Standard_M64ls": {
+                "disks": [
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-shared",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 1,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-sap",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 2,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 3,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 4,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 5,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": true,
+                        "id": null,
+                        "name": "-log1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 6,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": true,
+                        "id": null,
+                        "name": "-log2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 7,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+                ]
+            },
+            "Standard_M64s": {
+                "disks": [
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-shared",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 1,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-sap",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 2,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 3,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 4,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 5,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": true,
+                        "id": null,
+                        "name": "-data4",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 6,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": true,
+                        "id": null,
+                        "name": "-log1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 7,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": true,
+                        "id": null,
+                        "name": "-log2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 8,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 9,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+                ]
+            },
+            "Standard_M64ms": {
+                "disks": [
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-shared",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 1,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-sap",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 2,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 3,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 4,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 5,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": true,
+                        "id": null,
+                        "name": "-log1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 6,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": true,
+                        "id": null,
+                        "name": "-log2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 7,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 8,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 9,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+                ]
+            },
+            "Standard_M128s": {
+                "disks": [
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-shared",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 1,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-sap",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 2,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 3,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 4,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 5,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": true,
+                        "id": null,
+                        "name": "-log1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 6,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": true,
+                        "id": null,
+                        "name": "-log2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 7,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 8,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+
+                ]
+            },
+            "Standard_M128ms": {
+                "disks": [
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-shared",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 1,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-sap",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 2,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 3,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 4,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 5,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data4",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 6,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data5",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 7,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": true,
+                        "id": null,
+                        "name": "-log1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 8,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": true,
+                        "id": null,
+                        "name": "-log2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 9,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 10,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 11,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 12,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup4",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+
+
+                ]
+            },
+            "Standard_M208s_v2": {
+                "disks": [
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-shared",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 1,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-sap",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 2,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 3,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 4,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 5,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data4",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 6,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": true,
+                        "id": null,
+                        "name": "-log1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 7,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": true,
+                        "id": null,
+                        "name": "-log2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 8,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 9,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 10,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+                ]
+            },
+            "Standard_M208ms_v2": {
+                "disks": [
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-shared",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 1,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-sap",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 2,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 3,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 4,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 5,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data4",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 6,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": true,
+                        "id": null,
+                        "name": "-log1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 7,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": true,
+                        "id": null,
+                        "name": "-log2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 8,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 4095,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 9,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 4095,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 10,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 4095,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+                ]
+            },
+            "Standard_M416s_v2": {
+                "disks": [
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-shared",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 1,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-sap",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 2,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 3,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 4,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 5,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data4",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 6,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": true,
+                        "id": null,
+                        "name": "-log1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 7,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": true,
+                        "id": null,
+                        "name": "-log2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 8,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 4095,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 9,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 4095,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 10,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 4095,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+                ]
+            },
+            "Standard_M416ms_v2": {
+                "disks": [
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-shared",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 1,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-sap",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 2,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 3,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 4,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 5,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data4",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 6,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data5",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 7,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data6",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 8,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data7",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 9,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data8",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 10,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": true,
+                        "id": null,
+                        "name": "-log1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 11,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": true,
+                        "id": null,
+                        "name": "-log2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 12,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 4095,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 13,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 4095,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 14,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 4095,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 15,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup4",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 4095,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "sku": "[parameters('virtualMachineSize')]",
+        "dataDisks": "[variables('diskSizes')[variables('sku')].disks]",
+        "applicationSecurityGroupID": "[resourceId(parameters('virtualNetworkResourceGroupName'),'Microsoft.Network/applicationSecurityGroups',parameters('applicationSecurityGroupName'))]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2018-04-01",
+            "type": "Microsoft.Compute/proximityPlacementGroups",
+            "name": "[variables('ppgName')]",
+            "location": "[variables('locationName')]"
+        },
+        {
+            "type": "Microsoft.Compute/availabilitySets",
+            "name": "[variables('avSetName')]",
+            "apiVersion": "2018-10-01",
+            "location": "[variables('locationName')]",
+            "sku": {
+                "name": "Aligned"
+            },
+            "properties": {
+                "platformFaultDomainCount": 2,
+                "platformUpdateDomainCount": 10,
+                "proximityPlacementGroup": {
+                    "id": "[resourceId('Microsoft.Compute/proximityPlacementGroups',parameters('proximityPlacementGroupName'))]"
+                }
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Compute/proximityPlacementGroups/', parameters('proximityPlacementGroupName'))]"
+            ]
+        },
+        {
+            "name": "[variables('publicIpAddressName')]",
+            "type": "Microsoft.Network/publicIpAddresses",
+            "apiVersion": "2019-02-01",
+            "location": "[variables('locationName')]",
+            "condition": "[parameters('HasPublicIP')]",
+            "properties": {
+                "publicIpAllocationMethod": "Static"
+            },
+            "sku": {
+                "name": "Standard"
+            }
+        },
+        {
+            "name": "[concat(variables('networkInterfaceName'),'-pubip')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2019-07-01",
+            "condition": "[parameters('HasPublicIP')]",
+            "location": "[variables('locationName')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIpAddresses/', variables('publicIpAddressName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            },
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIpAddress": {
+                                "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', variables('publicIpAddressName'))]"
+                            },
+                            "primary": true,
+                            "privateIPAddressVersion": "IPv4",
+                            "applicationSecurityGroups": [
+                                {
+                                    "id": "[variables('applicationSecurityGroupID')]"
+                                }
+                            ]
+
+                        }
+                    }
+                ],
+                "enableAcceleratedNetworking": true
+            }
+        },
+        {
+            "name": "[variables('networkInterfaceName')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2019-07-01",
+            "condition": "[not(parameters('HasPublicIP'))]",
+            "location": "[variables('locationName')]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            },
+                            "privateIPAllocationMethod": "Dynamic",
+                            "primary": true,
+                            "privateIPAddressVersion": "IPv4",
+                            "applicationSecurityGroups": [
+                                {
+                                    "id": "[variables('applicationSecurityGroupID')]"
+                                }
+                            ]
+
+                        }
+                    }
+                ],
+                "enableAcceleratedNetworking": true
+            }
+        },
+        {
+            "name": "[concat(variables('sapMachineName'), variables('dataDisks')[copyIndex()].name)]",
+            "type": "Microsoft.Compute/disks",
+            "apiVersion": "2019-07-01",
+            "location": "[variables('locationName')]",
+            "properties": "[variables('dataDisks')[copyIndex()].properties]",
+            "sku": {
+                "name": "[variables('dataDisks')[copyIndex()].sku]"
+            },
+            "copy": {
+                "name": "managedDiskResources",
+                "count": "[length(variables('dataDisks'))]"
+            },
+            "tags": "[variables('allDiskTags')]"
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[variables('sapMachineName')]",
+            "dependsOn": [
+                "[if(parameters('HasPublicIP'),concat(variables('networkInterfaceName'),'-pubip'),variables('networkInterfaceName'))]"
+            ],
+            "apiVersion": "2018-10-01",
+            "location": "[variables('locationName')]",
+            "properties": {
+                "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySetName'))]"
+                },
+                "proximityPlacementGroup": {
+                    "id": "[resourceId('Microsoft.Compute/proximityPlacementGroups',parameters('proximityPlacementGroupName'))]"
+                },
+                "hardwareProfile": {
+                    "vmSize": "[if(equals(parameters('virtualMachineSize'), 'Demo'),'Standard_E16_v3',parameters('virtualMachineSize'))]"
+                },
+                "osProfile": {
+                    "computerName": "[variables('sapMachineName')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPasswordOrKey')]",
+                    "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[if(empty(parameters('imageID')), parameters('imageReference').publisher,json('null'))]",
+                        "offer": "[if(empty(parameters('imageID')), parameters('imageReference').offer,json('null'))]",
+                        "sku": "[if(empty(parameters('imageID')), parameters('imageReference').sku,json('null'))]",
+                        "version": "[if(empty(parameters('imageID')), parameters('imageReference').version,json('null'))]",
+                        "id": "[if(not(empty(parameters('imageID'))), parameters('imageID'),json('null'))]"
+                    },
+                    "osDisk": {
+                        "name": "[concat(variables('sapMachineName'), '-osdisk')]",
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage"
+                    },
+                    "copy": [
+                        {
+                            "name": "dataDisks",
+                            "count": "[length(variables('dataDisks'))]",
+                            "input": {
+
+                                "lun": "[variables('dataDisks')[copyIndex('dataDisks')].lun]",
+                                "createOption": "[variables('dataDisks')[copyIndex('dataDisks')].createOption]",
+                                "diskSizeGB": "[variables('dataDisks')[copyIndex('dataDisks')].properties.diskSizeGB]",
+                                "caching": "[variables('dataDisks')[copyIndex('dataDisks')].caching]",
+                                "writeAcceleratorEnabled": "[variables('dataDisks')[copyIndex('dataDisks')].writeAcceleratorEnabled]",
+
+                                "managedDisk": {
+                                    "id": "[resourceId('Microsoft.Compute/disks', concat(variables('sapMachineName') ,variables('dataDisks')[copyIndex('dataDisks')].name))]"
+                                }
+                            }
+                        }
+                    ]
+                },
+
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', if(parameters('HasPublicIP'),concat(variables('networkInterfaceName'),'-pubip'),variables('networkInterfaceName')))]"
+                        }
+                    ]
+                }
+            },
+            "tags": "[variables('allVMTags')]"
+        },
+        {
+            "name": "[concat('Update-IP-',variables('sapMachineName'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "[variables('networkInterfaceName')]"
+            ],
+            "condition": "[not(empty(parameters('PrivateIP')))]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/networkInterfaces",
+                            "name": "[concat(variables('networkInterfaceName'),'-pubip')]",
+                            "apiVersion": "2019-06-01",
+                            "location": "[parameters('location')]",
+                            "condition": "[parameters('HasPublicIP')]",
+                            "properties": {
+                                "ipConfigurations": [
+                                    {
+                                        "name": "ipconfig1",
+                                        "properties": {
+                                            "privateIPAllocationMethod": "[if(empty(parameters('PrivateIP')) ,'Dynamic','Static')]",
+                                            "privateIPAddress": "[if(empty(parameters('PrivateIP')) ,'',parameters('PrivateIP'))]",
+                                            "subnet": {
+                                                "id": "[variables('subnetRef')]"
+                                            },
+                                            "publicIpAddress": {
+                                                "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', variables('publicIpAddressName'))]"
+                                            },
+                                            "applicationSecurityGroups": [
+                                                {
+                                                    "id": "[variables('applicationSecurityGroupID')]"
+                                                }
+                                            ]
+
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/networkInterfaces",
+                            "name": "[variables('networkInterfaceName')]",
+                            "apiVersion": "2019-06-01",
+                            "location": "[parameters('location')]",
+                            "condition": "[not(parameters('HasPublicIP'))]",
+                            "properties": {
+                                "ipConfigurations": [
+                                    {
+                                        "name": "ipconfig1",
+                                        "properties": {
+                                            "privateIPAllocationMethod": "[if(empty(parameters('PrivateIP')) ,'Dynamic','Static')]",
+                                            "privateIPAddress": "[if(empty(parameters('PrivateIP')) ,'',parameters('PrivateIP'))]",
+                                            "subnet": {
+                                                "id": "[variables('subnetRef')]"
+                                            },
+                                            "applicationSecurityGroups": [
+                                                {
+                                                    "id": "[variables('applicationSecurityGroupID')]"
+                                                }
+                                            ]
+
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+
+    ],
+    "outputs": {
+        "Computername": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Compute/virtualMachines',variables('sapMachineName'))]"
+        }
+    }
+}

@@ -1,0 +1,70 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "sapSystemId": {
+      "value": "[SID]"
+    },
+    "adminUsername": {
+      "value": "demoadmin"
+    },
+    "authenticationType": {
+      "value": "password"
+    },
+    "adminPasswordOrKey": {
+      "reference": {
+        "keyVault": {
+          "id": "[KeyVaultID]"
+        },
+        "secretName": "mypassword"
+      }
+    },
+    "location": {
+      "value": "[LOCATION]"
+    },
+    "virtualMachineSize": {
+      "value": "[MACHINESIZE]"
+    },
+    "virtualMachineName": {
+      "value": "[SERVERNAME]"
+    },
+    "PrivateIP": {
+      "value": ""
+    },
+    "HasPublicIP": {
+      "value": false
+    },
+    "availabilitySetName": {
+      "value": "[SID]-app-avset"
+    },
+    "proximityPlacementGroupName": {
+      "value": "[SID]-ppg"
+    },
+    "imageReference": {
+      "value": {
+        "publisher": "[PUBLISHER]",
+        "offer": "[OFFER]",
+        "sku": "[SKU]",
+        "version": "[VERSION]"
+      }
+    },
+    "imageID": {
+      "value": "[ImageID]"
+    },
+    "applicationSecurityGroupName": {
+      "value": "sap-app-asg"
+    },
+    "virtualNetworkResourceGroupName": {
+      "value": "demo-vnet-rg"
+    },
+    "virtualNetworkName": {
+      "value": "demo-vnet"
+    },
+    "subnetName": {
+      "value": "app-snet"
+    },
+    "vmTagValues": {
+      "value": { "System": "SAP", "$perfOptimizationLevel": "1" }
+    }
+  }
+}
