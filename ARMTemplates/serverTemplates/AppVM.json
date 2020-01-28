@@ -4,7 +4,7 @@
     "parameters": {
         "sapSystemId": {
             "type": "string",
-            "minLength": 1,
+            "minLength": 3
             "maxLength": 3,
             "metadata": {
                 "description": "The SAP System ID"
