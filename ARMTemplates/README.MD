@@ -213,7 +213,7 @@ Validate the SKU size using [SAP Note 1928533](https://launchpad.support.sap.com
 
 Open the key vault in the portal and choose Resource ID from the properties tab for your keyvault
 
-![Azure Keyvault ID](AzKEyVaultID.png)
+![Azure Keyvault ID](./AzKeyVaultID.png)
 
 ```PowerShell
 $ResourceGroup = "sharedserviced"
