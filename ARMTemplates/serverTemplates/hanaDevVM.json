@@ -136,6 +136,7 @@
         "allVMTags": "[union(parameters('vmTagValues'),variables('sidTag'))]",
         "diskSizes": {
             "Demo": {
+                "osdiskSizeGB": 63,
                 "disks": [
                     {
                         "lun": 0,
@@ -157,6 +158,7 @@
             },
 
             "Standard_DS14v2": {
+                "osdiskSizeGB": 63,
                 "disks": [
                     {
                         "lun": 0,
@@ -257,6 +259,7 @@
                 ]
             },
             "Standard_E16s_v3": {
+                "osdiskSizeGB": 63,
                 "disks": [
                     {
                         "lun": 0,
@@ -357,6 +360,7 @@
                 ]
             },
             "Standard_E32s_v3": {
+                "osdiskSizeGB": 63,
                 "disks": [
                     {
                         "lun": 0,
@@ -457,6 +461,7 @@
                 ]
             },
             "Standard_E64s_v3": {
+                "osdiskSizeGB": 63,
                 "disks": [
                     {
                         "lun": 0,
@@ -557,6 +562,7 @@
                 ]
             },
             "Standard_GS5": {
+                "osdiskSizeGB": 63,
                 "disks": [
                     {
                         "lun": 0,
@@ -657,6 +663,7 @@
                 ]
             },
             "Standard_M32ts": {
+                "osdiskSizeGB": 63,
                 "disks": [
                     {
                         "lun": 0,
@@ -757,6 +764,7 @@
                 ]
             },
             "Standard_M32ls": {
+                "osdiskSizeGB": 63,
                 "disks": [
                     {
                         "lun": 0,
@@ -857,6 +865,7 @@
                 ]
             },
             "Standard_M64ls": {
+                "osdiskSizeGB": 63,
                 "disks": [
                     {
                         "lun": 0,
@@ -957,6 +966,7 @@
                 ]
             },
             "Standard_M64ms": {
+                "osdiskSizeGB": 63,
                 "disks": [
                     {
                         "lun": 0,
@@ -1090,6 +1100,7 @@
                 ]
             },
             "Standard_M64s": {
+                "osdiskSizeGB": 63,
                 "disks": [
                     {
                         "lun": 0,
@@ -1190,6 +1201,7 @@
                 ]
             },
             "Standard_M128s": {
+                "osdiskSizeGB": 127,
                 "disks": [
                     {
                         "lun": 0,
@@ -1307,6 +1319,7 @@
                 ]
             },
             "Standard_M128ms": {
+                "osdiskSizeGB": 127,
                 "disks": [
                     {
                         "lun": 0,
@@ -1472,6 +1485,7 @@
                 ]
             },
             "Standard_M208s_v2": {
+                "osdiskSizeGB": 127,
                 "disks": [
                     {
                         "lun": 0,
@@ -1621,6 +1635,7 @@
                 ]
             },
             "Standard_M208ms_v2": {
+                "osdiskSizeGB": 127,
                 "disks": [
                     {
                         "lun": 0,
@@ -1786,6 +1801,7 @@
                 ]
             },
             "Standard_M416s_v2": {
+                "osdiskSizeGB": 127,
                 "disks": [
                     {
                         "lun": 0,
@@ -1951,6 +1967,7 @@
                 ]
             },
             "Standard_M416ms_v2": {
+                "osdiskSizeGB": 127,
                 "disks": [
                     {
                         "lun": 0,
@@ -2182,6 +2199,8 @@
         },
         "sku": "[parameters('virtualMachineSize')]",
         "dataDisks": "[variables('diskSizes')[variables('sku')].disks]",
+        "osDiskSize": "[variables('diskSizes')[variables('sku')].osdiskSizeGB]",
+        
         "applicationSecurityGroupID": "[resourceId(parameters('virtualNetworkResourceGroupName'),'Microsoft.Network/applicationSecurityGroups',parameters('applicationSecurityGroupName'))]"
     },
     "resources": [
@@ -2340,7 +2359,8 @@
                         "createOption": "FromImage",
                         "managedDisk": {
                             "storageAccountType": "[variables('dataDisks')[0].sku]"
-                        }
+                        },
+                        "diskSizeGB": "[variables('osDiskSize')]"
 
                     },
                     "copy": [

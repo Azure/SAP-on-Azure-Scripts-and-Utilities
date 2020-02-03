@@ -130,6 +130,7 @@
         "allVMTags": "[union(parameters('vmTagValues'),variables('sidTag'))]",
         "diskSizes": {
             "Standard_M32ts": {
+                "osdiskSizeGB": 63,
                 "disks": [
                     {
                         "lun": 0,
@@ -262,6 +263,7 @@
                 ]
             },
             "Standard_M32ls": {
+                "osdiskSizeGB": 63,
                 "disks": [
                     {
                         "lun": 0,
@@ -394,6 +396,7 @@
                 ]
             },
             "Standard_M64ls": {
+                "osdiskSizeGB": 63,
                 "disks": [
                     {
                         "lun": 0,
@@ -526,6 +529,7 @@
                 ]
             },
             "Standard_M64s": {
+                "osdiskSizeGB": 63,
                 "disks": [
                     {
                         "lun": 0,
@@ -690,6 +694,7 @@
                 ]
             },
             "Standard_M64ms": {
+                "osdiskSizeGB": 63,
                 "disks": [
                     {
                         "lun": 0,
@@ -854,6 +859,7 @@
                 ]
             },
             "Standard_M128s": {
+                "osdiskSizeGB": 127,
                 "disks": [
                     {
                         "lun": 0,
@@ -961,7 +967,7 @@
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
-                            "diskSizeGB": ,
+                            "diskSizeGB":,
                             "creationData": {
                                 "createOption": "empty"
                             }
@@ -1003,6 +1009,7 @@
                 ]
             },
             "Standard_M128ms": {
+                "osdiskSizeGB": 127,
                 "disks": [
                     {
                         "lun": 0,
@@ -1217,6 +1224,7 @@
                 ]
             },
             "Standard_M208s_v2": {
+                "osdiskSizeGB": 127,
                 "disks": [
                     {
                         "lun": 0,
@@ -1397,6 +1405,7 @@
                 ]
             },
             "Standard_M208ms_v2": {
+                "osdiskSizeGB": 127,
                 "disks": [
                     {
                         "lun": 0,
@@ -1577,6 +1586,7 @@
                 ]
             },
             "Standard_M416s_v2": {
+                "osdiskSizeGB": 127,
                 "disks": [
                     {
                         "lun": 0,
@@ -1757,6 +1767,7 @@
                 ]
             },
             "Standard_M416ms_v2": {
+                "osdiskSizeGB": 127,
                 "disks": [
                     {
                         "lun": 0,
@@ -2019,6 +2030,7 @@
         },
         "sku": "[parameters('virtualMachineSize')]",
         "dataDisks": "[variables('diskSizes')[variables('sku')].disks]",
+        "osDiskSize": "[variables('diskSizes')[variables('sku')].osdiskSizeGB]",
         "applicationSecurityGroupID": "[resourceId(parameters('virtualNetworkResourceGroupName'),'Microsoft.Network/applicationSecurityGroups',parameters('applicationSecurityGroupName'))]"
     },
     "resources": [
@@ -2174,7 +2186,12 @@
                     "osDisk": {
                         "name": "[concat(variables('sapMachineName'), '-osdisk')]",
                         "caching": "ReadWrite",
-                        "createOption": "FromImage"
+                        "createOption": "FromImage",
+                        "managedDisk": {
+                            "storageAccountType": "[variables('dataDisks')[0].sku]"
+                        },
+                        "diskSizeGB": "[variables('osDiskSize')]"
+
                     },
                     "copy": [
                         {
