@@ -50,7 +50,7 @@
       }
     },
     "imageID": {
-      "value": "[HanaImageID]"
+      "value": "[ImageID]"
     },
     "applicationSecurityGroupName": {
       "value": "sap-db-asg"

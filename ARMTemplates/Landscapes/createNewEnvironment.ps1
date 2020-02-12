@@ -3,14 +3,20 @@ $region = "westeurope"
 
 $subscriptionID = "[SUBSCRIPTIONID]"
 
-$KeyVaultID = "/subscriptions/[SUBSCRIPTIONID]/resourceGroups/sharedservices/providers/Microsoft.KeyVault/vaults/kfomainvault"
+if ($subscriptionID -eq "[SUBSCRIPTIONID]") {
+    Write-Error -Message "Please update the subscription ID"
+}
 
-#If you want to use a marketplace image $xxxxxImageID needs to be an empty string
-#Custom image ID
-$AppServerImageID = "/subscriptions/[SUBSCRIPTIONID]/resourceGroups/[IMAGEGALLERYRGNAME]/providers/Microsoft.Compute/galleries/CorpImageGallery/images/[IMAGENAME]/versions/0.24089.43435"
-$AppServerImageID = ""
-$ASCSServerImageID = ""
-$HanaServerImageID = ""
+#Change $Verbose to $true for verbose output
+$Verbose = $false
+
+$VerboseFlag = ""
+
+if ($Verbose) {
+    $VerboseFlag = " -Verbose "
+}
+
+$KeyVaultID = "/subscriptions/[SUBSCRIPTIONID]/resourceGroups/sharedservices/providers/Microsoft.KeyVault/vaults/kfomainvault"
 
 Add-Type -TypeDefinition @"
    public enum DBType
@@ -31,6 +37,9 @@ $ASCSPublisher = "suse"
 $ASCSOffer = "sles-15-sp1"
 $ASCSSKU = "gen1"
 $ASCSSKUVersion = "latest"
+#If you want to use a marketplace image $xxxxxImageID needs to be an empty string
+#Custom image ID
+$ASCSServerImageID = ""
 #VM Size for the ASCS server
 $ASCSVMSize = "Standard_D2s_v3"
 
@@ -42,6 +51,9 @@ $AppPublisher = "suse"
 $AppOffer = "sles-15-sp1"
 $AppSKU = "gen1"
 $AppSKUVersion = "latest"
+$AppServerImageID = ""
+#/subscriptions/[SUBSCRIPTIONID]/resourceGroups/[GALLERYRGNAME]/providers/Microsoft.Compute/galleries/[GALLERYNAME]/images/[IMAGENAME]/versions/0.24089.43435"
+
 #VM Size for the application server
 $AppVMSize = "Standard_D4s_v3"
 
@@ -54,6 +66,9 @@ $DBOffer = "sles-15-sp1"
 $DBSKU = "gen1"
 $DBSKUVersion = "latest"
 #VM Size for the database server
+#If you want to use a marketplace image $xxxxxImageID needs to be an empty string
+#Custom image ID
+$DBServerImageID = ""
 $DBVMSize = "Standard_E16s_v3"
 
 #Is High Availability required
@@ -127,12 +142,12 @@ for ($i = 1; $i -le $NumberOfDatabaseServers; $i++) {
     }
     $dbServerName = [System.String]::Format('db-{0}', $i.ToString())
     
-    $DeploymentScriptStep = [System.String]::Format('{1}Write-Host "Creating Db Server {2}"{1}$res = New-AzResourceGroupDeployment -Name "DbServer_Creation-{2}" -ResourceGroupName $ResourceGroupName -TemplateFile ..\..\servertemplates\[DBServerImage].json -TemplateParameterFile .\[SID].[DBServerImage]-{0}.parameters.json{1}if ($res.ProvisioningState -ne "Succeeded") {{ {1}  Write-Error -Message "The deployment failed" {1}}}{1}', $i, [Environment]::NewLine, $dbServerName)
+    $DeploymentScriptStep = [System.String]::Format('{1}Write-Host "Creating Db Server {2}"{1}$res = New-AzResourceGroupDeployment -Name "DbServer_Creation-{2}" -ResourceGroupName $ResourceGroupName -TemplateFile ..\..\servertemplates\[DBServerImage].json -TemplateParameterFile .\[SID].[DBServerImage]-{0}.parameters.json {3}{1}if ($res.ProvisioningState -ne "Succeeded") {{ {1}  Write-Error -Message "The deployment failed" {1}}}{1}', $i, [Environment]::NewLine, $dbServerName,$VerboseFlag)
     $DBDeploymentScript += $DeploymentScriptStep
 
     (Get-Content $dbTemplateFilePath).replace('[SID]', $SID) | Set-Content $dbTemplateFilePath
     (Get-Content $dbTemplateFilePath).replace('[KeyVaultID]', $KeyVaultID) | Set-Content $dbTemplateFilePath
-    (Get-Content $dbTemplateFilePath).replace('[HanaImageID]', $HanaServerImageID) | Set-Content $dbTemplateFilePath
+    (Get-Content $dbTemplateFilePath).replace('[ImageID]', $DBServerImageID) | Set-Content $dbTemplateFilePath
     (Get-Content $dbTemplateFilePath).replace('[LOCATION]', $region) | Set-Content $dbTemplateFilePath
     (Get-Content $dbTemplateFilePath).replace('[SERVERNAME]', $dbServerName) | Set-Content $dbTemplateFilePath
     (Get-Content $dbTemplateFilePath).replace('[PUBLISHER]', $DBPublisher) | Set-Content $dbTemplateFilePath
@@ -150,7 +165,7 @@ for ($i = 1; $i -le $NumberOfAppServers; $i++) {
     $appTemplateFilePath = [System.String]::Format('{0}\{1}\{1}.appVM-{2}.parameters.json', $s, $SID, $i)
     $appServerName = [System.String]::Format('app-{0}', $i.ToString())
         
-    $DeploymentScriptStep = [System.String]::Format('{1}Write-Host "Creating App Server {2}"{1}$res = New-AzResourceGroupDeployment -Name "AppServer_Creation-{2}" -ResourceGroupName $ResourceGroupName -TemplateFile ..\..\servertemplates\[AppServerImage].json -TemplateParameterFile .\[SID].[AppServerImage]-{0}.parameters.json{1}if ($res.ProvisioningState -ne "Succeeded") {{ {1}  Write-Error -Message "The deployment failed" {1}}}{1}', $i, [Environment]::NewLine, $appServerName)
+    $DeploymentScriptStep = [System.String]::Format('{1}Write-Host "Creating App Server {2}"{1}$res = New-AzResourceGroupDeployment -Name "AppServer_Creation-{2}" -ResourceGroupName $ResourceGroupName -TemplateFile ..\..\servertemplates\[AppServerImage].json -TemplateParameterFile .\[SID].[AppServerImage]-{0}.parameters.json {3}{1}if ($res.ProvisioningState -ne "Succeeded") {{ {1}  Write-Error -Message "The deployment failed" {1}}}{1}', $i, [Environment]::NewLine, $appServerName,$VerboseFlag)
     $DeploymentScript += $DeploymentScriptStep
 
     #Copying the application server template parameter file
@@ -177,7 +192,7 @@ for ($i = 1; $i -le $NumberOfASCSServers; $i++) {
     $appTemplateFilePath = [System.String]::Format('{0}\{1}\{1}.ascsVM-{2}.parameters.json', $s, $SID, $i)
     $ascsServerName = [System.String]::Format('ascs-{0}', $i.ToString())
         
-    $DeploymentScriptStep = [System.String]::Format('{1}Write-Host "Creating ASCS Server {2}"{1}$res = New-AzResourceGroupDeployment -Name "ASCSServer_Creation-{2}" -ResourceGroupName $ResourceGroupName -TemplateFile ..\..\servertemplates\[ASCSServerImage].json -TemplateParameterFile .\[SID].[ASCSServerImage]-{0}.parameters.json{1}if ($res.ProvisioningState -ne "Succeeded") {{ {1}  Write-Error -Message "The deployment failed" {1}}}{1}', $i, [Environment]::NewLine, $ascsServerName)
+    $DeploymentScriptStep = [System.String]::Format('{1}Write-Host "Creating ASCS Server {2}"{1}$res = New-AzResourceGroupDeployment -Name "ASCSServer_Creation-{2}" -ResourceGroupName $ResourceGroupName -TemplateFile ..\..\servertemplates\[ASCSServerImage].json -TemplateParameterFile .\[SID].[ASCSServerImage]-{0}.parameters.json {3}{1}if ($res.ProvisioningState -ne "Succeeded") {{ {1}  Write-Error -Message "The deployment failed" {1}}}{1}', $i, [Environment]::NewLine, $ascsServerName,$VerboseFlag)
     $ASCSDeploymentScript += $DeploymentScriptStep
 
     #Copying the application server template parameter file

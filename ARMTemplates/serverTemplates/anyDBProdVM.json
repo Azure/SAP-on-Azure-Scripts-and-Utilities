@@ -805,7 +805,7 @@
             "type": "Microsoft.Network/publicIpAddresses",
             "apiVersion": "2019-02-01",
             "location": "[variables('locationName')]",
-            "condition": "[parameters('HasPublicIP')]"
+            "condition": "[parameters('HasPublicIP')]",
             "properties": {
                 "publicIpAllocationMethod": "Static"
             },
