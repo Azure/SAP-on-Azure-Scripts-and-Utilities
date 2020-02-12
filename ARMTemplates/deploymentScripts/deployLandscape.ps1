@@ -43,14 +43,14 @@ if ($res.ProvisioningState -ne "Succeeded") {
     exit
 }
 
+Write-Host "Provisioning the Database Server(s)"
+[DBServerDeployment]
+
 Write-Host "Provisioning the ASCS Server(s)"
 [ASCSServerDeployment]
 
 Write-Host "Provisioning the Application Server(s)"
 [AppServerDeployment]
-
-Write-Host "Provisioning the Database Server(s)"
-[DBServerDeployment]
 
 Write-Host "Deployment finished: " (Get-Date).ToString("yyyy-MM-dd HH:mm")
 
