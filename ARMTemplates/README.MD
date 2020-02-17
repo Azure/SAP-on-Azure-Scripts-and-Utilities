@@ -1,34 +1,38 @@
 # **Overview**
 
-The scripts and templates in this folder structure can be used to deploy the infrastructure for a SAP on Azure deployment
+The scripts and templates in this folder structure can be used to deploy the infrastructure for a SAP on Azure deployment.
+
+## **Requirements**
+
+This solution requires an existing VNet with subnets as well as existing Application Security Groups.
 
 ## **The folder structure**
 
-The folder structure in the repo is designed to support an organisation that has a large number of SAP deployments
+The folder structure in the repo is designed to support an organisation that has a large number of SAP deployments.
 
 ### **/baseInfrastructure**
 
-This folder contains the templates for the core infrastructure artifacts
+This folder contains the templates for the core infrastructure artifacts.
 
 #### **asg.json**
 
-This is the template for the Application Security Group deployment
+This is the template for the Application Security Group deployment.
 
 #### **network.json**
 
-This is the template for the a sample network deployment
+This is the template for the a sample network deployment.
 
 #### **ppgavset.json**
 
-This is the template for Proximity Placement Group and Availability Sets deployment
+This is the template for Proximity Placement Group and Availability Sets deployment.
 
 ### **/deploymentScripts**
 
-This folder contains the deployment scripts for the templates
+This folder contains the deployment scripts for the templates.
 
 #### **deployInfrastructure.ps1**
 
-This is the deployment script for deploying the base infrastructure assets (asg.json)
+This is the deployment script for deploying the base infrastructure assets (asg.json).
 
 #### **deployLandscape.ps1**
 
@@ -36,7 +40,7 @@ This is the placeholder deployment script for deploying the landscape. Do not ru
 
 #### **deployNetwork.ps1**
 
-This is the  deployment script for deploying the landscapesample network configuration
+This is the  deployment script for deploying the landscapesample network configuration.
 
 ### **/landScapes**
 
@@ -48,11 +52,9 @@ This is the script you can use to create the deployment artifacts for a new land
 
 ### **/serverTemplates**
 
-This is the  folder containing all the server templates. After cloning the repository edit the template files to reflect your requirements (naming conventions etc)
+This is the  folder containing all the server templates. After forking the repository edit the template files to reflect your requirements (naming conventions etc).
 
 ```json
-        "sapSystemIdLower": "[toLower(parameters('sapSystemId'))]",
-        "locationName": "[if(empty(parameters('location')) , resourceGroup().location,parameters('location'))]",
         "sapMachineName": "[concat(variables('sapSystemIdLower'),'-',parameters('virtualMachineName'))]",
         "networkInterfaceName": "[concat(variables('sapMachineName'),'-nic')]",
         "publicIpAddressName": "[concat(variables('sapMachineName'),'-pip')]",
@@ -63,7 +65,9 @@ This is the  folder containing all the server templates. After cloning the repos
 
 ### **/serverTemplates/parameterFiles**
 
-This is the  folder containing all the server template parameter files. After cloning the repository edit the parameter files to reflect your environment (Application Security Group Names, Resource Group name for Virtual Network, Virtual Network name etc.)
+This is the  folder containing all the server template parameter files. After forking the repository edit the parameter files to reflect your environment (Application Security Group Names, Resource Group name for Virtual Network, Virtual Network name etc.).
+
+The parameter files contain placeholders [] that will be updated by the createNewEnvironment.ps1 file.
 
 ```json
     "applicationSecurityGroupName": {
@@ -87,28 +91,31 @@ This is the  folder containing all the server template parameter files. After cl
 
 ### **ASCSVM.json**
 
-This is the template for an ASCS virtual machine
+This is the template for an ASCS virtual machine.
 
 ### **APPVM.json**
 
-This is the template for an application server virtual machine
+This is the template for an application server virtual machine.
 
 ### **anyDBProdVM.json**
 
-This is the template for a database virtual machine
+This is the template for a database virtual machine.
 
 ### **HanaProdVM.json**
 
-This is the template for a database virtual machine designed to host the Hana Server
+This is the template for a database virtual machine designed to host the Hana Server.
 
 ### **HanaDevVM.json**
 
-This is the template for a development database virtual machine designed to host the Hana Server
+This is the template for a development database virtual machine designed to host the Hana Server.
 
 ## **Creating a new deployment of a new SAP environment on Azure**
 
-Navigate to the /landscapes folder. Modify the values in the **createNewEnvironment.ps1** file
-Change the [SUBSCRIPTIONID], [IMAGEGALLERYRGNAME],[VAULTNAME],[IMAGENAME] to reflect your environment
+Navigate to the /landscapes folder and modify the values in the **createNewEnvironment.ps1** file.
+
+Change the *[SUBSCRIPTIONID], [IMAGEGALLERYRGNAME], [IMAGEGALLERYRGNAME], [VAULTRG], [VAULTNAME], [IMAGENAME]* placeholders to reflect your environment.
+
+Update the $SID and other relevant variables.
 
 ```PowerShell
 $SID = "S40"
@@ -116,14 +123,16 @@ $region = "westeurope"
 
 $subscriptionID = "[SUBSCRIPTIONID]"
 
-$KeyVaultID = "/subscriptions/[SUBSCRIPTIONID]/resourceGroups/sharedservices/providers/Microsoft.KeyVault/vaults/[VAULTNAME]"
+#Shared resources
+$virtualNetworkResourceGroupName = "demo-vnet-rg"
+$virtualNetworkName = "demo-vnet"
+$dbsubnetName = "db-snet"
+$appsubnetName = "app-snet"
+$appASG = "sap-app-asg"
+$dbASG = "sap-db-asg"
 
-#If you want to use a marketplace image $xxxxxImageID needs to be an empty string
-#Custom image ID
-$AppServerImageID = "/subscriptions/[SUBSCRIPTIONID]/resourceGroups/[IMAGEGALLERYRGNAME]/providers/Microsoft.Compute/galleries/CorpImageGallery/images/[IMAGENAME]/versions/0.24089.43435"
-$AppServerImageID = ""
-$ASCSServerImageID = ""
-$HanaServerImageID = ""
+#Update this to refect your Azure KeyVault
+$KeyVaultID = "/subscriptions/[SUBSCRIPTIONID]/resourceGroups/[VAULTRG]/providers/Microsoft.KeyVault/vaults/[VAULTNAME]"
 
 Add-Type -TypeDefinition @"
    public enum DBType
@@ -144,29 +153,38 @@ $ASCSPublisher = "suse"
 $ASCSOffer = "sles-15-sp1"
 $ASCSSKU = "gen1"
 $ASCSSKUVersion = "latest"
+#If you want to use a marketplace image $xxxxxImageID needs to be an empty string
+#Custom image ID
+$ASCSServerImageID = ""
 #VM Size for the ASCS server
 $ASCSVMSize = "Standard_D2s_v3"
 
 #How many Application Servers are needed
-$NumberOfAppServers = 2
+$NumberOfAppServers = 1
 #Marketplace Template Information for the Application Server
 #If ImageID is provided then these fields will be ignored
 $AppPublisher = "suse"
 $AppOffer = "sles-15-sp1"
 $AppSKU = "gen1"
 $AppSKUVersion = "latest"
+$AppServerImageID = "/subscriptions/[SUBSCRIPTIONID]/resourceGroups/[IMAGEGALLERYRGNAME]/providers/Microsoft.Compute/galleries/[IMAGEGALLERYNAME]/images/[IMAGENAME]/versions/0.24089.43435"
+
 #VM Size for the application server
 $AppVMSize = "Standard_D4s_v3"
 
 #How many DB Servers are needed
 $NumberOfDatabaseServers = 2
 #Marketplace Template Information for the Database Server
+
 #If ImageID is provided then these fields will be ignored
 $DBPublisher = "suse"
 $DBOffer = "sles-15-sp1"
 $DBSKU = "gen1"
 $DBSKUVersion = "latest"
 #VM Size for the database server
+#If you want to use a marketplace image $xxxxxImageID needs to be an empty string
+#Custom image ID
+$DBServerImageID = ""
 $DBVMSize = "Standard_E16s_v3"
 
 #Is High Availability required
@@ -213,7 +231,7 @@ Validate the SKU size using [SAP Note 1928533](https://launchpad.support.sap.com
 
 Open the key vault in the portal and choose Resource ID from the properties tab for your keyvault
 
-![Azure Keyvault ID](./AzKeyVaultID.png)
+![Azure Keyvault ID](AzKEyVaultID.png)
 
 ```PowerShell
 $ResourceGroup = "sharedserviced"
@@ -238,11 +256,11 @@ Write-Host "Image ID" $id
 
 ### **Creating the folder structure**
 
-Execute the *createNewEnvironment.ps1* script
+Execute the *createNewEnvironment.ps1* script.
 
 ### **Update the server parameter files SID.xxxx.paramater.json and change the following parameters:**
 
-Navigate to the new folder, this folder will contain a deployment script and the parameter files required to deploy the availability sets and the proximity placement group as well as parameter files (ASCS, application and database)
+Navigate to the new folder, this folder will contain a deployment script and the parameter files required to deploy the availability sets and the proximity placement group as well as parameter files (ASCS, application and database). If needed update the files to reflect your requirements.
 
 - availabilitySetName, for example: "availabilitySetName": {"value": "S04-app-avset"}
 - availabilitySetNameDB, for example: "availabilitySetNameDB": {"value": "S04-db-avset"}
@@ -259,7 +277,7 @@ Navigate to the new folder, this folder will contain a deployment script and the
 
 and any other parameter values unique for the deployment.
 
-Validate that the parameters in the *deployLandscape.ps1* script reflect your environment.
+Ensure that the parameters in the *deployLandscape.ps1* script reflect your environment.
 
 ```PowerShell
 $ResourceGroupName = "SAP-S22"

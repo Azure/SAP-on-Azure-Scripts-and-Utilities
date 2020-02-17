@@ -35,5 +35,6 @@ The names of the groups are specified in the asg.parameters.json file
 ## deployLandscape.ps1
 
 This is a sample script that will be copied to the environment directories when. 
-**Do not run the script fropm here**
+
+**Do not run the script from here**
  can be used to deploy the infrastructure for the SAP environment.
