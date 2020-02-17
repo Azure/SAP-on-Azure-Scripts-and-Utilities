@@ -53,16 +53,16 @@
       "value": "[ImageID]"
     },
     "applicationSecurityGroupName": {
-      "value": "sap-db-asg"
+      "value": "[DBASG]"
     },
     "virtualNetworkResourceGroupName": {
-      "value": "demo-vnet-rg"
+      "value": "[VNetRG]"
     },
     "virtualNetworkName": {
-      "value": "demo-vnet"
+      "value": "[VNetName]"
     },
     "subnetName": {
-      "value": "db-snet"
+      "value": "[DBSubnetName]"
     },
     "diskTagValues": {
       "value": { "$perfOptimizationLevel": "1" }

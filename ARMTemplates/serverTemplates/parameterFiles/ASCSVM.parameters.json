@@ -52,16 +52,16 @@
       "value": "[ImageID]"
     },
     "applicationSecurityGroupName": {
-      "value": "sap-app-asg"
+      "value": "[APPASG]"
     },
     "virtualNetworkResourceGroupName": {
-      "value": "demo-vnet-rg"
+      "value": "[VNetRG]"
     },
     "virtualNetworkName": {
-      "value": "demo-vnet"
+      "value": "[VNetName]"
     },
     "subnetName": {
-      "value": "app-snet"
+      "value": "[AppSubnetName]"
     },
     "vmTagValues": {
       "value": { "System": "SAP", "$perfOptimizationLevel": "1" }

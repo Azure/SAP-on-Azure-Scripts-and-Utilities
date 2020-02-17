@@ -16,6 +16,14 @@ if ($Verbose) {
     $VerboseFlag = " -Verbose "
 }
 
+#Shared resources
+$virtualNetworkResourceGroupName="demo-vnet-rg"
+$virtualNetworkName= "demo-vnet"
+$dbsubnetName ="db-snet"
+$appsubnetName ="app-snet"
+$appASG = "sap-app-asg"
+$dbASG = "sap-db-asg"
+
 $KeyVaultID = "/subscriptions/[SUBSCRIPTIONID]/resourceGroups/sharedservices/providers/Microsoft.KeyVault/vaults/kfomainvault"
 
 Add-Type -TypeDefinition @"
@@ -30,7 +38,7 @@ Add-Type -TypeDefinition @"
 [DBType]$Database = [DBType]::HanaDev
 
 #How many ASCS Servers are needed
-$NumberOfASCSServers = 2
+$NumberOfASCSServers = 1
 #Marketplace Template Information for the ASCS Server
 #If ImageID is provided then these fields will be ignored
 $ASCSPublisher = "suse"
@@ -44,15 +52,14 @@ $ASCSServerImageID = ""
 $ASCSVMSize = "Standard_D2s_v3"
 
 #How many Application Servers are needed
-$NumberOfAppServers = 2
+$NumberOfAppServers = 1
 #Marketplace Template Information for the Application Server
 #If ImageID is provided then these fields will be ignored
 $AppPublisher = "suse"
 $AppOffer = "sles-15-sp1"
 $AppSKU = "gen1"
 $AppSKUVersion = "latest"
-$AppServerImageID = ""
-#/subscriptions/[SUBSCRIPTIONID]/resourceGroups/[GALLERYRGNAME]/providers/Microsoft.Compute/galleries/[GALLERYNAME]/images/[IMAGENAME]/versions/0.24089.43435"
+$AppServerImageID = "/subscriptions/80d5ed43-1465-432b-8914-5e1f68d49330/resourceGroups/SharedImagesUS/providers/Microsoft.Compute/galleries/CorpImageGallery/images/nwImage20200111-01/versions/0.24089.43435"
 
 #VM Size for the application server
 $AppVMSize = "Standard_D4s_v3"
@@ -60,6 +67,7 @@ $AppVMSize = "Standard_D4s_v3"
 #How many DB Servers are needed
 $NumberOfDatabaseServers = 2
 #Marketplace Template Information for the Database Server
+
 #If ImageID is provided then these fields will be ignored
 $DBPublisher = "suse"
 $DBOffer = "sles-15-sp1"
@@ -155,6 +163,10 @@ for ($i = 1; $i -le $NumberOfDatabaseServers; $i++) {
     (Get-Content $dbTemplateFilePath).replace('[SKU]', $DBSKU) | Set-Content $dbTemplateFilePath
     (Get-Content $dbTemplateFilePath).replace('[VERSION]', $DBSKUVersion) | Set-Content $dbTemplateFilePath
     (Get-Content $dbTemplateFilePath).replace('[MACHINESIZE]', $DBVMSize) | Set-Content $dbTemplateFilePath        
+    (Get-Content $dbTemplateFilePath).replace('[VNetRG]', $virtualNetworkResourceGroupName) | Set-Content $dbTemplateFilePath        
+    (Get-Content $dbTemplateFilePath).replace('[VNetName]', $virtualNetworkName) | Set-Content $dbTemplateFilePath        
+    (Get-Content $dbTemplateFilePath).replace('[DBSubnetName]', $dbsubnetName) | Set-Content $dbTemplateFilePath        
+    (Get-Content $dbTemplateFilePath).replace('[DBASG]', $dbASG) | Set-Content $dbTemplateFilePath        
 }
 
 #Application template
@@ -184,6 +196,11 @@ for ($i = 1; $i -le $NumberOfAppServers; $i++) {
     (Get-Content $appTemplateFilePath).replace('[SKU]', $AppSKU) | Set-Content $appTemplateFilePath
     (Get-Content $appTemplateFilePath).replace('[VERSION]', $AppSKUVersion) | Set-Content $appTemplateFilePath
     (Get-Content $appTemplateFilePath).replace('[MACHINESIZE]', $AppVMSize) | Set-Content $appTemplateFilePath
+    (Get-Content $appTemplateFilePath).replace('[VNetRG]', $virtualNetworkResourceGroupName) | Set-Content $appTemplateFilePath        
+    (Get-Content $appTemplateFilePath).replace('[VNetName]', $virtualNetworkName) | Set-Content $appTemplateFilePath        
+    (Get-Content $appTemplateFilePath).replace('[AppSubnetName]', $appsubnetName) | Set-Content $appTemplateFilePath        
+    (Get-Content $appTemplateFilePath).replace('[APPASG]', $appASG) | Set-Content $appTemplateFilePath        
+
 }
 
 $ascsServerName = ""
@@ -211,6 +228,11 @@ for ($i = 1; $i -le $NumberOfASCSServers; $i++) {
     (Get-Content $appTemplateFilePath).replace('[SKU]', $ASCSSKU) | Set-Content $appTemplateFilePath
     (Get-Content $appTemplateFilePath).replace('[VERSION]', $ASCSSKUVersion) | Set-Content $appTemplateFilePath
     (Get-Content $appTemplateFilePath).replace('[MACHINESIZE]', $ASCSVMSize) | Set-Content $appTemplateFilePath
+    (Get-Content $appTemplateFilePath).replace('[VNetRG]', $virtualNetworkResourceGroupName) | Set-Content $appTemplateFilePath        
+    (Get-Content $appTemplateFilePath).replace('[VNetName]', $virtualNetworkName) | Set-Content $appTemplateFilePath        
+    (Get-Content $appTemplateFilePath).replace('[AppSubnetName]', $appsubnetName) | Set-Content $appTemplateFilePath        
+    (Get-Content $appTemplateFilePath).replace('[APPASG]', $appASG) | Set-Content $appTemplateFilePath        
+
 }
 
 #Copying the deployment script
@@ -228,3 +250,7 @@ Copy-Item ..\deploymentScripts\deployLandscape.ps1 $SID
 (Get-Content $deploymentScriptPath).replace('[ASCSServerImage]', $ASCSServerImage) | Set-Content $deploymentScriptPath
 (Get-Content $deploymentScriptPath).replace('[SUBSCRIPTIONID]', $SubscriptionID) | Set-Content $deploymentScriptPath
 (Get-Content $deploymentScriptPath).replace('[REGION]', $region) | Set-Content $deploymentScriptPath
+(Get-Content $deploymentScriptPath).replace('[APPASG]', $appASG) | Set-Content $deploymentScriptPath
+(Get-Content $deploymentScriptPath).replace('[DBASG]', $dbASG) | Set-Content $deploymentScriptPath
+(Get-Content $deploymentScriptPath).replace('[VNetRG]', $virtualNetworkResourceGroupName) | Set-Content $deploymentScriptPath
+(Get-Content $deploymentScriptPath).replace('[VNetName]', $virtualNetworkName) | Set-Content $deploymentScriptPath
