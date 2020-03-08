@@ -1,0 +1,73 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "machineName": {
+            "type": "string"
+        },
+        "machineSize": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string",
+            "metadata": {
+                "description": "The location of the resource"
+            },
+            "defaultValue": ""
+        },
+        "Zone": {
+            "type": "string",
+            "metadata": {
+                "description": "The zonal info of the disk"
+            }
+        }
+    },
+    "variables": {
+        "diskSizes": {
+            "APP": {
+                "disks": [
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "ReadWrite",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 127,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "dataDisks": "[variables('diskSizes')[parameters('machineSize')].disks]"
+    },
+    "resources": [
+        {
+            "name": "[concat(parameters('machineName'), variables('dataDisks')[copyIndex()].name)]",
+            "type": "Microsoft.Compute/disks",
+            "apiVersion": "2019-07-01",
+            "location": "[parameters('location')]",
+            "properties": "[variables('dataDisks')[copyIndex()].properties]",
+            "zones": "[if(empty(parameters('Zone')), '', json(concat('[',parameters('Zone'),']')) )]",
+            "sku": {
+                "name": "[variables('dataDisks')[copyIndex()].sku]"
+            },
+            "copy": {
+                "name": "managedDiskResources",
+                "count": "[length(variables('dataDisks'))]"
+            }
+        }
+    ],
+    "outputs": {
+        "diskArray": {
+            "type": "array",
+            "value": "[variables('dataDisks')]"
+        }
+    }
+}

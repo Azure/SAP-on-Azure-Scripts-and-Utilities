@@ -1,0 +1,2110 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "machineName": {
+            "type": "string"
+        },
+        "machineSize": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string",
+            "metadata": {
+                "description": "The location of the resource"
+            },
+            "defaultValue": ""
+        },
+        "Zone": {
+            "type": "string",
+            "metadata": {
+                "description": "The zonal info of the disk"
+            }
+        }
+    },
+    "variables": {
+        "diskSizes": {
+            "Demo": {
+                "osdiskSizeGB": 63,
+                "disks": [
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+                ]
+            },
+
+            "Standard_DS14v2": {
+                "osdiskSizeGB": 63,
+                "disks": [
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 1,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 2,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 3,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-shared",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 4,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-sap",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 5,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 255,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+                ]
+            },
+            "Standard_E16s_v3": {
+                "osdiskSizeGB": 63,
+                "disks": [
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 1,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 2,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 3,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-shared",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 4,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-sap",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 5,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 255,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+                ]
+            },
+            "Standard_E32s_v3": {
+                "osdiskSizeGB": 63,
+                "disks": [
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 1,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 2,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 3,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-shared",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 4,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-sap",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 5,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+                ]
+            },
+            "Standard_E64s_v3": {
+                "osdiskSizeGB": 63,
+                "disks": [
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 1,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 2,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 3,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-shared",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 4,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-sap",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 5,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+
+                ]
+            },
+            "Standard_GS5": {
+                "osdiskSizeGB": 63,
+                "disks": [
+
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 1,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 2,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 3,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-shared",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 4,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-sap",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 5,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+
+                ]
+            },
+            "Standard_M32ts": {
+                "osdiskSizeGB": 63,
+                "disks": [
+
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 1,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 2,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 3,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-shared",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 4,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-sap",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 5,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+                ]
+            },
+            "Standard_M32ls": {
+                "osdiskSizeGB": 63,
+                "disks": [
+
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 1,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 2,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 3,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-shared",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 4,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-sap",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 5,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+
+                ]
+            },
+            "Standard_M64ls": {
+                "osdiskSizeGB": 63,
+                "disks": [
+
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 1,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 2,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 3,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-shared",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 4,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-sap",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 5,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+
+                ]
+            },
+            "Standard_M64ms": {
+                "osdiskSizeGB": 63,
+                "disks": [
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 1,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 2,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 4,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-shared",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 5,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-sap",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+
+                    {
+                        "lun": 5,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup1",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 6,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup2",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 7,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup3",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+
+                ]
+            },
+            "Standard_M64s": {
+                "osdiskSizeGB": 63,
+                "disks": [
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 1,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 2,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-shared",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 3,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-sap",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+
+                    {
+                        "lun": 4,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup1",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 5,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup2",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+                ]
+            },
+            "Standard_M128s": {
+                "osdiskSizeGB": 127,
+                "disks": [
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 1,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 2,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 3,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-shared",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 4,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-sap",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 5,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup1",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 6,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup2",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+
+                ]
+            },
+            "Standard_M128ms": {
+                "osdiskSizeGB": 127,
+                "disks": [
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 1,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 2,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 3,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data4",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 4,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data5",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 6,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-shared",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 7,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-sap",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 8,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup1",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 4095,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 9,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup2",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 4095,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+
+                ]
+            },
+            "Standard_M208s_v2": {
+                "osdiskSizeGB": 127,
+                "disks": [
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 1,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 2,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 3,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data4",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 4,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-shared",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 5,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-sap",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 6,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup1",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 7,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup2",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 8,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup3",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+
+                ]
+            },
+            "Standard_M208ms_v2": {
+                "osdiskSizeGB": 127,
+                "disks": [
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 1,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 2,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 3,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data4",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 4,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-shared",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 5,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-sap",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 6,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup1",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 7,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup2",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 8,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup3",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 9,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup4",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+
+                ]
+            },
+            "Standard_M416s_v2": {
+                "osdiskSizeGB": 127,
+                "disks": [
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 1,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 2,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 3,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data4",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 4,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-shared",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 5,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-sap",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+
+                    {
+                        "lun": 6,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup1",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 4095,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 7,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup2",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 4095,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 8,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup3",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 4095,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 9,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup4",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 4095,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+
+                ]
+            },
+            "Standard_M416ms_v2": {
+                "osdiskSizeGB": 127,
+                "disks": [
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data1",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 1,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data2",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 2,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data3",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 3,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data4",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 4,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data5",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 5,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data6",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 6,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data7",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 7,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data8",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 2047,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+
+                    {
+                        "lun": 8,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-shared",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 1023,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 9,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-sap",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+
+                    {
+                        "lun": 10,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup1",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 4095,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 11,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup2",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 4095,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 12,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup3",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 4095,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 13,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup4",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 4095,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "dataDisks": "[variables('diskSizes')[parameters('machineSize')].disks]"
+    },
+    "resources": [
+        {
+            "name": "[concat(parameters('machineName'), variables('dataDisks')[copyIndex()].name)]",
+            "type": "Microsoft.Compute/disks",
+            "apiVersion": "2019-07-01",
+            "location": "[parameters('location')]",
+            "zones": "[if(empty(parameters('Zone')), '', json(concat('[',parameters('Zone'),']')) )]",
+            "properties": "[variables('dataDisks')[copyIndex()].properties]",
+            "sku": {
+                "name": "[variables('dataDisks')[copyIndex()].sku]"
+            },
+            "copy": {
+                "name": "managedDiskResources",
+                "count": "[length(variables('dataDisks'))]"
+            }
+        }
+    ],
+    "outputs": {
+        "diskArray": {
+            "type": "array",
+            "value": "[variables('dataDisks')]"
+        }
+    }
+}
