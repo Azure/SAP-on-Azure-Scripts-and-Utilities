@@ -9,28 +9,31 @@ sudo mkfs -t ext4 /dev/data-vg01/data-lv01
 
 sudo mkdir /hana /hana/data /hana/log
 # Update fstab
-echo "/dev/data-vg01/data-lv01  /hana  ext4  defaults  0  2" | sudo tee -a /etc/fstab
+echo "/dev/data-vg01/data-lv01  /hana  ext4  defaults,barrier=0,nofail  0  2" | sudo tee -a /etc/fstab
 
 # Creating the /hana/shared volume
-sudo parted /dev/sdf --script mklabel gpt mkpart ext4part ext4 0% 100%
-partprobe /dev/sdf1
+(echo n; echo p; echo 1; echo ; echo ; echo w) | sudo fdisk /dev/sdf
+sudo mkfs -t ext4 /dev/sdf1
 
 sudo mkdir /hana/shared
 # Update fstab
-echo "/dev/sdf1 /hana/shared  ext4  defaults  0  2" | sudo tee -a /etc/fstab
+echo "/dev/sdf1 /hana/shared  ext4  defaults,barrier=0,nofail  0  2" | sudo tee -a /etc/fstab
 
 # Creating the /usr/sap volume
-sudo parted /dev/sdg --script mklabel gpt mkpart ext4part ext4 0% 100%
-partprobe /dev/sdg1
+(echo n; echo p; echo 1; echo ; echo ; echo w) | sudo fdisk /dev/sdg
+sudo mkfs -t ext4 /dev/sdg1
 
 sudo mkdir /usr/sap
 # Update fstab
-echo "/dev/sdg1 /usr/sap  ext4  defaults  0  2" | sudo tee -a /etc/fstab
+echo "/dev/sdg1 /usr/sap  ext4  defaults,barrier=0,nofail  0  2" | sudo tee -a /etc/fstab
 
 # Creating the /hana/backup volume
-sudo parted /dev/sdh --script mklabel gpt mkpart ext4part ext4 0% 100%
-partprobe /dev/sdh1
+(echo n; echo p; echo 1; echo ; echo ; echo w) | sudo fdisk /dev/sdh
+sudo mkfs -t ext4 /dev/sdh1
 
 sudo mkdir /hana/backup
 # Update fstab
-echo "/dev/sdh1 /hana/backup  ext4  defaults  0  2" | sudo tee -a /etc/fstab
+echo "/dev/sdh1 /hana/backup  ext4  defaults,barrier=0,nofail  0  2" | sudo tee -a /etc/fstab
+
+sudo -R chmod 0755 /hana
+sudo -R chmod 0755 /usr/sap

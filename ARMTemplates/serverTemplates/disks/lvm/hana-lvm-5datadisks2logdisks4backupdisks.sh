@@ -9,7 +9,7 @@ sudo mkdir /hana /hana/data
 sudo vgcreate data-vg01 /dev/sdc /dev/sdd /dev/sde /dev/sdf /dev/sdg
 sudo lvcreate --extents 100%FREE --stripes 5 --name data-lv01 data-vg01
 # Update fstab
-echo "/dev/data-vg01/data-lv01 /hana/data  ext4  defaults  0  2" | sudo tee -a /etc/fstab
+echo "/dev/data-vg01/data-lv01 /hana/data  ext4  defaults,barrier=0,nofail  0  2" | sudo tee -a /etc/fstab
 
 # Creating the /hana/log volume
 sudo pvcreate /dev/sdh
@@ -20,23 +20,23 @@ sudo lvcreate --extents 100%FREE --stripes 2 --name log-lv01 log-vg01
 sudo mkfs -t ext4 /dev/log-vg01/log-lv01
 sudo mkdir /hana/log
 # Update fstab
-echo "/dev/log-vg01/log-lv01 /hana/log  ext4  defaults  0  2" | sudo tee -a /etc/fstab
+echo "/dev/log-vg01/log-lv01 /hana/log  ext4  defaults,barrier=0,nofail  0  2" | sudo tee -a /etc/fstab
 
 # Creating the /hana/shared volume
-sudo parted /dev/sdj --script mklabel gpt mkpart ext4part ext4 0% 100%
-partprobe /dev/sdj1
+(echo n; echo p; echo 1; echo ; echo ; echo w) | sudo fdisk /dev/sdj
+sudo mkfs -t ext4 /dev/sdj1
 
 sudo mkdir /hana/shared
 # Update fstab
-echo "/dev/sdj1 /hana/shared  ext4  defaults  0  2" | sudo tee -a /etc/fstab
+echo "/dev/sdj1 /hana/shared  ext4  defaults,barrier=0,nofail  0  2" | sudo tee -a /etc/fstab
 
 # Creating the /usr/sap volume
-sudo parted /dev/sdk --script mklabel gpt mkpart ext4part ext4 0% 100%
-partprobe /dev/sdk1
+(echo n; echo p; echo 1; echo ; echo ; echo w) | sudo fdisk /dev/sdk
+sudo mkfs -t ext4 /dev/sdk1
 
 sudo mkdir /usr/sap
 # Update fstab
-echo "/dev/sdk1 /usr/sap  ext4  defaults  0  2" | sudo tee -a /etc/fstab
+echo "/dev/sdk1 /usr/sap  ext4  defaults,barrier=0,nofail  0  2" | sudo tee -a /etc/fstab
 
 # Creating the /hana/backup volume
 sudo pvcreate /dev/sdl
@@ -49,8 +49,7 @@ sudo lvcreate --extents 100%FREE --stripes 4 --name backup-lv01 backup-vg01
 sudo mkfs -t ext4 /dev/backup-vg01/backup-lv01
 sudo mkdir /backup
 # Update fstab
-echo "/dev/backup-vg01/backup-lv01  /hana/backup  ext4  defaults  0  2" | sudo tee -a /etc/fstab
+echo "/dev/backup-vg01/backup-lv01  /hana/backup  ext4  defaults,barrier=0,nofail  0  2" | sudo tee -a /etc/fstab
 
-
-
-
+sudo -R chmod 0755 /hana
+sudo -R chmod 0755 /usr/sap
