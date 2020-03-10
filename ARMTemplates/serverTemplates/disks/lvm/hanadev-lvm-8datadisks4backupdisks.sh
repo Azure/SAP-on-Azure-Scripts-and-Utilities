@@ -45,5 +45,5 @@ sudo mkdir /hana/backup
 
 echo "/dev/backup-vg01/backup-lv01  /hana/backup  ext4  defaults,barrier=0,nofail  0  2" | sudo tee -a /etc/fstab
 
-sudo -R chmod 0755 /hana
-sudo -R chmod 0755 /usr/sap
+sudo chmod -R 0755 /hana
+sudo chmod -R 0755 /usr/sap
