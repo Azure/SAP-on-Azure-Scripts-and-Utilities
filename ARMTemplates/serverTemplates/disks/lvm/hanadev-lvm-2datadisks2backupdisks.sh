@@ -1,3 +1,5 @@
+sudo zypper install lvm2
+
 sudo pvcreate /dev/sdc
 sudo pvcreate /dev/sdd
 
