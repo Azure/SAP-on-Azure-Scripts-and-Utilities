@@ -15,6 +15,7 @@ sudo pvcreate /dev/sdo
 sudo vgcreate data-vg01 /dev/sdc /dev/sdd /dev/sde /dev/sdf /dev/sdg /dev/sdh /dev/sdi /dev/sdj /dev/sdk /dev/sdl /dev/sdm /dev/sdn /dev/sdo
 sudo lvcreate --extents 100%FREE --stripes 13 --name data-lv01 data-vg01
 
+sudo mkfs -t ext4 /dev/data-vg01/data-lv01
 sudo mkdir /data
 echo "/dev/data-vg01/data-lv01  /data  ext4  defaults,barrier=0,nofail  0  2" | sudo tee -a /etc/fstab
 
