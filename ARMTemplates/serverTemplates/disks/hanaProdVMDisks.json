@@ -110,7 +110,7 @@
                     {
                         "lun": 5,
                         "createOption": "attach",
-                        "caching": "None",
+                        "caching": "ReadOnly",
                         "writeAcceleratorEnabled": false,
                         "id": null,
                         "name": "-shared",
