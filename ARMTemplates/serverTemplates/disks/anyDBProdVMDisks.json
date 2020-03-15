@@ -1230,7 +1230,7 @@
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
-                            "diskSizeGB": 2047,
+                            "diskSizeGB": 4095,
                             "creationData": {
                                 "createOption": "empty"
                             }
