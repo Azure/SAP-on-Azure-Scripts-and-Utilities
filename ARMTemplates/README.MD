@@ -2,6 +2,39 @@
 
 The scripts and templates in this folder structure can be used to deploy the infrastructure for a SAP on Azure deployment.
 
+## **Deployment options**
+
+You can use the scripts to deploy environments for both development, test, quality assurance and production workloads.
+
+### **Dev/Test**
+
+These are environments with single server instances of each role (ascs, app, db, web dispatch (optional)) as is illustrated below:
+
+![DevTest](DevTest.png)
+
+### **QA/Prod**
+
+The QA/Prod deployments are typically Highly Available environments having at least two servers of each type. The templates support three different deployment topologies of QA/Prod environments.
+
+#### **Without Zone information**  
+
+In this deployment the environment is deployed without providing availability zone as is illustated below. All components are deployed into the same proximity placement group ensuring proximity and low latency between the components.
+
+![NonZonal](NotZonal.png)
+
+#### **Zonal**  
+
+In this deployment the environment is deployed into a single availability zone as is illustated below. As Availability Zones and Availability Sets are mutually exclusive all components except the application tier are deployed without availability sets. The application tier is deployed into an availability set that is associated with the proximity placement group thereby ensuring proximity and low latency between the components.
+
+![Zonal](Zonal.png)
+
+#### **Cross Zonal**
+
+In this deployment the environment is deployed across two availability zones as is illustated below. As Availability Zones and Availability Sets are mutually exclusive all components except the application tier are deployed without availability sets. The application tier is deployed into an availability set that is associated with the proximity placement group thereby ensuring proximity and low latency between the components.
+
+![CrossZonal](CrossZonal.png)
+
+
 ## **Requirements**
 
 This solution requires an existing VNet with subnets as well as existing Application Security Groups.
@@ -89,25 +122,29 @@ The parameter files contain placeholders [] that will be updated by the createNe
 
 ## **Server Templates**
 
-### **ASCSVM.json**
+### **anyDBProdVM.json**
 
-This is the template for an ASCS virtual machine.
+This is the template for a database virtual machine.
 
 ### **APPVM.json**
 
 This is the template for an application server virtual machine.
 
-### **anyDBProdVM.json**
+### **ASCSVM.json**
 
-This is the template for a database virtual machine.
+This is the template for an ASCS virtual machine.
+
+### **HanaDevVM.json**
+
+This is the template for a development database virtual machine designed to host the Hana Server.
 
 ### **HanaProdVM.json**
 
 This is the template for a database virtual machine designed to host the Hana Server.
 
-### **HanaDevVM.json**
+### **WDVM.json**
 
-This is the template for a development database virtual machine designed to host the Hana Server.
+This is the template for a Web Dispatch virtual machine.
 
 ## **Creating a new deployment of a new SAP environment on Azure**
 
@@ -116,6 +153,7 @@ Navigate to the /landscapes folder and modify the values in the **createNewEnvir
 Change the *[SUBSCRIPTIONID], [IMAGEGALLERYRGNAME], [IMAGEGALLERYRGNAME], [VAULTRG], [VAULTNAME], [IMAGENAME]* placeholders to reflect your environment.
 
 Update the $SID and other relevant variables.
+
 
 ```PowerShell
 $SID = "S40"
@@ -167,7 +205,7 @@ $AppPublisher = "suse"
 $AppOffer = "sles-15-sp1"
 $AppSKU = "gen1"
 $AppSKUVersion = "latest"
-$AppServerImageID = "/subscriptions/[SUBSCRIPTIONID]/resourceGroups/[IMAGEGALLERYRGNAME]/providers/Microsoft.Compute/galleries/[IMAGEGALLERYNAME]/images/[IMAGENAME]/versions/0.24089.43435"
+$AppServerImageID = "/subscriptions/[SUBSCRIPTIONID]/resourceGroups/[IMAGEGALLERYRGNAME]/providers/Microsoft.Compute/galleries/[IMAGEGALLERYNAME]/images/[IMAGENAME]/versions/[VERSIONNUMBER]"
 
 #VM Size for the application server
 $AppVMSize = "Standard_D4s_v3"
@@ -187,8 +225,10 @@ $DBSKUVersion = "latest"
 $DBServerImageID = ""
 $DBVMSize = "Standard_E16s_v3"
 
-#Is High Availability required
+#Is High Availability required, if so the the servercount(s) will be 2 or higher
 $SAPHA = $true
+#If you need Web dispatchers set the $WebDispatch to true
+$WebDispatch = $false
 ```
 
 ### **Retrieving IDs, etc for the supporting services**
@@ -256,17 +296,17 @@ Write-Host "Image ID" $id
 
 ### **Creating the folder structure**
 
-Execute the *createNewEnvironment.ps1* script.
+Execute the *createNewEnvironment.ps1* script. It will create a folder underneath the "Landscapes" folder.
 
-### **Update the server parameter files SID.xxxx.paramater.json and change the following parameters:**
+### **Update the server parameter files SID.xxxx.paramater.json and change the following parameters (if needed):**
 
-Navigate to the new folder, this folder will contain a deployment script and the parameter files required to deploy the availability sets and the proximity placement group as well as parameter files (ASCS, application and database). If needed update the files to reflect your requirements.
+Navigate to the new folder, this folder will contain a deployment script and the parameter files required to deploy the availability sets and the proximity placement group as well as parameter files (Web Dispatch, ASCS, application and database). If needed update the files to reflect your requirements.
 
 - availabilitySetName, for example: "availabilitySetName": {"value": "S04-app-avset"}
 - availabilitySetNameDB, for example: "availabilitySetNameDB": {"value": "S04-db-avset"}
 - proximityPlacementGroupName, for example: "proximityPlacementGroupName": {"value": "S04-ppg"}
 - virtualMachineSize, for example: "virtualMachineSize": {"value": "Standard_E4s_v3"}
-- PrivateIP, for example: "PrivateIP": {"value":"111.222.333.444"}
+- PrivateIP, for example: "PrivateIP": {"value":["10.0.0.15","10.0.0.16"]}
 - HasPublicIP, for example: "HasPublicIP": {"value": false}
 - virtualNetworkResourceGroupName, for example "virtualNetworkResourceGroupName": { "value": "VNetRG" }
 - virtualNetworkName, for example "virtualNetworkName": { "value": "prodvnet" }
@@ -274,6 +314,7 @@ Navigate to the new folder, this folder will contain a deployment script and the
 - imageReference, for example: "imageReference": {"value": {"publisher": "suse","offer": "SLES-SAP","sku": "12-sp4","version": "latest"}}
 - imageID, for example: "imageID": {"value": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxxx/resourceGroups/SharedImagesUS/providers/Microsoft.Compute/galleries/CorpImageGallery/images/nwImage20200111-01/versions/0.24089.43435"} see above
 - Tags, for example "vmTagValues" : {"value" : "{ System": "SAP", "$perfOptimizationLevel": "1" }"
+- Zonal support, for instance {"value" : ["1"]} will deploy the servers in Availability Zone 1, {"value" : ["1","2"]} will deploy the servers across two Availability Zones, 1 and 2
 
 and any other parameter values unique for the deployment.
 
