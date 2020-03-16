@@ -124,7 +124,13 @@ The parameter files contain placeholders [] that will be updated by the createNe
 
 ### **anyDBProdVM.json**
 
-This is the template for a database virtual machine.
+This is the template for a database virtual machine. You can specify the database size in the parameter file to get the appropriate disk layout. The template has support for the following database sizes: "200", "500", "1024", "2048", "5120", "10240", "15360", "20480", "30720", "40960","51200"
+
+This setting is specified in the createNewEnvironment.ps1 file
+
+```PowerShell
+    $DBSize = "51200"
+```
 
 ### **APPVM.json**
 
