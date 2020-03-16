@@ -1,21 +1,39 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "virtualNetworkName": {
-            "value": "demo-vnet"
-        },
-        "networkSecurityGroupName": {
-            "value": "toplevel"
-        },
-        "location": {
-            "value": "westeurope"
-          },
-          "applicationSecurityGroupName": {
-            "value": "sap-app-asg"
-          },
-          "applicationSecurityGroupNameDB": {
-            "value": "sap-db-asg"
-          }
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "virtualNetworkName": {
+      "value": "demo-vnet"
+    },
+    "vnetAddressPrefix": {
+      "value": "10.8.0.0/16"
+    },
+    "appSubnetName": {
+      "value": "app-snet"
+    },
+    "appSubnetAddressPrefix": {
+      "value": "10.8.0.0/24"
+    },
+    "dbSubnetName": {
+      "value": "db-snet"
+    },
+    "dbSubnetAddressPrefix": {
+      "value": "10.8.16.0/24"
+    },
+    "networkSecurityGroupName": {
+      "value": "toplevel"
+    },
+    "location": {
+      "value": ""
+    },
+    "applicationSecurityGroupName": {
+      "value": "sap-app-asg"
+    },
+    "applicationSecurityGroupNameDB": {
+      "value": "sap-db-asg"
+    },
+    "applicationSecurityGroupNameWeb": {
+      "value": "sap-web-asg"
     }
+  }
 }

@@ -30,10 +30,10 @@
       "value": "[MACHINESIZE]"
     },
     "privateIP": {
-      "value": ""
+      "value": []
     },
     "HasPublicIP": {
-      "value": false
+      "value": "[HASPUBLICIP]"
     },
     "availabilitySetName": {
       "value": "[SID]-db-avset"
@@ -52,6 +52,9 @@
     "imageID": {
       "value": "[ImageID]"
     },
+    "virtualMachineCount": {
+      "value": "[VMCount]"
+    },
     "applicationSecurityGroupName": {
       "value": "[DBASG]"
     },
@@ -64,11 +67,12 @@
     "subnetName": {
       "value": "[DBSubnetName]"
     },
-    "diskTagValues": {
-      "value": { "$perfOptimizationLevel": "1" }
-    },
-    "vmTagValues": {
+    
+    "virtualMachineTagValues": {
       "value": { "System": "SAP", "$perfOptimizationLevel": "1" }
+    },
+    "Zone": {
+        "value": []
     }
   }
 }

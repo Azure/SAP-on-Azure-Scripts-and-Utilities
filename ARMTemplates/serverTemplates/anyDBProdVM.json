@@ -37,6 +37,12 @@
         "virtualMachineName": {
             "type": "string"
         },
+        "virtualMachineCount": {
+            "type": "int"
+        },
+        "virtualMachineSize": {
+            "type": "string"
+        },
         "dbSize": {
             "type": "string",
             "allowedValues": [
@@ -47,10 +53,12 @@
                 "5120",
                 "10240",
                 "15360",
-                "20480"
+                "20480",
+                "30720",
+                "40960",
+                "51200"
             ],
-            "defa
-            ultValue": "200"
+            "defaultValue": "200"
 
         },
         "availabilitySetName": {
@@ -62,7 +70,7 @@
         "imageReference": {
             "type": "object"
         },
-        "imageID":{
+        "imageID": {
             "type": "string"
         },
         "applicationSecurityGroupName": {
@@ -88,19 +96,16 @@
             "defaultValue": "default"
         },
         "PrivateIP": {
-            "type": "string"
+            "type": "array"
         },
-        "HasPublicIP":{
-            "type":"bool"
+        "HasPublicIP": {
+            "type": "bool"
         },
-        "vmTagValues": {
+        "virtualMachineTagValues": {
             "type": "object"
         },
-        "diskTagValues": {
-            "type": "object",
-            "defaultValue": {
-                "$perfOptimizationLevel": "1"
-            }
+        "Zone": {
+            "type": "array"
         }
     },
     "variables": {
@@ -109,8 +114,6 @@
         "locationName": "[if(empty(parameters('location')) , resourceGroup().location,parameters('location'))]",
         "vnetID": "[resourceid(parameters('virtualNetworkResourceGroupName') ,'Microsoft.Network/virtualNetworks',parameters('virtualNetworkName'))]",
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
-        "networkInterfaceName": "[concat(variables('sapMachineName'),'-nic')]",
-        "publicIpAddressName": "[concat(variables('sapMachineName'),'-pip')]",
         "avSetName": "[if(empty(parameters('availabilitySetName')), concat(variables('sapSystemIdLower'),'-db-avset'),parameters('availabilitySetName'))]",
         "ppgName": "[if(empty(parameters('proximityPlacementGroupName')), concat(variables('sapSystemIdLower'),'-ppg'),parameters('proximityPlacementGroupName'))]",
         "linuxConfiguration": {
@@ -127,666 +130,111 @@
         "sidTag": {
             "SID": "[parameters('sapSystemId')]"
         },
-        "allDiskTags": "[union(parameters('diskTagValues'),variables('sidTag'))]",
-        "allVMTags": "[union(parameters('vmTagValues'),variables('sidTag'))]",
-
+        "allVMTags": "[union(parameters('virtualMachineTagValues'),variables('sidTag'))]",
         "diskSizes": {
             "200": {
                 "vmSku": "Standard_E4s_v3",
-                "disks": [
-                    {
-                        "lun": 0,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-data",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 255,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 1,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-shared",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 127,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    }
-                ]
+                "osdiskSizeGB": 63,
+                "nrDisks": 2,
+                "lvm": ""
             },
             "500": {
                 "vmSku": "Standard_E8s_v3",
-                "disks": [
-                    {
-                        "lun": 0,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-data",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 511,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 1,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-log",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 255,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    }
-                ]
+                "osdiskSizeGB": 63,
+                "nrDisks": 2,
+                "lvm": ""
             },
             "1024": {
                 "vmSku": "Standard_E16s_v3",
-                "disks": [
-                    {
-                        "lun": 0,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-data1",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 511,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 1,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-data2",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 511,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 2,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-log",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 255,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    }
-                ]
+                "osdiskSizeGB": 63,
+                "nrDisks": 3,
+                "lvm": "anydb-lvm-2datadisks.sh"
             },
             "2048": {
                 "vmSku": "Standard_E32s_v3",
-                "disks": [
-                    {
-                        "lun": 0,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-data1",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 1023,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 1,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-data2",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 1023,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 2,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-log",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 511,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    }
-                ]
+                "osdiskSizeGB": 63,
+                "nrDisks": 3,
+                "lvm": "anydb-lvm-2datadisks.sh"
             },
             "5120": {
                 "vmSku": "Standard_M64ls",
-                "disks": [
-                    {
-                        "lun": 0,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-data1",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 1023,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 1,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-data2",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 1023,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 2,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-data3",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 1023,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 3,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-data4",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 1023,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 4,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-data5",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 1023,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 5,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-log1",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 511,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 6,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-log2",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 511,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    }
+                "osdiskSizeGB": 127,
+                "nrDisks": 7,
+                "lvm": "anydb-lvm-5datadisks2logdisks.sh"
 
-                ]
             },
             "10240": {
                 "vmSku": "Standard_M64s",
-                "disks": [
-                    {
-                        "lun": 0,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-data1",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 2047,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 1,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-data2",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 2047,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 2,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-data3",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 2047,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 3,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-data4",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 2047,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 4,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-data5",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 2047,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 5,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-log1",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 511,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 6,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-log2",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 511,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    }
-
-                ]
+                "osdiskSizeGB": 127,
+                "nrDisks": 7,
+                "lvm": "anydb-lvm-5datadisks2logdisks.sh"
             },
             "15360": {
                 "vmSku": "Standard_M64s",
-                "disks": [
-                    {
-                        "lun": 0,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-data1",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 4095,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 1,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-data2",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 4095,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 2,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-data3",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 4095,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 3,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-data4",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 4095,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 4,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-log1",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 511,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 5,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-log2",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 511,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    }
-
-                ]
+                "osdiskSizeGB": 127,
+                "nrDisks": 6,
+                "lvm": "anydb-lvm-4datadisks2logdisks.sh"
             },
             "20480": {
                 "vmSku": "Standard_M64s",
-                "disks": [
-                    {
-                        "lun": 0,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-data1",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 4095,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 1,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-data2",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 4095,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 2,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-data3",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 4095,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 3,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-data4",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 4095,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 4,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-data5",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 4095,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 5,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-log1",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 511,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    },
-                    {
-                        "lun": 6,
-                        "createOption": "attach",
-                        "caching": "ReadWrite",
-                        "writeAcceleratorEnabled": false,
-                        "id": null,
-                        "name": "-log2",
-                        "storageAccountType": null,
-                        "sku": "Premium_LRS",
-                        "properties": {
-                            "diskSizeGB": 511,
-                            "creationData": {
-                                "createOption": "empty"
-                            }
-                        }
-                    }
-
-                ]
+                "osdiskSizeGB": 127,
+                "nrDisks": 7,
+                "lvm": "anydb-lvm-5datadisks2logdisks.sh"
+            },
+            "30720": {
+                "vmSku": "Standard_M128s",
+                "osdiskSizeGB": 127,
+                "nrDisks": 10,
+                "lvm": "anydb-lvm-8datadisks2logdisks.sh"
+            },
+            "40960": {
+                "vmSku": "Standard_M128s",
+                "osdiskSizeGB": 127,
+                "nrDisks": 12,
+                "lvm": "anydb-lvm-10datadisks2logdisks.sh"
+            },
+            "51200": {
+                "vmSku": "Standard_M128s",
+                "osdiskSizeGB": 127,
+                "nrDisks": 16,
+                "lvm": "anydb-lvm-13datadisks3logdisks.sh"
             }
 
-
         },
-        "dataDisks": "[variables('diskSizes')[parameters('dbSize')].disks]",
-        "sku": "[variables('diskSizes')[parameters('dbSize')].vmSku]",
-        "applicationSecurityGroupID": "[resourceId(parameters('virtualNetworkResourceGroupName'),'Microsoft.Network/applicationSecurityGroups',parameters('applicationSecurityGroupName'))]"
+        "sku": "[if(empty(parameters('virtualMachineSize')), variables('diskSizes')[parameters('dbSize')].vmSku,parameters('virtualMachineSize'))]",
+        "size":"[if(empty(parameters('virtualMachineSize')),variables('sku'),parameters('virtualMachineSize'))]",
+        "osDiskSize": "[variables('diskSizes')[parameters('dbSize')].osdiskSizeGB]",
+        "nrOfDisks": "[variables('diskSizes')[parameters('dbSize')].nrDisks]",
+        "applicationSecurityGroupID": "[resourceId(parameters('virtualNetworkResourceGroupName'),'Microsoft.Network/applicationSecurityGroups',parameters('applicationSecurityGroupName'))]",
+        "loadBalancerName": "[concat(variables('sapSystemIdLower'),'-db-lb-std')]"
 
     },
     "resources": [
         {
             "apiVersion": "2018-04-01",
             "type": "Microsoft.Compute/proximityPlacementGroups",
+            "name": "[concat(variables('ppgName'),'-', padLeft(add(mod(copyIndex(0),2),1),2,'0'))]",
+            "location": "[variables('locationName')]",
+            "condition": "[greater(length(parameters('Zone')),1)]",
+            "copy": {
+                "count": "[if(greater(length(parameters('Zone')),1),2,1)]",
+                "name": "ppgLoop"
+            }
+
+        },
+        {
+            "apiVersion": "2018-04-01",
+            "type": "Microsoft.Compute/proximityPlacementGroups",
             "name": "[variables('ppgName')]",
-            "location": "[variables('locationName')]"
+            "location": "[variables('locationName')]",
+            "condition": "[or(empty(parameters('Zone')),equals(length(parameters('Zone')),1))]"
         },
         {
             "type": "Microsoft.Compute/availabilitySets",
             "name": "[variables('avSetName')]",
             "apiVersion": "2018-10-01",
             "location": "[variables('locationName')]",
+            "condition": "[or(empty(parameters('Zone')),equals(length(parameters('Zone')),1))]",
             "sku": {
                 "name": "Aligned"
             },
@@ -794,130 +242,156 @@
                 "platformFaultDomainCount": 2,
                 "platformUpdateDomainCount": 10,
                 "proximityPlacementGroup": {
-                    "id": "[resourceId('Microsoft.Compute/proximityPlacementGroups',parameters('proximityPlacementGroupName'))]"
+                    "id": "[resourceId('Microsoft.Compute/proximityPlacementGroups',variables('ppgName'))]"
                 }
             },
             "dependsOn": [
-                "[concat('Microsoft.Compute/proximityPlacementGroups/', parameters('proximityPlacementGroupName'))]"
+                "[concat('Microsoft.Compute/proximityPlacementGroups/', variables('ppgName'))]"
             ]
         },
         {
-            "name": "[variables('publicIpAddressName')]",
+            "name": "[variables('loadBalancerName')]",
+            "type": "Microsoft.Network/loadBalancers",
+            "apiVersion": "2018-12-01",
+            "condition": "[greater(parameters('virtualMachineCount'),1)]",
+            "location": "[variables('locationName')]",
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "frontendIPConfigurations": [
+                    {
+                        "name": "[concat(variables('loadBalancerName'),'-frontend')]",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            },
+                            "privateIPAddressVersion": "IPv4"
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "[concat(variables('loadBalancerName'),'-backend')]"
+                    }
+                ],
+                "loadBalancingRules": [
+                    {
+                        "name": "HTTPLBRule",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', variables('loadBalancerName'),concat(variables('loadBalancerName'),'-frontend'))]"
+                            },
+                            "backendAddressPool": {
+                                "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', variables('loadBalancerName'), concat(variables('loadBalancerName'),'-backend'))]"
+                            },
+                            "frontendPort": 0,
+                            "backendPort": 0,
+                            "enableFloatingIP": true,
+                            "idleTimeoutInMinutes": 4,
+                            "protocol": "All",
+                            "probe": {
+                                "id": "[resourceId('Microsoft.Network/loadBalancers/probes', variables('loadBalancerName'),concat(variables('loadBalancerName'),'-healthprobe'))]"
+                            }
+                        }
+                    }
+                ],
+                "probes": [
+                    {
+                        "name": "[concat(variables('loadBalancerName'),'-healthprobe')]",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "port": 62501,
+                            "intervalInSeconds": 5,
+                            "numberOfProbes": 2
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[concat(variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'), '-pip')]",
             "type": "Microsoft.Network/publicIpAddresses",
             "apiVersion": "2019-02-01",
             "location": "[variables('locationName')]",
+            "zones": "[if(empty(parameters('Zone')), '', json(concat('[',if(greater(length(parameters('Zone')),1),parameters('Zone')[mod(copyIndex(0),2)],parameters('Zone')[0]),']')) )]",
             "condition": "[parameters('HasPublicIP')]",
             "properties": {
                 "publicIpAllocationMethod": "Static"
             },
             "sku": {
                 "name": "Standard"
-            }
-        },
-        {
-            "name": "[concat(variables('networkInterfaceName'),'-pubip')]",
-            "type": "Microsoft.Network/networkInterfaces",
-            "apiVersion": "2019-07-01",
-            "condition": "[parameters('HasPublicIP')]",
-            "location": "[variables('locationName')]",
-            "dependsOn": [
-                "[concat('Microsoft.Network/publicIpAddresses/', variables('publicIpAddressName'))]"
-            ],
-            "properties": {
-                "ipConfigurations": [
-                    {
-                        "name": "ipconfig1",
-                        "properties": {
-                            "subnet": {
-                                "id": "[variables('subnetRef')]"
-                            },
-                            "privateIPAllocationMethod": "Dynamic",
-                            "publicIpAddress": {
-                                "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', variables('publicIpAddressName'))]"
-                            },
-                            "primary": true,
-                            "privateIPAddressVersion": "IPv4",
-                            "applicationSecurityGroups": [
-                                {
-                                    "id": "[variables('applicationSecurityGroupID')]"
-                                }
-                            ]
-
-                        }
-                    }
-                ],
-                "enableAcceleratedNetworking": true
-            }
-        },
-        {
-            "name": "[variables('networkInterfaceName')]",
-            "type": "Microsoft.Network/networkInterfaces",
-            "apiVersion": "2019-07-01",
-            "condition": "[not(parameters('HasPublicIP'))]",
-            "location": "[variables('locationName')]",
-            "properties": {
-                "ipConfigurations": [
-                    {
-                        "name": "ipconfig1",
-                        "properties": {
-                            "subnet": {
-                                "id": "[variables('subnetRef')]"
-                            },
-                            "privateIPAllocationMethod": "Dynamic",
-                            "primary": true,
-                            "privateIPAddressVersion": "IPv4",
-                            "applicationSecurityGroups": [
-                                {
-                                    "id": "[variables('applicationSecurityGroupID')]"
-                                }
-                            ]
-
-                        }
-                    }
-                ],
-                "enableAcceleratedNetworking": true
-            }
-        },
-        {
-            "name": "[concat(variables('sapMachineName'), variables('dataDisks')[copyIndex()].name)]",
-            "type": "Microsoft.Compute/disks",
-            "apiVersion": "2019-07-01",
-            "location": "[variables('locationName')]",
-            "properties": "[variables('dataDisks')[copyIndex()].properties]",
-            "sku": {
-                "name": "[variables('dataDisks')[copyIndex()].sku]"
             },
             "copy": {
-                "name": "managedDiskResources",
-                "count": "[length(variables('dataDisks'))]"
+                "count": "[parameters('virtualMachineCount')]",
+                "name": "pipLoop"
+            }
+        },
+        {
+            "name": "[concat(variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'), '-nic')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2019-07-01",
+            "location": "[variables('locationName')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/loadBalancers/', variables('loadBalancerName'))]",
+                "[concat(variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'), '-pip')]"
+
+            ],
+
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            },
+                            "privateIPAllocationMethod": "Dynamic",
+                            "primary": true,
+                            "privateIPAddressVersion": "IPv4",
+                            "publicIpAddress": "[if(parameters('HasPublicIP'),json(concat('{ \"id\" : \"',resourceId('Microsoft.Network/publicIpAddresses', concat(variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'), '-pip')),'\"}')), json('null'))]",
+                            "applicationSecurityGroups": "[if(not(empty(variables('applicationSecurityGroupID'))),json(concat('[{ \"id\" : \"',variables('applicationSecurityGroupID'),'\"}]')), json('null'))]",
+                            "loadBalancerBackendAddressPools": "[if(greater(parameters('virtualMachineCount'),1),json(concat('[{ \"id\" : \"',resourceId('Microsoft.Network/loadBalancers/backendAddressPools', variables('loadBalancerName'), concat(variables('loadBalancerName'),'-backend')),'\"}]')), json('null'))]"
+
+                        }
+                    }
+                ],
+                "enableAcceleratedNetworking": true
             },
-            "tags": "[variables('allDiskTags')]"
+            "copy": {
+                "count": "[parameters('virtualMachineCount')]",
+                "name": "nicLoop"
+            }
+
         },
         {
             "type": "Microsoft.Compute/virtualMachines",
-            "name": "[variables('sapMachineName')]",
+            "name": "[concat(variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'))]",
             "dependsOn": [
-                "[if(parameters('HasPublicIP'),concat(variables('networkInterfaceName'),'-pubip'),variables('networkInterfaceName'))]"
+                "[concat(variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'), '-nic')]",
+                "[concat('AddDisks-',variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'))]"
             ],
             "apiVersion": "2018-10-01",
             "location": "[variables('locationName')]",
+            "zones": "[if(empty(parameters('Zone')), '', json(concat('[',if(greater(length(parameters('Zone')),1),parameters('Zone')[mod(copyIndex(0),2)],parameters('Zone')[0]),']')) )]",
             "properties": {
-                "availabilitySet": {
-                    "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySetName'))]"
-                },
+                "availabilitySet": "[if(empty(parameters('Zone')),json(concat('{ \"id\" : \"',resourceId('Microsoft.Compute/availabilitySets',if(empty(parameters('Zone')),variables('avSetName'),concat(variables('avSetName'),'-', padLeft(add(mod(copyIndex(1),2),1),2,'0')))),'\"}')), json('null'))]",
+
                 "proximityPlacementGroup": {
-                    "id": "[resourceId('Microsoft.Compute/proximityPlacementGroups',parameters('proximityPlacementGroupName'))]"
+                    "id": "[resourceId('Microsoft.Compute/proximityPlacementGroups',if(empty(parameters('Zone')),variables('ppgName'),if(less(length(parameters('Zone')),2),variables('ppgName'),concat(variables('ppgName'),'-', padLeft(add(mod(copyIndex(0),2),1),2,'0')))))]"
                 },
+
                 "hardwareProfile": {
-                    "vmSize": "[variables('sku')]"
+                    "vmSize": "[if(empty(parameters('virtualMachineSize')),variables('sku'),parameters('virtualMachineSize')) ]"
                 },
                 "osProfile": {
-                    "computerName": "[variables('sapMachineName')]",
+                    "computerName": "[concat(variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'))]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('adminPasswordOrKey')]",
                     "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]"
                 },
-                "storageProfile": {
+                "storageProfile": { 
                     "imageReference": {
                         "publisher": "[if(empty(parameters('imageID')), parameters('imageReference').publisher,json('null'))]",
                         "offer": "[if(empty(parameters('imageID')), parameters('imageReference').offer,json('null'))]",
@@ -926,48 +400,115 @@
                         "id": "[if(not(empty(parameters('imageID'))), parameters('imageID'),json('null'))]"
                     },
                     "osDisk": {
-                        "name": "[concat(variables('sapMachineName'), '-osdisk')]",
+                        "name": "[concat(variables('sapMachineName'),'-', padLeft(copyIndex(1),2,'0'), '-osdisk')]",
                         "caching": "ReadWrite",
-                        "createOption": "FromImage"
+                        "createOption": "FromImage",
+                        "diskSizeGB": "[variables('osDiskSize')]",
+                        "managedDisk": {
+                            "storageAccountType": "Premium_LRS"
+
+                        }
                     },
                     "copy": [
                         {
                             "name": "dataDisks",
-                            "count": "[length(variables('dataDisks'))]",
+                            "count": "[variables('nrOfDisks')]",
                             "input": {
 
-                                "lun": "[variables('dataDisks')[copyIndex('dataDisks')].lun]",
-                                "createOption": "[variables('dataDisks')[copyIndex('dataDisks')].createOption]",
-                                "diskSizeGB": "[variables('dataDisks')[copyIndex('dataDisks')].properties.diskSizeGB]",
-                                "caching": "[variables('dataDisks')[copyIndex('dataDisks')].caching]",
-                                "writeAcceleratorEnabled": "[variables('dataDisks')[copyIndex('dataDisks')].writeAcceleratorEnabled]",
-
+                                "lun": "[reference(concat('AddDisks-',variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'))).outputs.diskArray.value[copyIndex('dataDisks')].lun]",
+                                "createOption": "[reference(concat('AddDisks-',variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'))).outputs.diskArray.value[copyIndex('dataDisks')].createOption]",
+                                "diskSizeGB": "[reference(concat('AddDisks-',variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'))).outputs.diskArray.value[copyIndex('dataDisks')].properties.diskSizeGB]",
+                                "caching": "[reference(concat('AddDisks-',variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'))).outputs.diskArray.value[copyIndex('dataDisks')].caching]",
+                                "writeAcceleratorEnabled": "[if(contains(variables('size'),'_M'),reference(concat('AddDisks-',variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'))).outputs.diskArray.value[copyIndex('dataDisks')].writeAcceleratorEnabled,json('false'))]",
                                 "managedDisk": {
-                                    "id": "[resourceId('Microsoft.Compute/disks', concat(variables('sapMachineName') ,variables('dataDisks')[copyIndex('dataDisks')].name))]"
+                                    "id": "[resourceId('Microsoft.Compute/disks', concat(variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'),reference(concat('AddDisks-',variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'))).outputs.diskArray.value[copyIndex('dataDisks')].name))]"
                                 }
                             }
                         }
                     ]
                 },
-
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', if(parameters('HasPublicIP'),concat(variables('networkInterfaceName'),'-pubip'),variables('networkInterfaceName')))]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'), '-nic'))]"
                         }
                     ]
                 }
             },
+            "copy": {
+                "count": "[parameters('virtualMachineCount')]",
+                "name": "vmLoop"
+            },
+
             "tags": "[variables('allVMTags')]"
         },
         {
-            "name": "[concat('Update-IP-',variables('sapMachineName'))]",
+            "name": "[concat(variables('sapMachineName'),'-',padLeft(copyIndex('extVMLoop',1),2,'0'),'/lvmExtension')]",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "apiVersion": "2019-07-01",
+            "location": "[variables('locationName')]",
+            "condition": "[not(empty(variables('diskSizes')[parameters('dbSize')].lvm))]",
+            "dependsOn": [
+                "[concat(variables('sapMachineName'),'-',padLeft(copyIndex('extVMLoop',1),2,'0'))]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Azure.Extensions",
+                "type": "CustomScript",
+                "typeHandlerVersion": "2.1",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "fileUris": [
+                        "[concat('https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/master/ARMTemplates/serverTemplates/disks/lvm/',variables('diskSizes')[parameters('dbSize')].lvm)]"
+                    ],
+                    "commandToExecute": "[concat('bash ', variables('diskSizes')[parameters('dbSize')].lvm)]"
+                }
+            },
+            "copy": {
+                "name": "extVMLoop",
+                "count": "[parameters('virtualMachineCount')]"
+            }
+
+        },
+        {
+            "name": "[concat('AddDisks-',variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "copy": {
+                "name": "vmLoop",
+                "count": "[parameters('virtualMachineCount')]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/master/ARMTemplates/serverTemplates/disks/anyDBProdVMDisks.json",
+                    "contentVersion": "1.0.0.0"
+                },
+
+                "parameters": {
+                    "machineName": {
+                        "value": "[concat(variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'))]"
+                    },
+                    "machineSize": {
+                        "value": "[parameters('dbSize')]"
+                    },
+                    "location": {
+                        "value": "[variables('locationName')]"
+                    },
+                    "Zone": {
+                        "value": "[if(empty(parameters('Zone')), '', if(greater(length(parameters('Zone')),1),parameters('Zone')[mod(copyIndex(0),2)],parameters('Zone')[0]))]"
+                    }
+
+                }
+            }
+        },
+        {
+            "name": "[concat('Update-IP-',variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-09-01",
             "dependsOn": [
-                "[variables('networkInterfaceName')]"
+                "[concat(variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'), '-nic')]"
             ],
-            "condition":"[not(empty(parameters('PrivateIP')))]",
+            "condition": "[not(empty(parameters('PrivateIP')))]",
             "properties": {
                 "mode": "Incremental",
                 "template": {
@@ -976,56 +517,26 @@
                     "resources": [
                         {
                             "type": "Microsoft.Network/networkInterfaces",
-                            "name": "[concat(variables('networkInterfaceName'),'-pubip')]",
+                            "name": "[concat(variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'), '-nic')]",
                             "apiVersion": "2019-06-01",
-                            "location": "[parameters('location')]",
-                            "condition": "[parameters('HasPublicIP')]",
+                            "location": "[variables('locationName')]",
+                            "dependsOn": [
+                                "[concat(variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'), '-nic')]"
+                            ],
+
                             "properties": {
                                 "ipConfigurations": [
                                     {
                                         "name": "ipconfig1",
                                         "properties": {
                                             "privateIPAllocationMethod": "[if(empty(parameters('PrivateIP')) ,'Dynamic','Static')]",
-                                            "privateIPAddress": "[if(empty(parameters('PrivateIP')) ,'',parameters('PrivateIP'))]",
+                                            "privateIPAddress": "[if(empty(parameters('PrivateIP')) ,'',parameters('PrivateIP')[copyIndex()])]",
                                             "subnet": {
                                                 "id": "[variables('subnetRef')]"
                                             },
-                                            "publicIpAddress": {
-                                                "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', variables('publicIpAddressName'))]"
-                                            },
-                                            "applicationSecurityGroups": [
-                                                {
-                                                    "id": "[variables('applicationSecurityGroupID')]"
-                                                }
-                                            ]
-
-                                        }
-                                    }
-                                ]
-                            }
-                        },
-                        {
-                            "type": "Microsoft.Network/networkInterfaces",
-                            "name": "[variables('networkInterfaceName')]",
-                            "apiVersion": "2019-06-01",
-                            "location": "[parameters('location')]",
-                            "condition": "[not(parameters('HasPublicIP'))]",
-                            "properties": {
-                                "ipConfigurations": [
-                                    {
-                                        "name": "ipconfig1",
-                                        "properties": {
-                                            "privateIPAllocationMethod": "[if(empty(parameters('PrivateIP')) ,'Dynamic','Static')]",
-                                            "privateIPAddress": "[if(empty(parameters('PrivateIP')) ,'',parameters('PrivateIP'))]",
-                                            "subnet": {
-                                                "id": "[variables('subnetRef')]"
-                                            },
-                                            "applicationSecurityGroups": [
-                                                {
-                                                    "id": "[variables('applicationSecurityGroupID')]"
-                                                }
-                                            ]
-
+                                            "publicIpAddress": "[if(parameters('HasPublicIP'),json(concat('{ \"id\" : \"',resourceId('Microsoft.Network/publicIpAddresses', concat(variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'), '-pip')),'\"}')), json('null'))]",
+                                            "applicationSecurityGroups": "[if(not(empty(variables('applicationSecurityGroupID'))),json(concat('[{ \"id\" : \"',variables('applicationSecurityGroupID'),'\"}]')), json('null'))]",
+                                            "loadBalancerBackendAddressPools": "[if(greater(parameters('virtualMachineCount'),1),json(concat('[{ \"id\" : \"',resourceId('Microsoft.Network/loadBalancers/backendAddressPools', variables('loadBalancerName'), concat(variables('loadBalancerName'),'-backend')),'\"}]')), json('null'))]"
                                         }
                                     }
                                 ]
@@ -1034,14 +545,21 @@
 
                     ]
                 }
+            },
+            "copy": {
+                "name": "updateIPLoop",
+                "count": "[parameters('virtualMachineCount')]"
             }
         }
-
     ],
     "outputs": {
         "Computername": {
             "type": "string",
             "value": "[resourceId('Microsoft.Compute/virtualMachines',variables('sapMachineName'))]"
+        },
+        "lvm": {
+            "type": "string",
+            "value": "[variables('diskSizes')[parameters('dbSize')].lvm]"
         }
     }
 }

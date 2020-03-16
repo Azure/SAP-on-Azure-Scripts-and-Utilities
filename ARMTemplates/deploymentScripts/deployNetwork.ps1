@@ -1,8 +1,8 @@
 # select subscription
 
-$ResourceGroupName = "demo-vnet-rg"
-$location = "westeurope"
-$subscriptionID = "[SUBSCRIPTIONID]"
+$ResourceGroupName = "demo-vnet-ne-rg"
+$location = "northeurope"
+$subscriptionID = "80d5ed43-1465-432b-8914-5e1f68d49330"
 
 
 Write-Host "Deployment started: " (Get-Date).ToString("yyyy-MM-dd HH:mm")

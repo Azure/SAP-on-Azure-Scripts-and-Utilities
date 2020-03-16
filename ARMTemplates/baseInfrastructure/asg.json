@@ -22,7 +22,15 @@
                 "description": "The name of the application security group that will be used for the database servers"
             },
             "defaultValue": "sap-db-asg"
+        },
+        "applicationSecurityGroupNameWeb": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the application security group that will be used for the web dispatchers"
+            },
+            "defaultValue": "sap-web-asg"
         }
+
     },
     "variables": {
         "locationName": "[if(empty(parameters('location')) , resourceGroup().location,parameters('location'))]"
@@ -40,6 +48,12 @@
             "apiVersion": "2019-02-01",
             "type": "Microsoft.Network/applicationSecurityGroups",
             "name": "[parameters('applicationSecurityGroupNameDB')]",
+            "location": "[variables('locationName')]"
+        },
+        {
+            "apiVersion": "2019-02-01",
+            "type": "Microsoft.Network/applicationSecurityGroups",
+            "name": "[parameters('applicationSecurityGroupNameWeb')]",
             "location": "[variables('locationName')]"
         }
 

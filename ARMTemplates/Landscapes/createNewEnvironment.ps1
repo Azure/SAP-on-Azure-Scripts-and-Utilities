@@ -24,7 +24,10 @@ $appsubnetName = "app-snet"
 $appASG = "sap-app-asg"
 $dbASG = "sap-db-asg"
 
-$KeyVaultID = "/subscriptions/[SUBSCRIPTIONID]/resourceGroups/sharedservices/providers/Microsoft.KeyVault/vaults/[VAULTNAME]"
+$HasPublicIP = $true
+$WebDispatch = $false
+
+$KeyVaultID = "/subscriptions/[SUBSCRIPTIONID]/resourceGroups/[VAULTGROUP]/providers/Microsoft.KeyVault/vaults/[VAULTNAME]"
 
 Add-Type -TypeDefinition @"
    public enum DBType
@@ -35,7 +38,7 @@ Add-Type -TypeDefinition @"
    }
 "@
 
-[DBType]$Database = [DBType]::HanaDev
+[DBType]$Database = [DBType]::AnyDB
 
 #How many ASCS Servers are needed
 $NumberOfASCSServers = 2
@@ -52,14 +55,14 @@ $ASCSServerImageID = ""
 $ASCSVMSize = "Standard_D2s_v3"
 
 #How many Application Servers are needed
-$NumberOfAppServers = 2
+$NumberOfAppServers = 3
 #Marketplace Template Information for the Application Server
 #If ImageID is provided then these fields will be ignored
 $AppPublisher = "suse"
 $AppOffer = "sles-15-sp1"
 $AppSKU = "gen1"
 $AppSKUVersion = "latest"
-$AppServerImageID = "/subscriptions/80d5ed43-1465-432b-8914-5e1f68d49330/resourceGroups/SharedImagesUS/providers/Microsoft.Compute/galleries/CorpImageGallery/images/nwImage20200111-01/versions/0.24089.43435"
+$AppServerImageID = ""
 
 #VM Size for the application server
 $AppVMSize = "Standard_D4s_v3"
@@ -77,7 +80,8 @@ $DBSKUVersion = "latest"
 #If you want to use a marketplace image $xxxxxImageID needs to be an empty string
 #Custom image ID
 $DBServerImageID = ""
-$DBVMSize = "Standard_E16s_v3"
+$DBVMSize = "Standard_E32s_v3"
+$DBSize = "51200"
 
 #Is High Availability required
 $SAPHA = $true
@@ -91,8 +95,8 @@ if ($SAPHA) {
         $NumberOfAppServers = 2
     }
  
-    if ($NumberOfDBServers -lt 2) {
-        $NumberOfDBServers = 2
+    if ($NumberOfDatabaseServers -lt 2) {
+        $NumberOfDatabaseServers = 2
     }
 }
 
@@ -106,6 +110,7 @@ $dbTemplateFilePath = ""
 $DBServerImage = "hanaProdVM"
 $AppServerImage = "AppVM"
 $ASCSServerImage = "ASCSVM"
+$WDServerImage = "WDVM"
 
 #Create the folder for the new landscape
 New-Item -Path $SID -ItemType Directory -ErrorAction SilentlyContinue
@@ -121,68 +126,137 @@ Copy-Item ..\baseInfrastructure\ppgavset.parameters.json $SID
 (Get-Content $templateFilePath).replace('[SID]', $SID) | Set-Content $templateFilePath
 (Get-Content $templateFilePath).replace('[LOCATION]', $region) | Set-Content $templateFilePath
 
+
 #Database template parameter file
 
 $DBDeploymentScript = ""
 $dbServerName = ""
-for ($i = 1; $i -le $NumberOfDatabaseServers; $i++) {
-    switch ($Database) {
-        HanaProd {
-            $dbTemplateFilePath = [System.String]::Format('{0}\{1}\{1}.HanaProdVM-{2}.parameters.json', $s, $SID, $i)
-            Copy-Item "..\serverTemplates\parameterFiles\hanaProdVM.parameters.json" $dbTemplateFilePath 
-            Write-Host "Using a Hana production database"
-            break;
-        }
-        HanaDev {
-            $dbTemplateFilePath = [System.String]::Format('{0}\{1}\{1}.HanaDevVM-{2}.parameters.json', $s, $SID, $i)
-            Copy-Item "..\serverTemplates\parameterFiles\hanaDevVM.parameters.json" $dbTemplateFilePath 
-            Write-Host "Using a Hana development database"
-            $DBServerImage = "hanaDevVM"
-            break;
-        }
-        AnyDB {
-            $dbTemplateFilePath = [System.String]::Format('{0}\{1}\{1}.anyDBProdVM-{2}.parameters.json', $s, $SID, $i)
-            Copy-Item "..\serverTemplates\parameterFiles\anyDBProdVM.parameters.json" $dbTemplateFilePath 
-            Write-Host "Using Any DB"
-            $DBServerImage = "anyDBProdVM"
-            break;
-        }
+switch ($Database) {
+    HanaProd {
+        $dbTemplateFilePath = [System.String]::Format('{0}\{1}\{1}.HanaProdVM.parameters.json', $s, $SID)
+        Copy-Item "..\serverTemplates\parameterFiles\hanaProdVM.parameters.json" $dbTemplateFilePath 
+        Write-Host "Using a Hana production database"
+        break;
     }
-    $dbServerName = [System.String]::Format('db-{0}', $i.ToString())
-    
-    $DeploymentScriptStep = [System.String]::Format('{1}Write-Host "Creating Db Server {2}"{1}$res = New-AzResourceGroupDeployment -Name "DbServer_Creation-{2}" -ResourceGroupName $ResourceGroupName -TemplateFile ..\..\servertemplates\[DBServerImage].json -TemplateParameterFile .\[SID].[DBServerImage]-{0}.parameters.json {3}{1}if ($res.ProvisioningState -ne "Succeeded") {{ {1}  Write-Error -Message "The deployment failed" {1}}}{1}', $i, [Environment]::NewLine, $dbServerName, $VerboseFlag)
-    $DBDeploymentScript += $DeploymentScriptStep
-
-    (Get-Content $dbTemplateFilePath).replace('[SID]', $SID) | Set-Content $dbTemplateFilePath
-    (Get-Content $dbTemplateFilePath).replace('[KeyVaultID]', $KeyVaultID) | Set-Content $dbTemplateFilePath
-    (Get-Content $dbTemplateFilePath).replace('[ImageID]', $DBServerImageID) | Set-Content $dbTemplateFilePath
-    (Get-Content $dbTemplateFilePath).replace('[LOCATION]', $region) | Set-Content $dbTemplateFilePath
-    (Get-Content $dbTemplateFilePath).replace('[SERVERNAME]', $dbServerName) | Set-Content $dbTemplateFilePath
-    (Get-Content $dbTemplateFilePath).replace('[PUBLISHER]', $DBPublisher) | Set-Content $dbTemplateFilePath
-    (Get-Content $dbTemplateFilePath).replace('[OFFER]', $DBOffer) | Set-Content $dbTemplateFilePath
-    (Get-Content $dbTemplateFilePath).replace('[SKU]', $DBSKU) | Set-Content $dbTemplateFilePath
-    (Get-Content $dbTemplateFilePath).replace('[VERSION]', $DBSKUVersion) | Set-Content $dbTemplateFilePath
-    (Get-Content $dbTemplateFilePath).replace('[MACHINESIZE]', $DBVMSize) | Set-Content $dbTemplateFilePath        
-    (Get-Content $dbTemplateFilePath).replace('[VNetRG]', $virtualNetworkResourceGroupName) | Set-Content $dbTemplateFilePath        
-    (Get-Content $dbTemplateFilePath).replace('[VNetName]', $virtualNetworkName) | Set-Content $dbTemplateFilePath        
-    (Get-Content $dbTemplateFilePath).replace('[DBSubnetName]', $dbsubnetName) | Set-Content $dbTemplateFilePath        
-    (Get-Content $dbTemplateFilePath).replace('[DBASG]', $dbASG) | Set-Content $dbTemplateFilePath        
+    HanaDev {
+        $dbTemplateFilePath = [System.String]::Format('{0}\{1}\{1}.HanaDevVM.parameters.json', $s, $SID)
+        Copy-Item "..\serverTemplates\parameterFiles\hanaDevVM.parameters.json" $dbTemplateFilePath 
+        Write-Host "Using a Hana development database"
+        $DBServerImage = "hanaDevVM"
+        break;
+    }
+    AnyDB {
+        $dbTemplateFilePath = [System.String]::Format('{0}\{1}\{1}.anyDBProdVM.parameters.json', $s, $SID)
+        Copy-Item "..\serverTemplates\parameterFiles\anyDBProdVM.parameters.json" $dbTemplateFilePath 
+        Write-Host "Using Any DB"
+        $DBServerImage = "anyDBProdVM"
+        break;
+    }
 }
+$dbServerName = [System.String]::Format('db')
+    
+$DeploymentScriptStep = [System.String]::Format('{1}Write-Host "Creating Db Server(s)"{1}$res = New-AzResourceGroupDeployment -Name "DbServer_Creation" -ResourceGroupName $ResourceGroupName -TemplateFile ..\..\servertemplates\[DBServerImage].json -TemplateParameterFile .\[SID].[DBServerImage].parameters.json {3}{1}if ($res.ProvisioningState -ne "Succeeded") {{ {1}  Write-Error -Message "The deployment failed" {1}}}{1}', $i, [Environment]::NewLine, $dbServerName, $VerboseFlag)
+$DBDeploymentScript += $DeploymentScriptStep
+
+(Get-Content $dbTemplateFilePath).replace('[SID]', $SID) | Set-Content $dbTemplateFilePath
+(Get-Content $dbTemplateFilePath).replace('[KeyVaultID]', $KeyVaultID) | Set-Content $dbTemplateFilePath
+(Get-Content $dbTemplateFilePath).replace('[ImageID]', $DBServerImageID) | Set-Content $dbTemplateFilePath
+(Get-Content $dbTemplateFilePath).replace('[LOCATION]', $region) | Set-Content $dbTemplateFilePath
+(Get-Content $dbTemplateFilePath).replace('[SERVERNAME]', $dbServerName) | Set-Content $dbTemplateFilePath
+(Get-Content $dbTemplateFilePath).replace('[PUBLISHER]', $DBPublisher) | Set-Content $dbTemplateFilePath
+(Get-Content $dbTemplateFilePath).replace('[OFFER]', $DBOffer) | Set-Content $dbTemplateFilePath
+(Get-Content $dbTemplateFilePath).replace('[SKU]', $DBSKU) | Set-Content $dbTemplateFilePath
+(Get-Content $dbTemplateFilePath).replace('[VERSION]', $DBSKUVersion) | Set-Content $dbTemplateFilePath
+(Get-Content $dbTemplateFilePath).replace('[MACHINESIZE]', $DBVMSize) | Set-Content $dbTemplateFilePath        
+(Get-Content $dbTemplateFilePath).replace('[DBSIZE]', $DBSize) | Set-Content $dbTemplateFilePath        
+(Get-Content $dbTemplateFilePath).replace('[VNetRG]', $virtualNetworkResourceGroupName) | Set-Content $dbTemplateFilePath        
+(Get-Content $dbTemplateFilePath).replace('[VNetName]', $virtualNetworkName) | Set-Content $dbTemplateFilePath        
+(Get-Content $dbTemplateFilePath).replace('[DBSubnetName]', $dbsubnetName) | Set-Content $dbTemplateFilePath        
+(Get-Content $dbTemplateFilePath).replace('[DBASG]', $dbASG) | Set-Content $dbTemplateFilePath        
+(Get-Content $dbTemplateFilePath).replace('"[VMCount]"', $NumberOfDatabaseServers.ToString()) | Set-Content $dbTemplateFilePath        
+(Get-Content $dbTemplateFilePath).replace('"[HASPUBLICIP]"', $HasPublicIP.ToString().ToLower()) | Set-Content $dbTemplateFilePath        
 
 #Application template
 
 $DeploymentScript = ""
 $appServerName = ""
-for ($i = 1; $i -le $NumberOfAppServers; $i++) {
-    $appTemplateFilePath = [System.String]::Format('{0}\{1}\{1}.appVM-{2}.parameters.json', $s, $SID, $i)
-    $appServerName = [System.String]::Format('app-{0}', $i.ToString())
+$appTemplateFilePath = [System.String]::Format('{0}\{1}\{1}.appVM.parameters.json', $s, $SID)
+$appServerName = [System.String]::Format('app')
         
-    $DeploymentScriptStep = [System.String]::Format('{1}Write-Host "Creating App Server {2}"{1}$res = New-AzResourceGroupDeployment -Name "AppServer_Creation-{2}" -ResourceGroupName $ResourceGroupName -TemplateFile ..\..\servertemplates\[AppServerImage].json -TemplateParameterFile .\[SID].[AppServerImage]-{0}.parameters.json {3}{1}if ($res.ProvisioningState -ne "Succeeded") {{ {1}  Write-Error -Message "The deployment failed" {1}}}{1}', $i, [Environment]::NewLine, $appServerName, $VerboseFlag)
-    $DeploymentScript += $DeploymentScriptStep
+$DeploymentScriptStep = [System.String]::Format('{1}Write-Host "Creating App Server(s)"{1}$res = New-AzResourceGroupDeployment -Name "AppServer_Creation-{2}" -ResourceGroupName $ResourceGroupName -TemplateFile ..\..\servertemplates\[AppServerImage].json -TemplateParameterFile .\[SID].[AppServerImage].parameters.json {3}{1}if ($res.ProvisioningState -ne "Succeeded") {{ {1}  Write-Error -Message "The deployment failed" {1}}}{1}', $i, [Environment]::NewLine, $appServerName, $VerboseFlag)
+$DeploymentScript += $DeploymentScriptStep
+
+#Copying the application server template parameter file
+    
+Copy-Item "..\serverTemplates\parameterFiles\appVM.parameters.json" $appTemplateFilePath 
+    
+#Modifying the application server template parameter file
+    
+(Get-Content $appTemplateFilePath).replace('[SID]', $SID) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[KeyVaultID]', $KeyVaultID) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[ImageID]', $AppServerImageID) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[LOCATION]', $region) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[SERVERNAME]', $appServerName) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[PUBLISHER]', $AppPublisher) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[OFFER]', $AppOffer) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[SKU]', $AppSKU) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[VERSION]', $AppSKUVersion) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[MACHINESIZE]', $AppVMSize) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[VNetRG]', $virtualNetworkResourceGroupName) | Set-Content $appTemplateFilePath        
+(Get-Content $appTemplateFilePath).replace('[VNetName]', $virtualNetworkName) | Set-Content $appTemplateFilePath        
+(Get-Content $appTemplateFilePath).replace('[AppSubnetName]', $appsubnetName) | Set-Content $appTemplateFilePath        
+(Get-Content $appTemplateFilePath).replace('[APPASG]', $appASG) | Set-Content $appTemplateFilePath        
+(Get-Content $appTemplateFilePath).replace('"[VMCount]"', $NumberOfAppServers.ToString()) | Set-Content $appTemplateFilePath        
+(Get-Content $appTemplateFilePath).replace('"[HASPUBLICIP]"', $HasPublicIP.ToString().ToLower()) | Set-Content $appTemplateFilePath        
+    
+
+$ascsServerName = ""
+$ASCSDeploymentScript = ""
+
+$appTemplateFilePath = [System.String]::Format('{0}\{1}\{1}.ascsVM.parameters.json', $s, $SID)
+$ascsServerName = [System.String]::Format('ascs')
+        
+$DeploymentScriptStep = [System.String]::Format('{1}Write-Host "Creating ASCS Server(s)"{1}$res = New-AzResourceGroupDeployment -Name "ASCSServer_Creation" -ResourceGroupName $ResourceGroupName -TemplateFile ..\..\servertemplates\[ASCSServerImage].json -TemplateParameterFile .\[SID].[ASCSServerImage].parameters.json {3}{1}if ($res.ProvisioningState -ne "Succeeded") {{ {1}  Write-Error -Message "The deployment failed" {1}}}{1}', $i, [Environment]::NewLine, $ascsServerName, $VerboseFlag)
+$ASCSDeploymentScript += $DeploymentScriptStep
+
+#Copying the application server template parameter file
+    
+Copy-Item "..\serverTemplates\parameterFiles\ASCSVM.parameters.json" $appTemplateFilePath 
+    
+#Modifying the application server template parameter file
+    
+(Get-Content $appTemplateFilePath).replace('[SID]', $SID) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[KeyVaultID]', $KeyVaultID) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[ImageID]', $ASCSServerImageID) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[LOCATION]', $region) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[SERVERNAME]', $ascsServerName) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[PUBLISHER]', $ASCSPublisher) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[OFFER]', $ASCSOffer) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[SKU]', $ASCSSKU) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[VERSION]', $ASCSSKUVersion) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[MACHINESIZE]', $ASCSVMSize) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[VNetRG]', $virtualNetworkResourceGroupName) | Set-Content $appTemplateFilePath        
+(Get-Content $appTemplateFilePath).replace('[VNetName]', $virtualNetworkName) | Set-Content $appTemplateFilePath        
+(Get-Content $appTemplateFilePath).replace('[AppSubnetName]', $appsubnetName) | Set-Content $appTemplateFilePath        
+(Get-Content $appTemplateFilePath).replace('[APPASG]', $appASG) | Set-Content $appTemplateFilePath        
+(Get-Content $appTemplateFilePath).replace('"[VMCount]"', $NumberOfASCSServers.ToString()) | Set-Content $appTemplateFilePath        
+(Get-Content $appTemplateFilePath).replace('"[HASPUBLICIP]"', $HasPublicIP.ToString().ToLower()) | Set-Content $appTemplateFilePath        
+
+$WDDeploymentScript = ""
+if ($WebDispatch) {
+    #Web Dispatch template
+
+    $WDDeploymentScript = ""
+    $wdServerName = ""
+    $appTemplateFilePath = [System.String]::Format('{0}\{1}\{1}.wdVM.parameters.json', $s, $SID)
+    $wdServerName = [System.String]::Format('webdispatch')
+        
+    $DeploymentScriptStep = [System.String]::Format('{1}Write-Host "Creating Web Dispatch Server(s)"{1}$res = New-AzResourceGroupDeployment -Name "WebServer_Creation-{2}" -ResourceGroupName $ResourceGroupName -TemplateFile ..\..\servertemplates\[WDServerImage].json -TemplateParameterFile .\[SID].[WDServerImage].parameters.json {3}{1}if ($res.ProvisioningState -ne "Succeeded") {{ {1}  Write-Error -Message "The deployment failed" {1}}}{1}', $i, [Environment]::NewLine, $wdServerName, $VerboseFlag)
+    $WDDeploymentScript += $DeploymentScriptStep
 
     #Copying the application server template parameter file
     
-    Copy-Item "..\serverTemplates\parameterFiles\appVM.parameters.json" $appTemplateFilePath 
+    Copy-Item "..\serverTemplates\parameterFiles\ascsVM.parameters.json" $appTemplateFilePath 
     
     #Modifying the application server template parameter file
     
@@ -190,7 +264,7 @@ for ($i = 1; $i -le $NumberOfAppServers; $i++) {
     (Get-Content $appTemplateFilePath).replace('[KeyVaultID]', $KeyVaultID) | Set-Content $appTemplateFilePath
     (Get-Content $appTemplateFilePath).replace('[ImageID]', $AppServerImageID) | Set-Content $appTemplateFilePath
     (Get-Content $appTemplateFilePath).replace('[LOCATION]', $region) | Set-Content $appTemplateFilePath
-    (Get-Content $appTemplateFilePath).replace('[SERVERNAME]', $appServerName) | Set-Content $appTemplateFilePath
+    (Get-Content $appTemplateFilePath).replace('[SERVERNAME]', $wdServerName) | Set-Content $appTemplateFilePath
     (Get-Content $appTemplateFilePath).replace('[PUBLISHER]', $AppPublisher) | Set-Content $appTemplateFilePath
     (Get-Content $appTemplateFilePath).replace('[OFFER]', $AppOffer) | Set-Content $appTemplateFilePath
     (Get-Content $appTemplateFilePath).replace('[SKU]', $AppSKU) | Set-Content $appTemplateFilePath
@@ -200,38 +274,9 @@ for ($i = 1; $i -le $NumberOfAppServers; $i++) {
     (Get-Content $appTemplateFilePath).replace('[VNetName]', $virtualNetworkName) | Set-Content $appTemplateFilePath        
     (Get-Content $appTemplateFilePath).replace('[AppSubnetName]', $appsubnetName) | Set-Content $appTemplateFilePath        
     (Get-Content $appTemplateFilePath).replace('[APPASG]', $appASG) | Set-Content $appTemplateFilePath        
-
-}
-
-$ascsServerName = ""
-$ASCSDeploymentScript = ""
-for ($i = 1; $i -le $NumberOfASCSServers; $i++) {
-    $appTemplateFilePath = [System.String]::Format('{0}\{1}\{1}.ascsVM-{2}.parameters.json', $s, $SID, $i)
-    $ascsServerName = [System.String]::Format('ascs-{0}', $i.ToString())
-        
-    $DeploymentScriptStep = [System.String]::Format('{1}Write-Host "Creating ASCS Server {2}"{1}$res = New-AzResourceGroupDeployment -Name "ASCSServer_Creation-{2}" -ResourceGroupName $ResourceGroupName -TemplateFile ..\..\servertemplates\[ASCSServerImage].json -TemplateParameterFile .\[SID].[ASCSServerImage]-{0}.parameters.json {3}{1}if ($res.ProvisioningState -ne "Succeeded") {{ {1}  Write-Error -Message "The deployment failed" {1}}}{1}', $i, [Environment]::NewLine, $ascsServerName, $VerboseFlag)
-    $ASCSDeploymentScript += $DeploymentScriptStep
-
-    #Copying the application server template parameter file
+    (Get-Content $appTemplateFilePath).replace('"[VMCount]"', $NumberOfAppServers.ToString()) | Set-Content $appTemplateFilePath        
+    (Get-Content $appTemplateFilePath).replace('"[HASPUBLICIP]"', $HasPublicIP.ToString().ToLower()) | Set-Content $appTemplateFilePath        
     
-    Copy-Item "..\serverTemplates\parameterFiles\ASCSVM.parameters.json" $appTemplateFilePath 
-    
-    #Modifying the application server template parameter file
-    
-    (Get-Content $appTemplateFilePath).replace('[SID]', $SID) | Set-Content $appTemplateFilePath
-    (Get-Content $appTemplateFilePath).replace('[KeyVaultID]', $KeyVaultID) | Set-Content $appTemplateFilePath
-    (Get-Content $appTemplateFilePath).replace('[ImageID]', $ASCSServerImageID) | Set-Content $appTemplateFilePath
-    (Get-Content $appTemplateFilePath).replace('[LOCATION]', $region) | Set-Content $appTemplateFilePath
-    (Get-Content $appTemplateFilePath).replace('[SERVERNAME]', $ascsServerName) | Set-Content $appTemplateFilePath
-    (Get-Content $appTemplateFilePath).replace('[PUBLISHER]', $ASCSPublisher) | Set-Content $appTemplateFilePath
-    (Get-Content $appTemplateFilePath).replace('[OFFER]', $ASCSOffer) | Set-Content $appTemplateFilePath
-    (Get-Content $appTemplateFilePath).replace('[SKU]', $ASCSSKU) | Set-Content $appTemplateFilePath
-    (Get-Content $appTemplateFilePath).replace('[VERSION]', $ASCSSKUVersion) | Set-Content $appTemplateFilePath
-    (Get-Content $appTemplateFilePath).replace('[MACHINESIZE]', $ASCSVMSize) | Set-Content $appTemplateFilePath
-    (Get-Content $appTemplateFilePath).replace('[VNetRG]', $virtualNetworkResourceGroupName) | Set-Content $appTemplateFilePath        
-    (Get-Content $appTemplateFilePath).replace('[VNetName]', $virtualNetworkName) | Set-Content $appTemplateFilePath        
-    (Get-Content $appTemplateFilePath).replace('[AppSubnetName]', $appsubnetName) | Set-Content $appTemplateFilePath        
-    (Get-Content $appTemplateFilePath).replace('[APPASG]', $appASG) | Set-Content $appTemplateFilePath        
 
 }
 
@@ -244,10 +289,12 @@ Copy-Item ..\deploymentScripts\deployLandscape.ps1 $SID
 (Get-Content $deploymentScriptPath).replace('[AppServerDeployment]', $DeploymentScript) | Set-Content $deploymentScriptPath
 (Get-Content $deploymentScriptPath).replace('[ASCSServerDeployment]', $ASCSDeploymentScript) | Set-Content $deploymentScriptPath
 (Get-Content $deploymentScriptPath).replace('[DBServerDeployment]', $DBDeploymentScript) | Set-Content $deploymentScriptPath
+(Get-Content $deploymentScriptPath).replace('[WDServerDeployment]', $WDDeploymentScript) | Set-Content $deploymentScriptPath
 (Get-Content $deploymentScriptPath).replace('[SID]', $SID) | Set-Content $deploymentScriptPath
 (Get-Content $deploymentScriptPath).replace('[DBServerImage]', $DBServerImage) | Set-Content $deploymentScriptPath
 (Get-Content $deploymentScriptPath).replace('[AppServerImage]', $AppServerImage) | Set-Content $deploymentScriptPath
 (Get-Content $deploymentScriptPath).replace('[ASCSServerImage]', $ASCSServerImage) | Set-Content $deploymentScriptPath
+(Get-Content $deploymentScriptPath).replace('[WDServerImage]', $WDServerImage) | Set-Content $deploymentScriptPath
 (Get-Content $deploymentScriptPath).replace('[SUBSCRIPTIONID]', $SubscriptionID) | Set-Content $deploymentScriptPath
 (Get-Content $deploymentScriptPath).replace('[REGION]', $region) | Set-Content $deploymentScriptPath
 (Get-Content $deploymentScriptPath).replace('[APPASG]', $appASG) | Set-Content $deploymentScriptPath

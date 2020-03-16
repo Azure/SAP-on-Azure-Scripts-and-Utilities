@@ -2,7 +2,7 @@
 
 $ResourceGroupNameforASG = "demo-vnet-rg"
 $location = "westeurope"
-$subscriptionID = "[SUBSCRIPTIONID]"
+$subscriptionID = "80d5ed43-1465-432b-8914-5e1f68d49330"
 
 
 Write-Host "Deployment started: " (Get-Date).ToString("yyyy-MM-dd HH:mm")

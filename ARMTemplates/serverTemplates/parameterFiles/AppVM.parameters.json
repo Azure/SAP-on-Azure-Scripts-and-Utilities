@@ -2,14 +2,11 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "sapSystemId": {
-      "value": "[SID]"
+    "applicationSecurityGroupName": {
+      "value": "[APPASG]"
     },
     "adminUsername": {
       "value": "demoadmin"
-    },
-    "authenticationType": {
-      "value": "password"
     },
     "adminPasswordOrKey": {
       "reference": {
@@ -19,26 +16,17 @@
         "secretName": "mypassword"
       }
     },
-    "location": {
-      "value": "[LOCATION]"
-    },
-    "virtualMachineSize": {
-      "value": "[MACHINESIZE]"
-    },
-    "virtualMachineName": {
-      "value": "[SERVERNAME]"
-    },
-    "PrivateIP": {
-      "value": ""
-    },
-    "HasPublicIP": {
-      "value": false
+    "authenticationType": {
+      "value": "password"
     },
     "availabilitySetName": {
       "value": "[SID]-app-avset"
     },
-    "proximityPlacementGroupName": {
-      "value": "[SID]-ppg"
+    "HasPublicIP": {
+      "value": "[HASPUBLICIP]"
+    },
+    "imageID": {
+      "value": "[ImageID]"
     },
     "imageReference": {
       "value": {
@@ -48,23 +36,41 @@
         "version": "[VERSION]"
       }
     },
-    "imageID": {
-      "value": "[ImageID]"
+    "location": {
+      "value": "[LOCATION]"
     },
-    "applicationSecurityGroupName": {
-      "value": "[APPASG]"
+    "PrivateIP": {
+      "value": []
     },
-    "virtualNetworkResourceGroupName": {
-      "value": "[VNetRG]"
+    "proximityPlacementGroupName": {
+      "value": "[SID]-ppg"
     },
-    "virtualNetworkName": {
-      "value": "[VNetName]"
+    "sapSystemId": {
+      "value": "[SID]"
     },
     "subnetName": {
       "value": "[AppSubnetName]"
     },
-    "vmTagValues": {
+    "virtualMachineName": {
+      "value": "[SERVERNAME]"
+    },
+    "virtualMachineSize": {
+      "value": "[MACHINESIZE]"
+    },
+    "virtualMachineCount": {
+      "value": "[VMCount]"
+    },
+    "virtualNetworkName": {
+      "value": "[VNetName]"
+    },
+    "virtualNetworkResourceGroupName": {
+      "value": "[VNetRG]"
+    },
+    "virtualMachineTagValues": {
       "value": { "System": "SAP", "$perfOptimizationLevel": "1" }
+    },
+    "Zone": {
+      "value": []
     }
   }
 }

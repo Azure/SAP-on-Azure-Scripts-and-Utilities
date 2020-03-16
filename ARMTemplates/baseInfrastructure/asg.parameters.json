@@ -3,13 +3,17 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "location": {
-      "value": "westeurope"
+      "value": ""
     },
     "applicationSecurityGroupName": {
       "value": "sap-app-asg"
     },
     "applicationSecurityGroupNameDB": {
       "value": "sap-db-asg"
+    },
+    "applicationSecurityGroupNameWeb": {
+      "value": "sap-web-asg"
     }
+
   }
 }

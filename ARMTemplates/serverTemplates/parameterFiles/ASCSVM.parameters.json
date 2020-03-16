@@ -29,10 +29,10 @@
       "value": "[SERVERNAME]"
     },
     "PrivateIP": {
-      "value": ""
+      "value": []
     },
     "HasPublicIP": {
-      "value": true
+      "value": "[HASPUBLICIP]"
     },
     "availabilitySetName": {
       "value": "[SID]-ascs-avset"
@@ -51,6 +51,9 @@
     "imageID": {
       "value": "[ImageID]"
     },
+    "virtualMachineCount": {
+      "value": "[VMCount]"
+    },
     "applicationSecurityGroupName": {
       "value": "[APPASG]"
     },
@@ -63,12 +66,13 @@
     "subnetName": {
       "value": "[AppSubnetName]"
     },
-    "vmTagValues": {
+    "virtualMachineTagValues": {
       "value": { "System": "SAP", "$perfOptimizationLevel": "1" }
     },
-    "diskTagValues": {
-      "value": { "$perfOptimizationLevel": "1" }
+    "Zone": {
+        "value": []
     }
+
 
   }
 }

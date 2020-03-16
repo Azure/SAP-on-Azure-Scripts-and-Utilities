@@ -1,17 +1,36 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "virtualNetworkName": {
             "defaultValue": "demo-vnet",
             "type": "String"
         },
+        "vnetAddressPrefix": {
+            "type": "String"
+        },
+        "appSubnetName": {
+            "type": "String",
+            "defaultValue": "app-snet"
+        },
+        "appSubnetAddressPrefix": {
+            "type": "String"
+        },
+        "dbSubnetName": {
+            "type": "String",
+            "defaultValue": "db-snet"
+        },
+        "dbSubnetAddressPrefix": {
+            "type": "String"
+        },
+
         "networkSecurityGroupName": {
             "defaultValue": "toplevel",
             "type": "String"
         },
 
         "location": {
+            "defaultValue": "[resourceGroup().location]",
             "type": "String"
         },
         "applicationSecurityGroupName": {
@@ -27,6 +46,13 @@
                 "description": "The name of the application security group that will be used for the database servers"
             },
             "defaultValue": "sap-db-asg"
+        },
+        "applicationSecurityGroupNameWeb": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the application security group that will be used for the web dispatchers"
+            },
+            "defaultValue": "sap-web-asg"
         }
     },
     "variables": {
@@ -37,19 +63,21 @@
             "type": "Microsoft.Network/applicationSecurityGroups",
             "apiVersion": "2019-11-01",
             "name": "[parameters('applicationSecurityGroupName')]",
-            "location": "[variables('locationName')]",
-            "properties": {
-                "provisioningState": "Succeeded"
-            }
+            "location": "[variables('locationName')]"
         },
         {
             "type": "Microsoft.Network/applicationSecurityGroups",
             "apiVersion": "2019-11-01",
             "name": "[parameters('applicationSecurityGroupNameDB')]",
-            "location": "westeurope",
-            "properties": {
-                "provisioningState": "Succeeded"
-            }
+            "location": "[variables('locationName')]"
+
+        },
+        {
+            "type": "Microsoft.Network/applicationSecurityGroups",
+            "apiVersion": "2019-11-01",
+            "name": "[parameters('applicationSecurityGroupNameWeb')]",
+            "location": "[variables('locationName')]"
+
         },
         {
             "type": "Microsoft.Network/networkSecurityGroups/securityRules",
@@ -81,21 +109,21 @@
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2019-11-01",
             "name": "[parameters('virtualNetworkName')]",
-            "location": "westeurope",
+            "location": "[variables('locationName')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
             ],
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
-                        "10.8.0.0/16"
+                        "[parameters('vnetaddressPrefix')]"
                     ]
                 },
                 "subnets": [
                     {
-                        "name": "app-snet",
+                        "name": "[parameters('appSubnetName')]",
                         "properties": {
-                            "addressPrefix": "10.8.0.0/24",
+                            "addressPrefix": "[parameters('appSubnetAddressPrefix')]",
                             "networkSecurityGroup": {
                                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
                             },
@@ -108,9 +136,9 @@
                         }
                     },
                     {
-                        "name": "db-snet",
+                        "name": "[parameters('dbSubnetName')]",
                         "properties": {
-                            "addressPrefix": "10.8.16.0/24",
+                            "addressPrefix": "[parameters('dbSubnetAddressPrefix')]",
                             "networkSecurityGroup": {
                                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
                             },
@@ -133,9 +161,10 @@
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2019-11-01",
             "name": "[parameters('networkSecurityGroupName')]",
-            "location": "westeurope",
+            "location": "[variables('locationName')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/applicationSecurityGroups', parameters('applicationSecurityGroupNameDB'))]",
+                "[resourceId('Microsoft.Network/applicationSecurityGroups', parameters('applicationSecurityGroupNameWeb'))]",
                 "[resourceId('Microsoft.Network/applicationSecurityGroups', parameters('applicationSecurityGroupName'))]"
             ],
             "properties": {
@@ -162,11 +191,11 @@
                         }
                     },
                     {
-                        "name": "Port_8080",
+                        "name": "Port_30015",
                         "properties": {
                             "protocol": "*",
                             "sourcePortRange": "*",
-                            "destinationPortRange": "8080",
+                            "destinationPortRange": "30015",
                             "access": "Allow",
                             "priority": 110,
                             "direction": "Inbound",
@@ -196,13 +225,13 @@
         {
             "type": "Microsoft.Network/virtualNetworks/subnets",
             "apiVersion": "2019-11-01",
-            "name": "[concat(parameters('virtualNetworks_demo_vnet_name'), '/app-snet')]",
+            "name": "[concat(parameters('virtualNetworkName'), '/',parameters('appSubnetName'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
             ],
             "properties": {
-                "addressPrefix": "10.8.0.0/24",
+                "addressPrefix": "[parameters('appSubnetAddressPrefix')]",
                 "networkSecurityGroup": {
                     "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
                 },
@@ -217,13 +246,13 @@
         {
             "type": "Microsoft.Network/virtualNetworks/subnets",
             "apiVersion": "2019-11-01",
-            "name": "[concat(parameters('networkSecurityGroupName'), '/db-snet')]",
+            "name": "[concat(parameters('virtualNetworkName'),  '/',parameters('dbSubnetName'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
             ],
             "properties": {
-                "addressPrefix": "10.8.16.0/24",
+                "addressPrefix": "[parameters('dbSubnetAddressPrefix')]",
                 "networkSecurityGroup": {
                     "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
                 },
@@ -238,7 +267,7 @@
         {
             "type": "Microsoft.Network/networkSecurityGroups/securityRules",
             "apiVersion": "2019-11-01",
-            "name": "[concat(parameters('networkSecurityGroupName'), '/Port_8080')]",
+            "name": "[concat(parameters('networkSecurityGroupName'), '/Port_30015')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]",
                 "[resourceId('Microsoft.Network/applicationSecurityGroups', parameters('applicationSecurityGroupNameDB'))]",
@@ -247,7 +276,7 @@
             "properties": {
                 "protocol": "*",
                 "sourcePortRange": "*",
-                "destinationPortRange": "8080",
+                "destinationPortRange": "30015",
                 "access": "Allow",
                 "priority": 110,
                 "direction": "Inbound",
