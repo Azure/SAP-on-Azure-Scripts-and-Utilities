@@ -1,0 +1,39 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "name": {
+      "value": "sap-we-kv"
+    },
+    "location": {
+      "value": "westeurope"
+    },
+    "objectId": {
+      "value": "ddb52f7b-2d28-4564-ad35-98db8f3a1fa2"
+    },
+    "keysPermissions": {
+      "value": ["all"]
+    },
+    "secretsPermissions": {
+      "value": ["all"]
+    },
+    "enabledForDeployment": {
+      "value": true
+    },
+    "enabledForDiskEncryption": {
+      "value": true
+    },
+    "enabledForTemplateDeployment": {
+      "value": true
+    },
+    "sku": {
+      "value": "Standard"
+    },
+    "secretName": {
+      "value": "mypassword"
+    },
+    "secretValue": {
+      "value": "[EnterYourPasswordHere]"
+    }
+  }
+}

@@ -30,7 +30,8 @@
             "type": "string"
         },
         "imageReference": {
-            "type": "object"
+            "type": "object",
+            "defaultValue":""
         },
         "HasPublicIP": {
             "type": "bool"
@@ -40,10 +41,11 @@
             "metadata": {
                 "description": "The location of the resource"
             },
-            "defaultValue": ""
+            "defaultValue": "[resourceGroup().location]"
         },
         "PrivateIP": {
-            "type": "array"
+            "type": "array",
+            "defaultValue": ""
         },
         "proximityPlacementGroupName": {
             "type": "string"
@@ -61,10 +63,11 @@
             "metadata": {
                 "description": "The name of the subnet"
             },
-            "defaultValue": "default"
+            "defaultValue": "app-vnet"
         },
         "virtualMachineName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "app"
         },
         "virtualMachineSize": {
             "type": "string",
@@ -85,7 +88,9 @@
                 "Standard_E48s_v3",
                 "Standard_E64s_v3",
                 "Standard_E64is_v3"
-            ]
+            ],
+            "defaultValue": "Standard_D2s_v3"
+
 
         },
         "virtualNetworkName": {
@@ -93,19 +98,23 @@
             "metadata": {
                 "description": "The name of the vnet"
             },
-            "defaultValue": ""
+            "defaultValue": "demo-vnet"
         },
         "virtualNetworkResourceGroupName": {
             "type": "string"
         },
         "virtualMachineCount": {
-            "type": "int"
+            "type": "int",
+            "defaultValue": 1
+
         },
         "virtualMachineTagValues": {
-            "type": "object"
+            "type": "object",
+            "defaultValue": null
         },
         "Zone": {
-            "type": "array"
+            "type": "array",
+            "defaultValue": "[]"
         }
 
     },
@@ -139,7 +148,8 @@
         },
         "nrOfDisks": "[variables('diskSizes')['ASCS'].nrDisks]",
         "allVMTags": "[union(parameters('virtualMachineTagValues'),variables('sidTag'))]",
-        "applicationSecurityGroupID": "[resourceId(parameters('virtualNetworkResourceGroupName'),'Microsoft.Network/applicationSecurityGroups',parameters('applicationSecurityGroupName'))]"
+        "applicationSecurityGroupID": "[resourceId(parameters('virtualNetworkResourceGroupName'),'Microsoft.Network/applicationSecurityGroups',parameters('applicationSecurityGroupName'))]",
+        "github": "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/master/ARMTemplates/serverTemplates/"
 
     },
     "resources": [
@@ -339,7 +349,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/master/ARMTemplates/serverTemplates/disks/AppVMDisks.json",
+                    "uri": "[concat(variables('github'),'/disks/AppVMDisks.json')]",
                     "contentVersion": "1.0.0.0"
                 },
 
