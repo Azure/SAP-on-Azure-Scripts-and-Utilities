@@ -29,8 +29,17 @@
         "imageID": {
             "type": "string"
         },
-        "imageReference": {
-            "type": "object"
+        "publisher": {
+            "type": "string"
+        },
+        "offer": {
+            "type": "string"
+        },
+        "sku": {
+            "type": "string"
+        },
+        "version": {
+            "type": "string"
         },
         "HasPublicIP": {
             "type": "bool"
@@ -44,7 +53,9 @@
         },
         "PrivateIP": {
             "type": "array",
-            "defaultValue": [""]
+            "defaultValue": [
+                ""
+            ]
         },
         "proximityPlacementGroupName": {
             "type": "string"
@@ -113,7 +124,9 @@
         },
         "Zone": {
             "type": "array",
-            "defaultValue": [""]
+            "defaultValue": [
+                ""
+            ]
         }
 
     },
@@ -148,7 +161,7 @@
         "nrOfDisks": "[variables('diskSizes')['ASCS'].nrDisks]",
         "allVMTags": "[union(parameters('virtualMachineTagValues'),variables('sidTag'))]",
         "applicationSecurityGroupID": "[resourceId(parameters('virtualNetworkResourceGroupName'),'Microsoft.Network/applicationSecurityGroups',parameters('applicationSecurityGroupName'))]",
-        "github": "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/master/ARMTemplates/serverTemplates/"
+        "github": "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/master/ARMTemplates/serverTemplates/",
 
     },
     "resources": [
@@ -288,10 +301,10 @@
                 },
                 "storageProfile": {
                     "imageReference": {
-                        "publisher": "[if(empty(parameters('imageID')), parameters('imageReference').publisher,json('null'))]",
-                        "offer": "[if(empty(parameters('imageID')), parameters('imageReference').offer,json('null'))]",
-                        "sku": "[if(empty(parameters('imageID')), parameters('imageReference').sku,json('null'))]",
-                        "version": "[if(empty(parameters('imageID')), parameters('imageReference').version,json('null'))]",
+                        "publisher": "[if(empty(parameters('imageID')), parameters('publisher'),json('null'))]",
+                        "offer": "[if(empty(parameters('imageID')), parameters('offer'),json('null'))]",
+                        "sku": "[if(empty(parameters('imageID')), parameters('sku'),json('null'))]",
+                        "version": "[if(empty(parameters('imageID')), parameters('version'),json('null'))]",
                         "id": "[if(not(empty(parameters('imageID'))), parameters('imageID'),json('null'))]"
                     },
                     "osDisk": {

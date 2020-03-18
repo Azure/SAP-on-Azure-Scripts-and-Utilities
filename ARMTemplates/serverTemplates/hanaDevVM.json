@@ -68,8 +68,17 @@
         "proximityPlacementGroupName": {
             "type": "string"
         },
-        "imageReference": {
-            "type": "object"
+        "publisher": {
+            "type": "string"
+        },
+        "offer": {
+            "type": "string"
+        },
+        "sku": {
+            "type": "string"
+        },
+        "version": {
+            "type": "string"
         },
         "imageID": {
             "type": "string"
@@ -404,10 +413,10 @@
                 },
                 "storageProfile": {
                     "imageReference": {
-                        "publisher": "[if(empty(parameters('imageID')), parameters('imageReference').publisher,json('null'))]",
-                        "offer": "[if(empty(parameters('imageID')), parameters('imageReference').offer,json('null'))]",
-                        "sku": "[if(empty(parameters('imageID')), parameters('imageReference').sku,json('null'))]",
-                        "version": "[if(empty(parameters('imageID')), parameters('imageReference').version,json('null'))]",
+                        "publisher": "[if(empty(parameters('imageID')), parameters('publisher'),json('null'))]",
+                        "offer": "[if(empty(parameters('imageID')), parameters('offer'),json('null'))]",
+                        "sku": "[if(empty(parameters('imageID')), parameters('sku'),json('null'))]",
+                        "version": "[if(empty(parameters('imageID')), parameters('version'),json('null'))]",
                         "id": "[if(not(empty(parameters('imageID'))), parameters('imageID'),json('null'))]"
                     },
                     "osDisk": {

@@ -44,13 +44,17 @@
     "proximityPlacementGroupName": {
       "value": "[SID]-ppg"
     },
-    "imageReference": {
-      "value": {
-        "publisher": "[PUBLISHER]",
-        "offer": "[OFFER]",
-        "sku": "[SKU]",
-        "version": "[VERSION]"
-      }
+    "publisher": {
+      "value": "[PUBLISHER]"
+    },
+    "offer": {
+      "value": "[OFFER]"
+    },
+    "sku": {
+      "value": "[SKU]"
+    },
+    "version": {
+      "value": "[VERSION]"
     },
     "ImageID": {
       "value": "[ImageID]"
