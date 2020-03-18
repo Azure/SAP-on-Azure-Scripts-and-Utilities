@@ -30,7 +30,6 @@
             "type": "string",
             "defaultValue": null,
             "minLength": 0
-
         },
         "publisher": {
             "type": "string"
@@ -422,7 +421,7 @@
             "dependsOn": [
                 "[concat(variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'), '-nic')]"
             ],
-            "condition": "[not(empty(parameters('PrivateIP')))]",
+            "condition": "[not(empty(parameters('PrivateIP')[0]))]",
             "properties": {
                 "mode": "Incremental",
                 "template": {
