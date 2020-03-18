@@ -27,7 +27,8 @@
             "type": "string"
         },
         "imageID": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": null
         },
         "publisher": {
             "type": "string"
