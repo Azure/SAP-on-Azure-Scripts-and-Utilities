@@ -42,7 +42,8 @@
             "type": "string"
         },
         "HasPublicIP": {
-            "type": "bool"
+            "type": "bool",
+            "defaultValue": false
         },
         "location": {
             "type": "string",
@@ -75,6 +76,11 @@
             },
             "defaultValue": "app-vnet"
         },
+        "virtualMachineCount": {
+            "type": "int",
+            "defaultValue": 1
+
+        },
         "virtualMachineName": {
             "type": "string",
             "defaultValue": "app"
@@ -103,6 +109,10 @@
 
 
         },
+        "virtualMachineTagValues": {
+            "type": "object",
+            "defaultValue": null
+        },
         "virtualNetworkName": {
             "type": "string",
             "metadata": {
@@ -112,15 +122,6 @@
         },
         "virtualNetworkResourceGroupName": {
             "type": "string"
-        },
-        "virtualMachineCount": {
-            "type": "int",
-            "defaultValue": 1
-
-        },
-        "virtualMachineTagValues": {
-            "type": "object",
-            "defaultValue": null
         },
         "Zone": {
             "type": "array",
@@ -161,7 +162,7 @@
         "nrOfDisks": "[variables('diskSizes')['ASCS'].nrDisks]",
         "allVMTags": "[union(parameters('virtualMachineTagValues'),variables('sidTag'))]",
         "applicationSecurityGroupID": "[resourceId(parameters('virtualNetworkResourceGroupName'),'Microsoft.Network/applicationSecurityGroups',parameters('applicationSecurityGroupName'))]",
-        "github": "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/master/ARMTemplates/serverTemplates/",
+        "github": "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/master/ARMTemplates/serverTemplates/"
 
     },
     "resources": [

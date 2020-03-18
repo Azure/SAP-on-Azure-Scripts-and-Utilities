@@ -2,19 +2,15 @@
     "$schema": "https://schema.management.azure.com/schemas/2018-05-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "sapSystemId": {
-            "type": "string",
-            "minLength": 3,
-            "maxLength": 3,
-            "metadata": {
-                "description": "The SAP System ID"
-            }
-        },
         "adminUsername": {
             "type": "string"
         },
         "adminPasswordOrKey": {
             "type": "securestring"
+        },
+        "applicationSecurityGroupName": {
+            "type": "string",
+            "defaultValue": "sap-app-asg"
         },
         "authenticationType": {
             "type": "string",
@@ -27,20 +23,7 @@
                 "description": "Type of authentication to use on the Virtual Machine."
             }
         },
-        "location": {
-            "type": "string",
-            "metadata": {
-                "description": "The location of the resource"
-            },
-            "defaultValue": ""
-        },
-        "virtualMachineName": {
-            "type": "string"
-        },
-        "virtualMachineCount": {
-            "type": "int"
-        },
-        "virtualMachineSize": {
+        "availabilitySetName": {
             "type": "string"
         },
         "dbSize": {
@@ -58,35 +41,58 @@
                 "40960",
                 "51200"
             ],
-            "defaultValue": "200"
+            "defaultValue": "1024"
 
         },
-        "availabilitySetName": {
-            "type": "string"
+        "HasPublicIP": {
+            "type": "bool",
+            "defaultValue": false
+        },
+        "location": {
+            "type": "string",
+            "metadata": {
+                "description": "The location of the resource"
+            },
+            "defaultValue": "[resourceGroup().location]"
+        },
+        "PrivateIP": {
+            "type": "array",
+            "defaultValue": [
+                ""
+            ]
         },
         "proximityPlacementGroupName": {
             "type": "string"
         },
-        "publisher": {
-            "type": "string"
-        },
-        "offer": {
-            "type": "string"
-        },
-        "sku": {
-            "type": "string"
-        },
-        "version": {
-            "type": "string"
-        },
-        "imageID": {
-            "type": "string"
-        },
-        "applicationSecurityGroupName": {
+        "sapSystemId": {
             "type": "string",
-            "defaultValue": "sap-db-asg"
+            "minLength": 3,
+            "maxLength": 3,
+            "metadata": {
+                "description": "The SAP System ID"
+            }
+        },
+        "subnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the subnet"
+            },
+            "defaultValue": "bm-vnet"
+        },
+        "virtualMachineCount": {
+            "type": "int",
+            "defaultValue": 1
+
         },
 
+        "virtualMachineName": {
+            "type": "string",
+            "defaultValue": "db"
+        },
+        "virtualMachineSize": {
+            "type": "string",
+            "defaultValue": "Standard_E16s_v3"
+        },
         "virtualNetworkResourceGroupName": {
             "type": "string"
         },
@@ -95,26 +101,16 @@
             "metadata": {
                 "description": "The name of the vnet"
             },
-            "defaultValue": ""
-        },
-        "subnetName": {
-            "type": "string",
-            "metadata": {
-                "description": "The name of the subnet"
-            },
-            "defaultValue": "default"
-        },
-        "PrivateIP": {
-            "type": "array"
-        },
-        "HasPublicIP": {
-            "type": "bool"
+            "defaultValue": "demo-vnet"
         },
         "virtualMachineTagValues": {
             "type": "object"
         },
         "Zone": {
-            "type": "array"
+            "type": "array",
+            "defaultValue": [
+                ""
+            ]
         }
     },
     "variables": {
@@ -211,11 +207,13 @@
 
         },
         "sku": "[if(empty(parameters('virtualMachineSize')), variables('diskSizes')[parameters('dbSize')].vmSku,parameters('virtualMachineSize'))]",
-        "size":"[if(empty(parameters('virtualMachineSize')),variables('sku'),parameters('virtualMachineSize'))]",
+        "size": "[if(empty(parameters('virtualMachineSize')),variables('sku'),parameters('virtualMachineSize'))]",
         "osDiskSize": "[variables('diskSizes')[parameters('dbSize')].osdiskSizeGB]",
         "nrOfDisks": "[variables('diskSizes')[parameters('dbSize')].nrDisks]",
         "applicationSecurityGroupID": "[resourceId(parameters('virtualNetworkResourceGroupName'),'Microsoft.Network/applicationSecurityGroups',parameters('applicationSecurityGroupName'))]",
-        "loadBalancerName": "[concat(variables('sapSystemIdLower'),'-db-lb-std')]"
+        "loadBalancerName": "[concat(variables('sapSystemIdLower'),'-db-lb-std')]",
+        "github": "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/master/ARMTemplates/serverTemplates/"
+
 
     },
     "resources": [
@@ -400,7 +398,7 @@
                     "adminPassword": "[parameters('adminPasswordOrKey')]",
                     "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]"
                 },
-                "storageProfile": { 
+                "storageProfile": {
                     "imageReference": {
                         "publisher": "[if(empty(parameters('imageID')), parameters('publisher'),json('null'))]",
                         "offer": "[if(empty(parameters('imageID')), parameters('offer'),json('null'))]",
@@ -467,7 +465,8 @@
                 "autoUpgradeMinorVersion": true,
                 "settings": {
                     "fileUris": [
-                        "[concat('https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/master/ARMTemplates/serverTemplates/disks/lvm/',variables('diskSizes')[parameters('dbSize')].lvm)]"
+                        "[concat(variables('github'), 'disks/lvm/',variables('diskSizes')[parameters('dbSize')].lvm)]"
+
                     ],
                     "commandToExecute": "[concat('bash ', variables('diskSizes')[parameters('dbSize')].lvm)]"
                 }
@@ -489,7 +488,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/master/ARMTemplates/serverTemplates/disks/anyDBProdVMDisks.json",
+                    "uri": "[concat(variables('github'),'/disks/anyDBProdVMDisks.json')]",
                     "contentVersion": "1.0.0.0"
                 },
 
