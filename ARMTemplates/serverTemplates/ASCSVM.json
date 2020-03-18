@@ -28,7 +28,9 @@
         },
         "imageID": {
             "type": "string",
-            "defaultValue": null
+            "defaultValue": null,
+            "minLength": 0
+
         },
         "publisher": {
             "type": "string"
@@ -407,7 +409,7 @@
                         "value": "[parameters('location')]"
                     },
                     "Zone": {
-                                                "value": "[if(empty(parameters('Zone')), '', if(greater(length(parameters('Zone')),1),parameters('Zone')[mod(copyIndex(0),2)],parameters('Zone')[0]))]"
+                        "value": "[if(empty(parameters('Zone')), '', if(greater(length(parameters('Zone')),1),parameters('Zone')[mod(copyIndex(0),2)],parameters('Zone')[0]))]"
                     }
 
                 }
