@@ -30,8 +30,7 @@
             "type": "string"
         },
         "imageReference": {
-            "type": "object",
-            "defaultValue":""
+            "type": "object"
         },
         "HasPublicIP": {
             "type": "bool"
@@ -45,7 +44,7 @@
         },
         "PrivateIP": {
             "type": "array",
-            "defaultValue": ""
+            "defaultValue": [""]
         },
         "proximityPlacementGroupName": {
             "type": "string"
@@ -114,7 +113,7 @@
         },
         "Zone": {
             "type": "array",
-            "defaultValue": "[]"
+            "defaultValue": [""]
         }
 
     },
