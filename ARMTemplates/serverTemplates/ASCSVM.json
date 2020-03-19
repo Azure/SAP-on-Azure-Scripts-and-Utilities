@@ -98,7 +98,7 @@
             "defaultValue": "Standard_D2s_v3"
         },
         "virtualMachineTagValues": {
-            "type": "object",
+            "type": "string",
             "defaultValue": "{ \"System\": \"SAP\", \"$perfOptimizationLevel\": \"1\" }"
         },
         "virtualNetworkName": {
@@ -148,7 +148,7 @@
             }
         },
         "nrOfDisks": "[variables('diskSizes')['ASCS'].nrDisks]",
-        "allVMTags": "[union(parameters('virtualMachineTagValues'),variables('sidTag'))]",
+        "allVMTags": "[union(json(parameters('virtualMachineTagValues')),variables('sidTag'))]",
         "applicationSecurityGroupID": "[resourceId(parameters('virtualNetworkResourceGroupName'),'Microsoft.Network/applicationSecurityGroups',parameters('applicationSecurityGroupName'))]",
         "loadBalancerName": "[concat(variables('sapSystemIdLower'),'-ascs-lb-std')]",
         "github": "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/master/ARMTemplates/serverTemplates/",

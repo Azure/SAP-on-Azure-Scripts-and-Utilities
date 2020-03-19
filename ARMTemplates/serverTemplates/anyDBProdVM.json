@@ -112,7 +112,7 @@
             "defaultValue": "Standard_E16s_v3"
         },
         "virtualMachineTagValues": {
-            "type": "object",
+            "type": "string",
             "defaultValue": "{ \"System\": \"SAP\", \"$perfOptimizationLevel\": \"1\" }"
         },
         "virtualNetworkName": {
@@ -155,7 +155,7 @@
         "sidTag": {
             "SID": "[parameters('sapSystemId')]"
         },
-        "allVMTags": "[union(parameters('virtualMachineTagValues'),variables('sidTag'))]",
+        "allVMTags": "[union(json(parameters('virtualMachineTagValues')),variables('sidTag'))]",
         "diskSizes": {
             "200": {
                 "vmSku": "Standard_E4s_v3",

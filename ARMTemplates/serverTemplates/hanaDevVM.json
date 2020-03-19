@@ -115,7 +115,7 @@
             ]
         },
         "virtualMachineTagValues": {
-            "type": "object",
+            "type": "string",
             "defaultValue": "{ \"System\": \"SAP\", \"$perfOptimizationLevel\": \"1\" }"
         },
         "virtualNetworkName": {
@@ -158,7 +158,7 @@
         "sidTag": {
             "SID": "[parameters('sapSystemId')]"
         },
-        "allVMTags": "[union(parameters('virtualMachineTagValues'),variables('sidTag'))]",
+        "allVMTags": "[union(json(parameters('virtualMachineTagValues')),variables('sidTag'))]",
         "diskSizes": {
             "Demo": {
                 "osdiskSizeGB": 63,
