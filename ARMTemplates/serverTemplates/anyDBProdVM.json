@@ -44,9 +44,27 @@
             "defaultValue": "1024"
 
         },
+
         "HasPublicIP": {
             "type": "bool",
             "defaultValue": false
+        },
+        "imageID": {
+            "type": "string",
+            "defaultValue": null,
+            "minLength": 0
+        },
+        "publisher": {
+            "type": "string"
+        },
+        "offer": {
+            "type": "string"
+        },
+        "sku": {
+            "type": "string"
+        },
+        "version": {
+            "type": "string"
         },
         "location": {
             "type": "string",
@@ -77,7 +95,7 @@
             "metadata": {
                 "description": "The name of the subnet"
             },
-            "defaultValue": "bm-vnet"
+            "defaultValue": "db-snet"
         },
         "virtualMachineCount": {
             "type": "int",
@@ -212,7 +230,9 @@
         "nrOfDisks": "[variables('diskSizes')[parameters('dbSize')].nrDisks]",
         "applicationSecurityGroupID": "[resourceId(parameters('virtualNetworkResourceGroupName'),'Microsoft.Network/applicationSecurityGroups',parameters('applicationSecurityGroupName'))]",
         "loadBalancerName": "[concat(variables('sapSystemIdLower'),'-db-lb-std')]",
-        "github": "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/master/ARMTemplates/serverTemplates/"
+        "github": "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/master/ARMTemplates/serverTemplates/",
+        "customImage": "[if(greater(length(trim(parameters('imageID'))),2),parameters('imageID'),'')]"
+
 
 
     },
@@ -400,11 +420,11 @@
                 },
                 "storageProfile": {
                     "imageReference": {
-                        "publisher": "[if(empty(parameters('imageID')), parameters('publisher'),json('null'))]",
-                        "offer": "[if(empty(parameters('imageID')), parameters('offer'),json('null'))]",
-                        "sku": "[if(empty(parameters('imageID')), parameters('sku'),json('null'))]",
-                        "version": "[if(empty(parameters('imageID')), parameters('version'),json('null'))]",
-                        "id": "[if(not(empty(parameters('imageID'))), parameters('imageID'),json('null'))]"
+                        "publisher": "[if(empty(variables('customImage')), parameters('publisher'),json('null'))]",
+                        "offer": "[if(empty(variables('customImage')), parameters('offer'),json('null'))]",
+                        "sku": "[if(empty(variables('customImage')), parameters('sku'),json('null'))]",
+                        "version": "[if(empty(variables('customImage')), parameters('version'),json('null'))]",
+                        "id": "[if(not(empty(variables('customImage'))), parameters('imageID'),json('null'))]"
                     },
                     "osDisk": {
                         "name": "[concat(variables('sapMachineName'),'-', padLeft(copyIndex(1),2,'0'), '-osdisk')]",
@@ -516,7 +536,8 @@
             "dependsOn": [
                 "[concat(variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'), '-nic')]"
             ],
-            "condition": "[not(empty(parameters('PrivateIP')))]",
+            "condition": "[not(empty(parameters('PrivateIP')[0]))]",
+
             "properties": {
                 "mode": "Incremental",
                 "template": {

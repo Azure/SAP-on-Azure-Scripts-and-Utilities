@@ -2,19 +2,15 @@
     "$schema": "https://schema.management.azure.com/schemas/2018-05-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "sapSystemId": {
-            "type": "string",
-            "minLength": 3,
-            "maxLength": 3,
-            "metadata": {
-                "description": "The SAP System ID"
-            }
-        },
         "adminUsername": {
             "type": "string"
         },
         "adminPasswordOrKey": {
             "type": "securestring"
+        },
+        "applicationSecurityGroupName": {
+            "type": "string",
+            "defaultValue": "sap-app-asg"
         },
         "authenticationType": {
             "type": "string",
@@ -27,18 +23,70 @@
                 "description": "Type of authentication to use on the Virtual Machine."
             }
         },
+        "availabilitySetName": {
+            "type": "string"
+        },
+        "HasPublicIP": {
+            "type": "bool",
+            "defaultValue": false
+        },
+        "imageID": {
+            "type": "string",
+            "defaultValue": null,
+            "minLength": 0
+        },
+        "publisher": {
+            "type": "string"
+        },
+        "offer": {
+            "type": "string"
+        },
+        "sku": {
+            "type": "string"
+        },
+        "version": {
+            "type": "string"
+        },
         "location": {
             "type": "string",
             "metadata": {
                 "description": "The location of the resource"
             },
-            "defaultValue": ""
+            "defaultValue": "[resourceGroup().location]"
         },
-        "virtualMachineName": {
+        "PrivateIP": {
+            "type": "array",
+            "defaultValue": [
+                ""
+            ]
+        },
+        "proximityPlacementGroupName": {
             "type": "string"
         },
+        "sapSystemId": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 3,
+            "metadata": {
+                "description": "The SAP System ID"
+            }
+        },
+        "subnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the subnet"
+            },
+            "defaultValue": "db-snet"
+        },
         "virtualMachineCount": {
-            "type": "int"
+            "type": "int",
+            "defaultValue": 1
+
+        },
+
+        "virtualMachineName": {
+            "type": "string",
+            "defaultValue": "db"
         },
         "virtualMachineSize": {
             "type": "string",
@@ -57,60 +105,27 @@
                 "Standard_M416ms_v2"
             ]
         },
-        "availabilitySetName": {
-            "type": "string"
-        },
-        "proximityPlacementGroupName": {
-            "type": "string"
-        },
-        "publisher": {
-            "type": "string"
-        },
-        "offer": {
-            "type": "string"
-        },
-        "sku": {
-            "type": "string"
-        },
-        "version": {
-            "type": "string"
-        },
-        "imageID": {
-            "type": "string"
-        },
-        "applicationSecurityGroupName": {
-            "type": "string",
-            "defaultValue": "sap-db-asg"
-        },
-        "virtualNetworkResourceGroupName": {
-            "type": "string"
-        },
         "virtualNetworkName": {
             "type": "string",
             "metadata": {
                 "description": "The name of the vnet"
             },
-            "defaultValue": ""
+            "defaultValue": "demo-vnet"
         },
-        "subnetName": {
-            "type": "string",
-            "metadata": {
-                "description": "The name of the subnet"
-            },
-            "defaultValue": "default"
-        },
-        "PrivateIP": {
-            "type": "array"
-        },
-        "HasPublicIP": {
-            "type": "bool"
+        "virtualNetworkResourceGroupName": {
+            "type": "string"
         },
         "virtualMachineTagValues": {
-            "type": "object"
+            "type": "object",
+            "defaultValue": null
         },
         "Zone": {
-            "type": "array"
+            "type": "array",
+            "defaultValue": [
+                ""
+            ]
         }
+
     },
     "variables": {
         "sapSystemIdLower": "[toLower(parameters('sapSystemId'))]",
@@ -202,7 +217,10 @@
         "osDiskSize": "[variables('diskSizes')[variables('sku')].osdiskSizeGB]",
         "nrOfDisks": "[variables('diskSizes')[variables('sku')].nrDisks]",
         "applicationSecurityGroupID": "[resourceId(parameters('virtualNetworkResourceGroupName'),'Microsoft.Network/applicationSecurityGroups',parameters('applicationSecurityGroupName'))]",
-        "loadBalancerName": "[concat(variables('sapSystemIdLower'),'-db-lb-std')]"
+        "loadBalancerName": "[concat(variables('sapSystemIdLower'),'-db-lb-std')]",
+        "github": "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/master/ARMTemplates/serverTemplates/",
+        "customImage": "[if(greater(length(trim(parameters('imageID'))),2),parameters('imageID'),'')]"
+
     },
     "resources": [
         {
@@ -382,11 +400,11 @@
                 },
                 "storageProfile": {
                     "imageReference": {
-                        "publisher": "[if(empty(parameters('imageID')), parameters('publisher'),json('null'))]",
-                        "offer": "[if(empty(parameters('imageID')), parameters('offer'),json('null'))]",
-                        "sku": "[if(empty(parameters('imageID')), parameters('sku'),json('null'))]",
-                        "version": "[if(empty(parameters('imageID')), parameters('version'),json('null'))]",
-                        "id": "[if(not(empty(parameters('imageID'))), parameters('imageID'),json('null'))]"
+                        "publisher": "[if(empty(variables('customImage')), parameters('publisher'),json('null'))]",
+                        "offer": "[if(empty(variables('customImage')), parameters('offer'),json('null'))]",
+                        "sku": "[if(empty(variables('customImage')), parameters('sku'),json('null'))]",
+                        "version": "[if(empty(variables('customImage')), parameters('version'),json('null'))]",
+                        "id": "[if(not(empty(variables('customImage'))), parameters('imageID'),json('null'))]"
                     },
                     "osDisk": {
                         "name": "[concat(variables('sapMachineName'),'-', padLeft(copyIndex(1),2,'0'), '-osdisk')]",
@@ -447,7 +465,7 @@
                 "autoUpgradeMinorVersion": true,
                 "settings": {
                     "fileUris": [
-                        "[concat('https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/master/ARMTemplates/serverTemplates/disks/lvm/',variables('diskSizes')[parameters('virtualMachineSize')].lvm)]"
+                        "[concat(variables('github'),'disks/lvm/',variables('diskSizes')[parameters('virtualMachineSize')].lvm)]"
                     ],
                     "commandToExecute": "[concat('bash ', variables('diskSizes')[parameters('virtualMachineSize')].lvm)]"
                 }
@@ -470,7 +488,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/master/ARMTemplates/serverTemplates/disks/hanaProdVMDisks.json",
+                    "uri": "[concat(variables('github'), 'disks/hanaProdVMDisks.json')]",
                     "contentVersion": "1.0.0.0"
                 },
 
@@ -499,7 +517,7 @@
                 "[concat(variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'), '-nic')]",
                 "[concat(variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'), '-pip')]"
             ],
-            "condition": "[not(empty(parameters('PrivateIP')))]",
+            "condition": "[not(empty(parameters('PrivateIP')[0]))]",
             "properties": {
                 "mode": "Incremental",
                 "template": {

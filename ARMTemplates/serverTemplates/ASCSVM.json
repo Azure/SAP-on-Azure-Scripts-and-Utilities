@@ -44,7 +44,8 @@
             "type": "string"
         },
         "HasPublicIP": {
-            "type": "bool"
+            "type": "bool",
+            "defaultValue":false
         },
         "location": {
             "type": "string",

@@ -2,19 +2,15 @@
     "$schema": "https://schema.management.azure.com/schemas/2018-05-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "sapSystemId": {
-            "type": "string",
-            "minLength": 3,
-            "maxLength": 3,
-            "metadata": {
-                "description": "The SAP System ID"
-            }
-        },
         "adminUsername": {
             "type": "string"
         },
         "adminPasswordOrKey": {
             "type": "securestring"
+        },
+        "applicationSecurityGroupName": {
+            "type": "string",
+            "defaultValue": "sap-app-asg"
         },
         "authenticationType": {
             "type": "string",
@@ -27,33 +23,13 @@
                 "description": "Type of authentication to use on the Virtual Machine."
             }
         },
-        "location": {
-            "type": "string",
-            "metadata": {
-                "description": "The location of the resource"
-            },
-            "defaultValue": ""
-        },
-        "virtualMachineCount": {
-            "type": "int"
-        },
-        "virtualMachineName": {
-            "type": "string"
-        },
-        "virtualMachineSize": {
-            "type": "string",
-            "allowedValues": [
-                "Standard_D2s_v3",
-                "Standard_D4s_v3",
-                "Standard_D8s_v3"
-            ]
-
-        },
         "availabilitySetName": {
             "type": "string"
         },
-        "proximityPlacementGroupName": {
-            "type": "string"
+        "imageID": {
+            "type": "string",
+            "defaultValue": null,
+            "minLength": 0
         },
         "publisher": {
             "type": "string"
@@ -67,49 +43,87 @@
         "version": {
             "type": "string"
         },
-        "imageID": {
-            "type": "string"
+        "HasPublicIP": {
+            "type": "bool",
+            "defaultValue":false
         },
-        "applicationSecurityGroupName": {
-            "type": "string",
-            "defaultValue": "sap-app-asg"
-        },
-
-        "virtualNetworkResourceGroupName": {
-            "type": "string"
-        },
-        "virtualNetworkName": {
+        "location": {
             "type": "string",
             "metadata": {
-                "description": "The name of the vnet"
+                "description": "The location of the resource"
             },
-            "defaultValue": ""
+            "defaultValue": "[resourceGroup().location]"
+        },
+        "PrivateIP": {
+            "type": "array",
+            "defaultValue": [
+                ""
+            ]
+        },
+        "proximityPlacementGroupName": {
+            "type": "string"
+        },
+        "sapSystemId": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 3,
+            "metadata": {
+                "description": "The SAP System ID"
+            }
         },
         "subnetName": {
             "type": "string",
             "metadata": {
                 "description": "The name of the subnet"
             },
-            "defaultValue": "default"
+            "defaultValue": "app-snet"
         },
-        "HasPublicIP": {
-            "type": "bool"
+        "virtualMachineName": {
+            "type": "string",
+            "defaultValue": "web"
         },
-        "PrivateIP": {
-            "type": "array"
+        "virtualMachineSize": {
+            "type": "string",
+            "allowedValues": [
+                "Standard_D2s_v3",
+                "Standard_D4s_v3",
+                "Standard_D8s_v3"
+            ],
+            "defaultValue": "Standard_D2s_v3"
+
+
+        },
+        "virtualNetworkName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the vnet"
+            },
+            "defaultValue": "demo-vnet"
+        },
+        "virtualNetworkResourceGroupName": {
+            "type": "string"
+        },
+        "virtualMachineCount": {
+            "type": "int",
+            "defaultValue": 1
+
         },
         "virtualMachineTagValues": {
-            "type": "object"
+            "type": "object",
+            "defaultValue": null
         },
         "Zone": {
-            "type": "array"
+            "type": "array",
+            "defaultValue": [
+                ""
+            ]
         }
     },
     "variables": {
         "sapSystemIdLower": "[toLower(parameters('sapSystemId'))]",
         "locationName": "[if(empty(parameters('location')) , resourceGroup().location,parameters('location'))]",
         "sapMachineName": "[concat(variables('sapSystemIdLower'),'-',parameters('virtualMachineName'))]",
-        "avSetName": "[concat(variables('sapSystemIdLower'),'-wd-avset')]",
+        "avSetName": "[if(empty(parameters('availabilitySetName')), concat(variables('sapSystemIdLower'),'-app-web'),parameters('availabilitySetName'))]",
         "ppgName": "[if(empty(parameters('proximityPlacementGroupName')), concat(variables('sapSystemIdLower'),'-ppg'),parameters('proximityPlacementGroupName'))]",
         "vnetID": "[resourceid(parameters('virtualNetworkResourceGroupName') ,'Microsoft.Network/virtualNetworks',parameters('virtualNetworkName'))]",
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
@@ -136,7 +150,10 @@
         "nrOfDisks": "[variables('diskSizes')['ASCS'].nrDisks]",
         "allVMTags": "[union(parameters('virtualMachineTagValues'),variables('sidTag'))]",
         "applicationSecurityGroupID": "[resourceId(parameters('virtualNetworkResourceGroupName'),'Microsoft.Network/applicationSecurityGroups',parameters('applicationSecurityGroupName'))]",
-        "loadBalancerName": "[concat(variables('sapSystemIdLower'),'-wd-lb-std')]"
+        "loadBalancerName": "[concat(variables('sapSystemIdLower'),'-web-lb-std')]",
+        "github": "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/master/ARMTemplates/serverTemplates/",
+        "customImage": "[if(greater(length(trim(parameters('imageID'))),2),parameters('imageID'),'')]"
+
 
     },
     "resources": [
@@ -317,11 +334,11 @@
                 },
                 "storageProfile": {
                     "imageReference": {
-                        "publisher": "[if(empty(parameters('imageID')), parameters('publisher'),json('null'))]",
-                        "offer": "[if(empty(parameters('imageID')), parameters('offer'),json('null'))]",
-                        "sku": "[if(empty(parameters('imageID')), parameters('sku'),json('null'))]",
-                        "version": "[if(empty(parameters('imageID')), parameters('version'),json('null'))]",
-                        "id": "[if(not(empty(parameters('imageID'))), parameters('imageID'),json('null'))]"
+                        "publisher": "[if(empty(variables('customImage')), parameters('publisher'),json('null'))]",
+                        "offer": "[if(empty(variables('customImage')), parameters('offer'),json('null'))]",
+                        "sku": "[if(empty(variables('customImage')), parameters('sku'),json('null'))]",
+                        "version": "[if(empty(variables('customImage')), parameters('version'),json('null'))]",
+                        "id": "[if(not(empty(variables('customImage'))), parameters('imageID'),json('null'))]"
                     },
                     "osDisk": {
                         "name": "[concat(variables('sapMachineName'),'-', padLeft(copyIndex(1),2,'0'), '-osdisk')]",
@@ -377,7 +394,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/master/ARMTemplates/serverTemplates/disks/AppVMDisks.json",
+                    "uri": "[concat(variables('github'),'/disks/AppVMDisks.json')]",
                     "contentVersion": "1.0.0.0"
                 },
 
@@ -392,7 +409,7 @@
                         "value": "[parameters('location')]"
                     },
                     "Zone": {
-                                                "value": "[if(empty(parameters('Zone')), '', if(greater(length(parameters('Zone')),1),parameters('Zone')[mod(copyIndex(0),2)],parameters('Zone')[0]))]"
+                        "value": "[if(empty(parameters('Zone')), '', if(greater(length(parameters('Zone')),1),parameters('Zone')[mod(copyIndex(0),2)],parameters('Zone')[0]))]"
                     }
 
                 }
@@ -405,7 +422,7 @@
             "dependsOn": [
                 "[concat(variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'), '-nic')]"
             ],
-            "condition": "[not(empty(parameters('PrivateIP')))]",
+            "condition": "[not(empty(parameters('PrivateIP')[0]))]",
             "properties": {
                 "mode": "Incremental",
                 "template": {
