@@ -110,7 +110,7 @@
 
         },
         "virtualMachineTagValues": {
-            "type": "object",
+            "type": "string",
             "defaultValue": "{ \"System\": \"SAP\", \"$perfOptimizationLevel\": \"1\" }"
         },
         "virtualNetworkName": {
@@ -161,7 +161,7 @@
             }
         },
         "nrOfDisks": "[variables('diskSizes')['ASCS'].nrDisks]",
-        "allVMTags": "[union(parameters('virtualMachineTagValues'),variables('sidTag'))]",
+        "allVMTags": "[union(json(parameters('virtualMachineTagValues')),variables('sidTag'))]",
         "applicationSecurityGroupID": "[resourceId(parameters('virtualNetworkResourceGroupName'),'Microsoft.Network/applicationSecurityGroups',parameters('applicationSecurityGroupName'))]",
         "github": "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/master/ARMTemplates/serverTemplates/",
         "customImage": "[if(greater(length(trim(parameters('imageID'))),2),parameters('imageID'),'')]"
