@@ -26,17 +26,17 @@
         "availabilitySetName": {
             "type": "string"
         },
-        "HasPublicIP": {
-            "type": "bool",
-            "defaultValue": false
-        },
         "imageID": {
             "type": "string",
             "defaultValue": null,
             "minLength": 0
         },
         "publisher": {
-            "type": "string"
+            "type": "string",
+            "allowedValues": [
+                "suse",
+                "RedHat"
+            ]
         },
         "offer": {
             "type": "string"
@@ -46,6 +46,10 @@
         },
         "version": {
             "type": "string"
+        },
+        "HasPublicIP": {
+            "type": "bool",
+            "defaultValue": false
         },
         "location": {
             "type": "string",
@@ -105,6 +109,10 @@
                 "Standard_M416ms_v2"
             ]
         },
+        "virtualMachineTagValues": {
+            "type": "object",
+            "defaultValue": "{ \"System\": \"SAP\", \"$perfOptimizationLevel\": \"1\" }"
+        },
         "virtualNetworkName": {
             "type": "string",
             "metadata": {
@@ -113,11 +121,8 @@
             "defaultValue": "demo-vnet"
         },
         "virtualNetworkResourceGroupName": {
-            "type": "string"
-        },
-        "virtualMachineTagValues": {
-            "type": "object",
-            "defaultValue": null
+            "type": "string",
+            "defaultValue": "demo-vnet-rg"
         },
         "Zone": {
             "type": "array",
@@ -125,7 +130,6 @@
                 ""
             ]
         }
-
     },
     "variables": {
         "sapSystemIdLower": "[toLower(parameters('sapSystemId'))]",

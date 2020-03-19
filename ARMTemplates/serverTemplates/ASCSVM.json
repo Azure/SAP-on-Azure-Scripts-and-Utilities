@@ -45,7 +45,7 @@
         },
         "HasPublicIP": {
             "type": "bool",
-            "defaultValue":false
+            "defaultValue": false
         },
         "location": {
             "type": "string",
@@ -78,6 +78,12 @@
             },
             "defaultValue": "app-snet"
         },
+        "virtualMachineCount": {
+            "type": "int",
+            "defaultValue": 1
+
+        },
+
         "virtualMachineName": {
             "type": "string",
             "defaultValue": "ascs"
@@ -90,8 +96,10 @@
                 "Standard_D8s_v3"
             ],
             "defaultValue": "Standard_D2s_v3"
-
-
+        },
+        "virtualMachineTagValues": {
+            "type": "object",
+            "defaultValue": "{ \"System\": \"SAP\", \"$perfOptimizationLevel\": \"1\" }"
         },
         "virtualNetworkName": {
             "type": "string",
@@ -101,16 +109,8 @@
             "defaultValue": "demo-vnet"
         },
         "virtualNetworkResourceGroupName": {
-            "type": "string"
-        },
-        "virtualMachineCount": {
-            "type": "int",
-            "defaultValue": 1
-
-        },
-        "virtualMachineTagValues": {
-            "type": "object",
-            "defaultValue": null
+            "type": "string",
+            "defaultValue": "demo-vnet-rg"
         },
         "Zone": {
             "type": "array",

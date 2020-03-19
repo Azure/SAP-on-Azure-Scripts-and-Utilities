@@ -111,7 +111,7 @@
         },
         "virtualMachineTagValues": {
             "type": "object",
-            "defaultValue": null
+            "defaultValue": "{ \"System\": \"SAP\", \"$perfOptimizationLevel\": \"1\" }"
         },
         "virtualNetworkName": {
             "type": "string",
@@ -121,7 +121,8 @@
             "defaultValue": "demo-vnet"
         },
         "virtualNetworkResourceGroupName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "demo-vnet-rg"
         },
         "Zone": {
             "type": "array",

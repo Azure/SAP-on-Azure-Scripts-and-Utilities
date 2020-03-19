@@ -2,19 +2,15 @@
     "$schema": "https://schema.management.azure.com/schemas/2018-05-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "sapSystemId": {
-            "type": "string",
-            "minLength": 3,
-            "maxLength": 3,
-            "metadata": {
-                "description": "The SAP System ID"
-            }
-        },
         "adminUsername": {
             "type": "string"
         },
         "adminPasswordOrKey": {
             "type": "securestring"
+        },
+        "applicationSecurityGroupName": {
+            "type": "string",
+            "defaultValue": "sap-app-asg"
         },
         "authenticationType": {
             "type": "string",
@@ -27,18 +23,74 @@
                 "description": "Type of authentication to use on the Virtual Machine."
             }
         },
+        "availabilitySetName": {
+            "type": "string"
+        },
+        "imageID": {
+            "type": "string",
+            "defaultValue": null,
+            "minLength": 0
+        },
+        "publisher": {
+            "type": "string",
+            "allowedValues": [
+                "suse",
+                "RedHat"
+            ]
+        },
+        "offer": {
+            "type": "string"
+        },
+        "sku": {
+            "type": "string"
+        },
+        "version": {
+            "type": "string"
+        },
+        "HasPublicIP": {
+            "type": "bool",
+            "defaultValue": false
+        },
         "location": {
             "type": "string",
             "metadata": {
                 "description": "The location of the resource"
             },
-            "defaultValue": ""
+            "defaultValue": "[resourceGroup().location]"
         },
-        "virtualMachineName": {
+        "PrivateIP": {
+            "type": "array",
+            "defaultValue": [
+                ""
+            ]
+        },
+        "proximityPlacementGroupName": {
             "type": "string"
         },
+        "sapSystemId": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 3,
+            "metadata": {
+                "description": "The SAP System ID"
+            }
+        },
+        "subnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the subnet"
+            },
+            "defaultValue": "db-snet"
+        },
         "virtualMachineCount": {
-            "type": "int"
+            "type": "int",
+            "defaultValue": 1
+
+        },
+
+        "virtualMachineName": {
+            "type": "string",
+            "defaultValue": "db"
         },
         "virtualMachineSize": {
             "type": "string",
@@ -62,59 +114,26 @@
                 "Standard_M416ms_v2"
             ]
         },
-        "availabilitySetName": {
-            "type": "string"
-        },
-        "proximityPlacementGroupName": {
-            "type": "string"
-        },
-        "publisher": {
-            "type": "string"
-        },
-        "offer": {
-            "type": "string"
-        },
-        "sku": {
-            "type": "string"
-        },
-        "version": {
-            "type": "string"
-        },
-        "imageID": {
-            "type": "string"
-        },
-        "applicationSecurityGroupName": {
-            "type": "string",
-            "defaultValue": "sap-db-asg"
-        },
-        "virtualNetworkResourceGroupName": {
-            "type": "string"
+        "virtualMachineTagValues": {
+            "type": "object",
+            "defaultValue": "{ \"System\": \"SAP\", \"$perfOptimizationLevel\": \"1\" }"
         },
         "virtualNetworkName": {
             "type": "string",
             "metadata": {
                 "description": "The name of the vnet"
             },
-            "defaultValue": ""
+            "defaultValue": "demo-vnet"
         },
-        "subnetName": {
+        "virtualNetworkResourceGroupName": {
             "type": "string",
-            "metadata": {
-                "description": "The name of the subnet"
-            },
-            "defaultValue": "db-snet"
-        },
-        "PrivateIP": {
-            "type": "array"
-        },
-        "HasPublicIP": {
-            "type": "bool"
-        },
-        "virtualMachineTagValues": {
-            "type": "object"
+            "defaultValue": "demo-vnet-rg"
         },
         "Zone": {
-            "type": "array"
+            "type": "array",
+            "defaultValue": [
+                ""
+            ]
         }
     },
     "variables": {

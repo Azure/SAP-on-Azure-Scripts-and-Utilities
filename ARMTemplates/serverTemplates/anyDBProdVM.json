@@ -111,8 +111,9 @@
             "type": "string",
             "defaultValue": "Standard_E16s_v3"
         },
-        "virtualNetworkResourceGroupName": {
-            "type": "string"
+        "virtualMachineTagValues": {
+            "type": "object",
+            "defaultValue": "{ \"System\": \"SAP\", \"$perfOptimizationLevel\": \"1\" }"
         },
         "virtualNetworkName": {
             "type": "string",
@@ -121,8 +122,9 @@
             },
             "defaultValue": "demo-vnet"
         },
-        "virtualMachineTagValues": {
-            "type": "object"
+        "virtualNetworkResourceGroupName": {
+            "type": "string",
+            "defaultValue": "demo-vnet"
         },
         "Zone": {
             "type": "array",
