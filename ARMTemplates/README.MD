@@ -68,9 +68,19 @@ This folder contains the templates for the core infrastructure artifacts.
 
 This is the template for the Application Security Group deployment.
 
+[![Deploy to Azure](https://azuredeploy.net/deploybutton.png)](https://ms.portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FSAP-on-Azure-Scripts-and-Utilities%2Fmaster%2FARMTemplates%2FbaseInfrastructure%2Fasg.json)
+
+#### **keyvault.json**
+
+This is the template for the key vault deployment.
+
+[![Deploy to Azure](https://azuredeploy.net/deploybutton.png)](https://ms.portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FSAP-on-Azure-Scripts-and-Utilities%2Fmaster%2FARMTemplates%2FbaseInfrastructure%2Fkeyvault.json)
+
 #### **network.json**
 
 This is the template for the a sample network deployment.
+
+[![Deploy to Azure](https://azuredeploy.net/deploybutton.png)](https://ms.portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FSAP-on-Azure-Scripts-and-Utilities%2Fmaster%2FARMTemplates%2FbaseInfrastructure%2Fnetwork.json)
 
 #### **ppgavset.json**
 
@@ -151,25 +161,37 @@ This setting is specified in the *createNewEnvironment.ps1* file
 $DBSize = "51200"
 ```
 
+[![Deploy to Azure](https://azuredeploy.net/deploybutton.png)](https://ms.portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FSAP-on-Azure-Scripts-and-Utilities%2Fmaster%2FARMTemplates%2FserverTemplates%2FanyDBProdVM.json)
+
 ### **APPVM.json**
 
 This is the template for an application server virtual machine.
+
+[![Deploy to Azure](https://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FSAP-on-Azure-Scripts-and-Utilities%2Fmaster%2FARMTemplates%2FserverTemplates%2FAppVM.json)
 
 ### **ASCSVM.json**
 
 This is the template for an ASCS virtual machine.
 
+[![Deploy to Azure](https://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FSAP-on-Azure-Scripts-and-Utilities%2Fmaster%2FARMTemplates%2FserverTemplates%2FASCSVM.json)
+
 ### **HanaDevVM.json**
 
 This is the template for a development database virtual machine designed to host the Hana Server.
+
+[![Deploy to Azure](https://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FSAP-on-Azure-Scripts-and-Utilities%2Fmaster%2FARMTemplates%2FserverTemplates%2FhanaDevVM.json)
 
 ### **HanaProdVM.json**
 
 This is the template for a database virtual machine designed to host the Hana Server.
 
+[![Deploy to Azure](https://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FSAP-on-Azure-Scripts-and-Utilities%2Fmaster%2FARMTemplates%2FserverTemplates%2FhanaProdVM.json)
+
 ### **WDVM.json**
 
 This is the template for a Web Dispatch virtual machine.
+
+[![Deploy to Azure](https://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FSAP-on-Azure-Scripts-and-Utilities%2Fmaster%2FARMTemplates%2FserverTemplates%2FWDVM.json)
 
 ## **Creating a new deployment of a new SAP environment on Azure**
 
