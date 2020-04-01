@@ -45,7 +45,7 @@
         },
         "HasPublicIP": {
             "type": "bool",
-            "defaultValue": false
+            "defaultValue":false
         },
         "location": {
             "type": "string",
@@ -78,12 +78,6 @@
             },
             "defaultValue": "app-snet"
         },
-        "virtualMachineCount": {
-            "type": "int",
-            "defaultValue": 1
-
-        },
-
         "virtualMachineName": {
             "type": "string",
             "defaultValue": "web"
@@ -96,10 +90,8 @@
                 "Standard_D8s_v3"
             ],
             "defaultValue": "Standard_D2s_v3"
-        },
-        "virtualMachineTagValues": {
-            "type": "string",
-            "defaultValue": "{ \"System\": \"SAP\", \"$perfOptimizationLevel\": \"1\" }"
+
+
         },
         "virtualNetworkName": {
             "type": "string",
@@ -109,8 +101,16 @@
             "defaultValue": "demo-vnet"
         },
         "virtualNetworkResourceGroupName": {
-            "type": "string",
-            "defaultValue": "demo-vnet-rg"
+            "type": "string"
+        },
+        "virtualMachineCount": {
+            "type": "int",
+            "defaultValue": 1
+
+        },
+        "virtualMachineTagValues": {
+            "type": "object",
+            "defaultValue": null
         },
         "Zone": {
             "type": "array",
@@ -119,7 +119,7 @@
             ]
         }
     },
-   "variables": {
+    "variables": {
         "sapSystemIdLower": "[toLower(parameters('sapSystemId'))]",
         "locationName": "[if(empty(parameters('location')) , resourceGroup().location,parameters('location'))]",
         "sapMachineName": "[concat(variables('sapSystemIdLower'),'-',parameters('virtualMachineName'))]",
@@ -148,7 +148,7 @@
             }
         },
         "nrOfDisks": "[variables('diskSizes')['ASCS'].nrDisks]",
-        "allVMTags": "[union(json(parameters('virtualMachineTagValues')),variables('sidTag'))]",
+        "allVMTags": "[union(parameters('virtualMachineTagValues'),variables('sidTag'))]",
         "applicationSecurityGroupID": "[resourceId(parameters('virtualNetworkResourceGroupName'),'Microsoft.Network/applicationSecurityGroups',parameters('applicationSecurityGroupName'))]",
         "loadBalancerName": "[concat(variables('sapSystemIdLower'),'-web-lb-std')]",
         "github": "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/master/ARMTemplates/serverTemplates/",
@@ -344,7 +344,7 @@
                         "name": "[concat(variables('sapMachineName'),'-', padLeft(copyIndex(1),2,'0'), '-osdisk')]",
                         "caching": "ReadWrite",
                         "createOption": "FromImage",
-                        "diskSizeGB": 63,
+                        "diskSizeGB": "[if(startsWith(toLower(parameters('publisher')),'microsoft') ,127, 63)]",
                         "managedDisk": {
                             "storageAccountType": "Premium_LRS"
 

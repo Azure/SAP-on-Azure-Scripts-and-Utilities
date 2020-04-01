@@ -110,8 +110,8 @@
 
         },
         "virtualMachineTagValues": {
-            "type": "string",
-            "defaultValue": "{ \"System\": \"SAP\", \"$perfOptimizationLevel\": \"1\" }"
+            "type": "object",
+            "defaultValue": null
         },
         "virtualNetworkName": {
             "type": "string",
@@ -121,8 +121,7 @@
             "defaultValue": "demo-vnet"
         },
         "virtualNetworkResourceGroupName": {
-            "type": "string",
-            "defaultValue": "demo-vnet-rg"
+            "type": "string"
         },
         "Zone": {
             "type": "array",
@@ -161,7 +160,7 @@
             }
         },
         "nrOfDisks": "[variables('diskSizes')['ASCS'].nrDisks]",
-        "allVMTags": "[union(json(parameters('virtualMachineTagValues')),variables('sidTag'))]",
+        "allVMTags": "[union(parameters('virtualMachineTagValues'),variables('sidTag'))]",
         "applicationSecurityGroupID": "[resourceId(parameters('virtualNetworkResourceGroupName'),'Microsoft.Network/applicationSecurityGroups',parameters('applicationSecurityGroupName'))]",
         "github": "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/master/ARMTemplates/serverTemplates/",
         "customImage": "[if(greater(length(trim(parameters('imageID'))),2),parameters('imageID'),'')]"
@@ -314,7 +313,7 @@
                         "name": "[concat(variables('sapMachineName'),'-', padLeft(copyIndex(1),2,'0'), '-osdisk')]",
                         "caching": "ReadWrite",
                         "createOption": "FromImage",
-                        "diskSizeGB": 63,
+                        "diskSizeGB": "[if(startsWith(toLower(parameters('publisher')),'microsoft') ,127, 63)]",
                         "managedDisk": {
                             "storageAccountType": "Premium_LRS"
 

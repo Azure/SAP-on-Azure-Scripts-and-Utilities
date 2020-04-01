@@ -9,7 +9,6 @@ if ($subscriptionID -eq "[SUBSCRIPTIONID]") {
 
 #Change $Verbose to $true for verbose output
 $Verbose = $false
-
 $VerboseFlag = ""
 
 if ($Verbose) {
@@ -23,11 +22,21 @@ $dbsubnetName = "db-snet"
 $appsubnetName = "app-snet"
 $appASG = "sap-app-asg"
 $dbASG = "sap-db-asg"
+$keyVaultName="sap-kv"
+$adminUserName = "demoadmin"
+$keyVaultSecretName="mypassword"
 
 $HasPublicIP = $true
-$WebDispatch = $false
+$WebDispatch = $true
 
-$KeyVaultID = "/subscriptions/[SUBSCRIPTIONID]/resourceGroups/[VAULTGROUP]/providers/Microsoft.KeyVault/vaults/[VAULTNAME]"
+#Get the Key Vault id
+$kv = Get-AzKeyVault -VaultName $keyVaultName
+
+if ($null -eq $kv) {
+    Write-Error -Message "The key vault '" + $keyVaultName + "' does not exist"
+    exit
+}
+$KeyVaultID = $kv.ResourceId
 
 Add-Type -TypeDefinition @"
    public enum DBType
@@ -38,7 +47,7 @@ Add-Type -TypeDefinition @"
    }
 "@
 
-[DBType]$Database = [DBType]::AnyDB
+[DBType]$Database = [DBType]::HanaProd
 
 #How many ASCS Servers are needed
 $NumberOfASCSServers = 2
@@ -62,6 +71,12 @@ $AppPublisher = "suse"
 $AppOffer = "sles-15-sp1"
 $AppSKU = "gen1"
 $AppSKUVersion = "latest"
+
+# Comment this out if you want to use Windows
+# $AppPublisher = "MicrosoftWindowsServer"
+# $AppOffer = "WindowsServer"
+# $AppSKU = "2016-Datacenter"
+# $AppSKUVersion = "latest"
 $AppServerImageID = ""
 
 #VM Size for the application server
@@ -80,7 +95,9 @@ $DBSKUVersion = "latest"
 #If you want to use a marketplace image $xxxxxImageID needs to be an empty string
 #Custom image ID
 $DBServerImageID = ""
-$DBVMSize = "Standard_E32s_v3"
+$DBVMSize = "Standard_M64s"
+
+#This only applies for AnyDB
 $DBSize = "51200"
 
 #Is High Availability required
@@ -126,7 +143,6 @@ Copy-Item ..\baseInfrastructure\ppgavset.parameters.json $SID
 (Get-Content $templateFilePath).replace('[SID]', $SID) | Set-Content $templateFilePath
 (Get-Content $templateFilePath).replace('[LOCATION]', $region) | Set-Content $templateFilePath
 
-
 #Database template parameter file
 
 $DBDeploymentScript = ""
@@ -160,6 +176,8 @@ $DBDeploymentScript += $DeploymentScriptStep
 
 (Get-Content $dbTemplateFilePath).replace('[SID]', $SID) | Set-Content $dbTemplateFilePath
 (Get-Content $dbTemplateFilePath).replace('[KeyVaultID]', $KeyVaultID) | Set-Content $dbTemplateFilePath
+(Get-Content $dbTemplateFilePath).replace('[PASSWORDSECRET]', $keyVaultSecretName) | Set-Content $dbTemplateFilePath
+(Get-Content $dbTemplateFilePath).replace('[ADMINUSER]', $adminUserName) | Set-Content $dbTemplateFilePath
 (Get-Content $dbTemplateFilePath).replace('[ImageID]', $DBServerImageID) | Set-Content $dbTemplateFilePath
 (Get-Content $dbTemplateFilePath).replace('[LOCATION]', $region) | Set-Content $dbTemplateFilePath
 (Get-Content $dbTemplateFilePath).replace('[SERVERNAME]', $dbServerName) | Set-Content $dbTemplateFilePath
@@ -194,6 +212,8 @@ Copy-Item "..\serverTemplates\parameterFiles\appVM.parameters.json" $appTemplate
     
 (Get-Content $appTemplateFilePath).replace('[SID]', $SID) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[KeyVaultID]', $KeyVaultID) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[PASSWORDSECRET]', $keyVaultSecretName) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[ADMINUSER]', $adminUserName) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[ImageID]', $AppServerImageID) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[LOCATION]', $region) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[SERVERNAME]', $appServerName) | Set-Content $appTemplateFilePath
@@ -227,6 +247,8 @@ Copy-Item "..\serverTemplates\parameterFiles\ASCSVM.parameters.json" $appTemplat
     
 (Get-Content $appTemplateFilePath).replace('[SID]', $SID) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[KeyVaultID]', $KeyVaultID) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[PASSWORDSECRET]', $keyVaultSecretName) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[ADMINUSER]', $adminUserName) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[ImageID]', $ASCSServerImageID) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[LOCATION]', $region) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[SERVERNAME]', $ascsServerName) | Set-Content $appTemplateFilePath
@@ -249,19 +271,21 @@ if ($WebDispatch) {
     $WDDeploymentScript = ""
     $wdServerName = ""
     $appTemplateFilePath = [System.String]::Format('{0}\{1}\{1}.wdVM.parameters.json', $s, $SID)
-    $wdServerName = [System.String]::Format('webdispatch')
+    $wdServerName = [System.String]::Format('webdisp')
         
     $DeploymentScriptStep = [System.String]::Format('{1}Write-Host "Creating Web Dispatch Server(s)"{1}$res = New-AzResourceGroupDeployment -Name "WebServer_Creation-{2}" -ResourceGroupName $ResourceGroupName -TemplateFile ..\..\servertemplates\[WDServerImage].json -TemplateParameterFile .\[SID].[WDServerImage].parameters.json {3}{1}if ($res.ProvisioningState -ne "Succeeded") {{ {1}  Write-Error -Message "The deployment failed" {1}}}{1}', $i, [Environment]::NewLine, $wdServerName, $VerboseFlag)
     $WDDeploymentScript += $DeploymentScriptStep
 
     #Copying the application server template parameter file
     
-    Copy-Item "..\serverTemplates\parameterFiles\ascsVM.parameters.json" $appTemplateFilePath 
+    Copy-Item "..\serverTemplates\parameterFiles\wdVM.parameters.json" $appTemplateFilePath 
     
     #Modifying the application server template parameter file
     
     (Get-Content $appTemplateFilePath).replace('[SID]', $SID) | Set-Content $appTemplateFilePath
     (Get-Content $appTemplateFilePath).replace('[KeyVaultID]', $KeyVaultID) | Set-Content $appTemplateFilePath
+    (Get-Content $appTemplateFilePath).replace('[PASSWORDSECRET]', $keyVaultSecretName) | Set-Content $appTemplateFilePath
+    (Get-Content $appTemplateFilePath).replace('[ADMINUSER]', $adminUserName) | Set-Content $appTemplateFilePath
     (Get-Content $appTemplateFilePath).replace('[ImageID]', $AppServerImageID) | Set-Content $appTemplateFilePath
     (Get-Content $appTemplateFilePath).replace('[LOCATION]', $region) | Set-Content $appTemplateFilePath
     (Get-Content $appTemplateFilePath).replace('[SERVERNAME]', $wdServerName) | Set-Content $appTemplateFilePath
@@ -276,8 +300,6 @@ if ($WebDispatch) {
     (Get-Content $appTemplateFilePath).replace('[APPASG]', $appASG) | Set-Content $appTemplateFilePath        
     (Get-Content $appTemplateFilePath).replace('"[VMCount]"', $NumberOfAppServers.ToString()) | Set-Content $appTemplateFilePath        
     (Get-Content $appTemplateFilePath).replace('"[HASPUBLICIP]"', $HasPublicIP.ToString().ToLower()) | Set-Content $appTemplateFilePath        
-    
-
 }
 
 #Copying the deployment script

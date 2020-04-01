@@ -6,7 +6,7 @@
       "value": "[SID]"
     },
     "adminUsername": {
-      "value": "demoadmin"
+      "value": "[ADMINUSER]"
     },
     "authenticationType": {
       "value": "password"
@@ -22,20 +22,20 @@
     "location": {
       "value": "[LOCATION]"
     },
-    "virtualMachineName": {
-      "value": "[SERVERNAME]"
-    },
     "virtualMachineSize": {
       "value": "[MACHINESIZE]"
     },
+    "virtualMachineName": {
+      "value": "[SERVERNAME]"
+    },
     "PrivateIP": {
-      "value": []
+      "value": [""]
     },
     "HasPublicIP": {
       "value": "[HASPUBLICIP]"
     },
     "availabilitySetName": {
-      "value": "[SID]-db-avset"
+      "value": "[SID]-web-avset"
     },
     "proximityPlacementGroupName": {
       "value": "[SID]-ppg"
@@ -59,7 +59,7 @@
       "value": "[VMCount]"
     },
     "applicationSecurityGroupName": {
-      "value": "[DBASG]"
+      "value": "[APPASG]"
     },
     "virtualNetworkResourceGroupName": {
       "value": "[VNetRG]"
@@ -68,7 +68,7 @@
       "value": "[VNetName]"
     },
     "subnetName": {
-      "value": "[DBSubnetName]"
+      "value": "[AppSubnetName]"
     },
     "virtualMachineTagValues": {
       "value": { "System": "SAP", "$perfOptimizationLevel": "1" }
@@ -76,5 +76,7 @@
     "Zone": {
         "value": []
     }
+
+
   }
 }

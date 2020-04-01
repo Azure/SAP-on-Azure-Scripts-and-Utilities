@@ -16,7 +16,7 @@
         "keyVault": {
           "id": "[KeyVaultID]"
         },
-        "secretName": "mypassword"
+        "secretName": "[PASSWORDSECRET]"
       }
     },
     "location": {
