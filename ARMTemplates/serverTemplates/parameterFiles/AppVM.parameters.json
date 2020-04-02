@@ -6,7 +6,7 @@
       "value": "[APPASG]"
     },
     "adminUsername": {
-      "value": "demoadmin"
+      "value": "[ADMINUSER]"
     },
     "adminPasswordOrKey": {
       "reference": {
@@ -21,6 +21,10 @@
     },
     "availabilitySetName": {
       "value": "[SID]-app-avset"
+    },
+    "diagnosticsStorageAccount":
+    {
+      "value": "[DIAGNOSTICSACCOUNT]"
     },
     "HasPublicIP": {
       "value": "[HASPUBLICIP]"
@@ -44,7 +48,7 @@
       "value": "[LOCATION]"
     },
     "PrivateIP": {
-      "value": []
+      "value": [""]
     },
     "proximityPlacementGroupName": {
       "value": "[SID]-ppg"

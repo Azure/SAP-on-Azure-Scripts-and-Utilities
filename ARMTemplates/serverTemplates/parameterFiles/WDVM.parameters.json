@@ -19,23 +19,21 @@
         "secretName": "[PASSWORDSECRET]"
       }
     },
+    "availabilitySetName": {
+      "value": "[SID]-web-avset"
+    },
     "location": {
       "value": "[LOCATION]"
     },
-    "virtualMachineSize": {
-      "value": "[MACHINESIZE]"
-    },
-    "virtualMachineName": {
-      "value": "[SERVERNAME]"
-    },
-    "PrivateIP": {
-      "value": [""]
+    "diagnosticsStorageAccount":
+    {
+      "value": "[DIAGNOSTICSACCOUNT]"
     },
     "HasPublicIP": {
       "value": "[HASPUBLICIP]"
     },
-    "availabilitySetName": {
-      "value": "[SID]-web-avset"
+    "PrivateIP": {
+      "value": [""]
     },
     "proximityPlacementGroupName": {
       "value": "[SID]-ppg"
@@ -60,6 +58,12 @@
     },
     "applicationSecurityGroupName": {
       "value": "[APPASG]"
+    },
+    "virtualMachineSize": {
+      "value": "[MACHINESIZE]"
+    },
+    "virtualMachineName": {
+      "value": "[SERVERNAME]"
     },
     "virtualNetworkResourceGroupName": {
       "value": "[VNetRG]"

@@ -2,11 +2,11 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "sapSystemId": {
-      "value": "[SID]"
-    },
     "adminUsername": {
-      "value": "demoadmin"
+      "value": "[ADMINUSER]"
+    },
+    "applicationSecurityGroupName": {
+      "value": "[DBASG]"
     },
     "authenticationType": {
       "value": "password"
@@ -19,27 +19,24 @@
         "secretName": "[PASSWORDSECRET]"
       }
     },
-    "location": {
-      "value": "[LOCATION]"
+    "availabilitySetName": {
+      "value": "[SID]-db-avset"
     },
-    "virtualMachineName": {
-      "value": "[SERVERNAME]"
-    },
-    "virtualMachineSize": {
-      "value": "[MACHINESIZE]"
-    },
-
     "dbSize": {
       "value": "[DBSIZE]"
     },
-    "PrivateIP": {
-      "value": []
+    "diagnosticsStorageAccount":
+    {
+      "value": "[DIAGNOSTICSACCOUNT]"
     },
     "HasPublicIP": {
       "value": "[HASPUBLICIP]"
     },
-    "availabilitySetName": {
-      "value": "[SID]-db-avset"
+    "location": {
+      "value": "[LOCATION]"
+    },
+    "PrivateIP": {
+      "value": [""]
     },
     "proximityPlacementGroupName": {
       "value": "[SID]-ppg"
@@ -62,14 +59,20 @@
     "virtualMachineCount": {
       "value": "[VMCount]"
     },
-    "applicationSecurityGroupName": {
-      "value": "[DBASG]"
+    "virtualMachineName": {
+      "value": "[SERVERNAME]"
+    },
+    "virtualMachineSize": {
+      "value": "[MACHINESIZE]"
     },
     "virtualNetworkResourceGroupName": {
       "value": "[VNetRG]"
     },
     "virtualNetworkName": {
       "value": "[VNetName]"
+    },
+    "sapSystemId": {
+      "value": "[SID]"
     },
     "subnetName": {
       "value": "[DBSubnetName]"

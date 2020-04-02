@@ -42,9 +42,13 @@
                 "51200"
             ],
             "defaultValue": "1024"
-
         },
-
+        "diagnosticsStorageAccount": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the diagnostics storage account"
+            }
+        },
         "HasPublicIP": {
             "type": "bool",
             "defaultValue": false
@@ -100,9 +104,7 @@
         "virtualMachineCount": {
             "type": "int",
             "defaultValue": 1
-
         },
-
         "virtualMachineName": {
             "type": "string",
             "defaultValue": "db"
@@ -111,9 +113,8 @@
             "type": "string",
             "defaultValue": "Standard_E16s_v3"
         },
-        "virtualMachineTagValues": {
-            "type": "string",
-            "defaultValue": "{ \"System\": \"SAP\", \"$perfOptimizationLevel\": \"1\" }"
+        "virtualNetworkResourceGroupName": {
+            "type": "string"
         },
         "virtualNetworkName": {
             "type": "string",
@@ -122,9 +123,8 @@
             },
             "defaultValue": "demo-vnet"
         },
-        "virtualNetworkResourceGroupName": {
-            "type": "string",
-            "defaultValue": "demo-vnet"
+        "virtualMachineTagValues": {
+            "type": "object"
         },
         "Zone": {
             "type": "array",
@@ -155,7 +155,7 @@
         "sidTag": {
             "SID": "[parameters('sapSystemId')]"
         },
-        "allVMTags": "[union(json(parameters('virtualMachineTagValues')),variables('sidTag'))]",
+        "allVMTags": "[union(parameters('virtualMachineTagValues'),variables('sidTag'))]",
         "diskSizes": {
             "200": {
                 "vmSku": "Standard_E4s_v3",
@@ -462,6 +462,12 @@
                             "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'), '-nic'))]"
                         }
                     ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "[concat('https://',parameters('diagnosticsStorageAccount'),'.blob.core.windows.net/')]"
+                    }
                 }
             },
             "copy": {

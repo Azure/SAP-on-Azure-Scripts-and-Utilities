@@ -26,17 +26,23 @@
         "availabilitySetName": {
             "type": "string"
         },
+        "diagnosticsStorageAccount": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the diagnostics storage account"
+            }
+        },
+        "HasPublicIP": {
+            "type": "bool",
+            "defaultValue": false
+        },
         "imageID": {
             "type": "string",
-            "defaultValue": "",
+            "defaultValue": null,
             "minLength": 0
         },
         "publisher": {
-            "type": "string",
-            "allowedValues": [
-                "suse",
-                "RedHat"
-            ]
+            "type": "string"
         },
         "offer": {
             "type": "string"
@@ -46,10 +52,6 @@
         },
         "version": {
             "type": "string"
-        },
-        "HasPublicIP": {
-            "type": "bool",
-            "defaultValue": false
         },
         "location": {
             "type": "string",
@@ -85,9 +87,7 @@
         "virtualMachineCount": {
             "type": "int",
             "defaultValue": 1
-
         },
-
         "virtualMachineName": {
             "type": "string",
             "defaultValue": "db"
@@ -109,11 +109,6 @@
                 "Standard_M416ms_v2"
             ]
         },
-        "virtualMachineTagValues": {
-            "type": "string",
-            "defaultValue": "{ \"System\": \"SAP\", \"$perfOptimizationLevel\": \"1\" }"
-            
-        },
         "virtualNetworkName": {
             "type": "string",
             "metadata": {
@@ -122,8 +117,11 @@
             "defaultValue": "demo-vnet"
         },
         "virtualNetworkResourceGroupName": {
-            "type": "string",
-            "defaultValue": "demo-vnet-rg"
+            "type": "string"
+        },
+        "virtualMachineTagValues": {
+            "type": "object",
+            "defaultValue": null
         },
         "Zone": {
             "type": "array",
@@ -154,7 +152,7 @@
         "sidTag": {
             "SID": "[parameters('sapSystemId')]"
         },
-        "allVMTags": "[union(json(parameters('virtualMachineTagValues')),variables('sidTag'))]",
+        "allVMTags": "[union(parameters('virtualMachineTagValues'),variables('sidTag'))]",
         "diskSizes": {
             "Standard_E32s_v3": {
                 "osdiskSizeGB": 127,
@@ -445,6 +443,12 @@
                             "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'), '-nic'))]"
                         }
                     ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "[concat('https://',parameters('diagnosticsStorageAccount'),'.blob.core.windows.net/')]"
+                    }
                 }
             },
             "copy": {

@@ -26,6 +26,12 @@
         "availabilitySetName": {
             "type": "string"
         },
+        "diagnosticsStorageAccount": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the diagnostics storage account"
+            }
+        },
         "imageID": {
             "type": "string",
             "defaultValue": null,
@@ -45,7 +51,7 @@
         },
         "HasPublicIP": {
             "type": "bool",
-            "defaultValue":false
+            "defaultValue": false
         },
         "location": {
             "type": "string",
@@ -123,7 +129,7 @@
         "sapSystemIdLower": "[toLower(parameters('sapSystemId'))]",
         "locationName": "[if(empty(parameters('location')) , resourceGroup().location,parameters('location'))]",
         "sapMachineName": "[concat(variables('sapSystemIdLower'),'-',parameters('virtualMachineName'))]",
-        "avSetName": "[if(empty(parameters('availabilitySetName')), concat(variables('sapSystemIdLower'),'-app-web'),parameters('availabilitySetName'))]",
+        "avSetName": "[if(empty(parameters('availabilitySetName')), concat(variables('sapSystemIdLower'),'-web-avset'),parameters('availabilitySetName'))]",
         "ppgName": "[if(empty(parameters('proximityPlacementGroupName')), concat(variables('sapSystemIdLower'),'-ppg'),parameters('proximityPlacementGroupName'))]",
         "vnetID": "[resourceid(parameters('virtualNetworkResourceGroupName') ,'Microsoft.Network/virtualNetworks',parameters('virtualNetworkName'))]",
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
@@ -178,7 +184,7 @@
         },
         {
             "type": "Microsoft.Compute/availabilitySets",
-            "name": "[variables('avSetName')]",
+            "name": "[toLower(variables('avSetName'))]",
             "apiVersion": "2018-10-01",
             "location": "[variables('locationName')]",
             "condition": "[or(empty(parameters('Zone')),equals(length(parameters('Zone')),1))]",
@@ -374,6 +380,12 @@
                             "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'), '-nic'))]"
                         }
                     ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "[concat('https://',parameters('diagnosticsStorageAccount'),'.blob.core.windows.net/')]"
+                    }
                 }
             },
             "copy": {

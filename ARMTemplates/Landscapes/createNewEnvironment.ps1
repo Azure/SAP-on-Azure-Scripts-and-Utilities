@@ -25,6 +25,7 @@ $dbASG = "sap-db-asg"
 $keyVaultName="sap-kv"
 $adminUserName = "demoadmin"
 $keyVaultSecretName="mypassword"
+$diagnosticLogStorageAccount = "sapstoragekfo"
 
 $HasPublicIP = $true
 $WebDispatch = $true
@@ -178,6 +179,7 @@ $DBDeploymentScript += $DeploymentScriptStep
 (Get-Content $dbTemplateFilePath).replace('[KeyVaultID]', $KeyVaultID) | Set-Content $dbTemplateFilePath
 (Get-Content $dbTemplateFilePath).replace('[PASSWORDSECRET]', $keyVaultSecretName) | Set-Content $dbTemplateFilePath
 (Get-Content $dbTemplateFilePath).replace('[ADMINUSER]', $adminUserName) | Set-Content $dbTemplateFilePath
+(Get-Content $dbTemplateFilePath).replace('[DIAGNOSTICSACCOUNT]', $diagnosticLogStorageAccount) | Set-Content $dbTemplateFilePath
 (Get-Content $dbTemplateFilePath).replace('[ImageID]', $DBServerImageID) | Set-Content $dbTemplateFilePath
 (Get-Content $dbTemplateFilePath).replace('[LOCATION]', $region) | Set-Content $dbTemplateFilePath
 (Get-Content $dbTemplateFilePath).replace('[SERVERNAME]', $dbServerName) | Set-Content $dbTemplateFilePath
@@ -214,6 +216,7 @@ Copy-Item "..\serverTemplates\parameterFiles\appVM.parameters.json" $appTemplate
 (Get-Content $appTemplateFilePath).replace('[KeyVaultID]', $KeyVaultID) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[PASSWORDSECRET]', $keyVaultSecretName) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[ADMINUSER]', $adminUserName) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[DIAGNOSTICSACCOUNT]', $diagnosticLogStorageAccount) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[ImageID]', $AppServerImageID) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[LOCATION]', $region) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[SERVERNAME]', $appServerName) | Set-Content $appTemplateFilePath
@@ -249,6 +252,7 @@ Copy-Item "..\serverTemplates\parameterFiles\ASCSVM.parameters.json" $appTemplat
 (Get-Content $appTemplateFilePath).replace('[KeyVaultID]', $KeyVaultID) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[PASSWORDSECRET]', $keyVaultSecretName) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[ADMINUSER]', $adminUserName) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[DIAGNOSTICSACCOUNT]', $diagnosticLogStorageAccount) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[ImageID]', $ASCSServerImageID) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[LOCATION]', $region) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[SERVERNAME]', $ascsServerName) | Set-Content $appTemplateFilePath
@@ -286,6 +290,7 @@ if ($WebDispatch) {
     (Get-Content $appTemplateFilePath).replace('[KeyVaultID]', $KeyVaultID) | Set-Content $appTemplateFilePath
     (Get-Content $appTemplateFilePath).replace('[PASSWORDSECRET]', $keyVaultSecretName) | Set-Content $appTemplateFilePath
     (Get-Content $appTemplateFilePath).replace('[ADMINUSER]', $adminUserName) | Set-Content $appTemplateFilePath
+    (Get-Content $appTemplateFilePath).replace('[DIAGNOSTICSACCOUNT]', $diagnosticLogStorageAccount) | Set-Content $appTemplateFilePath
     (Get-Content $appTemplateFilePath).replace('[ImageID]', $AppServerImageID) | Set-Content $appTemplateFilePath
     (Get-Content $appTemplateFilePath).replace('[LOCATION]', $region) | Set-Content $appTemplateFilePath
     (Get-Content $appTemplateFilePath).replace('[SERVERNAME]', $wdServerName) | Set-Content $appTemplateFilePath
