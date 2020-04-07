@@ -65,7 +65,7 @@ $ASCSServerImageID = ""
 $ASCSVMSize = "Standard_D2s_v3"
 
 #How many Application Servers are needed
-$NumberOfAppServers = 3
+$NumberOfAppServers = 2
 #Marketplace Template Information for the Application Server
 #If ImageID is provided then these fields will be ignored
 $AppPublisher = "suse"
