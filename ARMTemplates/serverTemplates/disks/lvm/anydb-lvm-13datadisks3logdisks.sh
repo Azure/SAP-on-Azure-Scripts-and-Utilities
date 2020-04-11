@@ -19,7 +19,7 @@ sudo lvcreate --extents 100%FREE --stripes 13 --name data-lv01 data-vg01
 
 sudo mkfs -t ext4 /dev/data-vg01/data-lv01
 sudo mkdir /data
-echo "/dev/data-vg01/data-lv01  /data  ext4  defaults,barrier=0,nofail  0  2" | sudo tee -a /etc/fstab
+echo "/dev/data-vg01/data-lv01  /data  ext4  defaults,nobarrier,nofail  0  2" | sudo tee -a /etc/fstab
 
 sudo pvcreate /dev/sdp
 sudo pvcreate /dev/sdq
@@ -30,4 +30,4 @@ sudo lvcreate --extents 100%FREE --stripes 3 --name log-lv01 log-vg01
 sudo mkfs -t ext4 /dev/log-vg01/log-lv01
 sudo mkdir /log
 
-echo "/dev/log-vg01/log-lv01  /log  ext4  defaults,barrier=0,nofail  0  2" | sudo tee -a /etc/fstab
+echo "/dev/log-vg01/log-lv01  /log  ext4  defaults,nobarrier,nofail  0  2" | sudo tee -a /etc/fstab
