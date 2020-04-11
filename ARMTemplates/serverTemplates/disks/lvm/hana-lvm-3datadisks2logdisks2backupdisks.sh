@@ -1,6 +1,5 @@
 # Create the volumes
-
-# Creating the /hana/data volume
+# Checking which /dev/sd? is mapped to which LUN
 
 read sdc <<< $(sudo lsscsi -u -i 3 | grep 3:0:0:0 | awk '{print $4}')
 read sdd <<< $(sudo lsscsi -u -i 3 | grep 3:0:0:1 | awk '{print $4}')
@@ -11,6 +10,8 @@ read sdh <<< $(sudo lsscsi -u -i 3 | grep 3:0:0:5 | awk '{print $4}')
 read sdi <<< $(sudo lsscsi -u -i 3 | grep 3:0:0:6 | awk '{print $4}')
 read sdj <<< $(sudo lsscsi -u -i 3 | grep 3:0:0:7 | awk '{print $4}')
 read sdk <<< $(sudo lsscsi -u -i 3 | grep 3:0:0:8 | awk '{print $4}')
+
+# Creating the /hana/data volume
 
 sudo pvcreate $sdc
 sudo pvcreate $sdd

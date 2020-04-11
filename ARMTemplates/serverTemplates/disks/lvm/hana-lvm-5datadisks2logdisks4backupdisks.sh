@@ -1,31 +1,46 @@
 # Create the volumes
+# Checking which /dev/sd? is mapped to which LUN
+
+read sdc <<< $(sudo lsscsi -u -i 3 | grep 3:0:0:0 | awk '{print $4}')
+read sdd <<< $(sudo lsscsi -u -i 3 | grep 3:0:0:1 | awk '{print $4}')
+read sde <<< $(sudo lsscsi -u -i 3 | grep 3:0:0:2 | awk '{print $4}')
+read sdf <<< $(sudo lsscsi -u -i 3 | grep 3:0:0:3 | awk '{print $4}')
+read sdg <<< $(sudo lsscsi -u -i 3 | grep 3:0:0:4 | awk '{print $4}')
+read sdh <<< $(sudo lsscsi -u -i 3 | grep 3:0:0:5 | awk '{print $4}')
+read sdi <<< $(sudo lsscsi -u -i 3 | grep 3:0:0:6 | awk '{print $4}')
+read sdj <<< $(sudo lsscsi -u -i 3 | grep 3:0:0:7 | awk '{print $4}')
+read sdk <<< $(sudo lsscsi -u -i 3 | grep 3:0:0:8 | awk '{print $4}')
+read sdl <<< $(sudo lsscsi -u -i 3 | grep 3:0:0:9 | awk '{print $4}')
+read sdm <<< $(sudo lsscsi -u -i 3 | grep 3:0:0:10 | awk '{print $4}')
+read sdn <<< $(sudo lsscsi -u -i 3 | grep 3:0:0:11 | awk '{print $4}')
+read sdo <<< $(sudo lsscsi -u -i 3 | grep 3:0:0:12 | awk '{print $4}')
 
 # Creating the /hana/data volume
-sudo pvcreate /dev/sdc
-sudo pvcreate /dev/sdd
-sudo pvcreate /dev/sde
-sudo pvcreate /dev/sdf
-sudo pvcreate /dev/sdg
+sudo pvcreate $sdc
+sudo pvcreate $sdd
+sudo pvcreate $sde
+sudo pvcreate $sdf
+sudo pvcreate $sdg
 
 sudo mkdir /hana /hana/data
-sudo vgcreate data-vg01 /dev/sdc /dev/sdd /dev/sde /dev/sdf /dev/sdg
+sudo vgcreate data-vg01 $sdc $sdd $sde $sdf $sdg
 sudo lvcreate --extents 100%FREE --stripes 5 --stripesize 256 --name data-lv01 data-vg01
 # Update fstab
 echo "/dev/data-vg01/data-lv01 /hana/data  xfs  defaults,nobarrier,nofail  0  2" | sudo tee -a /etc/fstab
 
 # Creating the /hana/log volume
-sudo pvcreate /dev/sdh
-sudo pvcreate /dev/sdi
+sudo pvcreate $sdh
+sudo pvcreate $sdi
 
-sudo vgcreate log-vg01 /dev/sdh /dev/sdi
+sudo vgcreate log-vg01 $sdh $sdi
 sudo lvcreate --extents 100%FREE --stripes 2 --stripesize 32 --name log-lv01 log-vg01
 sudo mkfs.xfs /dev/log-vg01/log-lv01
 sudo mkdir /hana/log
 # Update fstab
 echo "/dev/log-vg01/log-lv01 /hana/log  xfs  defaults,nobarrier,nofail  0  2" | sudo tee -a /etc/fstab
 
-sudo pvcreate /dev/sdj
-sudo vgcreate shared-vg01 /dev/sdj
+sudo pvcreate $sdj
+sudo vgcreate shared-vg01 $sdj
 sudo lvcreate --extents 100%FREE --name shared-lv01 shared-vg01
 sudo mkfs.xfs /dev/shared-vg01/shared-lv01
 
@@ -34,8 +49,8 @@ sudo mkdir /hana/shared
 echo "/dev/shared-vg01/shared-lv01 /hana/shared  xfs  defaults,nobarrier,nofail  0  2" | sudo tee -a /etc/fstab
 
 # Creating the /usr/sap volume
-sudo pvcreate /dev/sdk
-sudo vgcreate usrsap-vg01 /dev/sdk
+sudo pvcreate $sdk
+sudo vgcreate usrsap-vg01 $sdk
 sudo lvcreate --extents 100%FREE --name usrsap-lv01 usrsap-vg01
 sudo mkfs.xfs /dev/usrsap-vg01/usrsap-lv01
 
@@ -44,12 +59,12 @@ sudo mkdir /usr/sap
 echo "/dev/usrsap-vg01/usrsap-lv01 /usr/sap  xfs  defaults,nobarrier,nofail  0  2" | sudo tee -a /etc/fstab
 
 # Creating the /hana/backup volume
-sudo pvcreate /dev/sdl
-sudo pvcreate /dev/sdm
-sudo pvcreate /dev/sdn
-sudo pvcreate /dev/sdo
+sudo pvcreate $sdl
+sudo pvcreate $sdm
+sudo pvcreate $sdn
+sudo pvcreate $sdo
 
-sudo vgcreate backup-vg01 /dev/sdl /dev/sdm /dev/sdn /dev/sdm
+sudo vgcreate backup-vg01 $sdl $sdm $sdn $sdo
 sudo lvcreate --extents 100%FREE --stripes 4 --name backup-lv01 backup-vg01
 sudo mkfs.xfs /dev/backup-vg01/backup-lv01
 sudo mkdir /backup
