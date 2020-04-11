@@ -1,6 +1,6 @@
-sudo zypper install lvm2
+# Create the volumes
 
-sudo zypper install lvm2
+# Create the volumes
 
 # Creating the /hana/data volume
 sudo pvcreate /dev/sdc

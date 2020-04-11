@@ -1,4 +1,4 @@
-sudo zypper install lvm2
+# Create the volumes
 sudo pvcreate /dev/sdc
 sudo pvcreate /dev/sdd
 
