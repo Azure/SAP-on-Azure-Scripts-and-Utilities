@@ -55,7 +55,7 @@ $NumberOfASCSServers = 2
 #Marketplace Template Information for the ASCS Server
 #If ImageID is provided then these fields will be ignored
 $ASCSPublisher = "suse"
-$ASCSOffer = "sles-15-sp1"
+$ASCSOffer = "sles-sap-15-sp1"
 $ASCSSKU = "gen1"
 $ASCSSKUVersion = "latest"
 #If you want to use a marketplace image $xxxxxImageID needs to be an empty string
@@ -69,7 +69,7 @@ $NumberOfAppServers = 2
 #Marketplace Template Information for the Application Server
 #If ImageID is provided then these fields will be ignored
 $AppPublisher = "suse"
-$AppOffer = "sles-15-sp1"
+$AppOffer = "sles-sap-15-sp1"
 $AppSKU = "gen1"
 $AppSKUVersion = "latest"
 
@@ -89,7 +89,7 @@ $NumberOfDatabaseServers = 2
 
 #If ImageID is provided then these fields will be ignored
 $DBPublisher = "suse"
-$DBOffer = "sles-15-sp1"
+$DBOffer = "sles-sap-15-sp1"
 $DBSKU = "gen1"
 $DBSKUVersion = "latest"
 #VM Size for the database server

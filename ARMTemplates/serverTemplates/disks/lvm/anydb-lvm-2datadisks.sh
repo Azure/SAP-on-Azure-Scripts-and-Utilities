@@ -1,9 +1,11 @@
 # Create the volumes
 
 # Checking which /dev/sd? is mapped to which LUN
+read idTemp <<< $(sudo lsscsi -u  | grep /dev/sdc | awk '{print $1}' | awk -F ':' '{print $1}')
+read id <<< ${idTemp:1}
 
-read sdc <<< $(sudo lsscsi -u -i 3 | grep 3:0:0:0 | awk '{print $4}')
-read sdd <<< $(sudo lsscsi -u -i 3 | grep 3:0:0:1 | awk '{print $4}')
+read sdc <<< $(sudo lsscsi -u -i $id | grep $id:0:0:0 | awk '{print $4}')
+read sdd <<< $(sudo lsscsi -u -i $id | grep $id:0:0:1 | awk '{print $4}')
 
 sudo pvcreate $sdc
 sudo pvcreate $sdd
