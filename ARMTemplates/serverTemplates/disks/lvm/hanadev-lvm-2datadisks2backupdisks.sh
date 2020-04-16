@@ -1,20 +1,9 @@
 # Create the volumes
-# Checking which /dev/sd? is mapped to which LUN
 
-read idTemp <<< $(sudo lsscsi -u  | grep /dev/sdc | awk '{print $1}' | awk -F ':' '{print $1}')
-read id <<< ${idTemp:1}
+sudo pvcreate /dev/disk/azure/scsi1/lun0
+sudo pvcreate /dev/disk/azure/scsi1/lun1
 
-read sdc <<< $(sudo lsscsi -u -i $id | grep $id:0:0:0 | awk '{print $4}')
-read sdd <<< $(sudo lsscsi -u -i $id | grep $id:0:0:1 | awk '{print $4}')
-read sde <<< $(sudo lsscsi -u -i $id | grep $id:0:0:2 | awk '{print $4}')
-read sdf <<< $(sudo lsscsi -u -i $id | grep $id:0:0:3 | awk '{print $4}')
-read sdg <<< $(sudo lsscsi -u -i $id | grep $id:0:0:4 | awk '{print $4}')
-read sdh <<< $(sudo lsscsi -u -i $id | grep $id:0:0:5 | awk '{print $4}')
-
-sudo pvcreate $sdc
-sudo pvcreate $sdd
-
-sudo vgcreate data-vg01 $sdc $sdd
+sudo vgcreate data-vg01 /dev/disk/azure/scsi1/lun0 /dev/disk/azure/scsi1/lun1
 sudo lvcreate --extents 100%FREE --stripes 2 --stripesize 256 --name data-lv01 data-vg01
 sudo mkfs.xfs /dev/data-vg01/data-lv01
 sudo mkdir /hana /hana/data
@@ -22,8 +11,8 @@ sudo mkdir /hana /hana/data
 echo "/dev/data-vg01/data-lv01  /hana  xfs  defaults,nobarrier,nofail  0  2" | sudo tee -a /etc/fstab
 
 # Create the /hana/shared volume
-sudo pvcreate $sde
-sudo vgcreate shared-vg01 $sde
+sudo pvcreate /dev/disk/azure/scsi1/lun2
+sudo vgcreate shared-vg01 /dev/disk/azure/scsi1/lun2
 sudo lvcreate --extents 100%FREE --name shared-lv01 shared-vg01
 sudo mkfs.xfs /dev/shared-vg01/shared-lv01
 
@@ -32,8 +21,8 @@ sudo mkdir /hana/shared
 echo "/dev/shared-vg01/shared-lv01 /hana/shared  xfs  defaults,nobarrier,nofail  0  2" | sudo tee -a /etc/fstab
 
 # Creating the /usr/sap volume
-sudo pvcreate $sdf
-sudo vgcreate usrsap-vg01 $sdf
+sudo pvcreate /dev/disk/azure/scsi1/lun3
+sudo vgcreate usrsap-vg01 /dev/disk/azure/scsi1/lun3
 sudo lvcreate --extents 100%FREE --name usrsap-lv01 usrsap-vg01
 sudo mkfs.xfs /dev/usrsap-vg01/usrsap-lv01
 
@@ -42,10 +31,10 @@ sudo mkdir /usr/sap
 echo "/dev/usrsap-vg01/usrsap-lv01 /usr/sap  xfs  defaults,nobarrier,nofail  0  2" | sudo tee -a /etc/fstab
 
 # Creating the /hana/backup volume
-sudo pvcreate $sdg
-sudo pvcreate $sdh
+sudo pvcreate /dev/disk/azure/scsi1/lun4
+sudo pvcreate /dev/disk/azure/scsi1/lun5
 
-sudo vgcreate backup-vg01 $sdg $sdh
+sudo vgcreate backup-vg01 /dev/disk/azure/scsi1/lun4 /dev/disk/azure/scsi1/lun5
 sudo lvcreate --extents 100%FREE --stripes 2 --name backup-lv01 backup-vg01
 sudo mkfs.xfs /dev/backup-vg01/backup-lv01
 sudo mkdir /hana/backup
