@@ -32,7 +32,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data",
+                        "name": "-data01",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {

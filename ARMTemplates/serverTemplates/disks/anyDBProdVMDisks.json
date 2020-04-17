@@ -33,7 +33,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data",
+                        "name": "-data01",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -49,7 +49,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-log",
+                        "name": "-log01",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -70,7 +70,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data",
+                        "name": "-data01",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -86,7 +86,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-log",
+                        "name": "-log01",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -107,7 +107,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data1",
+                        "name": "-data01",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -123,7 +123,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data2",
+                        "name": "-data02",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -139,7 +139,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-log",
+                        "name": "-log01",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -160,7 +160,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data1",
+                        "name": "-data01",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -176,7 +176,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data2",
+                        "name": "-data02",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -192,7 +192,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-log",
+                        "name": "-log01",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -213,7 +213,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data1",
+                        "name": "-data01",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -229,7 +229,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data2",
+                        "name": "-data02",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -245,7 +245,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data3",
+                        "name": "-data03",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -261,7 +261,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data4",
+                        "name": "-data04",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -277,7 +277,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data5",
+                        "name": "-data05",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -293,7 +293,7 @@
                         "caching": "None",
                         "writeAcceleratorEnabled": true,
                         "id": null,
-                        "name": "-log1",
+                        "name": "-log01",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -309,7 +309,7 @@
                         "caching": "None",
                         "writeAcceleratorEnabled": true,
                         "id": null,
-                        "name": "-log2",
+                        "name": "-log02",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -331,7 +331,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data1",
+                        "name": "-data01",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -347,7 +347,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data2",
+                        "name": "-data02",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -363,7 +363,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data3",
+                        "name": "-data03",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -379,7 +379,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data4",
+                        "name": "-data04",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -395,7 +395,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data5",
+                        "name": "-data05",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -411,7 +411,7 @@
                         "caching": "None",
                         "writeAcceleratorEnabled": true,
                         "id": null,
-                        "name": "-log1",
+                        "name": "-log01",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -427,7 +427,7 @@
                         "caching": "None",
                         "writeAcceleratorEnabled": true,
                         "id": null,
-                        "name": "-log2",
+                        "name": "-log02",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -449,7 +449,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data1",
+                        "name": "-data01",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -465,7 +465,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data2",
+                        "name": "-data02",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -481,7 +481,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data3",
+                        "name": "-data03",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -497,7 +497,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data4",
+                        "name": "-data04",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -513,7 +513,7 @@
                         "caching": "None",
                         "writeAcceleratorEnabled": true,
                         "id": null,
-                        "name": "-log1",
+                        "name": "-log01",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -529,7 +529,7 @@
                         "caching": "None",
                         "writeAcceleratorEnabled": true,
                         "id": null,
-                        "name": "-log2",
+                        "name": "-log02",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -551,7 +551,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data1",
+                        "name": "-data01",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -567,7 +567,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data2",
+                        "name": "-data02",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -583,7 +583,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data3",
+                        "name": "-data03",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -599,7 +599,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data4",
+                        "name": "-data04",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -615,7 +615,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data5",
+                        "name": "-data05",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -631,7 +631,7 @@
                         "caching": "None",
                         "writeAcceleratorEnabled": true,
                         "id": null,
-                        "name": "-log1",
+                        "name": "-log01",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -647,7 +647,7 @@
                         "caching": "None",
                         "writeAcceleratorEnabled": true,
                         "id": null,
-                        "name": "-log2",
+                        "name": "-log02",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -669,7 +669,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data1",
+                        "name": "-data01",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -685,7 +685,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data2",
+                        "name": "-data02",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -701,7 +701,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data3",
+                        "name": "-data03",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -717,7 +717,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data4",
+                        "name": "-data04",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -733,7 +733,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data5",
+                        "name": "-data05",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -749,7 +749,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data6",
+                        "name": "-data06",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -765,7 +765,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data7",
+                        "name": "-data07",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -781,7 +781,7 @@
                         "caching": "ReadWrite",
                         "writeAcceleratorEnabled": false,
                         "id": null,
-                        "name": "-data8",
+                        "name": "-data08",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -797,7 +797,7 @@
                         "caching": "None",
                         "writeAcceleratorEnabled": true,
                         "id": null,
-                        "name": "-log1",
+                        "name": "-log01",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -813,7 +813,7 @@
                         "caching": "None",
                         "writeAcceleratorEnabled": true,
                         "id": null,
-                        "name": "-log2",
+                        "name": "-log02",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -995,7 +995,7 @@
                         "caching": "None",
                         "writeAcceleratorEnabled": true,
                         "id": null,
-                        "name": "-log1",
+                        "name": "-log01",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -1011,7 +1011,7 @@
                         "caching": "None",
                         "writeAcceleratorEnabled": true,
                         "id": null,
-                        "name": "-log2",
+                        "name": "-log02",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -1242,7 +1242,7 @@
                         "caching": "None",
                         "writeAcceleratorEnabled": true,
                         "id": null,
-                        "name": "-log1",
+                        "name": "-log01",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -1258,7 +1258,7 @@
                         "caching": "None",
                         "writeAcceleratorEnabled": true,
                         "id": null,
-                        "name": "-log2",
+                        "name": "-log02",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
@@ -1274,7 +1274,7 @@
                         "caching": "None",
                         "writeAcceleratorEnabled": true,
                         "id": null,
-                        "name": "-log3",
+                        "name": "-log03",
                         "storageAccountType": null,
                         "sku": "Premium_LRS",
                         "properties": {
