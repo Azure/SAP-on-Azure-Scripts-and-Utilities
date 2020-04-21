@@ -25,11 +25,18 @@
     "diagnosticsStorageAccount": {
       "value": "[DIAGNOSTICSACCOUNT]"
     },
-    "HasPublicIP": {
+    "environmentType":{
+      "value": "[ENVTYPE]"
+    },
+    "hasPublicIP": {
       "value": "[HASPUBLICIP]"
     },
+    "domainNameLabel":
+    {
+      "value": "[DNS]"
+    },
     "imageID": {
-      "value": "[ImageID]"
+      "value": "[IMAGEID]"
     },
     "location": {
       "value": "[LOCATION]"
@@ -76,7 +83,7 @@
     "virtualMachineTagValues": {
       "value": { "System": "SAP", "$perfOptimizationLevel": "1" }
     },
-    "Zone": {
+    "zone": {
       "value": []
     }
   }

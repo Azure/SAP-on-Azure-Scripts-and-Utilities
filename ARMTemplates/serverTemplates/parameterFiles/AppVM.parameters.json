@@ -22,15 +22,21 @@
     "availabilitySetName": {
       "value": "[SID]-app-avset"
     },
-    "diagnosticsStorageAccount":
-    {
+    "diagnosticsStorageAccount": {
       "value": "[DIAGNOSTICSACCOUNT]"
     },
-    "HasPublicIP": {
+    "hasPublicIP": {
       "value": "[HASPUBLICIP]"
     },
+    "domainNameLabel":
+    {
+      "value": "[DNS]"
+    },
+    "environmentType": {
+      "value": "[ENVTYPE]"
+    },
     "imageID": {
-      "value": "[ImageID]"
+      "value": "[IMAGEID]"
     },
     "publisher": {
       "value": "[PUBLISHER]"
@@ -47,7 +53,7 @@
     "location": {
       "value": "[LOCATION]"
     },
-    "PrivateIP": {
+    "privateIP": {
       "value": [""]
     },
     "proximityPlacementGroupName": {
@@ -77,7 +83,7 @@
     "virtualMachineTagValues": {
       "value": { "System": "SAP", "$perfOptimizationLevel": "1" }
     },
-    "Zone": {
+    "zone": {
       "value": []
     }
   }

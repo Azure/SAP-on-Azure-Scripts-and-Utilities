@@ -32,6 +32,17 @@
                 "description": "The name of the diagnostics storage account"
             }
         },
+        "environmentType": {
+            "type": "string",
+            "defaultValue": "PRD",
+            "allowedValues": [
+                "DEV",
+                "QA",
+                "PRD",
+                "SBX",
+                "TST"
+            ]
+        },
         "imageID": {
             "type": "string",
             "defaultValue": null,
@@ -49,9 +60,12 @@
         "version": {
             "type": "string"
         },
-        "HasPublicIP": {
+        "hasPublicIP": {
             "type": "bool",
             "defaultValue": false
+        },
+        "domainNameLabel": {
+            "type": "bool"
         },
         "location": {
             "type": "string",
@@ -60,7 +74,7 @@
             },
             "defaultValue": "[resourceGroup().location]"
         },
-        "PrivateIP": {
+        "privateIP": {
             "type": "array",
             "defaultValue": [
                 ""
@@ -118,7 +132,7 @@
             "type": "object",
             "defaultValue": null
         },
-        "Zone": {
+        "zone": {
             "type": "array",
             "defaultValue": [
                 ""
@@ -147,6 +161,11 @@
         "sidTag": {
             "SID": "[parameters('sapSystemId')]"
         },
+        "envTag": {
+            "Environment": "[parameters('environmentType')]"
+        },
+        "allVMTags": "[union(parameters('virtualMachineTagValues'),variables('sidTag'),variables('envTag'))]",
+
         "diskSizes": {
             "ASCS": {
                 "osdiskSizeGB": 63,
@@ -154,7 +173,6 @@
             }
         },
         "nrOfDisks": "[variables('diskSizes')['ASCS'].nrDisks]",
-        "allVMTags": "[union(parameters('virtualMachineTagValues'),variables('sidTag'))]",
         "applicationSecurityGroupID": "[resourceId(parameters('virtualNetworkResourceGroupName'),'Microsoft.Network/applicationSecurityGroups',parameters('applicationSecurityGroupName'))]",
         "loadBalancerName": "[concat(variables('sapSystemIdLower'),'-web-lb-std')]",
         "github": "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/master/ARMTemplates/serverTemplates/",
@@ -269,9 +287,10 @@
             "apiVersion": "2019-02-01",
             "location": "[variables('locationName')]",
             "zones": "[if(empty(parameters('Zone')), '', json(concat('[',if(greater(length(parameters('Zone')),1),parameters('Zone')[mod(copyIndex(0),2)],parameters('Zone')[0]),']')) )]",
-            "condition": "[parameters('HasPublicIP')]",
+            "condition": "[parameters('hasPublicIP')]",
             "properties": {
-                "publicIpAllocationMethod": "Static"
+                "publicIpAllocationMethod": "Static",
+                "dnsSettings": "[if(parameters('domainNameLabel'),json(concat('{\"domainNameLabel\":\"',concat(variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0')),'\"}')),json('null'))]"
             },
             "sku": {
                 "name": "Standard"
@@ -299,7 +318,7 @@
                                 "id": "[variables('subnetRef')]"
                             },
                             "privateIPAllocationMethod": "Dynamic",
-                            "publicIpAddress": "[if(parameters('HasPublicIP'),json(concat('{ \"id\" : \"',resourceId('Microsoft.Network/publicIpAddresses', concat(variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'), '-pip')),'\"}')), json('null'))]",
+                            "publicIpAddress": "[if(parameters('hasPublicIP'),json(concat('{ \"id\" : \"',resourceId('Microsoft.Network/publicIpAddresses', concat(variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'), '-pip')),'\"}')), json('null'))]",
                             "primary": true,
                             "privateIPAddressVersion": "IPv4",
                             "applicationSecurityGroups": "[if(not(empty(variables('applicationSecurityGroupID'))),json(concat('[{ \"id\" : \"',variables('applicationSecurityGroupID'),'\"}]')), json('null'))]",
@@ -420,7 +439,7 @@
                     "location": {
                         "value": "[parameters('location')]"
                     },
-                    "Zone": {
+                    "zone": {
                         "value": "[if(empty(parameters('Zone')), '', if(greater(length(parameters('Zone')),1),parameters('Zone')[mod(copyIndex(0),2)],parameters('Zone')[0]))]"
                     }
 
@@ -434,7 +453,7 @@
             "dependsOn": [
                 "[concat(variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'), '-nic')]"
             ],
-            "condition": "[not(empty(parameters('PrivateIP')[0]))]",
+            "condition": "[not(empty(parameters('privateIP')[0]))]",
             "properties": {
                 "mode": "Incremental",
                 "template": {
@@ -451,12 +470,12 @@
                                     {
                                         "name": "ipconfig1",
                                         "properties": {
-                                            "privateIPAllocationMethod": "[if(empty(parameters('PrivateIP')) ,'Dynamic','Static')]",
-                                            "privateIPAddress": "[if(empty(parameters('PrivateIP')) ,'',string(parameters('PrivateIP')[copyIndex()]))]",
+                                            "privateIPAllocationMethod": "[if(empty(parameters('privateIP')) ,'Dynamic','Static')]",
+                                            "privateIPAddress": "[if(empty(parameters('privateIP')) ,'',string(parameters('privateIP')[copyIndex()]))]",
                                             "subnet": {
                                                 "id": "[variables('subnetRef')]"
                                             },
-                                            "publicIpAddress": "[if(parameters('HasPublicIP'),json(concat('{ \"id\" : \"',concat(variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'), '-nic'),'\"}')), json('null'))]",
+                                            "publicIpAddress": "[if(parameters('hasPublicIP'),json(concat('{ \"id\" : \"',concat(variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'), '-nic'),'\"}')), json('null'))]",
                                             "applicationSecurityGroups": "[if(not(empty(parameters('virtualMachineCount'))),json(concat('[{ \"id\" : \"',variables('applicationSecurityGroupID'),'\"}]')), json('null'))]",
                                             "loadBalancerBackendAddressPools": "[if(greater(parameters('virtualMachineCount'),1),json(concat('[{ \"id\" : \"',resourceId('Microsoft.Network/loadBalancers/backendAddressPools', variables('loadBalancerName'), concat(variables('loadBalancerName'),'-backend')),'\"}]')), json('null'))]"
                                         }

@@ -15,7 +15,7 @@
             },
             "defaultValue": ""
         },
-        "Zone": {
+        "zone": {
             "type": "string",
             "metadata": {
                 "description": "The zonal info of the disk"

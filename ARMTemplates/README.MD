@@ -218,7 +218,7 @@ $keyVaultName="sap-kv"
 $adminUserName = "demoadmin"
 $keyVaultSecretName="mypassword"
 
-$HasPublicIP = $true
+$hasPublicIP = $true
 $WebDispatch = $true
 
 #Get the Key Vault id
@@ -244,21 +244,21 @@ Add-Type -TypeDefinition @"
 #How many ASCS Servers are needed
 $NumberOfASCSServers = 2
 #Marketplace Template Information for the ASCS Server
-#If ImageID is provided then these fields will be ignored
+#If imageID is provided then these fields will be ignored
 $ASCSPublisher = "suse"
 $ASCSOffer = "sles-15-sp1"
 $ASCSSKU = "gen1"
 $ASCSSKUVersion = "latest"
-#If you want to use a marketplace image $xxxxxImageID needs to be an empty string
+#If you want to use a marketplace image $xxxxximageID needs to be an empty string
 #Custom image ID
-$ASCSServerImageID = ""
+$ASCSServerimageID = ""
 #VM Size for the ASCS server
 $ASCSVMSize = "Standard_D2s_v3"
 
 #How many Application Servers are needed
 $NumberOfAppServers = 2
 #Marketplace Template Information for the Application Server
-#If ImageID is provided then these fields will be ignored
+#If imageID is provided then these fields will be ignored
 $AppPublisher = "suse"
 $AppOffer = "sles-15-sp1"
 $AppSKU = "gen1"
@@ -269,7 +269,7 @@ $AppSKUVersion = "latest"
 # $AppSKU = "2016-Datacenter"
 # $AppSKUVersion = "latest"
 
-$AppServerImageID = "/subscriptions/[SUBSCRIPTIONID]/resourceGroups/[IMAGEGALLERYRGNAME]/providers/Microsoft.Compute/galleries/[IMAGEGALLERYNAME]/images/[IMAGENAME]/versions/[VERSIONNUMBER]"
+$AppServerimageID = "/subscriptions/[SUBSCRIPTIONID]/resourceGroups/[IMAGEGALLERYRGNAME]/providers/Microsoft.Compute/galleries/[IMAGEGALLERYNAME]/images/[IMAGENAME]/versions/[VERSIONNUMBER]"
 
 #VM Size for the application server
 $AppVMSize = "Standard_D4s_v3"
@@ -278,15 +278,15 @@ $AppVMSize = "Standard_D4s_v3"
 $NumberOfDatabaseServers = 2
 #Marketplace Template Information for the Database Server
 
-#If ImageID is provided then these fields will be ignored
+#If imageID is provided then these fields will be ignored
 $DBPublisher = "suse"
 $DBOffer = "sles-15-sp1"
 $DBSKU = "gen1"
 $DBSKUVersion = "latest"
 #VM Size for the database server
-#If you want to use a marketplace image $xxxxxImageID needs to be an empty string
+#If you want to use a marketplace image $xxxxximageID needs to be an empty string
 #Custom image ID
-$DBServerImageID = ""
+$DBServerimageID = ""
 #VM Size for the database server
 $DBVMSize = "Standard_M64s"
 
@@ -383,8 +383,8 @@ Navigate to the new folder, this folder will contain a deployment script and the
 - availabilitySetNameDB, for example: "availabilitySetNameDB": {"value": "S04-db-avset"}
 - proximityPlacementGroupName, for example: "proximityPlacementGroupName": {"value": "S04-ppg"}
 - virtualMachineSize, for example: "virtualMachineSize": {"value": "Standard_E4s_v3"}
-- PrivateIP, for example: "PrivateIP": {"value":["10.0.0.15","10.0.0.16"]}
-- HasPublicIP, for example: "HasPublicIP": {"value": false}
+- privateIP, for example: "privateIP": {"value":["10.0.0.15","10.0.0.16"]}
+- hasPublicIP, for example: "hasPublicIP": {"value": false}
 - virtualNetworkResourceGroupName, for example "virtualNetworkResourceGroupName": { "value": "VNetRG" }
 - virtualNetworkName, for example "virtualNetworkName": { "value": "prodvnet" }
 - subnetName, for example "subnetName": { "value": "apps" }

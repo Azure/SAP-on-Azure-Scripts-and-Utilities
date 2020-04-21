@@ -27,7 +27,8 @@ $adminUserName = "demoadmin"
 $keyVaultSecretName="mypassword"
 $diagnosticLogStorageAccount = "sapstoragekfo"
 
-$HasPublicIP = $true
+$hasPublicIP = $true
+$setDNS = $false
 $WebDispatch = $true
 
 #Get the Key Vault id
@@ -53,21 +54,21 @@ Add-Type -TypeDefinition @"
 #How many ASCS Servers are needed
 $NumberOfASCSServers = 2
 #Marketplace Template Information for the ASCS Server
-#If ImageID is provided then these fields will be ignored
+#If imageID is provided then these fields will be ignored
 $ASCSPublisher = "suse"
 $ASCSOffer = "sles-sap-15-sp1"
 $ASCSSKU = "gen1"
 $ASCSSKUVersion = "latest"
-#If you want to use a marketplace image $xxxxxImageID needs to be an empty string
+#If you want to use a marketplace image $xxxxximageID needs to be an empty string
 #Custom image ID
-$ASCSServerImageID = ""
+$ASCSServerimageID = ""
 #VM Size for the ASCS server
 $ASCSVMSize = "Standard_D2s_v3"
 
 #How many Application Servers are needed
 $NumberOfAppServers = 2
 #Marketplace Template Information for the Application Server
-#If ImageID is provided then these fields will be ignored
+#If imageID is provided then these fields will be ignored
 $AppPublisher = "suse"
 $AppOffer = "sles-sap-15-sp1"
 $AppSKU = "gen1"
@@ -78,7 +79,7 @@ $AppSKUVersion = "latest"
 # $AppOffer = "WindowsServer"
 # $AppSKU = "2016-Datacenter"
 # $AppSKUVersion = "latest"
-$AppServerImageID = ""
+$AppServerimageID = ""
 
 #VM Size for the application server
 $AppVMSize = "Standard_D4s_v3"
@@ -87,15 +88,15 @@ $AppVMSize = "Standard_D4s_v3"
 $NumberOfDatabaseServers = 2
 #Marketplace Template Information for the Database Server
 
-#If ImageID is provided then these fields will be ignored
+#If imageID is provided then these fields will be ignored
 $DBPublisher = "suse"
 $DBOffer = "sles-sap-15-sp1"
 $DBSKU = "gen1"
 $DBSKUVersion = "latest"
 #VM Size for the database server
-#If you want to use a marketplace image $xxxxxImageID needs to be an empty string
+#If you want to use a marketplace image $xxxxximageID needs to be an empty string
 #Custom image ID
-$DBServerImageID = ""
+$DBServerimageID = ""
 $DBVMSize = "Standard_M64s"
 
 #This only applies for AnyDB
@@ -180,7 +181,7 @@ $DBDeploymentScript += $DeploymentScriptStep
 (Get-Content $dbTemplateFilePath).replace('[PASSWORDSECRET]', $keyVaultSecretName) | Set-Content $dbTemplateFilePath
 (Get-Content $dbTemplateFilePath).replace('[ADMINUSER]', $adminUserName) | Set-Content $dbTemplateFilePath
 (Get-Content $dbTemplateFilePath).replace('[DIAGNOSTICSACCOUNT]', $diagnosticLogStorageAccount) | Set-Content $dbTemplateFilePath
-(Get-Content $dbTemplateFilePath).replace('[ImageID]', $DBServerImageID) | Set-Content $dbTemplateFilePath
+(Get-Content $dbTemplateFilePath).replace('[IMAGEID]', $DBServerimageID) | Set-Content $dbTemplateFilePath
 (Get-Content $dbTemplateFilePath).replace('[LOCATION]', $region) | Set-Content $dbTemplateFilePath
 (Get-Content $dbTemplateFilePath).replace('[SERVERNAME]', $dbServerName) | Set-Content $dbTemplateFilePath
 (Get-Content $dbTemplateFilePath).replace('[PUBLISHER]', $DBPublisher) | Set-Content $dbTemplateFilePath
@@ -194,7 +195,8 @@ $DBDeploymentScript += $DeploymentScriptStep
 (Get-Content $dbTemplateFilePath).replace('[DBSubnetName]', $dbsubnetName) | Set-Content $dbTemplateFilePath        
 (Get-Content $dbTemplateFilePath).replace('[DBASG]', $dbASG) | Set-Content $dbTemplateFilePath        
 (Get-Content $dbTemplateFilePath).replace('"[VMCount]"', $NumberOfDatabaseServers.ToString()) | Set-Content $dbTemplateFilePath        
-(Get-Content $dbTemplateFilePath).replace('"[HASPUBLICIP]"', $HasPublicIP.ToString().ToLower()) | Set-Content $dbTemplateFilePath        
+(Get-Content $dbTemplateFilePath).replace('"[HASPUBLICIP]"', $hasPublicIP.ToString().ToLower()) | Set-Content $dbTemplateFilePath        
+(Get-Content $dbTemplateFilePath).replace('"[DNS]"', $setDNS.ToString().ToLower()) | Set-Content $dbTemplateFilePath        
 
 #Application template
 
@@ -217,7 +219,7 @@ Copy-Item "..\serverTemplates\parameterFiles\appVM.parameters.json" $appTemplate
 (Get-Content $appTemplateFilePath).replace('[PASSWORDSECRET]', $keyVaultSecretName) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[ADMINUSER]', $adminUserName) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[DIAGNOSTICSACCOUNT]', $diagnosticLogStorageAccount) | Set-Content $appTemplateFilePath
-(Get-Content $appTemplateFilePath).replace('[ImageID]', $AppServerImageID) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[IMAGEID]', $AppServerimageID) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[LOCATION]', $region) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[SERVERNAME]', $appServerName) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[PUBLISHER]', $AppPublisher) | Set-Content $appTemplateFilePath
@@ -230,7 +232,8 @@ Copy-Item "..\serverTemplates\parameterFiles\appVM.parameters.json" $appTemplate
 (Get-Content $appTemplateFilePath).replace('[AppSubnetName]', $appsubnetName) | Set-Content $appTemplateFilePath        
 (Get-Content $appTemplateFilePath).replace('[APPASG]', $appASG) | Set-Content $appTemplateFilePath        
 (Get-Content $appTemplateFilePath).replace('"[VMCount]"', $NumberOfAppServers.ToString()) | Set-Content $appTemplateFilePath        
-(Get-Content $appTemplateFilePath).replace('"[HASPUBLICIP]"', $HasPublicIP.ToString().ToLower()) | Set-Content $appTemplateFilePath        
+(Get-Content $appTemplateFilePath).replace('"[HASPUBLICIP]"', $hasPublicIP.ToString().ToLower()) | Set-Content $appTemplateFilePath        
+(Get-Content $appTemplateFilePath).replace('"[DNS]"', $setDNS.ToString().ToLower()) | Set-Content $appTemplateFilePath        
     
 
 $ascsServerName = ""
@@ -253,7 +256,7 @@ Copy-Item "..\serverTemplates\parameterFiles\ASCSVM.parameters.json" $appTemplat
 (Get-Content $appTemplateFilePath).replace('[PASSWORDSECRET]', $keyVaultSecretName) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[ADMINUSER]', $adminUserName) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[DIAGNOSTICSACCOUNT]', $diagnosticLogStorageAccount) | Set-Content $appTemplateFilePath
-(Get-Content $appTemplateFilePath).replace('[ImageID]', $ASCSServerImageID) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[IMAGEID]', $ASCSServerimageID) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[LOCATION]', $region) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[SERVERNAME]', $ascsServerName) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[PUBLISHER]', $ASCSPublisher) | Set-Content $appTemplateFilePath
@@ -266,7 +269,8 @@ Copy-Item "..\serverTemplates\parameterFiles\ASCSVM.parameters.json" $appTemplat
 (Get-Content $appTemplateFilePath).replace('[AppSubnetName]', $appsubnetName) | Set-Content $appTemplateFilePath        
 (Get-Content $appTemplateFilePath).replace('[APPASG]', $appASG) | Set-Content $appTemplateFilePath        
 (Get-Content $appTemplateFilePath).replace('"[VMCount]"', $NumberOfASCSServers.ToString()) | Set-Content $appTemplateFilePath        
-(Get-Content $appTemplateFilePath).replace('"[HASPUBLICIP]"', $HasPublicIP.ToString().ToLower()) | Set-Content $appTemplateFilePath        
+(Get-Content $appTemplateFilePath).replace('"[HASPUBLICIP]"', $hasPublicIP.ToString().ToLower()) | Set-Content $appTemplateFilePath        
+(Get-Content $appTemplateFilePath).replace('"[DNS]"', $setDNS.ToString().ToLower()) | Set-Content $appTemplateFilePath        
 
 $WDDeploymentScript = ""
 if ($WebDispatch) {
@@ -291,7 +295,7 @@ if ($WebDispatch) {
     (Get-Content $appTemplateFilePath).replace('[PASSWORDSECRET]', $keyVaultSecretName) | Set-Content $appTemplateFilePath
     (Get-Content $appTemplateFilePath).replace('[ADMINUSER]', $adminUserName) | Set-Content $appTemplateFilePath
     (Get-Content $appTemplateFilePath).replace('[DIAGNOSTICSACCOUNT]', $diagnosticLogStorageAccount) | Set-Content $appTemplateFilePath
-    (Get-Content $appTemplateFilePath).replace('[ImageID]', $AppServerImageID) | Set-Content $appTemplateFilePath
+    (Get-Content $appTemplateFilePath).replace('[IMAGEID]', $AppServerimageID) | Set-Content $appTemplateFilePath
     (Get-Content $appTemplateFilePath).replace('[LOCATION]', $region) | Set-Content $appTemplateFilePath
     (Get-Content $appTemplateFilePath).replace('[SERVERNAME]', $wdServerName) | Set-Content $appTemplateFilePath
     (Get-Content $appTemplateFilePath).replace('[PUBLISHER]', $AppPublisher) | Set-Content $appTemplateFilePath
@@ -304,7 +308,8 @@ if ($WebDispatch) {
     (Get-Content $appTemplateFilePath).replace('[AppSubnetName]', $appsubnetName) | Set-Content $appTemplateFilePath        
     (Get-Content $appTemplateFilePath).replace('[APPASG]', $appASG) | Set-Content $appTemplateFilePath        
     (Get-Content $appTemplateFilePath).replace('"[VMCount]"', $NumberOfAppServers.ToString()) | Set-Content $appTemplateFilePath        
-    (Get-Content $appTemplateFilePath).replace('"[HASPUBLICIP]"', $HasPublicIP.ToString().ToLower()) | Set-Content $appTemplateFilePath        
+    (Get-Content $appTemplateFilePath).replace('"[HASPUBLICIP]"', $hasPublicIP.ToString().ToLower()) | Set-Content $appTemplateFilePath        
+    (Get-Content $appTemplateFilePath).replace('"[DNS]"', $setDNS.ToString().ToLower()) | Set-Content $appTemplateFilePath        
 }
 
 #Copying the deployment script

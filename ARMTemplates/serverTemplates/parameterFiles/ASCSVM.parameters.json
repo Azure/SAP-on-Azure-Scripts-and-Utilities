@@ -29,10 +29,17 @@
     {
       "value": "[DIAGNOSTICSACCOUNT]"
     },
-    "HasPublicIP": {
+    "hasPublicIP": {
       "value": "[HASPUBLICIP]"
     },
-    "PrivateIP": {
+    "domainNameLabel":
+    {
+      "value": "[DNS]"
+    },
+    "environmentType":{
+      "value": "[ENVTYPE]"
+    },
+    "privateIP": {
       "value": [""]
     },
     "proximityPlacementGroupName": {
@@ -51,7 +58,7 @@
       "value": "[VERSION]"
     },
     "imageID": {
-      "value": "[ImageID]"
+      "value": "[IMAGEID]"
     },
     "virtualMachineCount": {
       "value": "[VMCount]"
@@ -77,7 +84,7 @@
     "virtualMachineTagValues": {
       "value": { "System": "SAP", "$perfOptimizationLevel": "1" }
     },
-    "Zone": {
+    "zone": {
         "value": []
     }
 
