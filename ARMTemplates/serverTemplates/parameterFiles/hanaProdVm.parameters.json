@@ -62,6 +62,9 @@
     "sapSystemId": {
       "value": "[SID]"
     },
+    "mountDisks" :{
+      "value": "[MOUNTDISKS]"
+    },
     "virtualMachineCount": {
       "value": "[VMCount]"
     },

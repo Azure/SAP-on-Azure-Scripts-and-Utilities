@@ -142,6 +142,12 @@
             "defaultValue": [
                 ""
             ]
+        },
+        "mountDisks": {
+            "type": "bool",
+            "metadata": {
+                "description": "Is this environment using Azure NetApp files"
+            }
         }
     },
     "variables": {
@@ -481,7 +487,7 @@
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "apiVersion": "2019-07-01",
             "location": "[variables('locationName')]",
-            "condition": "[not(empty(variables('diskSizes')[parameters('virtualMachineSize')].lvm))]",
+            "condition": "[and(parameters('mountDisks'),not(empty(variables('diskSizes')[parameters('virtualMachineSize')].lvm)))]",
             "dependsOn": [
                 "[concat(variables('sapMachineName'),'-',padLeft(copyIndex('extVMLoop',1),2,'0'))]"
             ],
@@ -507,6 +513,7 @@
             "name": "[concat('AddDisks-',variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
+            "condition":"[not(parameters('mountDisks'))]",
             "copy": {
                 "name": "vmLoop",
                 "count": "[parameters('virtualMachineCount')]"

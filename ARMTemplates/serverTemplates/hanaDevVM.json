@@ -64,6 +64,9 @@
                 "description": "The SAP System ID"
             }
         },
+        "mountDisks": {
+            "type": "bool"
+        },
         "virtualMachineCount": {
             "type": "int"
         },
@@ -500,7 +503,7 @@
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "apiVersion": "2019-07-01",
             "location": "[variables('locationName')]",
-            "condition": "[not(empty(variables('diskSizes')[parameters('virtualMachineSize')].lvm))]",
+            "condition": "[and(parameters('mountDisks'),not(empty(variables('diskSizes')[parameters('virtualMachineSize')].lvm)))]",
             "dependsOn": [
                 "[concat(variables('sapMachineName'),'-',padLeft(copyIndex('extVMLoop',1),2,'0'))]"
             ],
@@ -525,7 +528,7 @@
         {
             "name": "[concat('AddDisks-',variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'))]",
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2018-05-01",
+            "apiVersion": "2019-10-01",
             "copy": {
                 "name": "vmLoop",
                 "count": "[parameters('virtualMachineCount')]"
@@ -549,9 +552,7 @@
                     },
                     "zone": {
                         "value": "[if(empty(parameters('Zone')), '', if(greater(length(parameters('Zone')),1),parameters('Zone')[mod(copyIndex(0),2)],parameters('Zone')[0]))]"
-
                     }
-
                 }
             }
         },

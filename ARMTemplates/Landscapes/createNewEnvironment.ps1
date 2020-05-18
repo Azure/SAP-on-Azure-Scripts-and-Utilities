@@ -22,14 +22,16 @@ $dbsubnetName = "db-snet"
 $appsubnetName = "app-snet"
 $appASG = "sap-app-asg"
 $dbASG = "sap-db-asg"
-$keyVaultName="sap-kv"
+$keyVaultName = "sap-kv"
 $adminUserName = "demoadmin"
-$keyVaultSecretName="mypassword"
+$keyVaultSecretName = "mypassword"
 $diagnosticLogStorageAccount = "sapstoragekfo"
 
-$hasPublicIP = $true
+$hasPublicIP = $false
 $setDNS = $false
-$WebDispatch = $true
+$WebDispatch = $false
+#Set MountDisks to false if you don't want to create the LVM and mount the disks
+$mountDisks = $true
 
 #Get the Key Vault id
 $kv = Get-AzKeyVault -VaultName $keyVaultName
@@ -181,6 +183,7 @@ $DBDeploymentScript += $DeploymentScriptStep
 (Get-Content $dbTemplateFilePath).replace('[PASSWORDSECRET]', $keyVaultSecretName) | Set-Content $dbTemplateFilePath
 (Get-Content $dbTemplateFilePath).replace('[ADMINUSER]', $adminUserName) | Set-Content $dbTemplateFilePath
 (Get-Content $dbTemplateFilePath).replace('[DIAGNOSTICSACCOUNT]', $diagnosticLogStorageAccount) | Set-Content $dbTemplateFilePath
+(Get-Content $dbTemplateFilePath).replace('[ENVTYPE]', $EnvType) | Set-Content $dbTemplateFilePath
 (Get-Content $dbTemplateFilePath).replace('[IMAGEID]', $DBServerimageID) | Set-Content $dbTemplateFilePath
 (Get-Content $dbTemplateFilePath).replace('[LOCATION]', $region) | Set-Content $dbTemplateFilePath
 (Get-Content $dbTemplateFilePath).replace('[SERVERNAME]', $dbServerName) | Set-Content $dbTemplateFilePath
@@ -197,6 +200,7 @@ $DBDeploymentScript += $DeploymentScriptStep
 (Get-Content $dbTemplateFilePath).replace('"[VMCount]"', $NumberOfDatabaseServers.ToString()) | Set-Content $dbTemplateFilePath        
 (Get-Content $dbTemplateFilePath).replace('"[HASPUBLICIP]"', $hasPublicIP.ToString().ToLower()) | Set-Content $dbTemplateFilePath        
 (Get-Content $dbTemplateFilePath).replace('"[DNS]"', $setDNS.ToString().ToLower()) | Set-Content $dbTemplateFilePath        
+(Get-Content $dbTemplateFilePath).replace('"[MOUNTDISKS]"', $mountDisks.ToString().ToLower()) | Set-Content $dbTemplateFilePath        
 
 #Application template
 
@@ -219,6 +223,7 @@ Copy-Item "..\serverTemplates\parameterFiles\appVM.parameters.json" $appTemplate
 (Get-Content $appTemplateFilePath).replace('[PASSWORDSECRET]', $keyVaultSecretName) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[ADMINUSER]', $adminUserName) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[DIAGNOSTICSACCOUNT]', $diagnosticLogStorageAccount) | Set-Content $appTemplateFilePath
+(Get-Content $appTemplateFilePath).replace('[ENVTYPE]', $EnvType) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[IMAGEID]', $AppServerimageID) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[LOCATION]', $region) | Set-Content $appTemplateFilePath
 (Get-Content $appTemplateFilePath).replace('[SERVERNAME]', $appServerName) | Set-Content $appTemplateFilePath
@@ -239,38 +244,41 @@ Copy-Item "..\serverTemplates\parameterFiles\appVM.parameters.json" $appTemplate
 $ascsServerName = ""
 $ASCSDeploymentScript = ""
 
-$appTemplateFilePath = [System.String]::Format('{0}\{1}\{1}.ascsVM.parameters.json', $s, $SID)
-$ascsServerName = [System.String]::Format('ascs')
+if ($NumberOfASCSServers -gt 0) {
+    $appTemplateFilePath = [System.String]::Format('{0}\{1}\{1}.ascsVM.parameters.json', $s, $SID)
+    $ascsServerName = [System.String]::Format('ascs')
         
-$DeploymentScriptStep = [System.String]::Format('{1}Write-Host "Creating ASCS Server(s)"{1}$res = New-AzResourceGroupDeployment -Name "ASCSServer_Creation" -ResourceGroupName $ResourceGroupName -TemplateFile ..\..\servertemplates\[ASCSServerImage].json -TemplateParameterFile .\[SID].[ASCSServerImage].parameters.json {3}{1}if ($res.ProvisioningState -ne "Succeeded") {{ {1}  Write-Error -Message "The deployment failed" {1}}}{1}', $i, [Environment]::NewLine, $ascsServerName, $VerboseFlag)
-$ASCSDeploymentScript += $DeploymentScriptStep
+    $DeploymentScriptStep = [System.String]::Format('{1}Write-Host "Creating ASCS Server(s)"{1}$res = New-AzResourceGroupDeployment -Name "ASCSServer_Creation" -ResourceGroupName $ResourceGroupName -TemplateFile ..\..\servertemplates\[ASCSServerImage].json -TemplateParameterFile .\[SID].[ASCSServerImage].parameters.json {3}{1}if ($res.ProvisioningState -ne "Succeeded") {{ {1}  Write-Error -Message "The deployment failed" {1}}}{1}', $i, [Environment]::NewLine, $ascsServerName, $VerboseFlag)
+    $ASCSDeploymentScript += $DeploymentScriptStep
 
-#Copying the application server template parameter file
+    #Copying the application server template parameter file
     
-Copy-Item "..\serverTemplates\parameterFiles\ASCSVM.parameters.json" $appTemplateFilePath 
+    Copy-Item "..\serverTemplates\parameterFiles\ASCSVM.parameters.json" $appTemplateFilePath 
     
-#Modifying the application server template parameter file
+    #Modifying the ascs server template parameter file
     
-(Get-Content $appTemplateFilePath).replace('[SID]', $SID) | Set-Content $appTemplateFilePath
-(Get-Content $appTemplateFilePath).replace('[KeyVaultID]', $KeyVaultID) | Set-Content $appTemplateFilePath
-(Get-Content $appTemplateFilePath).replace('[PASSWORDSECRET]', $keyVaultSecretName) | Set-Content $appTemplateFilePath
-(Get-Content $appTemplateFilePath).replace('[ADMINUSER]', $adminUserName) | Set-Content $appTemplateFilePath
-(Get-Content $appTemplateFilePath).replace('[DIAGNOSTICSACCOUNT]', $diagnosticLogStorageAccount) | Set-Content $appTemplateFilePath
-(Get-Content $appTemplateFilePath).replace('[IMAGEID]', $ASCSServerimageID) | Set-Content $appTemplateFilePath
-(Get-Content $appTemplateFilePath).replace('[LOCATION]', $region) | Set-Content $appTemplateFilePath
-(Get-Content $appTemplateFilePath).replace('[SERVERNAME]', $ascsServerName) | Set-Content $appTemplateFilePath
-(Get-Content $appTemplateFilePath).replace('[PUBLISHER]', $ASCSPublisher) | Set-Content $appTemplateFilePath
-(Get-Content $appTemplateFilePath).replace('[OFFER]', $ASCSOffer) | Set-Content $appTemplateFilePath
-(Get-Content $appTemplateFilePath).replace('[SKU]', $ASCSSKU) | Set-Content $appTemplateFilePath
-(Get-Content $appTemplateFilePath).replace('[VERSION]', $ASCSSKUVersion) | Set-Content $appTemplateFilePath
-(Get-Content $appTemplateFilePath).replace('[MACHINESIZE]', $ASCSVMSize) | Set-Content $appTemplateFilePath
-(Get-Content $appTemplateFilePath).replace('[VNetRG]', $virtualNetworkResourceGroupName) | Set-Content $appTemplateFilePath        
-(Get-Content $appTemplateFilePath).replace('[VNetName]', $virtualNetworkName) | Set-Content $appTemplateFilePath        
-(Get-Content $appTemplateFilePath).replace('[AppSubnetName]', $appsubnetName) | Set-Content $appTemplateFilePath        
-(Get-Content $appTemplateFilePath).replace('[APPASG]', $appASG) | Set-Content $appTemplateFilePath        
-(Get-Content $appTemplateFilePath).replace('"[VMCount]"', $NumberOfASCSServers.ToString()) | Set-Content $appTemplateFilePath        
-(Get-Content $appTemplateFilePath).replace('"[HASPUBLICIP]"', $hasPublicIP.ToString().ToLower()) | Set-Content $appTemplateFilePath        
-(Get-Content $appTemplateFilePath).replace('"[DNS]"', $setDNS.ToString().ToLower()) | Set-Content $appTemplateFilePath        
+    (Get-Content $appTemplateFilePath).replace('[SID]', $SID) | Set-Content $appTemplateFilePath
+    (Get-Content $appTemplateFilePath).replace('[KeyVaultID]', $KeyVaultID) | Set-Content $appTemplateFilePath
+    (Get-Content $appTemplateFilePath).replace('[PASSWORDSECRET]', $keyVaultSecretName) | Set-Content $appTemplateFilePath
+    (Get-Content $appTemplateFilePath).replace('[ADMINUSER]', $adminUserName) | Set-Content $appTemplateFilePath
+    (Get-Content $appTemplateFilePath).replace('[DIAGNOSTICSACCOUNT]', $diagnosticLogStorageAccount) | Set-Content $appTemplateFilePath
+    (Get-Content $appTemplateFilePath).replace('[ENVTYPE]', $EnvType) | Set-Content $appTemplateFilePath
+    (Get-Content $appTemplateFilePath).replace('[IMAGEID]', $ASCSServerimageID) | Set-Content $appTemplateFilePath
+    (Get-Content $appTemplateFilePath).replace('[LOCATION]', $region) | Set-Content $appTemplateFilePath
+    (Get-Content $appTemplateFilePath).replace('[SERVERNAME]', $ascsServerName) | Set-Content $appTemplateFilePath
+    (Get-Content $appTemplateFilePath).replace('[PUBLISHER]', $ASCSPublisher) | Set-Content $appTemplateFilePath
+    (Get-Content $appTemplateFilePath).replace('[OFFER]', $ASCSOffer) | Set-Content $appTemplateFilePath
+    (Get-Content $appTemplateFilePath).replace('[SKU]', $ASCSSKU) | Set-Content $appTemplateFilePath
+    (Get-Content $appTemplateFilePath).replace('[VERSION]', $ASCSSKUVersion) | Set-Content $appTemplateFilePath
+    (Get-Content $appTemplateFilePath).replace('[MACHINESIZE]', $ASCSVMSize) | Set-Content $appTemplateFilePath
+    (Get-Content $appTemplateFilePath).replace('[VNetRG]', $virtualNetworkResourceGroupName) | Set-Content $appTemplateFilePath        
+    (Get-Content $appTemplateFilePath).replace('[VNetName]', $virtualNetworkName) | Set-Content $appTemplateFilePath        
+    (Get-Content $appTemplateFilePath).replace('[AppSubnetName]', $appsubnetName) | Set-Content $appTemplateFilePath        
+    (Get-Content $appTemplateFilePath).replace('[APPASG]', $appASG) | Set-Content $appTemplateFilePath        
+    (Get-Content $appTemplateFilePath).replace('"[VMCount]"', $NumberOfASCSServers.ToString()) | Set-Content $appTemplateFilePath        
+    (Get-Content $appTemplateFilePath).replace('"[HASPUBLICIP]"', $hasPublicIP.ToString().ToLower()) | Set-Content $appTemplateFilePath        
+    (Get-Content $appTemplateFilePath).replace('"[DNS]"', $setDNS.ToString().ToLower()) | Set-Content $appTemplateFilePath        
+}
 
 $WDDeploymentScript = ""
 if ($WebDispatch) {
@@ -295,6 +303,7 @@ if ($WebDispatch) {
     (Get-Content $appTemplateFilePath).replace('[PASSWORDSECRET]', $keyVaultSecretName) | Set-Content $appTemplateFilePath
     (Get-Content $appTemplateFilePath).replace('[ADMINUSER]', $adminUserName) | Set-Content $appTemplateFilePath
     (Get-Content $appTemplateFilePath).replace('[DIAGNOSTICSACCOUNT]', $diagnosticLogStorageAccount) | Set-Content $appTemplateFilePath
+    (Get-Content $appTemplateFilePath).replace('[ENVTYPE]', $EnvType) | Set-Content $appTemplateFilePath
     (Get-Content $appTemplateFilePath).replace('[IMAGEID]', $AppServerimageID) | Set-Content $appTemplateFilePath
     (Get-Content $appTemplateFilePath).replace('[LOCATION]', $region) | Set-Content $appTemplateFilePath
     (Get-Content $appTemplateFilePath).replace('[SERVERNAME]', $wdServerName) | Set-Content $appTemplateFilePath
