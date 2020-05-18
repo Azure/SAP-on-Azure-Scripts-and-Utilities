@@ -20,9 +20,6 @@
             "metadata": {
                 "description": "The zonal info of the disk"
             }
-        },
-        "NoDisks": {
-            "type": "bool"
         }
     },
     "variables": {
@@ -2093,7 +2090,6 @@
             "type": "Microsoft.Compute/disks",
             "apiVersion": "2019-07-01",
             "location": "[parameters('location')]",
-            "condition": "[parameters('NoDisks')]",
             "zones": "[if(empty(parameters('Zone')), '', json(concat('[',parameters('Zone'),']')) )]",
             "properties": "[variables('dataDisks')[copyIndex()].properties]",
             "sku": {
