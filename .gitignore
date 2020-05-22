@@ -329,3 +329,5 @@ ASALocalRun/
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
 ARMTemplates/Landscapes/*/
+Rename-VM/test.ps1
+Rename-VM/removeresources.ps1
