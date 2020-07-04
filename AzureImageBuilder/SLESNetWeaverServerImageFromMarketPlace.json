@@ -1,0 +1,73 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+    },
+    "variables": {
+    },
+    "resources": [
+        {
+            "name": "<imageTemplateName>",
+            "type": "Microsoft.VirtualMachineImages/imageTemplates",
+            "apiVersion": "2020-02-14",
+            "location": "<location>",
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "<imgBuilderId>": {
+                    }
+                }
+            },
+            "tags": {
+                "imagebuilderTemplate": "<json>"
+            },
+
+            "dependsOn": [
+            ],
+            "properties": {
+                "buildTimeoutInMinutes": 40,
+
+                "vmProfile": {
+                    "vmSize": "Standard_D2s_v3",
+                    "osDiskSizeGB": 31,
+                    "vnetConfig": {
+                        "subnetId": "<subnetID>"
+                    }
+                },
+
+                "source": {
+                    "type": "PlatformImage",
+                    "publisher": "suse",
+                    "offer": "sles-sap-15-sp1",
+                    "sku": "gen1",
+                    "version": "latest"
+                },
+                "customize": [
+                    {
+                        "type": "Shell",
+                        "name": "InstallSAPTune",
+                        "inline": [
+                            "sudo zypper install -y saptune"
+                        ]
+                    }
+
+                ],
+                "distribute": [
+                    {
+                        "type": "SharedImage",
+                        "galleryImageId": "<galleryImageId>",
+                        "runOutputName": "<runOutputName>",
+                        "artifactTags": {
+                            "source": "azureVmImageBuilder",
+                            "imagebuilderTemplate": "<json>"
+                        },
+                        "replicationRegions": [
+                            "<region1>",
+                            "<region2>"
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
+}
