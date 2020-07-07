@@ -55,8 +55,7 @@ Write-Verbose  "getting VM config"
 $destzone = [int]$newAvailabilityZoneNumber
 
 Write-Verbose $destzone
-if($destzone -lt 1 -or $destzone -gt 3)
-{
+if ($destzone -lt 1 -or $destzone -gt 3) {
     Write-Host -ForegroundColor Red "Sorry, the value for avalability zones is 1,2 or 3" 
     exit
 }
@@ -83,13 +82,13 @@ foreach ($nic in $originalVM.NetworkProfile.NetworkInterfaces) {
 
 $tags = $originalVM.Tags
     
-#  Shutdown or remove the original VM
-#  Stop-AzVM -ResourceGroupName $ResourceGroupName -Name $VirtualMachineName -force
-Write-Verbose  "removing existing VM"
-Remove-AzVM -ResourceGroupName $ResourceGroupName -Name $VirtualMachineName -force
-
 #  Create the basic configuration for the replacement VM
-$newVM = New-AzVMConfig -VMName $VirtualMachineName -VMSize $originalVM.HardwareProfile.VmSize -zone $destzone -Tags $tags
+if ($VerbosePreference -eq "Continue") {
+    $newVM = New-AzVMConfig -VMName $VirtualMachineName -VMSize $originalVM.HardwareProfile.VmSize -zone $destzone -Tags $tags -Verbose
+}
+else {
+    $newVM = New-AzVMConfig -VMName $VirtualMachineName -VMSize $originalVM.HardwareProfile.VmSize -zone $destzone -Tags $tags -
+}
        
 #  Snap and copy the os disk
 Write-Verbose  "snapshotting disks"
@@ -101,20 +100,32 @@ $newdiskConfig = New-AzDiskConfig -AccountType $storageType -Location $location 
 $newdiskName = $osdiskname + "-z" + $destzone
 $newdisk = New-AzDisk -Disk $newdiskConfig -ResourceGroupName $ResourceGroupName -DiskName $newdiskName
 
-	
 Write-Verbose  ("new disk info {0}" -f $newdisk.ManagedDisk.Id)
 Write-Verbose  ("newdisk {0}" -f $newdisk )
 Write-Verbose  ("newdisk.manageddisk {0}" -f $newdisk.ManagedDisk)
 Write-Verbose  ("newdisk.manageddisk.id {0}" -f $newdisk.ManagedDisk.Id)
 Write-Verbose  ("the newdisk value is {0}" -f $newdisk)
 Write-Verbose  ("the newdisk.Id value is {0}" -f $newdisk.Id)
+Write-Verbose  ("the newVM.Name value is {0}" -f $newVM.Name)
+
+
 if ($osType -eq "Linux") {
     Write-Verbose "OS Type is Linux"
-    Set-AzVMOSDisk -VM $newVM -CreateOption Attach  -ManagedDiskId $newdisk.Id -Name $newdisk.Name  -Linux
+    if ($VerbosePreference -eq "Continue") {
+        Set-AzVMOSDisk -VM $newVM -CreateOption Attach  -ManagedDiskId $newdisk.Id -Name $newdisk.Name  -Linux
+    }
+    else {
+        Set-AzVMOSDisk -VM $newVM -CreateOption Attach  -ManagedDiskId $newdisk.Id -Name $newdisk.Name  -Linux
+    }
 }
 if ($osType -eq "Windows") {
     Write-Verbose "OS Type is Windows"
-    Set-AzVMOSDisk -VM $newVM -CreateOption Attach  -ManagedDiskId $newdisk.Id -Name $newdisk.Name  -Windows		
+    if ($VerbosePreference -eq "Continue") {
+        Set-AzVMOSDisk -VM $newVM -CreateOption Attach  -ManagedDiskId $newdisk.Id -Name $newdisk.Name  -Windows -Verbose
+    }
+    else {
+        Set-AzVMOSDisk -VM $newVM -CreateOption Attach  -ManagedDiskId $newdisk.Id -Name $newdisk.Name  -Windows		
+    }
 }
 
 # Snapshot & copy all of the drives
@@ -124,35 +135,70 @@ foreach ($disk in $originalVM.StorageProfile.DataDisks) {
 
     $snapshotName = $disk.Name + "-snap"		      
     $snapshot = New-AzSnapshot -Snapshot $snapshotcfg -SnapshotName $snapshotName -ResourceGroupName $ResourceGroupName
-    [string]$thisdiskStorageType = $disk.StorageAccountType
+    
     $diskName = $disk.Name + "-z" + $destzone
     $diskConfig = New-AzDiskConfig -AccountType $storageType -Location $location -CreateOption Copy -SourceResourceId $snapshot.Id -zone $destzone
     $newdisk = New-AzDisk -Disk $diskConfig -ResourceGroupName $ResourceGroupName -DiskName $diskName
 
-    Add-AzVMDataDisk -VM $newVM `
-	       -Name $newdisk.Name `
-	       -ManagedDiskId $newdisk.Id `
-	       -Caching $disk.Caching `
-	       -Lun $disk.Lun `
-	       -DiskSizeInGB $newdisk.DiskSizeGB `
-	       -CreateOption Attach
+    if ($VerbosePreference -eq "Continue") {
+        Add-AzVMDataDisk -VM $newVM `
+            -Name $newdisk.Name `
+            -ManagedDiskId $newdisk.Id `
+            -Caching $disk.Caching `
+            -Lun $disk.Lun `
+            -DiskSizeInGB $newdisk.DiskSizeGB `
+            -CreateOption Attach 
+        -Verbose
+    }
+    else {
+        Add-AzVMDataDisk -VM $newVM `
+            -Name $newdisk.Name `
+            -ManagedDiskId $newdisk.Id `
+            -Caching $disk.Caching `
+            -Lun $disk.Lun `
+            -DiskSizeInGB $newdisk.DiskSizeGB `
+            -CreateOption Attach 
+        
+    }
 
 }
 
 foreach ($nic in $originalVM.NetworkProfile.NetworkInterfaces) {
-    if ($nic.Primary -eq "True") {
-        Add-AzVMNetworkInterface `
-            -VM $newVM `
-            -Id $nic.Id -Primary
+    if ($nic.Primary -eq $true) {
+        if ($VerbosePreference -eq "Continue") {
+            Add-AzVMNetworkInterface -VM $newVM -Id $nic.Id -Primary -Verbose
+        }
+        else {
+            Add-AzVMNetworkInterface -VM $newVM -Id $nic.Id -Primary            
+        }
+        Write-Verbose ("Primary nic {0}" -f $nic.Id)
+        
     }
     else {
-        Add-AzVMNetworkInterface `
-            -VM $newVM `
-            -Id $nic.Id
+        if ($VerbosePreference -eq "Continue") {
+            Add-AzVMNetworkInterface -VM $newVM  -Id $nic.Id -Verbose
+        }
+        else {
+            Add-AzVMNetworkInterface -VM $newVM  -Id $nic.Id
+        }
+        Write-Verbose ("nic {0}" -f $nic.Id)
     }
+
 }
+#  Shutdown or remove the original VM
+#  Stop-AzVM -ResourceGroupName $ResourceGroupName -Name $VirtualMachineName -force
+Write-Verbose  "removing existing VM"
+Remove-AzVM -ResourceGroupName $ResourceGroupName -Name $VirtualMachineName -force
+
+
 Write-Verbose  "creating zonal VM"
-New-AzVM  -ResourceGroupName $ResourceGroupName -Location $originalVM.Location -VM $newVM -DisableBginfoExtension -zone $destzone
+
+if ($VerbosePreference -eq "Continue") {
+    New-AzVM  -ResourceGroupName $ResourceGroupName -Location $originalVM.Location -VM $newVM -DisableBginfoExtension -zone $destzone -Verbose
+}
+else {
+    New-AzVM  -ResourceGroupName $ResourceGroupName -Location $originalVM.Location -VM $newVM -DisableBginfoExtension -zone $destzone
+}
     
 
 
