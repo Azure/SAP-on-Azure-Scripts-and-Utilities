@@ -141,14 +141,13 @@ foreach ($disk in $originalVM.StorageProfile.DataDisks) {
     $newdisk = New-AzDisk -Disk $diskConfig -ResourceGroupName $ResourceGroupName -DiskName $diskName
 
     if ($VerbosePreference -eq "Continue") {
-        Add-AzVMDataDisk -VM $newVM `
-            -Name $newdisk.Name `
+        Add-AzVMDataDisk -VM $newVM  -Name $newdisk.Name `
             -ManagedDiskId $newdisk.Id `
             -Caching $disk.Caching `
             -Lun $disk.Lun `
             -DiskSizeInGB $newdisk.DiskSizeGB `
-            -CreateOption Attach 
-        -Verbose
+            -CreateOption Attach `
+            -Verbose
     }
     else {
         Add-AzVMDataDisk -VM $newVM `
