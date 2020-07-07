@@ -106,7 +106,7 @@ function New-SharedCustomImage {
 
     $version = [System.String]::Format('{0}/versions/{1}', $imageDefID, $VersionName)
     $templateSourceFilePath = [System.String]::Format('.\\{0}', $TemplateFileName)
-    $templateFilePath = [System.String]::Format('Temp\\{0}{1}.json', $TemplateFileName.Replace(".json,", "") , $suffix)
+    $templateFilePath = [System.String]::Format('Temp\\{0}{1}.json', $TemplateFileName.Replace(".json", "") , $suffix)
     
     Copy-Item -Path $templateSourceFilePath -Destination $templateFilePath
 
