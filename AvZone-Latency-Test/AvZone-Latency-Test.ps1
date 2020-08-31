@@ -1,4 +1,4 @@
-﻿<#
+<#
 
 .SYNOPSIS
     Creates VMs and tests latency between VMs
@@ -76,7 +76,7 @@ param(
     #OS Type
     [string]$OSOffer = "CentOS", 
     #OS Verion
-    [string]$OSSku = "7.6", 
+    [string]$OSSku = "8.0", 
     #Latest OS image
     [string]$OSVersion = "latest", 
     #OS username
