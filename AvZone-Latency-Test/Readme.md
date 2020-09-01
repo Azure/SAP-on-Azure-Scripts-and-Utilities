@@ -26,9 +26,19 @@ To provide an easy way of testing you can use this script.
 
 The script creates three VMs, one in each zone and then runs qperf to test the latency and throughput. Depending on your parameters the environment will be deleted after your test or kept for further usage.
 
-We use qperf as it utilizes TCP and UDP traffic. ICMP traffic is not prioritized in Azure, therefor it is required to use TCP or UDP to get propper results.
+You can decide to use qperf or niping (SAP tool) to test the latency and bandwidth.
+If you want to use niping please provide a URL to e.g. a BLOB storage which provides direct access to the niping executable.
+The output for qperf and niping is the same.
+
+In addition you will receive a list of Azure hypervisor hosts where your VM is running.
 
 ### Sample Output
+
+        Getting Hosts for virtual machines
+        VM1 : AMS07XXXXXXXXXX
+        VM2 : AMZ07XXXXXXXXXX
+        VM3 : AMS21XXXXXXXXXX
+
 
         Region:  westeurope
         VM Type:  Standard_D8s_v3
@@ -49,6 +59,5 @@ We use qperf as it utilizes TCP and UDP traffic. ICMP traffic is not prioritized
         | zone 2 |   xxx MB/sec |              |   xxx MB/sec |
         | zone 3 |   xxx MB/sec |   xxx MB/sec |              |
         -------------------------------------------------------
-
 ```
 Based on the output you can decide which zones to use.
