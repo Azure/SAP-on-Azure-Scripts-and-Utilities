@@ -100,8 +100,19 @@ param(
     #Azure IP Subnet prefix if using public IP to VNET creation
     [string]$SubnetAddressPrefix = "10.1.1.0/24", 
     #Azure IP VNET prefix if using public IP to VNET creation
-    [string]$VnetAddressPrefix = "10.1.1.0/24" 
+    [string]$VnetAddressPrefix = "10.1.1.0/24",
+    #decide to use qperf or niping
+    [ValidateSet("qperf","niping")][string]$testtool = "qperf",
+    #path to niping
+    [string]$nipingpath
 )
+
+    if ($testtool -eq "niping") {
+        if (!$nipingpath) {
+            $nipingpath = Read-Host -Prompt "Please enter download path for niping executable: "
+        }
+           
+    }
 
 
 	# select subscription
@@ -222,50 +233,120 @@ param(
 
     $sshsessions = Get-SSHSession
 
-    # install qperf on all VMs
-    Write-Host -ForegroundColor Green "Installing qperf on all VMs"
+
+    Write-Host -ForegroundColor Green "Getting Hosts for virtual machines"
     For ($zone=1; $zone -le $zones; $zone++) {
 
-        $output = Invoke-SSHCommand -Command "echo $VMLocalAdminPassword | sudo -S yum -y install qperf" -SessionId $sshsessions[$zone-1].SessionId
-        $output = Invoke-SSHCommand -Command "nohup qperf &" -SessionId $sshsessions[$zone-1].SessionId -TimeOut 3 -ErrorAction silentlycontinue
+        $output = Invoke-SSHCommand -Command "cat /var/lib/hyperv/.kvp_pool_3 | sed 's/[^a-zA-Z0-9]//g' | grep -o -P '(?<=HostName).*(?=HostingSystemEditionId)'" -SessionId $sshsessions[$zone-1].SessionId
+        Write-Host ("VM$zone : " + $output.Output)
 
     }
 
-    # run performance tests
-    Write-Host -ForegroundColor Green "Running bandwidth and latency tests"
-    For ($zone=1; $zone -le $zones; $zone++) {
 
-        $vmtopingno1 = (( $zone   %3)+1)
-        $vmtoping1 = $VMPrefix + (( $zone   %3)+1)
-        $vmtopingno2 = ((($zone+1)%3)+1)
-        $vmtoping2 = $VMPrefix + ((($zone+1)%3)+1)
+    # run qperf test
+    if ($testtool -eq "qperf") {
+        # install qperf on all VMs
+        Write-Host -ForegroundColor Green "Installing qperf on all VMs"
+        For ($zone=1; $zone -le $zones; $zone++) {
 
-        $output = Invoke-SSHCommand -Command "qperf $vmtoping1 tcp_lat" -SessionId $sshsessions[$zone-1].SessionId
-        $latencytemp = [string]$output.Output[1]
-        $latencytemp = $latencytemp.substring($latencytemp.IndexOf("=")+3)
-        $latencytemp = $latencytemp.PadLeft(12)
-        $latency[$zone -1][$vmtopingno1 -1] = $latencytemp
+            $output = Invoke-SSHCommand -Command "echo $VMLocalAdminPassword | sudo -S yum -y install qperf" -SessionId $sshsessions[$zone-1].SessionId
+            $output = Invoke-SSHCommand -Command "nohup qperf &" -SessionId $sshsessions[$zone-1].SessionId -TimeOut 3 -ErrorAction silentlycontinue
 
-        $output = Invoke-SSHCommand -Command "qperf $vmtoping1 tcp_bw" -SessionId $sshsessions[$zone-1].SessionId
-        $bandwidthtemp = [string]$output.Output[1]
-        $bandwidthtemp = $bandwidthtemp.substring($bandwidthtemp.IndexOf("=")+3)
-        $bandwidthtemp = $bandwidthtemp.PadLeft(12)
-        $bandwidth[$zone -1][$vmtopingno1 -1] = $bandwidthtemp
+        }
 
-        $output = Invoke-SSHCommand -Command "qperf $vmtoping2 tcp_lat" -SessionId $sshsessions[$zone-1].SessionId
-        $latencytemp = [string]$output.Output[1]
-        $latencytemp = $latencytemp.substring($latencytemp.IndexOf("=")+3)
-        $latencytemp = $latencytemp.PadLeft(12)
-        $latency[$zone -1][$vmtopingno2 -1] = $latencytemp
+        # run performance tests
+        Write-Host -ForegroundColor Green "Running bandwidth and latency tests"
+        For ($zone=1; $zone -le $zones; $zone++) {
 
-        $output = Invoke-SSHCommand -Command "qperf $vmtoping2 tcp_bw" -SessionId $sshsessions[$zone-1].SessionId
-        $bandwidthtemp = [string]$output.Output[1]
-        $bandwidthtemp = $bandwidthtemp.substring($bandwidthtemp.IndexOf("=")+3)
-        $bandwidthtemp = $bandwidthtemp.PadLeft(12)
-        $bandwidth[$zone -1][$vmtopingno2 -1] = $bandwidthtemp
+            $vmtopingno1 = (( $zone   %3)+1)
+            $vmtoping1 = $VMPrefix + (( $zone   %3)+1)
+            $vmtopingno2 = ((($zone+1)%3)+1)
+            $vmtoping2 = $VMPrefix + ((($zone+1)%3)+1)
 
+            $output = Invoke-SSHCommand -Command "qperf $vmtoping1 tcp_lat" -SessionId $sshsessions[$zone-1].SessionId
+            $latencytemp = [string]$output.Output[1]
+            $latencytemp = $latencytemp.substring($latencytemp.IndexOf("=")+3)
+            $latencytemp = $latencytemp.PadLeft(12)
+            $latency[$zone -1][$vmtopingno1 -1] = $latencytemp
+
+            $output = Invoke-SSHCommand -Command "qperf $vmtoping1 tcp_bw" -SessionId $sshsessions[$zone-1].SessionId
+            $bandwidthtemp = [string]$output.Output[1]
+            $bandwidthtemp = $bandwidthtemp.substring($bandwidthtemp.IndexOf("=")+3)
+            $bandwidthtemp = $bandwidthtemp.PadLeft(12)
+            $bandwidth[$zone -1][$vmtopingno1 -1] = $bandwidthtemp
+
+            $output = Invoke-SSHCommand -Command "qperf $vmtoping2 tcp_lat" -SessionId $sshsessions[$zone-1].SessionId
+            $latencytemp = [string]$output.Output[1]
+            $latencytemp = $latencytemp.substring($latencytemp.IndexOf("=")+3)
+            $latencytemp = $latencytemp.PadLeft(12)
+            $latency[$zone -1][$vmtopingno2 -1] = $latencytemp
+
+            $output = Invoke-SSHCommand -Command "qperf $vmtoping2 tcp_bw" -SessionId $sshsessions[$zone-1].SessionId
+            $bandwidthtemp = [string]$output.Output[1]
+            $bandwidthtemp = $bandwidthtemp.substring($bandwidthtemp.IndexOf("=")+3)
+            $bandwidthtemp = $bandwidthtemp.PadLeft(12)
+            $bandwidth[$zone -1][$vmtopingno2 -1] = $bandwidthtemp
+
+        }
     }
 
+    if ($testtool -eq "niping") {
+
+        # download niping on all hosts and run niping server
+        Write-Host -ForegroundColor Green "Installing niping on all VMs"
+        For ($zone=1; $zone -le $zones; $zone++) {
+
+            $output = Invoke-SSHCommand -Command "echo $VMLocalAdminPassword | wget $nipingpath -O /tmp/niping" -SessionId $sshsessions[$zone-1].SessionId
+            $output = Invoke-SSHCommand -Command "echo $VMLocalAdminPassword | chmod +x /tmp/niping" -SessionId $sshsessions[$zone-1].SessionId
+            $output = Invoke-SSHCommand -Command "echo $VMLocalAdminPassword | nohup /tmp/niping -s -I 0 &" -SessionId $sshsessions[$zone-1].SessionId -TimeOut 3 -ErrorAction silentlycontinue
+
+        }
+
+        # run performance tests
+        Write-Host -ForegroundColor Green "Running bandwidth and latency tests"
+        For ($zone=1; $zone -le $zones; $zone++) {
+
+            $vmtopingno1 = (( $zone   %3)+1)
+            $vmtoping1 = $VMPrefix + (( $zone   %3)+1)
+            $vmtopingno2 = ((($zone+1)%3)+1)
+            $vmtoping2 = $VMPrefix + ((($zone+1)%3)+1)
+
+            $output = Invoke-SSHCommand -Command "/tmp/niping -c -B 10 -L 100 -H $vmtoping1 | grep av2" -SessionId $sshsessions[$zone-1].SessionId
+            $latencytemp = [string]$output.Output
+            $latencytemp = $latencytemp -replace '\s+', ' '
+            $latencytemp = $latencytemp.Split(" ")
+            $latencytemp = [string]$latencytemp[1] + " " + $latencytemp[2]
+            $latencytemp = $latencytemp.PadLeft(12)
+            $latency[$zone -1][$vmtopingno1 -1] = $latencytemp
+
+            $output = Invoke-SSHCommand -Command "/tmp/niping -c -B 100000 -L 100 -H $vmtoping1 | grep tr2" -SessionId $sshsessions[$zone-1].SessionId
+            $bandwidthtemp = [string]$output.Output
+            $bandwidthtemp = $bandwidthtemp -replace '\s+', ' '
+            $bandwidthtemp = $bandwidthtemp.Split(" .")
+            $bandwidthtemp = [int]$bandwidthtemp[1] / 1024
+            $bandwidthtemp = [string]([math]::ceiling($bandwidthtemp)) + " MB/s"
+            $bandwidthtemp = $bandwidthtemp.PadLeft(12)
+            $bandwidth[$zone -1][$vmtopingno1 -1] = $bandwidthtemp
+
+            $output = Invoke-SSHCommand -Command "/tmp/niping -c -B 10 -L 100 -H $vmtoping2 | grep av2" -SessionId $sshsessions[$zone-1].SessionId
+            $latencytemp = [string]$output.Output
+            $latencytemp = $latencytemp -replace '\s+', ' '
+            $latencytemp = $latencytemp.Split(" ")
+            $latencytemp = [string]$latencytemp[1] + " " + $latencytemp[2]
+            $latencytemp = $latencytemp.PadLeft(12)
+            $latency[$zone -1][$vmtopingno2 -1] = $latencytemp
+
+            $output = Invoke-SSHCommand -Command "/tmp/niping -c -B 100000 -L 100 -H $vmtoping2 | grep tr2" -SessionId $sshsessions[$zone-1].SessionId
+            $bandwidthtemp = [string]$output.Output
+            $bandwidthtemp = $bandwidthtemp -replace '\s+', ' '
+            $bandwidthtemp = $bandwidthtemp.Split(" .")
+            $bandwidthtemp = [int]$bandwidthtemp[1] / 1024
+            $bandwidthtemp = [string]([math]::ceiling($bandwidthtemp)) + " MB/s"
+            $bandwidthtemp = $bandwidthtemp.PadLeft(12)
+            $bandwidth[$zone -1][$vmtopingno2 -1] = $bandwidthtemp
+
+        }
+    }
     
     # Print output
     Write-Host "Region: " $region
@@ -295,11 +376,8 @@ param(
 
     # Removing SSH sessions
     Write-Host -ForegroundColor Green "Removing SSH Sessions"
-    For ($zone=1; $zone -le $zones; $zone++) {
-        Remove-SSHSession -SessionId $sshsessions[$zone-1].SessionId
-    }
-
-
+    Get-SSHSession | Remove-SSHSession -ErrorAction SilentlyContinue
+    
     #destroy resource group
     if ($DestroyAfterTest) {
         Write-Host -ForegroundColor Green "Deleting Resource Group"
