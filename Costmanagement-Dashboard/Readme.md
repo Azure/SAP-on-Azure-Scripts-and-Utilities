@@ -75,8 +75,12 @@ The Azure Cost Management connector uses OAuth 2.0 for authentication with Azure
 ### PowerBI Themes
 [https://docs.microsoft.com/en-us/power-bi/create-reports/desktop-report-themes](https://docs.microsoft.com/en-us/power-bi/create-reports/desktop-report-themes)
 
-# Questions
-if you have questions please open an issue on the GitHub site
+# Questions or need help?
+if you have questions please open an issue on the GitHub site or send a mail to
+Rob Wilson [rowilson@microsoft.com](rowilson@microsoft.com) or
+Philipp Leitenbauer [phleiten@microsoft.com](phleiten@microsoft.com)
+
+we can also schedule a demo.
 
 # Sample Screenshots
 ## Home Screen
