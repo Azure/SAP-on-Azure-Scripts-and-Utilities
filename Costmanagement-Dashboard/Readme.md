@@ -79,41 +79,54 @@ The Azure Cost Management connector uses OAuth 2.0 for authentication with Azure
 if you have questions please open an issue on the GitHub site
 
 # Sample Screenshots
+## Home Screen
+The home screen provides a general overview of your Azure consumption, you can drill into every detail by clicking on an entry.
+Using the 30-Day and 365-Day trend you can provide a fast overview of past spending and an outlook for the next month.
+
 ![Home](readme-images/home.jpg)
 
-Home Screen
+## Summary page
+The Monthly Summary page provides more insights into the your billing.
 
 ![Summary](readme-images/summary.jpg)
 
-Summary page
+## Applications page
+Based on tagging the applications will be grouped, you can e.g. create a tag per SAP landscape to inlucde Database, ASCS and App servers or you could use it to show different business units within your company.
 
 ![Applications](readme-images/applications.jpg)
 
-Applications view
+## Meter Details
+Drill into details on e.g. virtual machines or storage
 
 ![Meter (Details)](readme-images/meter-detail.jpg)
 
-Meter details
+## Networking
+Get more insights which subscription generates how much networking costs
 
 ![Networking](readme-images/networking.jpg)
 
-Networking
+## Cost Center
+You are using cost centers in Azure, here you can see the costs per cost center.
 
 ![cost center](readme-images/costcenter.jpg)
 
-Cost Center
+## Reservations (Reserved Instances)
+Reserved Instances provide the option to save costs, Reservations shows how much you send on different VM types.
 
 ![reservations](readme-images/reserverations.jpg)
 
-Reserverations
+## Azure Regions
+Find out which region generates how much monthly usage
 
 ![regions](readme-images/regions.jpg)
 
-Regions
+## Pricesheet
+Look at your companies price sheet for all your SKUs.
 
 ![price sheet](readme-images/price-sheet.jpg)
 
-Price Sheet
+## Other pages
+in addition to that there is a databricks page.
 
 ## Contributing
 
