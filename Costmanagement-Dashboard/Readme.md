@@ -35,6 +35,36 @@ When opening the template for the first time you will get a screen to fill out y
 * Subscription Metadata: local path to Excel file with Subscription Metadata
 * Price Sheet Validation: local path to your Microsoft pricesheet
 
+## Using metadata files to map costs
+The PowerBI Dashboard used Azure tags to combine different types of costs.
+So it is easy to see what the total costs of e.g. a VM which is combined out of Compute, Storage, Networking, Backup and other meters.
+Sometimes tags change over time or you e.g. had a typo in the tags. Thats where the metadata files can help as you can map old data to new data.
+As an example you might change the cost center structure for all of your Azure resources, but what about the old data? The tags and associated costs won't change for historic data.
+Mapping those old tags to the new once still provides the same view on applications or resources, even if they are tagged differently.
+
+The basic dataflow is explain in the following diagram
+
+![FlowDiagram](readme-images/cost-management-metadata-model.jpg)
+
+## Find more information
+
+### Azure Cost Management API
+You can find more information about the Azure Cost Management API on
+[https://docs.microsoft.com/en-us/power-bi/connect-data/desktop-connect-azure-cost-management](https://docs.microsoft.com/en-us/power-bi/connect-data/desktop-connect-azure-cost-management)
+
+The Azure Cost Management connector uses OAuth 2.0 for authentication with Azure and identifies users who are going to use the connector. Tokens generated in this process are valid for a specific period. Power BI preserves the token for the next login. OAuth 2.0, is a standard for the process that goes on behind the scenes to ensure the secure handling of these permissions.
+
+### Azure Cost Consumption API v2
+[https://docs.microsoft.com/en-us/rest/api/consumption/](https://docs.microsoft.com/en-us/rest/api/consumption/)
+
+### Get Enterprise Agreement Reservation Costs and Usage
+[https://docs.microsoft.com/en-us/azure/cost-management-billing/reservations/understand-reserved-instance-usage-ea](https://docs.microsoft.com/en-us/azure/cost-management-billing/reservations/understand-reserved-instance-usage-ea)
+
+### Cost Management Connector v2
+[https://docs.microsoft.com/en-us/power-bi/connect-data/desktop-connect-azure-cost-management](https://docs.microsoft.com/en-us/power-bi/connect-data/desktop-connect-azure-cost-management)
+
+
+
 # Questions
 if you have questions please open an issue on the GitHub site
 
