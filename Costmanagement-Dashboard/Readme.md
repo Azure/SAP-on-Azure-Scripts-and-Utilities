@@ -63,7 +63,17 @@ The Azure Cost Management connector uses OAuth 2.0 for authentication with Azure
 ### Cost Management Connector v2
 [https://docs.microsoft.com/en-us/power-bi/connect-data/desktop-connect-azure-cost-management](https://docs.microsoft.com/en-us/power-bi/connect-data/desktop-connect-azure-cost-management)
 
+### Azure Cost Management API and PowerBI
+[https://docs.microsoft.com/en-us/azure/cost-management-billing/costs/analyze-cost-data-azure-cost-management-power-bi-template-appt](https://docs.microsoft.com/en-us/azure/cost-management-billing/costs/analyze-cost-data-azure-cost-management-power-bi-template-app)
 
+### Azure Enterprise Portal
+[https://docs.microsoft.com/en-us/azure/cost-management-billing/manage/ea-portal-get-started](https://docs.microsoft.com/en-us/azure/cost-management-billing/manage/ea-portal-get-started)
+
+### Azure custom pricing
+[https://docs.microsoft.com/en-us/azure/cost-management-billing/manage/ea-pricing](https://docs.microsoft.com/en-us/azure/cost-management-billing/manage/ea-pricing)
+
+### PowerBI Themes
+[https://docs.microsoft.com/en-us/power-bi/create-reports/desktop-report-themes](https://docs.microsoft.com/en-us/power-bi/create-reports/desktop-report-themes)
 
 # Questions
 if you have questions please open an issue on the GitHub site
