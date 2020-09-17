@@ -7,23 +7,23 @@ THE SCRIPTS ARE PROVIDED AS IS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR I
 # Getting Started
 ## Requirements
 To use the cost management dashboard you are required to have following information
-* run Excel and PowerBI on your PC
-* Azure Cost Management API PowerBI key
+* run Excel and Power BI on your PC
+* Azure Cost Management API Power BI key
 * access to your Azure Subscription incl permissions for Cost Management API
 
 ## How to deploy the Cost Management Dashboard
 1. Download all files from this site
 2. Update the metadata files (Excel Files)
-3. Start the PowerBI Template
-4. Enter the required data (PowerBI parameters)
+3. Start the Power BI Template
+4. Enter the required data (Power BI parameters)
 5. Refresh data to perform a first test
-6. Update the PowerBI Theme
+6. Update the Power BI Theme
 7. Publish your Report if you want to make it accessible to others
 
-## Starting PowerBI for the first time
+## Starting Power BI for the first time
 When opening the template for the first time you will get a screen to fill out your connection details:
 
-![Starting PowerBI](readme-images/github-template-getting-started.jpg)
+![Starting Power BI](readme-images/github-template-getting-started.jpg)
 
 * Enrollment ID: can be found on your EA Portal
 * Months - Usage: number of month to download, we recommend to start with 2
@@ -36,7 +36,7 @@ When opening the template for the first time you will get a screen to fill out y
 * Price Sheet Validation: local path to your Microsoft pricesheet
 
 ## Using metadata files to map costs
-The PowerBI Dashboard used Azure tags to combine different types of costs.
+The Power BI Dashboard used Azure tags to combine different types of costs.
 So it is easy to see what the total costs of e.g. a VM which is combined out of Compute, Storage, Networking, Backup and other meters.
 Sometimes tags change over time or you e.g. had a typo in the tags. Thats where the metadata files can help as you can map old data to new data.
 As an example you might change the cost center structure for all of your Azure resources, but what about the old data? The tags and associated costs won't change for historic data.
@@ -45,6 +45,21 @@ Mapping those old tags to the new once still provides the same view on applicati
 The basic dataflow is explain in the following diagram
 
 ![FlowDiagram](readme-images/cost-management-metadata-model.jpg)
+
+## Using Power BI workspaces
+If you publish your report online please check the limits of Power BI.
+
+The default app workspace is limited to 10GB of data. Loading more than 2 month in a big Azure enrolement could result in data bigger than 10GB.
+
+You can use Premium capacity to get up to 100GB of data store
+
+Manage data storage in Power BI workspaces
+
+[https://docs.microsoft.com/en-us/power-bi/admin/service-admin-manage-your-data-storage-in-power-bi](https://docs.microsoft.com/en-us/power-bi/admin/service-admin-manage-your-data-storage-in-power-bi)
+
+Power BI pricing models
+
+[https://powerbi.microsoft.com/en-us/pricing/](https://powerbi.microsoft.com/en-us/pricing/)
 
 ## Find more information
 
@@ -63,7 +78,7 @@ The Azure Cost Management connector uses OAuth 2.0 for authentication with Azure
 ### Cost Management Connector v2
 [https://docs.microsoft.com/en-us/power-bi/connect-data/desktop-connect-azure-cost-management](https://docs.microsoft.com/en-us/power-bi/connect-data/desktop-connect-azure-cost-management)
 
-### Azure Cost Management API and PowerBI
+### Azure Cost Management API and Power BI
 [https://docs.microsoft.com/en-us/azure/cost-management-billing/costs/analyze-cost-data-azure-cost-management-power-bi-template-appt](https://docs.microsoft.com/en-us/azure/cost-management-billing/costs/analyze-cost-data-azure-cost-management-power-bi-template-app)
 
 ### Azure Enterprise Portal
