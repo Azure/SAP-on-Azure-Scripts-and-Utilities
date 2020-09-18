@@ -34,7 +34,10 @@ param(
     #Virtual Machine name
     [Parameter(Mandatory = $true)][string]$VirtualMachineName,
     #Number of Availability Zone
-    [Parameter(Mandatory = $true)][string]$newAvailabilityZoneNumber
+    [Parameter(Mandatory = $true)][string]$newAvailabilityZoneNumber,
+    #Proximity placement group
+    [Parameter(Mandatory = $false)][string]$proximityPlacementGroupID
+
 )
 
 # select subscription
@@ -84,10 +87,23 @@ $tags = $originalVM.Tags
     
 #  Create the basic configuration for the replacement VM
 if ($VerbosePreference -eq "Continue") {
-    $newVM = New-AzVMConfig -VMName $VirtualMachineName -VMSize $originalVM.HardwareProfile.VmSize -zone $destzone -Tags $tags -Verbose
+    if ($proximityPlacementGroupID -ne "")
+    {
+        $newVM = New-AzVMConfig -VMName $VirtualMachineName -VMSize $originalVM.HardwareProfile.VmSize -zone $destzone -Tags $tags -ProximityPlacementGroupId $proximityPlacementGroupID -Verbose
+    }
+    else {
+        $newVM = New-AzVMConfig -VMName $VirtualMachineName -VMSize $originalVM.HardwareProfile.VmSize -zone $destzone -Tags $tags -Verbose
+    }
+    
 }
 else {
-    $newVM = New-AzVMConfig -VMName $VirtualMachineName -VMSize $originalVM.HardwareProfile.VmSize -zone $destzone -Tags $tags -
+    if ($proximityPlacementGroupID -ne "")
+    {
+        $newVM = New-AzVMConfig -VMName $VirtualMachineName -VMSize $originalVM.HardwareProfile.VmSize -zone $destzone -Tags $tags -ProximityPlacementGroupId $proximityPlacementGroupID 
+    }
+    else {
+        $newVM = New-AzVMConfig -VMName $VirtualMachineName -VMSize $originalVM.HardwareProfile.VmSize -zone $destzone -Tags $tags 
+    }
 }
        
 #  Snap and copy the os disk
