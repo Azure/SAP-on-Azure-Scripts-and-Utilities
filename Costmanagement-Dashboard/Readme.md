@@ -14,7 +14,7 @@ To use the cost management dashboard you are required to have following informat
 ## How to deploy the Cost Management Dashboard
 1. Download all files from this site
 2. Update the metadata files (Excel Files)
-3. Read latest [release notes](Contoso - Azure Cost Management - Release Notes.pdf)
+3. Read latest [release notes](Release-Notes.pdf)
 4. Start the Power BI Template
 5. Enter the required data (Power BI parameters)
 6. Refresh data to perform a first test
