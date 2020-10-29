@@ -111,7 +111,7 @@ Select-AzSubscription -Subscription $SubscriptionName -Force
 
 $output = @()
 
-$vms = Get-AzComputeResourceSku | where { $_.Locations.Contains($region) } | where { $_.ResourceType.Contains("virtualMachines") };
+$vms = Get-AzComputeResourceSku -Location $region | Where-Object { $_.ResourceType -eq 'virtualMachines' };
 
 #    $vmseries = @("M","D")
 
