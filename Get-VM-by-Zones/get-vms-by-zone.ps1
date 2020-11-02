@@ -80,14 +80,16 @@
 
 .NOTES
     v0.1 - Initial version
-
+    v0.2 - Update required module specification to use Az.Compute 4.2.1 which allows location parameter
+            for better filtering of results
 #>
+
 <#
 Copyright (c) Microsoft Corporation.
 Licensed under the MIT license.
 #>
 
-#Requires -Modules Az.Compute
+#Requires -Module @{ ModuleName = 'Az.Compute'; ModuleVersion = '4.2.1' }
 #Requires -Version 5.1
 
 param(
