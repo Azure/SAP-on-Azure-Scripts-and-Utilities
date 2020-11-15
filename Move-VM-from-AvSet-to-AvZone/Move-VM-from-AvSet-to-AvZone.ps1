@@ -12,7 +12,7 @@
     IMPORTANT: the script does not VM extensions or any identities assigned to the Virtual Machine.  Also, the script will not work for VMs with public IP addresses.
 
 .EXAMPLE
-    ./Move-VM-to-AvZone.ps1 -SubscriptionName testsubscription -ResourceGroupName test-rg -VirtualMachineName vm1 -newAvailabilityZoneNumber 2 
+    ./Move-VM-from-AvSet-to-AvZone.ps1 -SubscriptionName testsubscription -ResourceGroupName test-rg -VirtualMachineName vm1 -newAvailabilityZoneNumber 2  -proximityPlacementGroupID "resourceID"
 
 .LINK
     https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities

@@ -331,3 +331,6 @@ ASALocalRun/
 ARMTemplates/Landscapes/*/
 Rename-VM/test.ps1
 Rename-VM/removeresources.ps1
+Move-VMs/azcopy.exe
+Move-VMs/ThirdPartyNotice.txt
+Move-VMs/export.json
