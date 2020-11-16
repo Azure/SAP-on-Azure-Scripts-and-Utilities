@@ -111,6 +111,19 @@ foreach ($vmName in $VMs) {
     $tempVM = Get-AzVM -Name $vmName -ResourceGroupName $ResourceGroupName 
     if ($tempVM) {
         Write-Host "Processing " $vmName
+        $VMInfo | add-member -MemberType NoteProperty -Name "Size" -Value $tempVM.HardwareProfile.VmSize
+        $VMInfo | add-member -MemberType NoteProperty -Name "OsDisk" -Value $disk.Name
+        $VMInfo | add-member -MemberType NoteProperty -Name "OsType" -Value $tempVM.StorageProfile.OsDisk.OsType
+        $VMInfo | add-member -MemberType NoteProperty -Name "ppg_ID" -Value $tempVM.ProximityPlacementGroup.Id
+        $VMInfo | add-member -MemberType NoteProperty -Name "avset_ID" -Value $tempVM.AvailabilitySetReference.Id
+        $VMInfo | add-member -MemberType NoteProperty -Name "Zone" -Value $tempVM.Zones[0]
+        $VMInfo | add-member -MemberType NoteProperty -Name "Tags" -Value $tempVM.Tags
+
+        $nic = Get-AzNetworkInterface -Name $tempVM.NetworkProfile.NetworkInterfaces[0].Id.Split("/")[8] -ResourceGroupName $ResourceGroupName
+        $VMInfo | add-member -MemberType NoteProperty -Name "subnet" -Value  $nic.IpConfigurations[0].Subnet.Id
+        $VMInfo | add-member -MemberType NoteProperty -Name "IP" -Value  $nic.IpConfigurations[0].PrivateIpAddress
+        
+
         $disk = $tempVM.StorageProfile.OsDisk
         $disk2 = Get-AzDisk -ResourceGroupName $ResourceGroupName -DiskName $disk.Name 
         $DiskInfo = new-object PSObject
@@ -118,6 +131,7 @@ foreach ($vmName in $VMs) {
         $DiskInfo | add-member -MemberType NoteProperty -Name "NewName" -Value $disk.Name
         $DiskInfo | add-member -MemberType NoteProperty -Name "Size" -Value $disk2.DiskSizeGB
         $DiskInfo | add-member -MemberType NoteProperty -Name "SKU" -Value $disk2.Sku.Name
+        $DiskInfo | add-member -MemberType NoteProperty -Name "WriteAcceleratorEnabled" -Value $disk2.WriteAcceleratorEnabled
 
         $Disks += $DiskInfo
 
@@ -138,17 +152,6 @@ foreach ($vmName in $VMs) {
             else {
                 Start-AzStorageBlobCopy -AbsoluteUri $sas.AccessSAS -DestContainer $storageContainerName -DestContext $destinationContext -DestBlob $destinationVHDFileName
             }
-            
-        
-            $VMInfo | add-member -MemberType NoteProperty -Name "Size" -Value $tempVM.HardwareProfile.VmSize
-            $VMInfo | add-member -MemberType NoteProperty -Name "OsDisk" -Value $disk.Name
-            $VMInfo | add-member -MemberType NoteProperty -Name "OsType" -Value $tempVM.StorageProfile.OsDisk.OsType
-            $VMInfo | add-member -MemberType NoteProperty -Name "ppg_ID" -Value $tempVM.ProximityPlacementGroup.Id
-            $VMInfo | add-member -MemberType NoteProperty -Name "avset_ID" -Value $tempVM.AvailabilitySetReference.Id
-            $nic = Get-AzNetworkInterface -Name $tempVM.NetworkProfile.NetworkInterfaces[0].Id.Split("/")[8] -ResourceGroupName $ResourceGroupName
-            $VMInfo | add-member -MemberType NoteProperty -Name "subnet" -Value  $nic.IpConfigurations[0].Subnet.Id
-            $VMInfo | add-member -MemberType NoteProperty -Name "IP" -Value  $nic.IpConfigurations[0].PrivateIpAddress
-            
 
             # Snapshot & copy all of the drives
             foreach ($disk in $tempVM.StorageProfile.DataDisks) {
@@ -168,6 +171,7 @@ foreach ($vmName in $VMs) {
                     $DiskInfo | add-member -MemberType NoteProperty -Name "SKU" -Value $disk2.Sku.Name
                     $DiskInfo | add-member -MemberType NoteProperty -Name "Caching" -Value $disk.Caching
                     $DiskInfo | add-member -MemberType NoteProperty -Name "Lun" -Value $disk.Lun
+                    $DiskInfo | add-member -MemberType NoteProperty -Name "WriteAcceleratorEnabled" -Value $disk.WriteAcceleratorEnabled
 
                     $Disks += $DiskInfo
                 }

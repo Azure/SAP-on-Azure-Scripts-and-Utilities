@@ -334,3 +334,5 @@ Rename-VM/removeresources.ps1
 Move-VMs/azcopy.exe
 Move-VMs/ThirdPartyNotice.txt
 Move-VMs/export.json
+Move-VMs/export copy.json
+Move-VMs/runall.ps1

@@ -6,6 +6,12 @@
     "OsType" : "Linux",
     "ppg_ID": "/subscriptions/8d8422a3-a9c1-4fe9-b880-adcf61557c71/resourceGroups/PROTO-WEEU-SAPPROT_DEMO-WOO/providers/Microsoft.Compute/proximityPlacementGroups/PROTO-WEEU-SAPPROT-WOO_z2-ppg",
     "avset_ID": null,
+    "Zone":  "1",
+    "Tags":  {
+                 "SID":  "WOO",
+                 "environment":  "SAP"
+             },
+
     "subnet": "/subscriptions/8d8422a3-a9c1-4fe9-b880-adcf61557c71/resourceGroups/PROTO-WEEU-SAPPROTO-INFRASTRUCTURE/providers/Microsoft.Network/virtualNetworks/PROTO-WEEU-SAPPROTO-vnet/subnets/PROTO-WEEU-SAPPROTO_db-subnet",
     "IP": "10.15.2.4",
     "Disks": [
@@ -24,6 +30,12 @@
     "OsType" : "Linux",
     "ppg_ID": "/subscriptions/8d8422a3-a9c1-4fe9-b880-adcf61557c71/resourceGroups/PROTO-WEEU-SAPPROT_DEMO-WOO/providers/Microsoft.Compute/proximityPlacementGroups/PROTO-WEEU-SAPPROT-WOO_z2-ppg",
     "avset_ID": null,
+    "Zone":  "1",
+    "Tags":  {
+                 "SID":  "WOO",
+                 "environment":  "SAP"
+             },
+
     "subnet": "/subscriptions/8d8422a3-a9c1-4fe9-b880-adcf61557c71/resourceGroups/PROTO-WEEU-SAPPROTO-INFRASTRUCTURE/providers/Microsoft.Network/virtualNetworks/PROTO-WEEU-SAPPROTO-vnet/subnets/PROTO-WEEU-SAPPROTO_db-subnet",
     "IP": "10.15.2.5",
     "Disks": [

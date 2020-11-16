@@ -8,4 +8,17 @@ $Location                   = "westeurope"
 
 # .\Create-Disks.ps1 -SubscriptionName $SubscriptionName -ResourceGroupName $TargetResourceGroupName -storageAccountName $storageAccountName -ExportManifest "export.json"
 
-.\Create-VMs.ps1  -SubscriptionName $SubscriptionName -ResourceGroupName $TargetResourceGroupName -ExportManifest "export.json"
+# .\Create-VMs.ps1  -SubscriptionName $SubscriptionName -ResourceGroupName $TargetResourceGroupName -ExportManifest "export.json"
+
+
+$VMs = Get-Content "export.json" | Out-String | ConvertFrom-Json 
+
+
+foreach ($vm in $VMs) {
+    $Members = $vm.Tags |Get-Member -MemberType "NoteProperty"
+    foreach($member in $members)
+    {
+        Write-Host $member.Definition
+    }
+
+}

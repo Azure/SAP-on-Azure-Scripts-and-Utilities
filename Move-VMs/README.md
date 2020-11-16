@@ -9,6 +9,10 @@ The migration is a 4 step process
 - Create the disks
 - Create the virtual machines
 
+**Note** 
+
+Ultra disks are not supported.
+
 **requirements:**
 
 - Azure Subscription
