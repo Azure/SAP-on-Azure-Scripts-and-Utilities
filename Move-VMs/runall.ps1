@@ -1,8 +1,8 @@
-$SubscriptionName           = "My-Subscription"
-$ResourceGroupName          = "PROTO-NOEU-SAPPROT_DEMO-WOO"
-$TargetResourceGroupName    = "PROTO-WEEU-SAPPROT_DEMO-WOO"
-$storageAccountName         = "protoweeumigratedisks"
-$Location                   = "westeurope"
+#$SubscriptionName           = "My-Subscription"
+$ResourceGroupName = "PROTO-NOEU-SAPPROT_DEMO-WOO"
+$TargetResourceGroupName = "PROTO-WEEU-SAPPROT_DEMO-WOO"
+$storageAccountName = "protoweeumigratedisks"
+$Location = "westeurope"
 
 #.\Export-Disks.ps1 -SubscriptionName $SubscriptionName -ResourceGroupName $ResourceGroupName -TargetResourceGroupName $TargetResourceGroupName -storageAccountName $storageAccountName -Location $Location -ExportManifest "export.json"
 
@@ -13,12 +13,12 @@ $Location                   = "westeurope"
 
 $VMs = Get-Content "export.json" | Out-String | ConvertFrom-Json 
 
+$tags = @{}
 
 foreach ($vm in $VMs) {
-    $Members = $vm.Tags |Get-Member -MemberType "NoteProperty"
-    foreach($member in $members)
-    {
-        Write-Host $member.Definition
-    }
-
+  for ($i = 0; $i -lt $vm.Tag_keys.Count; $i++) {
+    $tags.Add($vm.Tag_keys[$i], $vm.Tag_values[$i])
+  }
 }
+
+$tags

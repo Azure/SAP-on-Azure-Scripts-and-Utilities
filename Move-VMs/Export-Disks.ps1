@@ -111,20 +111,24 @@ foreach ($vmName in $VMs) {
     $tempVM = Get-AzVM -Name $vmName -ResourceGroupName $ResourceGroupName 
     if ($tempVM) {
         Write-Host "Processing " $vmName
+        
+        $disk = $tempVM.StorageProfile.OsDisk
+
         $VMInfo | add-member -MemberType NoteProperty -Name "Size" -Value $tempVM.HardwareProfile.VmSize
         $VMInfo | add-member -MemberType NoteProperty -Name "OsDisk" -Value $disk.Name
         $VMInfo | add-member -MemberType NoteProperty -Name "OsType" -Value $tempVM.StorageProfile.OsDisk.OsType
         $VMInfo | add-member -MemberType NoteProperty -Name "ppg_ID" -Value $tempVM.ProximityPlacementGroup.Id
         $VMInfo | add-member -MemberType NoteProperty -Name "avset_ID" -Value $tempVM.AvailabilitySetReference.Id
         $VMInfo | add-member -MemberType NoteProperty -Name "Zone" -Value $tempVM.Zones[0]
-        $VMInfo | add-member -MemberType NoteProperty -Name "Tags" -Value $tempVM.Tags
+        $VMInfo | add-member -MemberType NoteProperty -Name "Tag_keys" -Value $tempVM.Tags.Keys
+        $VMInfo | add-member -MemberType NoteProperty -Name "Tag_values" -Value $tempVM.Tags.Values
 
         $nic = Get-AzNetworkInterface -Name $tempVM.NetworkProfile.NetworkInterfaces[0].Id.Split("/")[8] -ResourceGroupName $ResourceGroupName
         $VMInfo | add-member -MemberType NoteProperty -Name "subnet" -Value  $nic.IpConfigurations[0].Subnet.Id
         $VMInfo | add-member -MemberType NoteProperty -Name "IP" -Value  $nic.IpConfigurations[0].PrivateIpAddress
         
 
-        $disk = $tempVM.StorageProfile.OsDisk
+        
         $disk2 = Get-AzDisk -ResourceGroupName $ResourceGroupName -DiskName $disk.Name 
         $DiskInfo = new-object PSObject
         $DiskInfo | add-member -MemberType NoteProperty -Name "Name" -Value $disk.Name

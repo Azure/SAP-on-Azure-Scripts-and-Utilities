@@ -53,7 +53,12 @@ if ($notPresent) {
 $VMs = Get-Content $ExportManifest | Out-String | ConvertFrom-Json 
 
 foreach ($vm in $VMs) {
-    $newVM = New-AzVMConfig -VMName $vm.Name -VMSize $vm.Size #-Tags $vm.Tags
+    $tags = @{}
+    for ($i = 0; $i -lt $vm.Tag_keys.Count; $i++) {
+        $tags.Add($vm.Tag_keys[$i], $vm.Tag_values[$i])
+      }
+
+    $newVM = New-AzVMConfig -VMName $vm.Name -VMSize $vm.Size -Tags $tags
 
     if ($null -ne $vm.avset_ID) {
         $newVM.AvailabilitySetReference.Id = $vm.avset_ID
@@ -85,9 +90,17 @@ foreach ($vm in $VMs) {
     foreach ($disk in $vm.Disks) {
         if ($vm.OsDisk -ne $disk.NewName) {
             $disk2 = Get-AzDisk -ResourceGroupName $ResourceGroupName -DiskName $disk.NewName
-            Add-AzVMDataDisk -VM $newVM -Name $disk.NewName  -ManagedDiskId $disk2.Id -Caching $disk.Caching -Lun $disk.Lun -DiskSizeInGB $disk.Size -CreateOption Attach -WriteAccelerator $disk.WriteAcceleratorEnabled
+            if($disk.WriteAcceleratorEnabled)
+            {
+                Add-AzVMDataDisk -VM $newVM -Name $disk.NewName  -ManagedDiskId $disk2.Id -Caching $disk.Caching -Lun $disk.Lun -DiskSizeInGB $disk.Size -CreateOption Attach -WriteAccelerator 
+            }
+            else
+            {
+                Add-AzVMDataDisk -VM $newVM -Name $disk.NewName  -ManagedDiskId $disk2.Id -Caching $disk.Caching -Lun $disk.Lun -DiskSizeInGB $disk.Size -CreateOption Attach
+            }
+             
         }
     }
 
-    New-AzVM  -ResourceGroupName $ResourceGroupName -Location $rg.Location -VM $newVM -DisableBginfoExtension -Zone $vm.Zone
+    New-AzVM  -ResourceGroupName $ResourceGroupName -Location $rg.Location -VM $newVM  -Zone $vm.Zone -Verbose
 }

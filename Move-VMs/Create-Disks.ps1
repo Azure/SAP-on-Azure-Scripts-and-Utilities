@@ -64,15 +64,12 @@ foreach ($vm in $VMs) {
         $sourceVHDURI = "https://" + $StorageAccountName + ".blob.core.windows.net/disks/" + $disk.Name +".vhd"
         Write-Host "Processing: " $sourceVHDURI
         #Provide the size of the disks in GB. It should be greater than the VHD file size.
-        $diskSize = $disk.Size
-        Write-Host $diskSize
-
+        
         #Provide the storage type for Managed Disk. Premium_LRS or Standard_LRS.
         $storageType = $disk.SKU
-        Write-Host $storageType
 
-        $diskConfig = New-AzDiskConfig -AccountType $storageType -Location $rg.Location -CreateOption Import -StorageAccountId $storageAccountId -SourceUri $sourceVHDURI
-        New-AzDisk -Disk $diskConfig -ResourceGroupName $resourceGroupName -DiskName $disk.NewName
+        $diskConfig = New-AzDiskConfig -AccountType $storageType -Location $rg.Location -CreateOption Import -StorageAccountId $storageAccountId -SourceUri $sourceVHDURI -Zone $vm.Zone
+        New-AzDisk -Disk $diskConfig -ResourceGroupName $resourceGroupName -DiskName $disk.NewName 
 
     }
 }

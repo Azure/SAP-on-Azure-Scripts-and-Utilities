@@ -3,15 +3,12 @@
     "Name": "PROTO-WEEU-SAPPROT-WOO_wooanchor_z1_00lbe0",
     "Size": "Standard_D4s_v4",
     "OsDisk": "PROTO-WEEU-SAPPROT-WOO_wooanchor_z1_00lbe0-OsDisk",
-    "OsType" : "Linux",
+    "OsType": "Linux",
     "ppg_ID": "/subscriptions/8d8422a3-a9c1-4fe9-b880-adcf61557c71/resourceGroups/PROTO-WEEU-SAPPROT_DEMO-WOO/providers/Microsoft.Compute/proximityPlacementGroups/PROTO-WEEU-SAPPROT-WOO_z2-ppg",
     "avset_ID": null,
-    "Zone":  "1",
-    "Tags":  {
-                 "SID":  "WOO",
-                 "environment":  "SAP"
-             },
-
+    "Zone": "1",
+    "Tag_keys": ["SID", "environment"],
+    "Tag_values": ["WOO", "SAP"],
     "subnet": "/subscriptions/8d8422a3-a9c1-4fe9-b880-adcf61557c71/resourceGroups/PROTO-WEEU-SAPPROTO-INFRASTRUCTURE/providers/Microsoft.Network/virtualNetworks/PROTO-WEEU-SAPPROTO-vnet/subnets/PROTO-WEEU-SAPPROTO_db-subnet",
     "IP": "10.15.2.4",
     "Disks": [
@@ -27,15 +24,12 @@
     "Name": "PROTO-WEEU-SAPPROT-WOO_woodora_z1_00l0be0",
     "Size": "Standard_D4s_v3",
     "OsDisk": "PROTO-WEEU-SAPPROT-WOO_woodora_z1_00l0be0-OsDisk",
-    "OsType" : "Linux",
+    "OsType": "Linux",
     "ppg_ID": "/subscriptions/8d8422a3-a9c1-4fe9-b880-adcf61557c71/resourceGroups/PROTO-WEEU-SAPPROT_DEMO-WOO/providers/Microsoft.Compute/proximityPlacementGroups/PROTO-WEEU-SAPPROT-WOO_z2-ppg",
     "avset_ID": null,
-    "Zone":  "1",
-    "Tags":  {
-                 "SID":  "WOO",
-                 "environment":  "SAP"
-             },
-
+    "Zone": "1",
+    "Tag_keys": ["SID", "environment"],
+    "Tag_values": ["WOO", "SAP"],
     "subnet": "/subscriptions/8d8422a3-a9c1-4fe9-b880-adcf61557c71/resourceGroups/PROTO-WEEU-SAPPROTO-INFRASTRUCTURE/providers/Microsoft.Network/virtualNetworks/PROTO-WEEU-SAPPROTO-vnet/subnets/PROTO-WEEU-SAPPROTO_db-subnet",
     "IP": "10.15.2.5",
     "Disks": [
@@ -51,7 +45,8 @@
         "Size": 128,
         "SKU": "Premium_LRS",
         "Caching": "None",
-        "Lun": 0
+        "Lun": 0,
+        "WriteAcceleratorEnabled": false
       },
       {
         "Name": "PROTO-NOEU-SAPPROT-WOO_woodora_z1_00l0be0-data01",
@@ -59,7 +54,8 @@
         "Size": 128,
         "SKU": "Premium_LRS",
         "Caching": "None",
-        "Lun": 1
+        "Lun": 1,
+        "WriteAcceleratorEnabled": false
       }
     ]
   }
