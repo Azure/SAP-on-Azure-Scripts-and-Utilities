@@ -121,10 +121,10 @@ This script will create managed disks from the .vhd files.
 
 ## Create the Virtual Machines
 
-This script will create the virtual machines.
+This script will create the virtual machines and associste them with the provided subnet, IP, availability set and proximity placement group.
 
 ### Example on how to create the VMs
 
 ```PowerShell
-.\Create-Disks.ps1 -SubscriptionName $SubscriptionName -ResourceGroupName $TargetResourceGroupName -storageAccountName $storageAccountName -ExportManifest "export.json"
+.\Create-VMs.ps1  -SubscriptionName $SubscriptionName -ResourceGroupName $TargetResourceGroupName -ExportManifest "export.json"
 ```
