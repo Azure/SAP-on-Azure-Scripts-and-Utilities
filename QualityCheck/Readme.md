@@ -1,6 +1,10 @@
 # Quality Check for SAP on Azure
 Current Version: V1
 
+## Disclaimer
+
+THE SCRIPTS ARE PROVIDED AS IS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
+
 ## Description
 When installing SAP HANA on Azure you have to follow guidelines available on [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-get-started)
 Especially the storage layout available [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-vm-operations-storage) should be taken into consideration.
