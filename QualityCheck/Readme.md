@@ -20,6 +20,10 @@ The Quality Check consists of two files
 
 
 ## How to run it
+Download the PowerShell Script and the JSON file, but them in the same folder and install the prerequisits.
+Then simply run the script.
+
+
 ### Sample Commands
 ```
 . 'QualityCheck.ps1' -ResourceGroupName <ResourceGroupName for VMs> -SubscriptionName <subscription name> -AzVMname <Azure VM name> -vm_hostname <IP address or DNS name> -vm_username <OS user> -hanadeployment <ScaleUp or ScaleOut> -hanastoragetype <Premium or UltraDisk or ANF> -highavailability <$true or $false>
