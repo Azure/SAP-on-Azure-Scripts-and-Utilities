@@ -21,6 +21,7 @@ The Quality Check consists of two files
 
 ## How to run it
 Download the PowerShell Script and the JSON file, but them in the same folder and install the prerequisits.
+
 Then simply run the script.
 
 ### Sample Commands

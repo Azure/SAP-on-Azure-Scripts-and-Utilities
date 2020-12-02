@@ -1,0 +1,1248 @@
+{
+    "Version": 1,
+    "GeneralConfig": {
+        "SAPHANA": {
+            "Volumes": [
+                {
+                    "Description": "HANA Data",
+                    "Path": "/hana/data"
+                },
+                {
+                    "Description": "HANA Log",
+                    "Path": "/hana/log"
+                },
+                {
+                    "Description": "HANA Shared",
+                    "Path": "/hana/shared"
+                }
+            ],
+            "StripeSizes": {
+                "HANA Data": "256.00k",
+                "HANA Log": "64.00k"
+            },
+            "ScaleOut": {
+                "NICCount": 3
+            }
+        }
+    },
+    "GeneralCollectVMInformation": [
+        {
+            "ProcessingCommand": "hostname",
+            "PostProcessingCommand": "",
+            "Description": "Hostname",
+            "RootRequired": false,
+            "RemoveCRLF": true
+        },
+        {
+            "ProcessingCommand": "uname -r",
+            "PostProcessingCommand": "",
+            "Description": "Kernel Version",
+            "RootRequired": false,
+            "RemoveCRLF": true
+        },
+        {
+            "ProcessingCommand": "cat /etc/*release*",
+            "PostProcessingCommand": "",
+            "Description": "System Release",
+            "RootRequired": false,
+            "RemoveCRLF": false
+        },
+        {
+            "ProcessingCommand": "cat /var/lib/hyperv/.kvp_pool_3 | tr -d '\\000' | grep -o -P '(?<=HostName).*(?=HostingSystemEditionId)'",
+            "PostProcessingCommand": "",
+            "Description": "Azure Hypervisor Host",
+            "RootRequired": false,
+            "RemoveCRLF": true
+        },
+        {
+            "ProcessingCommand": "curl --noproxy * -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/vmSize?api-version=2019-11-01&format=text'",
+            "PostProcessingCommand": "",
+            "Description": "VM Type",
+            "RootRequired": true,
+            "RemoveCRLF": false
+        },
+        {
+            "ProcessingCommand": "echo 1",
+            "PostProcessingCommand": "$ppg = (Get-AzVM -ResourceGroupName $ResourceGroupName -Name $AzVMname).ProximityPlacementGroup; if (!$ppg) { 'No PPG defined' } else { (Get-AzProximityPlacementGroup -ResourceId $ppg.Id).Name }",
+            "Description": "Proximity Placement Group",
+            "RootRequired": false,
+            "RemoveCRLF": false
+        }
+    ],
+    "VMDiskConfig": [
+        {
+            "VMType": "Standard_M32ts",
+            "DiskConfig": {
+                "Premium": [
+                    {
+                        "DataDiskSize": 64,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 128,
+                        "LogDiskCount": 3,
+                        "SharedDiskSize": 192,
+                        "SharedDiskCount": 1
+                    },
+                    {
+                        "DataDiskSize": 512,
+                        "DataDiskCount": 3,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 2,
+                        "SharedDiskSize": 192,
+                        "SharedDiskCount": 1
+                    }
+                ],
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 250,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 2500,
+                        "DataDiskMBPS": 400,
+                        "LogDiskSize": 96,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 1800,
+                        "LogDiskMBPS": 250,
+                        "SharedDiskSize": 192,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_M32ls",
+            "DiskConfig": {
+                "Premium": [
+                    {
+                        "DataDiskSize": 64,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 128,
+                        "LogDiskCount": 3,
+                        "SharedDiskSize": 256,
+                        "SharedDiskCount": 1
+                    },
+                    {
+                        "DataDiskSize": 512,
+                        "DataDiskCount": 3,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 2,
+                        "SharedDiskSize": 256,
+                        "SharedDiskCount": 1
+                    }
+                ],
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 300,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 2500,
+                        "DataDiskMBPS": 400,
+                        "LogDiskSize": 256,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 1800,
+                        "LogDiskMBPS": 250,
+                        "SharedDiskSize": 256,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_M64ls",
+            "DiskConfig": {
+                "Premium": [
+                    {
+                        "DataDiskSize": 128,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 128,
+                        "LogDiskCount": 3,
+                        "SharedDiskSize": 512,
+                        "SharedDiskCount": 1
+                    },
+                    {
+                        "DataDiskSize": 512,
+                        "DataDiskCount": 3,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 2,
+                        "SharedDiskSize": 512,
+                        "SharedDiskCount": 1
+                    }
+                ],
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 620,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 3500,
+                        "DataDiskMBPS": 400,
+                        "LogDiskSize": 256,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 1800,
+                        "LogDiskMBPS": 250,
+                        "SharedDiskSize": 512,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_M64s",
+            "DiskConfig": {
+                "Premium": [
+                    {
+                        "DataDiskSize": 256,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 256,
+                        "LogDiskCount": 3,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    },
+                    {
+                        "DataDiskSize": 512,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 2,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    }
+                ],
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 1200,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 5000,
+                        "DataDiskMBPS": 600,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 2500,
+                        "LogDiskMBPS": 250,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_M64ms",
+            "DiskConfig": {
+                "Premium": [
+                    {
+                        "DataDiskSize": 512,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 256,
+                        "LogDiskCount": 3,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    },
+                    {
+                        "DataDiskSize": 1024,
+                        "DataDiskCount": 3,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 2,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    }
+                ],
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 2100,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 5000,
+                        "DataDiskMBPS": 600,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 2500,
+                        "LogDiskMBPS": 250,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_M128s",
+            "DiskConfig": {
+                "Premium": [
+                    {
+                        "DataDiskSize": 512,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 256,
+                        "LogDiskCount": 3,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    },
+                    {
+                        "DataDiskSize": 1024,
+                        "DataDiskCount": 3,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 2,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    }
+                ],
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 2400,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 7000,
+                        "DataDiskMBPS": 750,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 2500,
+                        "LogDiskMBPS": 250,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_M128ms",
+            "DiskConfig": {
+                "Premium": [
+                    {
+                        "DataDiskSize": 1024,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 256,
+                        "LogDiskCount": 3,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    },
+                    {
+                        "DataDiskSize": 1024,
+                        "DataDiskCount": 5,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 2,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    }
+                ],
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 4800,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 7000,
+                        "DataDiskMBPS": 750,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 2500,
+                        "LogDiskMBPS": 250,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_M208s_v2",
+            "DiskConfig": {
+                "Premium": [
+                    {
+                        "DataDiskSize": 1024,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 256,
+                        "LogDiskCount": 3,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    },
+                    {
+                        "DataDiskSize": 1024,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 2,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    }
+                ],
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 3500,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 7000,
+                        "DataDiskMBPS": 750,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 2500,
+                        "LogDiskMBPS": 250,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_M208ms_v2",
+            "DiskConfig": {
+                "Premium": [
+                    {
+                        "DataDiskSize": 2048,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 256,
+                        "LogDiskCount": 3,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    },
+                    {
+                        "DataDiskSize": 2048,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 2,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    }
+                ],
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 7200,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 7000,
+                        "DataDiskMBPS": 750,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 2500,
+                        "LogDiskMBPS": 250,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_M416s_v2",
+            "DiskConfig": {
+                "Premium": [
+                    {
+                        "DataDiskSize": 2048,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 256,
+                        "LogDiskCount": 3,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    },
+                    {
+                        "DataDiskSize": 2048,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 2,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    }
+                ],
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 7200,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 9000,
+                        "DataDiskMBPS": 1000,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 4000,
+                        "LogDiskMBPS": 400,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_M416ms_v2",
+            "DiskConfig": {
+                "Premium": [
+                    {
+                        "DataDiskSize": 4095,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 256,
+                        "LogDiskCount": 3,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    },
+                    {
+                        "DataDiskSize": 2048,
+                        "DataDiskCount": 8,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 2,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    }
+                ],
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 14400,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 9000,
+                        "DataDiskMBPS": 1500,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 4000,
+                        "LogDiskMBPS": 400,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_E64s_v3",
+            "DiskConfig": {
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 610,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 3500,
+                        "DataDiskMBPS": 400,
+                        "LogDiskSize": 220,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 1800,
+                        "LogDiskMBPS": 250,
+                        "SharedDiskSize": 432,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_E20ds_v4",
+            "DiskConfig": {
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 200,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 2500,
+                        "DataDiskMBPS": 400,
+                        "LogDiskSize": 80,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 1800,
+                        "LogDiskMBPS": 250,
+                        "SharedDiskSize": 160,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_E32ds_v4",
+            "DiskConfig": {
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 300,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 2500,
+                        "DataDiskMBPS": 400,
+                        "LogDiskSize": 128,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 1800,
+                        "LogDiskMBPS": 256,
+                        "SharedDiskSize": 384,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_E48ds_v4",
+            "DiskConfig": {
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 460,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 3000,
+                        "DataDiskMBPS": 400,
+                        "LogDiskSize": 192,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 1800,
+                        "LogDiskMBPS": 250,
+                        "SharedDiskSize": 384,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_E64ds_v4",
+            "DiskConfig": {
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 610,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 3500,
+                        "DataDiskMBPS": 400,
+                        "LogDiskSize": 256,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 1800,
+                        "LogDiskMBPS": 250,
+                        "SharedDiskSize": 512,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        }
+    ],
+    "KnownIssues": {
+        "SUSE": {
+            "Kernel": [
+                {
+                    "MinVersion": "4.12.14-94.41.1",
+                    "MaxVersion": "4.12.14-95.37.1",
+                    "Description": "Please check SAP Note https://launchpad.support.sap.com/#/notes/2814271"
+                }
+            ]
+        },
+        "RedHat": {
+            "Kernel": [
+            ]
+        }
+    },
+    "Checks": {
+        "General": [
+            {
+                "Type": "OS",
+                "Enabled": true,
+                "RootRequired": true,
+                "PreProcessingCommand": "",
+                "ProcessingCommand": "curl --noproxy * -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/vmSize?api-version=2019-11-01&format=text'",
+                "PostProcessingCommand": "$found=0; foreach ($x in $configFile.VMDiskConfig) { if ($x.VMType -eq 'PARAMETER') { $found = 1; Set-Variable -scope global -name vmtype -value $x.VMType } }; $found",
+                "ExpectedOutput": "1",
+                "Description": "Check if VM is supported",
+                "ErrorMessage": "Unsupported VM Type",
+                "HelpMessage": "see more details at https://www.sap.com/dmc/exp/2014-09-02-hana-hardware/enEN/iaas.html#categories=Microsoft%20Azure"
+            },
+            {
+                "Type": "OS",
+                "Enabled": true,
+                "RootRequired": true,
+                "PreProcessingCommand": "",
+                "ProcessingCommand": "hostname",
+                "PostProcessingCommand": "Set-Variable -scope global -name hostname -value PARAMETER; 1",
+                "ExpectedOutput": "1",
+                "Description": "Check Hostname",
+                "ErrorMessage": "",
+                "HelpMessage": ""
+            },
+            {
+                "Type": "OS",
+                "Enabled": true,
+                "RootRequired": false,
+                "PreProcessingCommand": "",
+                "ProcessingCommand": "hostnamectl | grep 'Operating'",
+                "PostProcessingCommand": "if ('PARAMETER' -match 'SUSE') { Set-Variable -scope global -name distribution -value 'SUSE' }; if ('PARAMETER' -match 'Red Hat') { Set-Variable -scope global -name distribution -value 'RedHat' } ; 1",
+                "ExpectedOutput": "1",
+                "Description": "Check Distribtion",
+                "ErrorMessage": "",
+                "HelpMessage": ""
+            }
+        ],
+        "SUSE": [
+            {
+                "Type": "OS",
+                "Enabled": true,
+                "RootRequired": true,
+                "PreProcessingCommand": "",
+                "ProcessingCommand": "cat /var/lib/sapconf/act_profile",
+                "PostProcessingCommand": "",
+                "ExpectedOutput": "sapconf-hana",
+                "Description": "Check if sapconf profile for SAP HANA applied",
+                "ErrorMessage": "",
+                "HelpMessage": ""
+            }
+        ],
+        "RedHat": [
+            {
+                "Type": "OS",
+                "Enabled": true,
+                "RootRequired": true,
+                "PreProcessingCommand": "",
+                "ProcessingCommand": "tuned-adm active",
+                "PostProcessingCommand": "",
+                "ExpectedOutput": "Current active profile: sap-hana",
+                "Description": "Check if tuned profile for SAP HANA is applied",
+                "ErrorMessage": "",
+                "HelpMessage": ""
+            }
+
+        ],
+        "Storage": {
+            "ANF": [
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.core.rmem_max",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.core.rmem_max = 16777216",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.core.wmem_max",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.core.wmem_max = 16777216",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.core.rmem_default",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.core.rmem_default = 16777216",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.core.wmem_default",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.core.wmem_default = 16777216",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.core.optmem_max",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.core.optmem_max = 16777216",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.ipv4.tcp_rmem",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.ipv4.tcp_rmem = 65536 16777216 16777216",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.ipv4.tcp_wmem",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.ipv4.tcp_wmem = 65536 16777216 16777216",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.core.netdev_max_backlog",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.core.netdev_max_backlog = 300000",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.ipv4.tcp_slow_start_after_idle",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.ipv4.tcp_slow_start_after_idle=0",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.ipv4.tcp_no_metrics_save",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.ipv4.tcp_no_metrics_save = 1",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },                
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.ipv4.tcp_moderate_rcvbuf",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.ipv4.tcp_moderate_rcvbuf = 1",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },                
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.ipv4.tcp_window_scaling",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.ipv4.tcp_window_scaling = 1",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },                
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.ipv4.tcp_timestamps",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.ipv4.tcp_timestamps = 1",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },                
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.ipv4.tcp_sack",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.ipv4.tcp_sack = 1",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl ipv6.conf.all.disable_ipv6",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "ipv6.conf.all.disable_ipv6 = 1",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.ipv4.tcp_max_syn_backlog",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.ipv4.tcp_max_syn_backlog = 16348",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.ipv4.ip_local_port_range",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.ipv4.ip_local_port_range = 40000 65300",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.ipv4.conf.all.rp_filter",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.ipv4.conf.all.rp_filter = 0",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl sunrpc.tcp_slot_table_entries",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "sunrpc.tcp_slot_table_entries = 128",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl vm.swappiness",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "vm.swappiness = 10",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "cat /etc/modprobe.d/* | grep tcp_max_slot_table_entries",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "options sunrpc tcp_max_slot_table_entries=128",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                }
+            ]
+        },
+        "HighAvailability": {
+            "SUSE": [
+                {
+                    "RunForSBD": true,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "crm configure show | grep 'PREFER_SITE_TAKEOVER=true' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check pacemaker setting for PREFER_SITE_TAKEOVER=true",
+                    "ErrorMessage": "change to recommended setting PREFER_SITE_TAKEOVER=true",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": true,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "crm configure show | grep 'AUTOMATED_REGISTER=true' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check pacemaker setting for AUTOMATED_REGISTER=true",
+                    "ErrorMessage": "change to recommended setting AUTOMATED_REGISTER=true",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": true,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "crm configure show | grep 'stonith-enabled=true' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check pacemaker setting for stonith-enabled=true",
+                    "ErrorMessage": "change to recommended setting stonith-enabled=true",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": true,
+                    "RunForAgent": true,
+                   "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "crm configure show | grep 'stonith-timeout=144' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check pacemaker setting for stonith-timeout=144",
+                    "ErrorMessage": "change to recommended setting stonith-timeout=144",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": true,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "cat /etc/corosync/corosync.conf | xargs | grep 'token: 30000 ' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check corosync token 30000 setting",
+                    "ErrorMessage": "change to recommended setting token: 30000",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": true,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "cat /etc/corosync/corosync.conf | xargs | grep 'token_retransmits_before_loss_const: 10 ' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check corosync token_retransmits_before_loss_const: 10 setting",
+                    "ErrorMessage": "change to recommended setting token_retransmits_before_loss_const: 10",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": true,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "cat /etc/corosync/corosync.conf | xargs | grep 'join: 60 ' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check corosync join: 60 setting",
+                    "ErrorMessage": "change to recommended setting join: 60",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": true,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "cat /etc/corosync/corosync.conf | xargs | grep 'consensus: 36000 ' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check corosync consensus: 36000  setting",
+                    "ErrorMessage": "change to recommended setting consensus: 36000 ",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": true,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "cat /etc/corosync/corosync.conf | xargs | grep 'max_messages: 20 ' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check corosync max_messages: 20 setting",
+                    "ErrorMessage": "change to recommended setting max_messages: 20",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": true,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "cat /etc/corosync/corosync.conf | xargs | grep 'expected_votes: 2 ' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check corosync expected_votes: 2 setting",
+                    "ErrorMessage": "change to recommended setting expected_votes: 2",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": true,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "cat /etc/corosync/corosync.conf | xargs | grep 'two_node: 1 ' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check corosync two_node: 1 setting",
+                    "ErrorMessage": "change to recommended setting two_node: 1",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": true,
+                    "RunForAgent": false,
+                    "Type": "SBD",
+                    "Enabled": true,
+                    "RootRequired": false,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "expectedresult='Timeout (watchdog) : 60'; result=0; for i in $(echo $p_password | sudo -S cat /etc/sysconfig/sbd | grep '^SBD_DEVICE' | cut -d '=' -f 2 | tr ';' ' '); do resultcommand=$(echo $p_password | sudo -S sbd -d ${i} dump | grep watchdog); if [[ $resultcommand == $expectedresult ]]; then result=$((result + 1)); else result=$((result - 10)); fi; done; if [ $result -gt 0 ]; then echo 'OK'; else echo 'ERROR'; fi",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "OK",
+                    "Description": "Check SBD watchdog timeout 60",
+                    "ErrorMessage": "change the SBD watchdog timeout to 60",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": true,
+                    "RunForAgent": false,
+                    "Type": "SBD",
+                    "Enabled": true,
+                    "RootRequired": false,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "expectedresult='Timeout (msgwait)  : 120'; result=0; for i in $(echo $p_password | sudo -S cat /etc/sysconfig/sbd | grep '^SBD_DEVICE' | cut -d '=' -f 2 | tr ';' ' '); do resultcommand=$(echo $p_password | sudo -S sbd -d ${i} dump | grep msgwait); if [[ $resultcommand == $expectedresult ]]; then result=$((result + 1)); else result=$((result - 10)); fi; done; if [ $result -gt 0 ]; then echo 'OK'; else echo 'ERROR'; fi",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "OK",
+                    "Description": "Check SBD msgwait timeout 120",
+                    "ErrorMessage": "change the SBD msgwait timeout to 120",
+                    "HelpMessage": ""
+                }
+
+            ],
+            "RedHat": [
+                {
+                    "RunForSBD": false,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "pcs config show | grep 'PREFER_SITE_TAKEOVER=true' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check pacemaker setting for PREFER_SITE_TAKEOVER=true",
+                    "ErrorMessage": "change to recommended setting PREFER_SITE_TAKEOVER=true",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": false,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "pcs config show | grep 'AUTOMATED_REGISTER=true' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check pacemaker setting for AUTOMATED_REGISTER=true",
+                    "ErrorMessage": "change to recommended setting AUTOMATED_REGISTER=true",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": false,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "pcs config show | grep 'stonith-enabled: true' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check pacemaker setting for stonith-enabled: true",
+                    "ErrorMessage": "change to recommended setting stonith-enabled: true",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": false,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "cat /etc/corosync/corosync.conf | xargs | grep 'token: 30000 ' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check corosync token 30000 setting",
+                    "ErrorMessage": "change to recommended setting token: 30000",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": false,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "pcs quorum status | xargs | grep 'Expected votes: 2' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check corosync expected_votes: 2 setting",
+                    "ErrorMessage": "change to recommended setting expected_votes: 2",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": false,
+                    "RunForAgent": true,
+                    "Type": "Fencing",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "pcs config show | grep 'concurrent-fencing: true' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check concurrent-fencing: true setting",
+                    "ErrorMessage": "change to recommended setting concurrent-fencing: true",
+                    "HelpMessage": ""
+                }
+            ]
+        }
+    }
+}
