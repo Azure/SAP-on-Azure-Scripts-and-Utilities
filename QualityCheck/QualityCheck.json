@@ -48,7 +48,7 @@
             "RemoveCRLF": false
         },
         {
-            "ProcessingCommand": "cat /var/lib/hyperv/.kvp_pool_3 | tr -d '\\000' | grep -o -P '(?<=HostName).*(?=HostingSystemEditionId)'",
+            "ProcessingCommand": "strings /var/lib/hyperv/.kvp_pool_3 | sed -n 2p",
             "PostProcessingCommand": "",
             "Description": "Azure Hypervisor Host",
             "RootRequired": false,

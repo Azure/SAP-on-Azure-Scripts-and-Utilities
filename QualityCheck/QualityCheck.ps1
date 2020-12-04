@@ -63,10 +63,14 @@ param(
 )
 
 
+
 function CalculateKernelVersion {
     Param (
         [string] $kernelversion
     )
+
+    # Linux Kernel Version consist of - and .
+    # this module generates a number to compare different kernel versions
 
     $kversion = $kernelversion.Replace("-",".")
     $kversionarray = $kversion.split(".")
@@ -81,6 +85,7 @@ function Get-RandomAlphanumericString {
         [int] $length = 8
 	)
 
+    # create a random alphanumeric string for file names
     return (Write-Output ( -join ((0x30..0x39) + ( 0x41..0x5A) + ( 0x61..0x7A) | Get-Random -Count $length  | ForEach-Object {[char]$_}) ))
 }
 
@@ -104,15 +109,26 @@ function RunOSCommand {
     )
 
     if ($p.RootRequired) {
+        # if root required sudo is added to the command
         $command = "echo $p_password | sudo -S " + $p.ProcessingCommand
     }
     else {
+        # otherwise command will be used without sudo
         $command = $p.ProcessingCommand
     }
 
-    $result = Invoke-SSHCommand -Command $command -SessionId 0
+    try {
+        # run the SSH command
+        $result = Invoke-SSHCommand -Command $command -SessionId 0
+    }
+    catch {
+        WriteOutput -output "Something went wrong" -type "STATUS-RED"
+    }
+
+    # Output contains the text from the SSH session
     $result = $result.Output
 
+    # postprocessing can interpret / modify the output for further processing
     if (($p.PostProcessingCommand -ne "") -or ($p.PostProcessingCommand)) {
 
         $command = $p.PostProcessingCommand
@@ -129,6 +145,7 @@ function WriteOutputToFile {
         [string]$outputstring
     )
     
+    # send string to log file
     $outputstring >> $global:logfilename
 
 }
@@ -140,6 +157,7 @@ function WriteOutput {
         [boolean]$addspaces=$false
     )
     
+    # function formats the output for the script adding error or ok messages incl colored output
     switch ($type) {
         "STATUS-GREEN" { 
             $outputstring = " OK    - " + $output
@@ -180,6 +198,7 @@ function WriteOutputHeader {
         [string]$type="INFO"
     )
     
+    # Writing output with sections
     WriteOutput -output "--------------------------------------------"
     WriteOutput -output $output -type $type
     WriteOutput -output "--------------------------------------------"
@@ -191,10 +210,16 @@ function ConvertSizeStringToNumber {
         [string]$inputsize
     )
 
+    # convert a text value with sizing characters (gigabyte, megabyte, terabyte) to a real number for comparison
+
+    # remove symbols occuring in Red Hat distributions
     $inputsize = $inputsize.Replace('<','')
     $inputsize = $inputsize.Replace('>','')
+    
+    # get length of string
     $length = $inputsize.Length
 
+    # based on last char value the multiplier is defined, output is GB
     switch ($inputsize.Substring($length-1,1)) {
         "m" {
             $multiplier = 1/1024
@@ -207,6 +232,7 @@ function ConvertSizeStringToNumber {
         }
     }
 
+    # return size in GB
     [int]$size = $inputsize.Substring(0,($inputsize.Length - 3)) * $multiplier
 
     $size
@@ -226,6 +252,7 @@ $OutputArray = @()
 
 
 # validating parameters
+# for ANF scenarios the resource group and account name is required to query the performance tier later
 if ($hanastoragetype -eq "ANF") {
 
     $found = 0
@@ -246,9 +273,9 @@ $p_Password = ConvertFrom-SecureString -SecureString $vm_password
 $Credential = New-Object System.Management.Automation.PSCredential ($vm_username, $vm_password);
 
 # load config from file
-## create full path for config file name
+# create full path for config file name
 $ConfigFileName = $PSScriptRoot + "\" + $ConfigFileName
-## load json config file
+# load json config file
 try {
     $ConfigFileHandle = Get-Content -raw -path $ConfigFileName -ErrorAction Stop
     $ConfigFile = $ConfigFileHandle | ConvertFrom-Json
@@ -258,32 +285,36 @@ catch {
     exit 13
 }
 
-## download online version
-$ConfigFileUpdateURL = "https://qualitycheck.blob.core.windows.net/qualitycheck/QualityCheck.json"
+# download online version
+# and compare it with version numbers in files to see if there is a newer version available on GitHub
+$ConfigFileUpdateURL = "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/master/QualityCheck/version.json"
 try {
-    $ConfigFileOnlineVersion = (Invoke-WebRequest $ConfigFileUpdateURL -ErrorAction SilentlyContinue  | ConvertFrom-Json).Version
+    $OnlineFileVersion = (Invoke-WebRequest -Uri $ConfigFileUpdateURL -UseBasicParsing -ErrorAction SilentlyContinue).Content  | ConvertFrom-Json
 
-    if ($ConfigFileOnlineVersion -gt $ConfigFile.Version) {
-        WriteOutputHeader -output "There is a newer configfile available on GitHub, please consider downloading it" -type "STATUS-RED"
+    if ($OnlineFileVersion.RepositoryVersion -gt $ConfigFile.Version) {
+        WriteOutputHeader -output "There is a newer QualityCheck.json available on GitHub, please consider downloading it" -type "STATUS-RED"
         Start-Sleep -Seconds 3
     }
+
+    if ($OnlineFileVersion.ScriptVersion -gt $scriptversion) {
+        WriteOutputHeader -output "There is a newer QualityCheck.ps1 available on GitHub, please consider downloading it" -type "STATUS-RED"
+        Start-Sleep -Seconds 3
+    }
+
 }
 catch {
     WriteOutput -output "Can't connect to GitHub to check version" -type "INFO"
 }
 
 
-# connecting to SAP HANA host
-## cleanup SSH Trusted Hosts
+# cleanup SSH Trusted Hosts
 Get-SSHTrustedHost | Remove-SSHTrustedHost -ErrorAction Continue  | Out-Null
 Get-SSHSession | Remove-SSHSession  -ErrorAction Continue | Out-Null
-
 
 # let's get started ...
 # connecting to Azure
 
 # select subscription
-
 if ($fastconnect -eq $false) {
 
     $Subscription = Get-AzSubscription -SubscriptionName $SubscriptionName
@@ -295,7 +326,6 @@ if ($fastconnect -eq $false) {
     Select-AzSubscription -Subscription $SubscriptionName -Force
 
 }
-
 
 # check if VM is running
 $vm = Get-AzVM -ResourceGroupName $ResourceGroupName -Name $AzVMname -Status -ErrorAction SilentlyContinue
@@ -312,6 +342,7 @@ else {
         exit 11
     }
 }
+
 ## create SSH stream 
 try {
     $SessionSSH = New-SSHSession -ComputerName $vm_hostname -Port $sshport -Credential $Credential -AcceptKey -ErrorAction SilentlyContinue 
@@ -398,16 +429,25 @@ WriteOutputHeader -output "Starting Linux Distribuation Checks"
 
 WriteOutput -output ("Linux Distribution is " + $global:distribution) -type "STATUS-GREEN"
 
-# get Kernel config
+# get Kernel version
 $command = "uname -r"
-$kernelversion = (Invoke-SSHCommand -Command $command -SessionId 0).Output
+try {
+    $kernelversion = (Invoke-SSHCommand -Command $command -SessionId 0).Output
+}
+catch {
+    WriteOutput -output "Something went wrong" -type "STATUS-RED"
+}
+
+# calculate comparable kernel version value
 $calculatedkernelversion = CalculateKernelVersion -kernelversion $kernelversion
 
 foreach ($check in $configFile.KnownIssues.$global:distribution.Kernel) {
 
+    # calculate min and max version number
     $calculatedkernelversionmin = CalculateKernelVersion -kernelversion $check.MinVersion
     $calculatedkernelversionmax = CalculateKernelVersion -kernelversion $check.MaxVersion
 
+    # check if there is a known kernel issue
     if (($calculatedkernelversion -ge $calculatedkernelversionmin) -and ($calculatedkernelversion -le $calculatedkernelversionmax))
     {
         WriteOutput -output ("There might be a known issue related to your kernel version, please check " + $check.Description) -type "STATUS-RED"
@@ -451,6 +491,10 @@ WriteOutputHeader -output "Ending OS Checks for Storage"
 WriteOutputHeader -output "Starting Storage Checks"
 ###################################################
 
+#
+#  (Azure Metadata Service) <-> (sg_map for LUN ID) <-> (lvm report) <-> (mounts)
+#
+
 # load config for VM type
 foreach ($diskconfig in $ConfigFile.VMDiskConfig) {
     if ($vmtype -eq $diskconfig.VMType) {
@@ -461,21 +505,39 @@ foreach ($diskconfig in $ConfigFile.VMDiskConfig) {
 
 # get LVM config
 $command = "echo $p_password | sudo -S lvm fullreport --reportformat json"
-$lvmconfig = (Invoke-SSHCommand -Command $command -SessionId 0).Output | ConvertFrom-Json
+try {
+    $lvmconfig = (Invoke-SSHCommand -Command $command -SessionId 0).Output | ConvertFrom-Json
+}
+catch {
+    WriteOutput -output "Something went wrong" -type "STATUS-RED"
+}
 
 # get mount points
-#$command = "echo $p_password | sudo -S findmnt --json"
-#$findmnt = (Invoke-SSHCommand -Command $command -SessionId 0).Output | ConvertFrom-Json
 $command = "echo $p_password | sudo -S findmnt -r -n"
-$findmnt = (Invoke-SSHCommand -Command $command -SessionId 0).Output | ConvertFrom-String -Delimiter ' ' -PropertyNames target,source,fstype,options
+try {
+    $findmnt = (Invoke-SSHCommand -Command $command -SessionId 0).Output | ConvertFrom-String -Delimiter ' ' -PropertyNames target,source,fstype,options
+}
+catch {
+    WriteOutput -output "Something went wrong" -type "STATUS-RED"
+}
 
 # get LUN IDs for devices
 $command = "echo $p_password | sudo -S sg_map -x"
-$diskmapping = (Invoke-SSHCommand -Command $command -SessionId 0).Output | ConvertFrom-String
+try {
+    $diskmapping = (Invoke-SSHCommand -Command $command -SessionId 0).Output | ConvertFrom-String
+}
+catch {
+    WriteOutput -output "Something went wrong" -type "STATUS-RED"
+}
 
-# get Azure Disk COnfig
+# get Azure Disk Config
 $command = "echo $p_password | sudo -S curl --noproxy * -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/storageProfile?api-version=2019-08-15'"
-$azurediskconfig = (Invoke-SSHCommand -Command $command -SessionId 0).Output | ConvertFrom-Json
+try {
+    $azurediskconfig = (Invoke-SSHCommand -Command $command -SessionId 0).Output | ConvertFrom-Json
+}
+catch {
+    WriteOutput -output "Something went wrong" -type "STATUS-RED"
+}
 
 if (($hanastoragetype -eq "Premium") -or ($hanastoragetype -eq "UltraDisk")) {
 
@@ -588,8 +650,6 @@ if (($hanastoragetype -eq "Premium") -or ($hanastoragetype -eq "UltraDisk")) {
                             }
                         }
                         
-                        
-                        
                         if (($pvcount -ge $diskcount) -and ($pvsize -ge $disksize)) {
                             $diskconfigok = 1
                         }
@@ -605,9 +665,6 @@ if (($hanastoragetype -eq "Premium") -or ($hanastoragetype -eq "UltraDisk")) {
                             WriteOutput -output ("Filesystem " + $volume.Path + " has a certified disk layout") -type "STATUS-GREEN"
                         }
                     }
-
-
-
                 }
                 1 {
                     # error, at least one PV has different size
@@ -626,6 +683,7 @@ if (($hanastoragetype -eq "Premium") -or ($hanastoragetype -eq "UltraDisk")) {
                     }
                 }
 
+                # match the Azure Disk
                 foreach ($azuredisk in $azurediskconfig.dataDisks) {
                     if ($azuredisk.lun -eq $matchinglun) {
                         break
@@ -648,6 +706,7 @@ if (($hanastoragetype -eq "Premium") -or ($hanastoragetype -eq "UltraDisk")) {
                 # Getting UltraDisk parameters
                 if ($hanastoragetype -eq "UltraDisk") {
 
+                    # set the value for comparison of IOPS and MBPS based on file system
                     switch ($volume.Description) {
                         "HANA Data" {
                             $UltraDiskIOPS = $disklayout.DataDiskIOPS
@@ -664,6 +723,7 @@ if (($hanastoragetype -eq "Premium") -or ($hanastoragetype -eq "UltraDisk")) {
 
                     }
 
+                    # Get Azure Ultra Disk Configuration
                     $UltraDisk = Get-AzDisk -DiskName $azuredisk.name -ResourceGroupName $ResourceGroupName
 
                     if ($UltraDisk.DiskIOPSReadWrite -ge $UltraDiskIOPS) {
@@ -689,15 +749,33 @@ if (($hanastoragetype -eq "Premium") -or ($hanastoragetype -eq "UltraDisk")) {
     }
 }
 
+# Check ANF requirements
 if ($hanastoragetype -eq "ANF") {
 
     # get ANF Account
-    $anfaccount = Get-AzNetAppFilesAccount -ResourceGroupName $ANFResourceGroupName
+
+    try {
+        $anfaccount = Get-AzNetAppFilesAccount -ResourceGroupName $ANFResourceGroupName
+    }
+    catch {
+        WriteOutput -output "Something went wrong" -type "STATUS-RED"
+    }
+
     # get ANF Pools
-    $anfpools = Get-AzNetAppFilesPool -AccountObject $anfaccount
+    try {
+        $anfpools = Get-AzNetAppFilesPool -AccountObject $anfaccount
+    }
+    catch {
+        WriteOutput -output "Something went wrong" -type "STATUS-RED"
+    }
     # get ANF Volumes
-    $anfvolumes = Get-AzNetAppFilesVolume -PoolObject $anfpools
-    
+    try {
+        $anfvolumes = Get-AzNetAppFilesVolume -PoolObject $anfpools
+    }
+    catch {
+        WriteOutput -output "Something went wrong" -type "STATUS-RED"
+    }
+
     # check disk config
     foreach ($volume in $ConfigFile.GeneralConfig.SAPHANA.Volumes) {
 
@@ -710,6 +788,7 @@ if ($hanastoragetype -eq "ANF") {
             }
         }
 
+        # Check the mount options
         if ($filesystem.options -match "vers=4.1,rsize=1048576,wsize=1048576") {
             WriteOutput -output ("File System " + $volume.Path + " - mount options OK") -type "STATUS-GREEN"
         }
@@ -833,14 +912,21 @@ if ($hanastoragetype -eq "ANF") {
                 WriteOutput -output ("Filesystem " + $volume.Path + " is not NFS4") -type "STATUS-RED"
             }
 
+            # check for multiple NICs and if NFS is mounted on eth0 or other card (NFS shouldn't be mounted on eth0)
             if ($hanadeployment -eq "ScaleOut") {
 
+                # get IP address of mount
                 $nfsipaddress = ($volume.source).Split(":")[0]
 
                 # check if NFS mount is sent through eth0 (if yes than error because UDR is missing)
                 $command = "echo $p_password | ip route get $nfsipaddress | grep eth0 | wc -l"
-                $nfsinterface = (Invoke-SSHCommand -Command $command -SessionId 0).Output
-
+                try {
+                    $nfsinterface = (Invoke-SSHCommand -Command $command -SessionId 0).Output
+                }
+                catch {
+                    WriteOutput -output "Something went wrong" -type "STATUS-RED"
+                }
+        
                 if ($nfsinterface -eq "1") {
                     WriteOutput -output ("NFS traffic for filesystem " + $volume.Path + " is sent through eth0, please create a route through separate interface") -type "STATUS-RED"  
                 }
@@ -859,6 +945,8 @@ WriteOutputHeader -output "Ending Storage Checks"
 
 
 # check if fencing agent or sbd is used
+# Fencing Agent if config includes "fence_azure_arm"
+# otherwise it is SBD
 if (($global:distribution -eq "RedHat") -and ($highavailability -eq $true)) {
     $command = "echo $p_password | sudo -S pcs config show | grep fence_azure_arm | wc -l"
 }
@@ -866,8 +954,15 @@ if (($global:distribution -eq "SUSE") -and ($highavailability -eq $true)) {
     $command = "echo $p_password | sudo -S crm configure show | grep fence_azure_arm | wc -l"
 }
 
+
+# start the High Availability Checks
 if ($highavailability -eq $true) {
-    $fencingoutput = (Invoke-SSHCommand -Command $command -SessionId 0).Output
+    try {
+        $fencingoutput = (Invoke-SSHCommand -Command $command -SessionId 0).Output
+    }
+    catch {
+        WriteOutput -output "Something went wrong" -type "STATUS-RED"
+    }
 
     ###################################################
     WriteOutputHeader -output "Starting High Availability Checks"
@@ -913,11 +1008,21 @@ WriteOutputHeader -output "Starting Networking Checks"
 
 
 # Check if Accelerated Networking is enabled
-
 $niccount = 0
-$azurevm = Get-AzVM -name $hostname -ResourceGroupName $ResourceGroupName
+try {
+    $azurevm = Get-AzVM -name $hostname -ResourceGroupName $ResourceGroupName
+}
+catch {
+    WriteOutput -output "Something went wrong" -type "STATUS-RED"
+}
+
 foreach ($azurevmnetworkinterface in $azurevm.NetworkProfile.NetworkInterfaces) {
-    $networkinterface = Get-AzNetworkInterface -ResourceId $azurevmnetworkinterface.Id
+    try {
+        $networkinterface = Get-AzNetworkInterface -ResourceId $azurevmnetworkinterface.Id
+    }
+    catch {
+        WriteOutput -output "Something went wrong" -type "STATUS-RED"
+    }
 
     # check Accelerated Networking
     if ($networkinterface.EnableAcceleratedNetworking) {
@@ -965,8 +1070,13 @@ foreach ($azurevmnetworkinterface in $azurevm.NetworkProfile.NetworkInterfaces) 
             if ($global:fencingsolutionsbd -eq $true) {
                 # check if NFS mount is sent through eth0 (if yes than error because UDR is missing)
                 $command = "echo $p_password | rpm -qi socat | grep Version | wc -l"
-                $nfsinterface = (Invoke-SSHCommand -Command $command -SessionId 0).Output
-
+                try {
+                    $nfsinterface = (Invoke-SSHCommand -Command $command -SessionId 0).Output
+                }
+                catch {
+                    WriteOutput -output "Something went wrong" -type "STATUS-RED"
+                }
+        
                 if ($nfsinterface -eq "1") {
                     WriteOutput -output ("socat installed") -type "STATUS-GREEN"
                 }
@@ -978,7 +1088,6 @@ foreach ($azurevmnetworkinterface in $azurevm.NetworkProfile.NetworkInterfaces) 
     }
 
 }
-
 
 if ($hanadeployment -eq "ScaleOut") {
     if ($niccount -lt $ConfigFile.GeneralConfig.SAPHANA.ScaleOut.NICCount) {
@@ -997,3 +1106,4 @@ WriteOutputHeader -output "Cleaning Up"
 Get-SSHSession | Remove-SSHSession | Out-Null
 Rename-Item $global:logfilename ($global:hostname + "-" + ((Get-Date).ToString('yyyyMMddhhmmss')) + ".txt")
 
+# done
