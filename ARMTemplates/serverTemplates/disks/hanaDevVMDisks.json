@@ -147,6 +147,107 @@
                     }
                 ]
             },
+            "Standard_E20ds_v4": {
+                "osdiskSizeGB": 63,
+                "disks": [
+                    {
+                        "lun": 0,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data01",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 1,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data02",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 2,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-data03",
+                        "storageAccountType": null,
+                        "sku": "Premium_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 3,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-shared01",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 511,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 4,
+                        "createOption": "attach",
+                        "caching": "ReadOnly",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-sap01",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 63,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    },
+                    {
+                        "lun": 5,
+                        "createOption": "attach",
+                        "caching": "None",
+                        "writeAcceleratorEnabled": false,
+                        "id": null,
+                        "name": "-backup01",
+                        "storageAccountType": null,
+                        "sku": "StandardSSD_LRS",
+                        "properties": {
+                            "diskSizeGB": 255,
+                            "creationData": {
+                                "createOption": "empty"
+                            }
+                        }
+                    }
+                ]
+            },
             "Standard_E16s_v3": {
                 "osdiskSizeGB": 63,
                 "disks": [
