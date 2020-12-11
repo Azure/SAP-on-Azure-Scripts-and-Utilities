@@ -1010,7 +1010,7 @@ WriteOutputHeader -output "Starting Networking Checks"
 # Check if Accelerated Networking is enabled
 $niccount = 0
 try {
-    $azurevm = Get-AzVM -name $hostname -ResourceGroupName $ResourceGroupName
+    $azurevm = Get-AzVM -name $AzVMname -ResourceGroupName $ResourceGroupName
 }
 catch {
     WriteOutput -output "Something went wrong" -type "STATUS-RED"
