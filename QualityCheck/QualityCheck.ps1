@@ -10,7 +10,9 @@
     https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities
 
 .NOTES
-    v1.0 - Initial version
+    v1.0 -  Initial version
+    v2.0 -  fixing some typos
+            adding some additional checks for non-supported VM types
 
 #>
 <#
@@ -62,6 +64,8 @@ param(
     [boolean]$fastconnect = $true
 )
 
+# defining script version
+$scriptversion = 2
 
 
 function CalculateKernelVersion {
@@ -237,9 +241,6 @@ function ConvertSizeStringToNumber {
 
     $size
 }
-
-# defining script version
-$scriptversion = 1
 
 # defining variables
 $OutputArray = @()
@@ -424,7 +425,7 @@ WriteOutputHeader -output "Ending General Checks"
 ###################################################
 
 ###################################################
-WriteOutputHeader -output "Starting Linux Distribuation Checks"
+WriteOutputHeader -output "Starting Linux Distribution Checks"
 ###################################################
 
 WriteOutput -output ("Linux Distribution is " + $global:distribution) -type "STATUS-GREEN"
@@ -456,7 +457,7 @@ foreach ($check in $configFile.KnownIssues.$global:distribution.Kernel) {
 }
 
 ###################################################
-WriteOutputHeader -output "Ending Linux Distribuation Checks"
+WriteOutputHeader -output "Ending Linux Distribution Checks"
 ###################################################
 
 ###################################################
@@ -531,7 +532,7 @@ catch {
 }
 
 # get Azure Disk Config
-$command = "echo $p_password | sudo -S curl --noproxy * -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/storageProfile?api-version=2019-08-15'"
+$command = "echo $p_password | sudo -S curl --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/storageProfile?api-version=2019-08-15'"
 try {
     $azurediskconfig = (Invoke-SSHCommand -Command $command -SessionId 0).Output | ConvertFrom-Json
 }

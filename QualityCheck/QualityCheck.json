@@ -1,5 +1,5 @@
 {
-    "Version": 1,
+    "Version": 2,
     "GeneralConfig": {
         "SAPHANA": {
             "Volumes": [
@@ -55,7 +55,7 @@
             "RemoveCRLF": true
         },
         {
-            "ProcessingCommand": "curl --noproxy * -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/vmSize?api-version=2019-11-01&format=text'",
+            "ProcessingCommand": "curl --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/vmSize?api-version=2019-11-01&format=text'",
             "PostProcessingCommand": "",
             "Description": "VM Type",
             "RootRequired": true,
@@ -675,7 +675,7 @@
                 "Enabled": true,
                 "RootRequired": true,
                 "PreProcessingCommand": "",
-                "ProcessingCommand": "curl --noproxy * -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/vmSize?api-version=2019-11-01&format=text'",
+                "ProcessingCommand": "curl --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/vmSize?api-version=2019-11-01&format=text'",
                 "PostProcessingCommand": "$found=0; foreach ($x in $configFile.VMDiskConfig) { if ($x.VMType -eq 'PARAMETER') { $found = 1; Set-Variable -scope global -name vmtype -value $x.VMType } }; $found",
                 "ExpectedOutput": "1",
                 "Description": "Check if VM is supported",
@@ -702,7 +702,7 @@
                 "ProcessingCommand": "hostnamectl | grep 'Operating'",
                 "PostProcessingCommand": "if ('PARAMETER' -match 'SUSE') { Set-Variable -scope global -name distribution -value 'SUSE' }; if ('PARAMETER' -match 'Red Hat') { Set-Variable -scope global -name distribution -value 'RedHat' } ; 1",
                 "ExpectedOutput": "1",
-                "Description": "Check Distribtion",
+                "Description": "Check Distribution",
                 "ErrorMessage": "",
                 "HelpMessage": ""
             }

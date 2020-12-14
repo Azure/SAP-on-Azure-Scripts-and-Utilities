@@ -1,5 +1,5 @@
 # Quality Check for SAP on Azure
-Current Version: V1
+Current Version: V2
 
 ## Disclaimer
 
