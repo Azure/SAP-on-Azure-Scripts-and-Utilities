@@ -27,6 +27,9 @@ $adminUserName = "demoadmin"
 $keyVaultSecretName = "mypassword"
 $diagnosticLogStorageAccount = "sapstoragekfo"
 
+# Set the environment for tagging purposes: "DEV", "QA", "PRD", "SBX", "TST"
+$EnvType = "PRD"
+
 $hasPublicIP = $false
 $setDNS = $false
 $WebDispatch = $false
