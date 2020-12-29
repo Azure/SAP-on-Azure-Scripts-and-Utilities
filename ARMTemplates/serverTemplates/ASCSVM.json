@@ -165,7 +165,7 @@
 
         "diskSizes": {
             "ASCS": {
-                "osdiskSizeGB": 63,
+                "osdiskSizeGB": 64,
                 "nrDisks": 1
             }
         },
@@ -363,7 +363,7 @@
                         "name": "[concat(variables('sapMachineName'),'-', padLeft(copyIndex(1),2,'0'), '-osdisk')]",
                         "caching": "ReadWrite",
                         "createOption": "FromImage",
-                        "diskSizeGB": "[if(startsWith(toLower(parameters('publisher')),'microsoft') ,127, 63)]",
+                        "diskSizeGB": "[if(startsWith(toLower(parameters('publisher')),'microsoft') ,127, 64)]",
                         "managedDisk": {
                             "storageAccountType": "Premium_LRS"
 
