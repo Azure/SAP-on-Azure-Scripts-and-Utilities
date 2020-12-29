@@ -206,7 +206,7 @@ $DBDeploymentScript += $DeploymentScriptStep
 
 $DeploymentScript = ""
 $appServerName = ""
-$appTemplateFilePath = [System.String]::Format('{0}\{1}\{1}.appVM.parameters.json', $s, $SID)
+$appTemplateFilePath = [System.String]::Format('{0}\{1}\{1}.AppVM.parameters.json', $s, $SID)
 $appServerName = [System.String]::Format('app')
         
 $DeploymentScriptStep = [System.String]::Format('{1}Write-Host "Creating App Server(s)"{1}$res = New-AzResourceGroupDeployment -Name "AppServer_Creation-{2}" -ResourceGroupName $ResourceGroupName -TemplateFile ..\..\serverTemplates\[AppServerImage].json -TemplateParameterFile .\[SID].[AppServerImage].parameters.json {3}{1}if ($res.ProvisioningState -ne "Succeeded") {{ {1}  Write-Error -Message "The deployment failed" {1}}}{1}', $i, [Environment]::NewLine, $appServerName, $VerboseFlag)
