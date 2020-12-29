@@ -1237,7 +1237,7 @@
                         }
                     },
                     {
-                        "lun": 14,
+                        "lun": 13,
                         "createOption": "attach",
                         "caching": "None",
                         "writeAcceleratorEnabled": true,
@@ -1253,7 +1253,7 @@
                         }
                     },
                     {
-                        "lun": 15,
+                        "lun": 14,
                         "createOption": "attach",
                         "caching": "None",
                         "writeAcceleratorEnabled": true,
@@ -1269,7 +1269,7 @@
                         }
                     },
                     {
-                        "lun": 16,
+                        "lun": 15,
                         "createOption": "attach",
                         "caching": "None",
                         "writeAcceleratorEnabled": true,
