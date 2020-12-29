@@ -245,7 +245,7 @@ $ascsServerName = ""
 $ASCSDeploymentScript = ""
 
 if ($NumberOfASCSServers -gt 0) {
-    $appTemplateFilePath = [System.String]::Format('{0}\{1}\{1}.ascsVM.parameters.json', $s, $SID)
+    $appTemplateFilePath = [System.String]::Format('{0}\{1}\{1}.ASCSVM.parameters.json', $s, $SID)
     $ascsServerName = [System.String]::Format('ascs')
         
     $DeploymentScriptStep = [System.String]::Format('{1}Write-Host "Creating ASCS Server(s)"{1}$res = New-AzResourceGroupDeployment -Name "ASCSServer_Creation" -ResourceGroupName $ResourceGroupName -TemplateFile ..\..\serverTemplates\[ASCSServerImage].json -TemplateParameterFile .\[SID].[ASCSServerImage].parameters.json {3}{1}if ($res.ProvisioningState -ne "Succeeded") {{ {1}  Write-Error -Message "The deployment failed" {1}}}{1}', $i, [Environment]::NewLine, $ascsServerName, $VerboseFlag)
