@@ -175,7 +175,7 @@ switch ($Database) {
 }
 $dbServerName = [System.String]::Format('db')
     
-$DeploymentScriptStep = [System.String]::Format('{1}Write-Host "Creating Db Server(s)"{1}$res = New-AzResourceGroupDeployment -Name "DbServer_Creation" -ResourceGroupName $ResourceGroupName -TemplateFile ..\..\servertemplates\[DBServerImage].json -TemplateParameterFile .\[SID].[DBServerImage].parameters.json {3}{1}if ($res.ProvisioningState -ne "Succeeded") {{ {1}  Write-Error -Message "The deployment failed" {1}}}{1}', $i, [Environment]::NewLine, $dbServerName, $VerboseFlag)
+$DeploymentScriptStep = [System.String]::Format('{1}Write-Host "Creating Db Server(s)"{1}$res = New-AzResourceGroupDeployment -Name "DbServer_Creation" -ResourceGroupName $ResourceGroupName -TemplateFile ..\..\serverTemplates\[DBServerImage].json -TemplateParameterFile .\[SID].[DBServerImage].parameters.json {3}{1}if ($res.ProvisioningState -ne "Succeeded") {{ {1}  Write-Error -Message "The deployment failed" {1}}}{1}', $i, [Environment]::NewLine, $dbServerName, $VerboseFlag)
 $DBDeploymentScript += $DeploymentScriptStep
 
 (Get-Content $dbTemplateFilePath).replace('[SID]', $SID) | Set-Content $dbTemplateFilePath
@@ -209,7 +209,7 @@ $appServerName = ""
 $appTemplateFilePath = [System.String]::Format('{0}\{1}\{1}.appVM.parameters.json', $s, $SID)
 $appServerName = [System.String]::Format('app')
         
-$DeploymentScriptStep = [System.String]::Format('{1}Write-Host "Creating App Server(s)"{1}$res = New-AzResourceGroupDeployment -Name "AppServer_Creation-{2}" -ResourceGroupName $ResourceGroupName -TemplateFile ..\..\servertemplates\[AppServerImage].json -TemplateParameterFile .\[SID].[AppServerImage].parameters.json {3}{1}if ($res.ProvisioningState -ne "Succeeded") {{ {1}  Write-Error -Message "The deployment failed" {1}}}{1}', $i, [Environment]::NewLine, $appServerName, $VerboseFlag)
+$DeploymentScriptStep = [System.String]::Format('{1}Write-Host "Creating App Server(s)"{1}$res = New-AzResourceGroupDeployment -Name "AppServer_Creation-{2}" -ResourceGroupName $ResourceGroupName -TemplateFile ..\..\serverTemplates\[AppServerImage].json -TemplateParameterFile .\[SID].[AppServerImage].parameters.json {3}{1}if ($res.ProvisioningState -ne "Succeeded") {{ {1}  Write-Error -Message "The deployment failed" {1}}}{1}', $i, [Environment]::NewLine, $appServerName, $VerboseFlag)
 $DeploymentScript += $DeploymentScriptStep
 
 #Copying the application server template parameter file
@@ -248,7 +248,7 @@ if ($NumberOfASCSServers -gt 0) {
     $appTemplateFilePath = [System.String]::Format('{0}\{1}\{1}.ascsVM.parameters.json', $s, $SID)
     $ascsServerName = [System.String]::Format('ascs')
         
-    $DeploymentScriptStep = [System.String]::Format('{1}Write-Host "Creating ASCS Server(s)"{1}$res = New-AzResourceGroupDeployment -Name "ASCSServer_Creation" -ResourceGroupName $ResourceGroupName -TemplateFile ..\..\servertemplates\[ASCSServerImage].json -TemplateParameterFile .\[SID].[ASCSServerImage].parameters.json {3}{1}if ($res.ProvisioningState -ne "Succeeded") {{ {1}  Write-Error -Message "The deployment failed" {1}}}{1}', $i, [Environment]::NewLine, $ascsServerName, $VerboseFlag)
+    $DeploymentScriptStep = [System.String]::Format('{1}Write-Host "Creating ASCS Server(s)"{1}$res = New-AzResourceGroupDeployment -Name "ASCSServer_Creation" -ResourceGroupName $ResourceGroupName -TemplateFile ..\..\serverTemplates\[ASCSServerImage].json -TemplateParameterFile .\[SID].[ASCSServerImage].parameters.json {3}{1}if ($res.ProvisioningState -ne "Succeeded") {{ {1}  Write-Error -Message "The deployment failed" {1}}}{1}', $i, [Environment]::NewLine, $ascsServerName, $VerboseFlag)
     $ASCSDeploymentScript += $DeploymentScriptStep
 
     #Copying the application server template parameter file
@@ -289,7 +289,7 @@ if ($WebDispatch) {
     $appTemplateFilePath = [System.String]::Format('{0}\{1}\{1}.wdVM.parameters.json', $s, $SID)
     $wdServerName = [System.String]::Format('webdisp')
         
-    $DeploymentScriptStep = [System.String]::Format('{1}Write-Host "Creating Web Dispatch Server(s)"{1}$res = New-AzResourceGroupDeployment -Name "WebServer_Creation-{2}" -ResourceGroupName $ResourceGroupName -TemplateFile ..\..\servertemplates\[WDServerImage].json -TemplateParameterFile .\[SID].[WDServerImage].parameters.json {3}{1}if ($res.ProvisioningState -ne "Succeeded") {{ {1}  Write-Error -Message "The deployment failed" {1}}}{1}', $i, [Environment]::NewLine, $wdServerName, $VerboseFlag)
+    $DeploymentScriptStep = [System.String]::Format('{1}Write-Host "Creating Web Dispatch Server(s)"{1}$res = New-AzResourceGroupDeployment -Name "WebServer_Creation-{2}" -ResourceGroupName $ResourceGroupName -TemplateFile ..\..\serverTemplates\[WDServerImage].json -TemplateParameterFile .\[SID].[WDServerImage].parameters.json {3}{1}if ($res.ProvisioningState -ne "Succeeded") {{ {1}  Write-Error -Message "The deployment failed" {1}}}{1}', $i, [Environment]::NewLine, $wdServerName, $VerboseFlag)
     $WDDeploymentScript += $DeploymentScriptStep
 
     #Copying the application server template parameter file
