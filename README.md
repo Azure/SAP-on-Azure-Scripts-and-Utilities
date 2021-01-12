@@ -12,6 +12,7 @@ THE SCRIPTS ARE PROVIDED AS IS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR I
 | :-------------------------------- | :-------------------------------------- |
 | Availability Zones - Latency Test | [link](./AvZone-Latency-Test/Readme.md) |
 | Assessment module | [link](./AssessmentScripts/README.MD) |
+| SAP Start-Stop Automation | [link](./Start-Stop-Automation/README.md) |
 
 
 ## VM operations
