@@ -1,10 +1,10 @@
 # Move VM to Availability Zone
 
-## Availability Sets
+## Availability Zones
 
 [Availability Zones](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/manage-availability#configure-each-application-tier-into-separate-availability-zones-or-availability-sets) is a construct that allows you to create virtual machines that are on separate physical infrastructure, to get the most application resiliency.
 
-## Moving the VM into an Availability Set
+## Moving the VM into an Availability Zone
 
 **requirements:**
 
@@ -20,6 +20,8 @@
 
     IMPORTANT: the script does not preserve VM extensions.  Also, the script will not work for VMs with public IP addresses - if your VM does have public 
     IP addresses, the script will end before changing anything.  You should remove the Public IP, then use this script, and then re-create the public IP.
+    
+    VM has to be up and running when collecting the needed information!
 
 ### Example
 
