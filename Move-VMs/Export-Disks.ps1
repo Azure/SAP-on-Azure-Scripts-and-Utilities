@@ -119,7 +119,17 @@ foreach ($vmName in $VMs) {
         $VMInfo | add-member -MemberType NoteProperty -Name "OsType" -Value $tempVM.StorageProfile.OsDisk.OsType
         $VMInfo | add-member -MemberType NoteProperty -Name "ppg_ID" -Value $tempVM.ProximityPlacementGroup.Id
         $VMInfo | add-member -MemberType NoteProperty -Name "avset_ID" -Value $tempVM.AvailabilitySetReference.Id
-        $VMInfo | add-member -MemberType NoteProperty -Name "Zone" -Value $tempVM.Zones[0]
+
+        $zone = ""
+
+        try {
+            $zone = $tempVM.Zones[0]
+        }
+        
+        catch {
+            
+        }
+        $VMInfo | add-member -MemberType NoteProperty -Name "Zone" -Value $zone
         $VMInfo | add-member -MemberType NoteProperty -Name "Tag_keys" -Value $tempVM.Tags.Keys
         $VMInfo | add-member -MemberType NoteProperty -Name "Tag_values" -Value $tempVM.Tags.Values
 
