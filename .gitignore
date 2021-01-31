@@ -336,3 +336,4 @@ Move-VMs/ThirdPartyNotice.txt
 Move-VMs/export.json
 Move-VMs/export copy.json
 Move-VMs/runall.ps1
+AzureImageBuilder/local-demoGalleryImageFromMarketPlace.ps1
