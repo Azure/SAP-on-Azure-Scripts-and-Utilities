@@ -4,11 +4,11 @@ This repository contains artifacts published by the AzureCAT SAP Deployment and 
 
 ## SAP on Azure Automation Backend
 
-Here you can check [SAP on Azure Automation Backend documentation and artifacts](./Automation-Backend).
+Here you can check [SAP on Azure Automation Backend documentation and artifacts.](./Automation-Backend).
 
 ## SAP on Azure PowerApp Frontend
 
-Here you can check [SAP on Azure PowerApp Frontend documentation and artifacts](./PowerApp-Frontend).
+Here you can check [SAP on Azure PowerApp Frontend documentation and artifacts.](./PowerApp-Frontend).
 
 ## Disclaimer
 
