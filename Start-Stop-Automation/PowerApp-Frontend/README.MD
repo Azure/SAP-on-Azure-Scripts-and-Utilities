@@ -12,6 +12,6 @@ Find the blog on the SAP community [here](https://blogs.sap.com/2021/02/10/hey-s
 During the import process you will need to update connection parameters for the Azure Automation account, Table Storage, Outlook365 and Azure Resource Manager. To do that it is advisable to create them upfront so you can pick right away.
 For The table stores the start times and last user, who started the system.
 
-- SAP VMs marked with Azure Tags. Check Goran’s blog on how to set this up.
+- SAP VMs marked with Azure Tags. Check [Goran’s blog](https://techcommunity.microsoft.com/t5/running-sap-applications-on-the/optimize-your-azure-costs-by-automating-sap-system-start-stop/ba-p/2120675) on how to set this up.
 
 - A separate calendar in Outlook365 for your scheduled SAP systems. Don’t forget to change the script in the PowerApp.
