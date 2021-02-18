@@ -10,6 +10,8 @@
     There is no need to reinstall the operating system.
 
     IMPORTANT: the script does not VM extensions or any identities assigned to the Virtual Machine.  Also, the script will not work for VMs with public IP addresses.
+    
+    VM has to be up and running, otherwise it will not collect all the needed information, like StorageAccountType.
 
 .EXAMPLE
     ./Move-VM-from-AvSet-to-AvZone.ps1 -SubscriptionName testsubscription -ResourceGroupName test-rg -VirtualMachineName vm1 -newAvailabilityZoneNumber 2  -proximityPlacementGroupID "resourceID"
@@ -106,7 +108,9 @@ else {
     }
 }
        
-#  Snap and copy the os disk
+#  Stop the VM, snap and copy the os disk
+Stop-AzVM -ResourceGroupName $ResourceGroupName -Name $VirtualMachineName -force
+
 Write-Verbose  "snapshotting disks"
 $snapshotcfg = New-AzSnapshotConfig -Location $location -CreateOption copy -SourceResourceId $originalVM.StorageProfile.OsDisk.ManagedDisk.Id
 $osdiskname = $originalVM.StorageProfile.OsDisk.Name
