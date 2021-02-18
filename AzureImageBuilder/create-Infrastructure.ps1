@@ -39,12 +39,22 @@ function New-AIBInfrastructure {
         #Resource Group Name 
         [Parameter(Mandatory = $true)][string]$ResourceGroupName, 
         #Name of Image Gallery
-        [Parameter(Mandatory = $true)][string]$GalleryName
-    
+        [Parameter(Mandatory = $true)][string]$GalleryName,
+        #Naming Prefix
+        [Parameter(Mandatory = $true)][string]$Prefix
     )
 
-    $vNetName = "aib-vnet"
-    $idenityName = "aibIdentity"
+    $Subscription = Get-AzSubscription -SubscriptionName $SubscriptionName
+    if (-Not $Subscription) {
+        Write-Host -ForegroundColor Red -BackgroundColor White "Sorry, it seems you are not connected to Azure or don't have access to the subscription. Please use Connect-AzAccount to connect."
+        exit
+    }
+    
+    $foo = Select-AzSubscription -Subscription $SubscriptionName 
+    
+
+    $vNetName = $Prefix+"_AIB-vnet"
+    $idenityName = $Prefix+"_AIB-identity"
 
     $rg = Get-AzResourceGroup -Name $ResourceGroupName -Location $Region -ErrorVariable notPresent -ErrorAction SilentlyContinue
     if ($notPresent) {
@@ -61,11 +71,11 @@ function New-AIBInfrastructure {
     if (!$vnetCheck) {
         $errorInfo = "Virtual network '" + $vNetName + "' does not exist in resource group '" + $ResourceGroupName + "'. Creating it"
         Write-Host $errorInfo
-        $aibRule = New-AzNetworkSecurityRuleConfig -Name aib-rule -Description "Allow Image Builder Private Link Access to Proxy VM" -Access Allow -Protocol Tcp -Direction Inbound  -Priority 100 -SourceAddressPrefix AzureLoadBalancer -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 60000-60001
-        $networkSecurityGroup = New-AzNetworkSecurityGroup -ResourceGroupName $ResourceGroupName -Location $Region -Name "NSG-AIB" -SecurityRules $aibRule
+        $aibRule = New-AzNetworkSecurityRuleConfig -Name ($Prefix+"_AIB-rule") -Description "Allow Image Builder Private Link Access to Proxy VM" -Access Allow -Protocol Tcp -Direction Inbound  -Priority 100 -SourceAddressPrefix AzureLoadBalancer -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 60000-60001
+        $networkSecurityGroup = New-AzNetworkSecurityGroup -ResourceGroupName $ResourceGroupName -Location $Region -Name ($Prefix+"_AIB-nsg") -SecurityRules $aibRule
     
-        $Subnet = New-AzVirtualNetworkSubnetConfig -Name subNet  -AddressPrefix "10.0.0.0/24" -NetworkSecurityGroup $networkSecurityGroup -PrivateLinkServiceNetworkPoliciesFlag "Disabled"
-        $vNet = New-AzVirtualNetwork -Name $vNetName -AddressPrefix "10.0.0.0/16" -Subnet $Subnet -ResourceGroupName $ResourceGroupName -Location $Region
+        $Subnet = New-AzVirtualNetworkSubnetConfig -Name ($Prefix+"_AIB-subNet")  -AddressPrefix "10.0.0.0/28" -NetworkSecurityGroup $networkSecurityGroup -PrivateLinkServiceNetworkPoliciesFlag "Disabled"
+        $vNet = New-AzVirtualNetwork -Name $vNetName -AddressPrefix "10.0.0.0/27" -Subnet $Subnet -ResourceGroupName $ResourceGroupName -Location $Region
         $vnetCheck = Get-AzVirtualNetwork -Name $vNetName   -ResourceGroupName $ResourceGroupName
     }
 
@@ -80,9 +90,8 @@ function New-AIBInfrastructure {
 
     (Get-Content $templateFilePath).replace('<subscriptionID>', $Subscription.Id) | Set-Content $templateFilePath
     (Get-Content $templateFilePath).replace('<rgName>', $ResourceGroupName) | Set-Content $templateFilePath
-    $foo = New-AzRoleDefinition -InputFile $templateFilePath -ErrorAction SilentlyContinue 
+    $foo = New-AzRoleDefinition -InputFile $templateFilePath -Verbose
     
-
     $templateSourceFilePath = [System.String]::Format('.\\{0}.json', "aibRoleNetworking")
     $templateFilePath = [System.String]::Format('Temp\\{0}{1}.json', "aibRoleNetworking" , $suffix)
 
@@ -91,17 +100,29 @@ function New-AIBInfrastructure {
     (Get-Content $templateFilePath).replace('<subscriptionID>', $Subscription.Id) | Set-Content $templateFilePath
     (Get-Content $templateFilePath).replace('<vnetRgName>', $ResourceGroupName) | Set-Content $templateFilePath
 
-    $foo = New-AzRoleDefinition -InputFile $templateFilePath -ErrorAction SilentlyContinue
+    $foo = New-AzRoleDefinition -InputFile $templateFilePath -Verbose
+
+    $roleName = "Azure Image Builder Service Image Creation Role"
+    $role = Get-AzRoleDefinition -Name $roleName
+
+    if(!$role) {
+        $roleName = "Contributor"
+        $role = Get-AzRoleDefinition -Name $roleName
+    }
 
     #Assing permissions to Azure Virtual Machine Image Builder
-    #New-AzRoleAssignment -RoleDefinitionName "Contributor" -Scope $rg.ResourceId -ServicePrincipalName "cf32a0cc-373c-47c9-9156-0db11f6a6dfc" -ErrorAction SilentlyContinue
+    $foo = New-AzRoleAssignment -ObjectId $idenityNamePrincipalId -RoleDefinitionName $rolename -Scope $rg.ResourceId 
 
-    # New-AzRoleAssignment -RoleDefinitionName "Azure Image Builder Service Image Creation Role" -Scope $rg.ResourceId -ServicePrincipalName "cf32a0cc-373c-47c9-9156-0db11f6a6dfc" -ErrorAction SilentlyContinue
+    $roleName = "Azure Image Builder Service Networking Role"
+    $role = Get-AzRoleDefinition -Name $roleName
 
-    $foo = New-AzRoleAssignment -ObjectId $idenityNamePrincipalId -RoleDefinitionName "Azure Image Builder Service Image Creation Role" -Scope $rg.ResourceId -ErrorAction SilentlyContinue
+    if(!$role) {
+        $roleName = "Contributor"
+        $role = Get-AzRoleDefinition -Name $roleName
+    }
 
     #New-AzRoleAssignment -RoleDefinitionName "Azure Image Builder Service Networking Role" -Scope $rg.ResourceId -ServicePrincipalName "cf32a0cc-373c-47c9-9156-0db11f6a6dfc" -ErrorAction SilentlyContinue
-    $foo = New-AzRoleAssignment -RoleDefinitionName "Azure Image Builder Service Networking Role" -Scope $rg.ResourceId -ObjectId $idenityNamePrincipalId -ErrorAction SilentlyContinue
+    $foo = New-AzRoleAssignment -RoleDefinitionName $roleName -Scope $rg.ResourceId -ObjectId $idenityNamePrincipalId -Verbose
 
     $imageDefID = ""
     $azg = Get-AzGallery -ResourceGroupName $ResourceGroupName -Name $GalleryName -ErrorAction SilentlyContinue
