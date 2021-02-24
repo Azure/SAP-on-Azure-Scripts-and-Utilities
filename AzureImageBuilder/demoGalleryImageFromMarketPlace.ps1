@@ -1,6 +1,6 @@
 . .\create-Shared-Custom-Image.ps1
 . .\check-Image-Build-Status.ps1
-. .\create-Infrastructure
+. .\create-Infrastructure.ps1
 
 $subscriptionName = "MySubscription"
 

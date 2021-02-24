@@ -54,17 +54,16 @@ function New-SharedCustomImage {
         #Additional Region(s)
         [Parameter(Mandatory = $true)][string]$AdditionalRegion,
         #SourceImageID
-        [Parameter(Mandatory = $false)][string]$SourceImageID
-
-    
-    
+        [Parameter(Mandatory = $false)][string]$SourceImageID,
+        #prefix
+        [Parameter(Mandatory = $false)][string]$Prefix = ""
     )
 
     $suffix = (Get-Date).ToString("yyyyMMddHHmm")
     $runOutputName = $ImageDefinitionName + $suffix
 
-    $vNetName = "aib-vnet"
-    $idenityName = "aibIdentity"
+    $vNetName = $Prefix + "_AIB-vnet"
+    $idenityName = $Prefix + "_AIB-identity"
 
     # $rg = Get-AzResourceGroup -Name $ResourceGroupName -Location $Region -ErrorVariable notPresent -ErrorAction SilentlyContinue
     # if ($notPresent) {
@@ -87,7 +86,7 @@ function New-SharedCustomImage {
         return $false
     }
     else {
-        $subNetId = [System.String]::Format('{0}/subnets/subNet', $vnetCheck.Id)
+        $subNetId = [System.String]::Format('{0}/subnets/{1}_AIB-subNet', $vnetCheck.Id, $Prefix)
     }
 
     $gid = Get-AzGalleryImageDefinition -ResourceGroupName $ResourceGroupName -GalleryName $GalleryName -Name $ImageDefinitionName -ErrorAction SilentlyContinue
@@ -122,14 +121,12 @@ function New-SharedCustomImage {
     (Get-Content $templateFilePath).replace('<customImageId>', $SourceImageID) | Set-Content $templateFilePath
     (Get-Content $templateFilePath).replace('<json>', $TemplateFileName.Replace(".", "_")) | Set-Content $templateFilePath
 
-
     $returnValue = $false
     $res = New-AzResourceGroupDeployment -ResourceGroupName $ResourceGroupName -TemplateFile $templateFilePath -Verbose 
 
     if ($Res.ProvisioningState -eq "Succeeded") { 
         $foo = Invoke-AzResourceAction -ResourceName $ImageDefinitionName -ResourceGroupName $ResourceGroupName -ResourceType Microsoft.VirtualMachineImages/imageTemplates -ApiVersion '2020-02-14' -Action Run -Verbose -Force
         $returnValue = $true
-
     }
     else {
         $returnValue = $false
@@ -137,6 +134,5 @@ function New-SharedCustomImage {
         $res = Get-AzResource -ResourceType "Microsoft.VirtualMachineImages/imageTemplates" -Name $ImageDefinitionName
         $foo = Remove-AzResource -ResourceId $res.ResourceId -Force
     }
-
     $returnValue
 }
