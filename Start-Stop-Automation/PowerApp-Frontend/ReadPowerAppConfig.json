@@ -1,0 +1,184 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workflows_ReadPowerAppConfig_name": {
+            "defaultValue": "ReadPowerAppConfig",
+            "type": "String"
+        },
+        "connections_azuretables_name": {
+            "defaultValue": "azuretables",
+            "type": "String"
+        },
+        "subscription": {
+            "defaultValue": "bf3d8837-8df9-4326-9414-f183b7e0886d",
+            "type": "String"
+        },
+        "storage_account_name": {
+            "defaultValue": "testmesa",
+            "type": "String"
+        },
+        "location": {
+            "defaultValue": "westeurope",
+            "type": "String"
+        },
+        "resource_group_of_table_connection": {
+            "defaultValue": "test-import-rg",
+            "type": "String"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Logic/workflows",
+            "apiVersion": "2017-07-01",
+            "name": "[parameters('workflows_ReadPowerAppConfig_name')]",
+            "location": "[parameters('location')]",
+            "dependsOn": ["[resourceId('Microsoft.Web/connections', parameters('connections_azuretables_name'))]"],
+            "properties": {
+                "state": "Enabled",
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {},
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "manual": {
+                            "type": "Request",
+                            "kind": "Http",
+                            "inputs": {
+                                "method": "GET"
+                            }
+                        }
+                    },
+                    "actions": {
+                        "For_each": {
+                            "foreach": "@body('Read_PowerApp_config')?['value']",
+                            "actions": {
+                                "Append_to_string_variable": {
+                                    "runAfter": {},
+                                    "type": "AppendToStringVariable",
+                                    "inputs": {
+                                        "name": "result",
+                                        "value": "\"@{items('For_each')?['RowKey']}\":\"@{items('For_each')?['value']}\","
+                                    }
+                                }
+                            },
+                            "runAfter": {
+                                "Read_PowerApp_config": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Foreach"
+                        },
+                        "Initialize_result": {
+                            "runAfter": {},
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "result",
+                                        "type": "string",
+                                        "value": "{"
+                                    }
+                                ]
+                            }
+                        },
+                        "Read_PowerApp_config": {
+                            "runAfter": {
+                                "Initialize_result": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['azuretables']['connectionId']"
+                                    }
+                                },
+                                "method": "get",
+                                "path": "/Tables/@{encodeURIComponent('powerappautomationjobtracker')}/entities",
+                                "queries": {
+                                    "$filter": "PartitionKey eq 'config'",
+                                    "$select": "RowKey,value"
+                                }
+                            }
+                        },
+                        "Response": {
+                            "runAfter": {
+                                "For_each": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Response",
+                            "kind": "Http",
+                            "inputs": {
+                                "body": "@concat(substring(variables('result'),0,lastIndexOf(variables('result'),',')),'}')",
+                                "headers": {
+                                    "Content-Type": "application/json"
+                                },
+                                "schema": {
+                                    "properties": {
+                                        "aad-tenant-id": {
+                                            "type": "string"
+                                        },
+                                        "automation-account-name": {
+                                            "type": "string"
+                                        },
+                                        "automation-rg": {
+                                            "type": "string"
+                                        },
+                                        "o365calendarId": {
+                                            "type": "string"
+                                        },
+                                        "sp-client-id": {
+                                            "type": "string"
+                                        },
+                                        "sp-client-secret": {
+                                            "type": "string"
+                                        },
+                                        "subscription": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                "statusCode": 200
+                            }
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "azuretables": {
+                                "connectionId": "[concat('/subscriptions/',parameters('subscription'),'/resourceGroups/',parameters('resource_group_of_table_connection'),'/providers/Microsoft.Web/connections/',parameters('connections_azuretables_name'))]",
+                                "connectionName": "azuretables",
+                                "id": "[concat('/subscriptions/',parameters('subscription'),'/providers/Microsoft.Web/locations/',parameters('location'),'/managedApis/',parameters('connections_azuretables_name'))]"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Web/connections",
+            "apiVersion": "2016-06-01",
+            "name": "[parameters('connections_azuretables_name')]",
+            "location": "[parameters('location')]",
+            "kind": "V1",
+            "properties": {
+                "displayName": "[parameters('storage_account_name')]",
+                "customParameterValues": {},
+                "api": {
+                    "id": "[concat('/subscriptions/',parameters('subscription'),'/providers/Microsoft.Web/locations/',parameters('location'),'/managedApis/',parameters('connections_azuretables_name'))]"
+                }
+            }
+        }
+    ]
+}
