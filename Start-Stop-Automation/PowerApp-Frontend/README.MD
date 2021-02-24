@@ -10,7 +10,7 @@ Find the blog on the SAP community [here](https://blogs.sap.com/2021/02/10/hey-s
 
     ![TableStorageView](./pictures/tablestorageview.png)
 
-- Import the LogicApp using template 'ReadPowerAppConfig.json' into Azure using the portal or CLI (search "Deploy a custom template"). You need to open the Table storage connection and maintain the storage account name and access key or create a new one from the LogicApp designer.
+- Import the LogicApp using template 'ReadPowerAppConfig.json' into Azure using the portal or CLI (search "Deploy a custom template"). You need to open the Table storage connection and maintain the storage account name and access key or create a new one from the LogicApp designer. Finally restrict the ip range of allowed services to call the LogicApp from PowerAutomate (LogicApp -> Workflow settings). Public IPs are listed [here](https://docs.microsoft.com/en-us/power-automate/limits-and-config#ip-addresses) or you could just run first time and check the error message for the ip provided by your PowerAutomate tenant.
 
     ![TableConnectionView](./pictures/logicApp.png)
     ![TableConnectionView](./pictures/table-connection.png)
