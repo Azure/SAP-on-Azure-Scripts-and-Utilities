@@ -11,11 +11,11 @@
             "type": "String"
         },
         "subscription": {
-            "defaultValue": "bf3d8837-8df9-4326-9414-f183b7e0886d",
+            "defaultValue": "",
             "type": "String"
         },
         "storage_account_name": {
-            "defaultValue": "testmesa",
+            "defaultValue": "",
             "type": "String"
         },
         "location": {
@@ -23,7 +23,7 @@
             "type": "String"
         },
         "resource_group_of_table_connection": {
-            "defaultValue": "test-import-rg",
+            "defaultValue": "sap-start-stop-rg",
             "type": "String"
         }
     },
