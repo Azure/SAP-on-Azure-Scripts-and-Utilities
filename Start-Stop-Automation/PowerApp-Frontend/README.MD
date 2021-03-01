@@ -6,7 +6,14 @@ Find the blog on the SAP community [here](https://blogs.sap.com/2021/02/10/hey-s
 
 - An Azure account with [Goran’s powershell and automation account setup](https://techcommunity.microsoft.com/t5/running-sap-applications-on-the/optimize-your-azure-costs-by-automating-sap-system-start-stop/ba-p/2120675) as well as authority to create the Azure storage account (table storage) and automation account. Azure Resource Manager requires a service principal to securely call the API. [Here](https://blog.jongallant.com/2017/11/azure-rest-apis-postman/) is the reference for Postman, which I re-created with http steps in PowerAutomate. Simply follow the service principal setup and exchange the ids on the table storage.
 
-- Table Storage configuration to store the connection parameters for the Azure REST API calls. Normally you would store these in Azure KeyVault but that makes the PowerAutomate flows less easily sharable. In favor of providing an easy starting point we put them on the table. Feel free to alter afterwards to match your requirements. Furthermore the entries are loaded through LogicApp 'ReadPowerAppConfig' to circumvent Data Loss Prevention Policy in PowerAutomate. Feel free to export/create it as PowerAutomate flow in case you don't have that issue. To get your Outlook365 calendar id for the scheduling feature you can use the [graph api explorer](https://developer.microsoft.com/en-us/graph/graph-explorer) with query: https://graph.microsoft.com/v1.0/me/calendars.
+- Table Storage configuration to store the connection parameters for the Azure REST API calls. Normally you would store these in Azure KeyVault but that makes the PowerAutomate flows less easily sharable. In favor of providing an easy starting point we put them on the table. Feel free to alter afterwards to match your requirements. Furthermore the entries are loaded through LogicApp 'ReadPowerAppConfig' to circumvent Data Loss Prevention Policy in PowerAutomate. Feel free to export/create it as PowerAutomate flow in case you don't have that issue.
+
+    1. o365calendarId: __Name__ of your shared calendar (Id will be extracted by PowerAutomate)
+    2. Subscription: Azure subscription that contains Automation account and Table storage
+    3. sp-client-id and *-secret: Credentials for Service Principal configured in section before
+    4. automation-rg: Azure resource group, that contains Automation Account
+    5. automation-account-name: Automation Account name
+    6. aad-tenant-id: Azure AD tenant id, that governs the SAP snoozing instance
 
     ![TableStorageView](./pictures/tablestorageview.png)
 
