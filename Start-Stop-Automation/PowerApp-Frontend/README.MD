@@ -2,6 +2,8 @@
 
 Find the blog on the SAP community [here](https://blogs.sap.com/2021/02/10/hey-sap-systems-my-powerapp-says-snooze-but-only-if-youre-ready-yet/).
 
+Series continued on Self-service sign-up process to the App [here](https://blogs.sap.com/2021/03/08/sap-snoozing-just-sign-me-up-already/).
+
 ## Prerequisites
 
 - An Azure account with [Goran’s powershell and automation account setup](https://techcommunity.microsoft.com/t5/running-sap-applications-on-the/optimize-your-azure-costs-by-automating-sap-system-start-stop/ba-p/2120675) as well as authority to create the Azure storage account (table storage) and automation account. Azure Resource Manager requires a service principal to securely call the API. [Here](https://blog.jongallant.com/2017/11/azure-rest-apis-postman/) is the reference for Postman, which I re-created with http steps in PowerAutomate. Simply follow the service principal setup and exchange the ids on the table storage.
