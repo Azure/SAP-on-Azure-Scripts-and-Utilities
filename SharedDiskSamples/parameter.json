@@ -1,0 +1,27 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "existingDomainName": {
+            "value": "kimforss.net"
+        },
+        "existingAdminUsername" : {
+            "value": "azureadm"
+        },
+        "existingAdminPassword" : {
+            "value": "6iv!60azi!u^zfI0!Yy"
+        },
+        "namePrefix" : {
+            "value": "kimzonal3"
+        },
+        "existingSubnetResourceID" : {
+            "value": "/subscriptions/dcb2713e-5dc8-4139-a9af-9768287bbb8d/resourceGroups/TEST-WEEU-SHARED-INFRASTRUCTURE/providers/Microsoft.Network/virtualNetworks/adVNET/subnets/dataSubnet"
+        },
+        "ilbIPAddress" : {
+            "value": "10.0.1.15"
+        },
+        "Zones" : {
+            "value": ["1"]
+        }
+    }
+}
