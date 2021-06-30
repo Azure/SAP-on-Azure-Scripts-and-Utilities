@@ -138,7 +138,7 @@
             "metadata": {
                 "description": "Availability Zones"
             },
-            "defaultValue": [""]
+            "defaultValue": [ "" ]
         },
 
         "witnessType": {
@@ -151,6 +151,17 @@
                 "description": "Type of cluster quorum witness (Disk or Cloud)"
             },
             "defaultValue": "Cloud"
+        },
+        "_artifactsLocation": {
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/main/SharedDiskSamples"
+        },
+        "_artifactsLocationSasToken": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Auto-generated token to access _artifactsLocation"
+            },
+            "defaultValue": ""
         }
     },
     "variables": {
@@ -264,10 +275,10 @@
         "vmImagePublisher": "MicrosoftWindowsServer",
         "vmImageOffer": "WindowsServer",
         "vmImageVersion": "latest",
-        "clusterPrepURL": "[concat('/dsc/PrepareClusterNode.ps1.zip')]",
+        "clusterPrepURL": "[concat(parameters('_artifactsLocation'),'/dsc/PrepareClusterNode.ps1.zip')]",
         "clusterPrepScript": "PrepareClusterNode.ps1",
         "clusterPrepFunction": "PrepareClusterNode",
-        "clusterConfigURL": "[concat('/dsc/ConfigureCluster.ps1.zip')]",
+        "clusterConfigURL": "[concat(parameters('_artifactsLocation'),'/dsc/ConfigureCluster.ps1.zip')]",
         "clusterConfigScript": "ConfigureCluster.ps1",
         "clusterConfigFunction": "ConfigureCluster",
         "clusterName": "[toUpper(concat(parameters('namePrefix'),'c'))]"
@@ -567,12 +578,14 @@
                     }
                 },
                 "protectedSettings": {
+                    "configurationUrlSasToken": "[parameters('_artifactsLocationSasToken')]",
                     "configurationArguments": {
                         "adminCreds": {
                             "userName": "[parameters('existingAdminUsername')]",
                             "password": "[parameters('existingAdminPassword')]"
                         }
                     }
+
                 }
             }
         },
@@ -622,7 +635,8 @@
                             "userName": "PLACEHOLDER-DO-NOT-USE",
                             "password": "[if(equals(parameters('witnessType'),'Cloud'),listKeys(resourceId('Microsoft.Storage/storageAccounts',variables('witnessStorageName')),variables('apiVersionStorage')).keys[0].value,'PLACEHOLDER-DO-NOT-USE')]"
                         }
-                    }
+                    },
+                    "configurationUrlSasToken": "[parameters('_artifactsLocationSasToken')]"
                 }
             }
         }
