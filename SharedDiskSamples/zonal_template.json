@@ -126,6 +126,17 @@
             },
             "defaultValue": "F"
         },
+        "dataDiskType": {
+            "type": "string",
+            "defaultValue": "Premium_ZRS",
+            "allowedValues": [
+                "Standard_LRS",
+                "Premium_LRS",
+                "StandardSSD_LRS",
+                "StandardSSD_ZRS",
+                "Premium_ZRS"
+            ]
+        },
         "zones": {
             "type": "array",
             "allowedValues": [
@@ -166,8 +177,8 @@
     },
     "variables": {
         "computeApiVersion": "2020-12-01",
-        "ppgName": "[concat(parameters('namePrefix'),'-ppg')]",
-        "zonalDeployment": "[greater(length(parameters('Zones')[0]),2)]",
+
+
         "asName": "[concat(parameters('namePrefix'),'-as')]",
         "asPlatformFaultDomainCount": 2,
         "asPlatformUpdateDomainCount": 5,
@@ -195,7 +206,7 @@
         ],
         "diskArray": "[take(variables('dataDisks'),if(equals(parameters('witnessType'),'Cloud'),1,2))]",
         "witnessStorageName": "[toLower(concat(parameters('namePrefix'),'w',uniqueString(resourceGroup().name)))]",
-        "witnessStorageType": "Standard_LRS",
+        "witnessStorageType": "Premium_ZRS",
         "apiVersionStorage": "2019-06-01",
         "clusterIpNeed": "[if(not(startsWith(parameters('vmImageSku'),'2019')),2,1)]",
         "ilbName": "[concat(parameters('namePrefix'),'-ilb')]",
@@ -281,33 +292,19 @@
         "clusterConfigURL": "[concat(parameters('_artifactsLocation'),'/dsc/ConfigureCluster.ps1.zip')]",
         "clusterConfigScript": "ConfigureCluster.ps1",
         "clusterConfigFunction": "ConfigureCluster",
-        "clusterName": "[toUpper(concat(parameters('namePrefix'),'c'))]"
+        "clusterName": "[toUpper(concat(parameters('namePrefix'),'c'))]",
+        "zonalDeployment": "[greater(length(parameters('Zones')[0]),0)]"
     },
     "resources": [
         {
-            "name": "[variables('ppgName')]",
+            "name": "[concat(parameters('namePrefix'),'-z',string(add(copyindex(), 1)),'-ppg')]",
             "type": "Microsoft.Compute/proximityPlacementGroups",
             "location": "[parameters('location')]",
-            "apiVersion": "2019-03-01"
-        },
-        {
-            "name": "[variables('asName')]",
-            "condition": "[not(variables('zonalDeployment'))]",
-            "type": "Microsoft.Compute/availabilitySets",
-            "location": "[parameters('location')]",
-            "apiVersion": "2019-07-01",
-            "dependsOn": [
-                "[variables('ppgName')]"
-            ],
-            "properties": {
-                "platformFaultDomainCount": "[variables('asPlatformFaultDomainCount')]",
-                "platformUpdateDomainCount": "[variables('asplatformUpdateDomainCount')]",
-                "proximityPlacementGroup": {
-                    "id": "[resourceId('Microsoft.Compute/proximityPlacementGroups', variables('ppgName'))]"
-                }
-            },
-            "sku": {
-                "name": "[variables('asSkuName')]"
+            "apiVersion": "2019-03-01",
+            "copy": {
+                "name": "vmLoop",
+                "mode": "[variables('vmLoopMode')]",
+                "count": "[variables('vmCount')]"
             }
         },
         {
@@ -316,7 +313,7 @@
             "location": "[parameters('location')]",
             "apiVersion": "2020-12-01",
             "sku": {
-                "name": "[if(variables('zonalDeployment'), 'Premium_LRS','Premium_LRS')]"
+                "name": "[parameters('dataDiskType')]"
             },
             "properties": {
                 "creationData": {
@@ -333,7 +330,7 @@
             "apiVersion": "2020-12-01",
             "condition": "[equals(parameters('witnessType'),'Disk')]",
             "sku": {
-                "name": "[if(variables('zonalDeployment'), 'Premium_LRS','Premium_LRS')]"
+                "name": "[variables('witnessStorageType')]"
             },
             "properties": {
                 "creationData": {
@@ -503,17 +500,18 @@
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('namePrefix'), copyindex(), '-nic'))]",
-                "[resourceId('Microsoft.Compute/availabilitySets', variables('asName'))]",
                 "[resourceId('Microsoft.Compute/disks', variables('dataDiskName'))]",
                 "[resourceId('Microsoft.Compute/disks', variables('witnessDiskName'))]"
             ],
+            "zones": [ "[add(copyindex(), 1)]" ],
             "properties": {
                 "hardwareProfile": {
                     "vmSize": "[parameters('vmSize')]"
                 },
-                "availabilitySet": {
-                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('asName'))]"
+                "proximityPlacementGroup": {
+                    "id": "[resourceId('Microsoft.Compute/proximityPlacementGroups', concat(parameters('namePrefix'),'-z',string(add(copyindex(), 1)),'-ppg'))]"
                 },
+
                 "osProfile": {
                     "computerName": "[toUpper(concat(parameters('namePrefix'), 'vm', copyindex()))]",
                     "adminUsername": "[parameters('existingAdminUsername')]",
@@ -550,7 +548,7 @@
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(parameters('namePrefix'), 'vm', copyindex(1),'/PrepareClusterNode')]",
-            "apiVersion": "2019-07-01",
+            "apiVersion": "[variables('computeApiVersion')]",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "vmLoop"
@@ -592,7 +590,7 @@
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(parameters('namePrefix'), 'vm', '0/ConfigureCluster')]",
-            "apiVersion": "2019-07-01",
+            "apiVersion": "[variables('computeApiVersion')]",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "vmExtensionLoop",
