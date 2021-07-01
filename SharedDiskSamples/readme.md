@@ -53,17 +53,18 @@ To successfully deploy this template, the following must already be provisioned 
 
 ## Deploying Sample Templates
 
-Click the button below to deploy the zonal version from the portal:
+```PowerShell
+.\New-AzResourceGroupDeployment -ResourceGroupName "TEST-WEEU-CLUSTER" -TemplateFile .\zonal_template.json  -name "Zonal_Deployment"
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FSAP-on-Azure-Scripts-and-Utilities%2Fmain%2FSharedDiskSamples%2Fzonal_template.json" target="_blank">
-    <img src="http://azuredeploy.net/deploybutton.png"/>
-</a>
+.\New-AzResourceGroupDeployment -ResourceGroupName "TEST-WEEU-CLUSTER" -TemplateFile .\avset_template.json  -name "AVset_Deployment"
 
-Click the button below to deploy the version using availability sets from the portal:
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FSAP-on-Azure-Scripts-and-Utilities%2Fmain%2FSharedDiskSamples%2Favset_template.json" target="_blank">
-    <img src="http://azuredeploy.net/deploybutton.png"/>
-</a>
+```
 
+```bash
+az deployment group create --resource-group "TEST-WEEU-CLUSTER" --template-file zonal_template.json --name "Zonal_Deployment"
+
+az deployment group create --resource-group "TEST-WEEU-CLUSTER" --template-file avset_template.json --name "AvSet_Deployment"
+```
 
 Tags: ``cluster, ha, shared disk, windows server 2019, ws2019``
