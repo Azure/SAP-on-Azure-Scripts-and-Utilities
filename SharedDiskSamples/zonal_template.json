@@ -185,7 +185,7 @@
         ],
         "diskArray": "[take(variables('dataDisks'),if(equals(parameters('witnessType'),'Cloud'),1,2))]",
         "witnessStorageName": "[toLower(concat(parameters('namePrefix'),'w',uniqueString(resourceGroup().name)))]",
-        "witnessStorageType": "Premium_ZRS",
+        "witnessStorageType": "Premium_LRS",
         "apiVersionStorage": "2019-06-01",
         "clusterIpNeed": "[if(not(startsWith(parameters('vmImageSku'),'2019')),2,1)]",
         "ilbName": "[concat(parameters('namePrefix'),'-ilb')]",
