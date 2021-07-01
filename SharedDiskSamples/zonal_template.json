@@ -137,7 +137,6 @@
                 "Premium_ZRS"
             ]
         },
-       
         "witnessType": {
             "type": "string",
             "allowedValues": [
