@@ -1,41 +1,44 @@
 # Windows Server Failover Cluster for SAP ASCS/SCS instance with Azure Shared Disk
 This template will provision a base two-node Windows Server Failover Cluster with a Azure Zonal Shared Disk. The resulting cluster deployment is intended for use with SAP ASCS/SCS workloads for highly available deployments on the Azure cloud platform. The clustered SAP workloads will be provisioned by SAP setup tools.
 
-The code here is based on the great work from Keith Meyer available here [301 Shared Disk SAP] (https://github.com/robotechredmond/301-shared-disk-sap)
+The code here is based on the great work from Keith Meyer available here [301 Shared Disk SAP](https://github.com/robotechredmond/301-shared-disk-sap)
 
-There are two separatate templates
+## Deployments using availability sets
 
-- for deployments using availability sets use  [avset_template] (./avset_template.json)
+For deployments using availability sets use the [avset_template](./avset_template.json)
 
 This template creates the following resources in the selected Azure Region:
 
-+	Proximity Placement Group and Availability Set for Azure VMs
-+   Two Azure VMs running Windows Server 2019 or Windows Server 2016 for cluster nodes.
-+   Azure VM DSC Extensions to prepare and configure the Windows Server Failover Cluster
-+   Azure Shared Data Disk for Data
-+   Cluster Witness resources (either Storage Account or Shared Disk depending on value of witnessType template parameter)
-+   Internal Load Balancer to provide a listener IP Address for clustered SAP workload.
-+   Azure Load Balancer for SNAT support for outbound requests.
++ Proximity Placement Group and Availability Set for Azure VMs
++ Two Azure VMs running Windows Server 2019 or Windows Server 2016 for cluster nodes.
++ Azure VM DSC Extensions to prepare and configure the Windows Server Failover Cluster
++ Azure Shared Data Disk for Data
++ Cluster Witness resources (either Storage Account or Shared Disk depending on value of witnessType template parameter)
++ Internal Load Balancer to provide a listener IP Address for clustered SAP workload.
++ Azure Load Balancer for SNAT support for outbound requests.
 
-- for zonal deployents use [zonal_template] (./zonal_template.json)
+## Deployments using availability zones
 
-+	A Proximity Placement Group per zone
-+   Two Azure VMs running Windows Server 2019 or Windows Server 2016 for cluster nodes running across two zones.
-+   Azure VM DSC Extensions to prepare and configure the Windows Server Failover Cluster
-+   Azure Shared Data Disk for Data
-+   Cluster Witness resources (either Storage Account or Shared Disk depending on value of witnessType template parameter)
-+   Internal Load Balancer to provide a listener IP Address for clustered SAP workload.
-+   Azure Load Balancer for SNAT support for outbound requests.
+For zonal deployents use [zonal_template](./zonal_template.json)
 
+This template creates the following resources in the selected Azure Region:
+
++ Proximity Placement Group per zone
++ Two Azure VMs running Windows Server 2019 or Windows Server 2016 for cluster nodes running across two zones.
++ Azure VM DSC Extensions to prepare and configure the Windows Server Failover Cluster
++ Azure Shared Data Disk for Data
++ Cluster Witness resources (either Storage Account or Shared Disk depending on value of witnessType template parameter)
++ Internal Load Balancer to provide a listener IP Address for clustered SAP workload.
++ Azure Load Balancer for SNAT support for outbound requests.
 
 ## Prerequisites
 
 To successfully deploy this template, the following must already be provisioned in your subscription:
 
-+   Azure Virtual Network with subnet defined for cluster node VMs and ILB
-+   Windows Server Active Directory and AD-integrated Dynamic DNS reachable from Azure Virtual Network
-+   Subnet IP address space defined in AD Sites and Services
-+   Custom DNS Server Settings configured on Azure Virtual Network to point to AD-integrated Dynamic DNS servers
++ Azure Virtual Network with subnet defined for cluster node VMs and ILB
++ Windows Server Active Directory and AD-integrated Dynamic DNS reachable from Azure Virtual Network
++ Subnet IP address space defined in AD Sites and Services
++ Custom DNS Server Settings configured on Azure Virtual Network to point to AD-integrated Dynamic DNS servers
 
 ## Template Deployment Notes
 
