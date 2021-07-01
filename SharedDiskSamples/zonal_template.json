@@ -137,21 +137,7 @@
                 "Premium_ZRS"
             ]
         },
-        "zones": {
-            "type": "array",
-            "allowedValues": [
-                "",
-                "1",
-                "2",
-                "3"
-
-            ],
-            "metadata": {
-                "description": "Availability Zones"
-            },
-            "defaultValue": [ "" ]
-        },
-
+       
         "witnessType": {
             "type": "string",
             "allowedValues": [
@@ -177,12 +163,6 @@
     },
     "variables": {
         "computeApiVersion": "2020-12-01",
-
-
-        "asName": "[concat(parameters('namePrefix'),'-as')]",
-        "asPlatformFaultDomainCount": 2,
-        "asPlatformUpdateDomainCount": 5,
-        "asSkuName": "Aligned",
         "dataDiskName": "[concat(parameters('namePrefix'),'-datadisk0')]",
         "witnessDiskName": "[concat(parameters('namePrefix'),'-witnessdisk0')]",
         "witnessDiskSizeGB": 256,
@@ -293,7 +273,6 @@
         "clusterConfigScript": "ConfigureCluster.ps1",
         "clusterConfigFunction": "ConfigureCluster",
         "clusterName": "[toUpper(concat(parameters('namePrefix'),'c'))]",
-        "zonalDeployment": "[greater(length(parameters('Zones')[0]),0)]"
     },
     "resources": [
         {
