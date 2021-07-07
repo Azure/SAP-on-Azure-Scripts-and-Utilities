@@ -12,7 +12,7 @@ To successfully deploy this template, the following must already be provisioned 
 + Subnet IP address space defined in AD Sites and Services
 + Custom DNS Server Settings configured on Azure Virtual Network to point to AD-integrated Dynamic DNS servers
 
-+ To deploy the required Azure VNET and Active Directory infrastructure, if not already in place, you may use [Active Directory Domain Controller deployment template]("https://github.com/Azure/azure-quickstart-templates/tree/master/active-directory-new-domain-ha-2-dc) to deploy the prerequisite infrastructure.
++ To deploy the required Azure VNET and Active Directory infrastructure, if not already in place, you may use [Active Directory Domain Controller deployment template](https://github.com/Azure/azure-quickstart-templates/tree/master/application-workloads/active-directory/active-directory-new-domain-ha-2-dc) to deploy the prerequisite infrastructure.
 
 ## Deployments using availability sets
 
