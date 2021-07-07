@@ -271,20 +271,9 @@
         "clusterConfigURL": "[concat(parameters('_artifactsLocation'),'/dsc/ConfigureCluster.ps1.zip')]",
         "clusterConfigScript": "ConfigureCluster.ps1",
         "clusterConfigFunction": "ConfigureCluster",
-        "clusterName": "[toUpper(concat(parameters('namePrefix'),'c'))]",
+        "clusterName": "[toUpper(concat(parameters('namePrefix'),'c'))]"
     },
     "resources": [
-        {
-            "name": "[concat(parameters('namePrefix'),'-z',string(add(copyindex(), 1)),'-ppg')]",
-            "type": "Microsoft.Compute/proximityPlacementGroups",
-            "location": "[parameters('location')]",
-            "apiVersion": "2019-03-01",
-            "copy": {
-                "name": "vmLoop",
-                "mode": "[variables('vmLoopMode')]",
-                "count": "[variables('vmCount')]"
-            }
-        },
         {
             "name": "[variables('dataDiskName')]",
             "type": "Microsoft.Compute/disks",
@@ -485,9 +474,6 @@
             "properties": {
                 "hardwareProfile": {
                     "vmSize": "[parameters('vmSize')]"
-                },
-                "proximityPlacementGroup": {
-                    "id": "[resourceId('Microsoft.Compute/proximityPlacementGroups', concat(parameters('namePrefix'),'-z',string(add(copyindex(), 1)),'-ppg'))]"
                 },
 
                 "osProfile": {

@@ -1,5 +1,5 @@
-# Windows Server Failover Cluster for SAP ASCS/SCS instance with Azure Shared Disk
-This template will provision a base two-node Windows Server Failover Cluster with a Azure Zonal Shared Disk. The resulting cluster deployment is intended for use with SAP ASCS/SCS workloads for highly available deployments on the Azure cloud platform. The clustered SAP workloads will be provisioned by SAP setup tools.
+# Windows Server Failover Cluster with Azure Shared Disk
+This template will provision a base two-node Windows Server Failover Cluster with a Azure Zonal Shared Disk. The resulting cluster deployment is intended for use with SAP ASCS/SCS workloads for highly available deployments on the Azure cloud platform. The clustered SAP workloads will be provisioned by SAP setup tools and are not part of this sample.
 
 The code here is based on the great work from Keith Meyer available here [301 Shared Disk SAP](https://github.com/robotechredmond/301-shared-disk-sap)
 
@@ -24,7 +24,7 @@ This template creates the following resources in the selected Azure Region:
 + Two Azure VMs running Windows Server 2019 or Windows Server 2016 for cluster nodes.
 + Azure VM DSC Extensions to prepare and configure the Windows Server Failover Cluster
 + Azure Shared Data Disk for Data
-+ Cluster Witness resources (either Storage Account or Shared Disk depending on value of witnessType template parameter)
++ Cluster Witness resources (either Cloud Witness (storage account) or Shared Disk depending on value of witnessType template parameter)
 + Internal Load Balancer to provide a listener IP Address for clustered SAP workload.
 + Azure Load Balancer for SNAT support for outbound requests.
 
@@ -37,6 +37,13 @@ This template creates the following resources in the selected Azure Region:
 ```bash
 az deployment group create --resource-group "TEST-WEEU-CLUSTER" --template-file avset_template.json --name "AvSet_Deployment"
 ```
+
+Click the button below to deploy from the portal:
+
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FSAP-on-Azure-Scripts-and-Utilities%2Fmain%2Favset_template.json" target="_blank">
+    <img src="http://azuredeploy.net/deploybutton.png"/>
+</a>
+
 
 ## Deployments using availability zones
 
@@ -62,6 +69,11 @@ This template creates the following resources in the selected Azure Region:
 az deployment group create --resource-group "TEST-WEEU-CLUSTER" --template-file zonal_template.json --name "Zonal_Deployment"
 ```
 
+Click the button below to deploy from the portal:
+
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FSAP-on-Azure-Scripts-and-Utilities%2Fmain%2Fzonal_template.json" target="_blank">
+    <img src="http://azuredeploy.net/deploybutton.png"/>
+</a>
 
 ## Template Deployment Notes
 
