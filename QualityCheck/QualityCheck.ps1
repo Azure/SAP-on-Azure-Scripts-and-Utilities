@@ -208,6 +208,63 @@ function CheckRequiredModules {
     }
 }
 
+
+function ConvertFrom-String_sgmap {
+
+    [CmdletBinding()]
+    param (
+        [object]$p
+    )
+
+    $_output = @()
+
+    $_x = $p.Trim() -replace '\s+',','
+
+    $_x | Foreach-Object {
+	    $_output += $_ | ConvertFrom-Csv -Header P1,P2,P3,P4,P5,P6,P7
+    }
+
+    return $_output
+}
+
+function ConvertFrom-String_df {
+
+    [CmdletBinding()]
+    param (
+        [object]$p
+    )
+
+    $_output = @()
+
+    $_x = $p.Trim() -replace '\s+',','
+
+    $_x | Foreach-Object {
+	    $_output += $_ | ConvertFrom-Csv -Header Filesystem,Size,Used,Free,UsedPercent,Mountpoint
+    }
+
+    return $_output
+}
+
+function ConvertFrom-String_findmnt {
+
+    [CmdletBinding()]
+    param (
+        [object]$p
+    )
+
+    $_output = @()
+
+    $_x = $p.Trim() -replace '\s+',','
+
+    $_x | Foreach-Object {
+	    $_output += $_ | ConvertFrom-Csv -Header target,source,fstype,options
+    }
+
+    return $_output
+}
+
+
+
 function CheckTCPConnectivity {
 
     if ($VMOperatingSystem -eq "Windows") {
@@ -215,13 +272,25 @@ function CheckTCPConnectivity {
     }
     else {
         # Linux Systems
-        $_testresult = Test-NetConnection -ComputerName $VMHostname -Port $VMConnectionPort
-        if ($_testresult.TcpTestSucceeded -eq $true) {
+        # $_testresult = Test-NetConnection -ComputerName $VMHostname -Port $VMConnectionPort
+        #if ($_testresult.TcpTestSucceeded -eq $true) {
+        #    Write-Host "Successfully connected"
+        #}
+        #else {
+        #    Write-Host "Error connecting, please check network connection"
+        #     exit
+        #}
+
+        $_testresult = New-Object System.Net.Sockets.TcpClient($VMHostname, $VMConnectionPort)
+        if ($_testresult.Connected -eq $true) {
             Write-Host "Successfully connected"
         }
         else {
             Write-Host "Error connecting, please check network connection"
+             exit
         }
+
+
     }
 }
 
@@ -569,7 +638,9 @@ function CollectVMStorage {
         $script:_lvmconfig = RunCommand -p $_command | ConvertFrom-Json
 
         $_command = PrepareCommand -Command "sg_map -x" -CommandType "OS"
-        $script:_diskmapping = RunCommand -p $_command | ConvertFrom-String
+        # $script:_diskmapping = RunCommand -p $_command | ConvertFrom-String
+        $script:_diskmapping = RunCommand -p $_command
+        $script:_diskmapping = ConvertFrom-String_sgmap -p $script:_diskmapping
 
         $_command = PrepareCommand -Command "curl --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/storageProfile?api-version=2019-08-15'"
         $script:_azurediskconfig = RunCommand -p $_command | ConvertFrom-Json
@@ -1143,10 +1214,14 @@ function CollectFileSystems {
     else {
 
         $_command = PrepareCommand -Command "findmnt -r -n" -CommandType "OS"
-        $script:_findmnt = RunCommand -p $_command | ConvertFrom-String -Delimiter ' ' -PropertyNames target,source,fstype,options
+        #$script:_findmnt = RunCommand -p $_command | ConvertFrom-String -Delimiter ' ' -PropertyNames target,source,fstype,options
+        $script:_findmnt = RunCommand -p $_command
+        $script:_findmnt = ConvertFrom-String_findmnt -p $script:_findmnt 
 
         $_command = PrepareCommand -Command "df -BG" -CommandType "OS"
-        $script:_filesystemfree = RunCommand -p $_command | ConvertFrom-String -PropertyNames Filesystem,Size,Used,Free,UsedPercent,Mountpoint
+        #$script:_filesystemfree = RunCommand -p $_command | ConvertFrom-String -PropertyNames Filesystem,Size,Used,Free,UsedPercent,Mountpoint
+        $script:_filesystemfree = RunCommand -p $_command 
+        $script:_filesystemfree = ConvertFrom-String_df -p $script:_filesystemfree 
 
         $script:_filesystems = @()
 
