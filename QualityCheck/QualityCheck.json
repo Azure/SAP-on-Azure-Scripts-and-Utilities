@@ -1,2884 +1,1248 @@
 {
-    "Version": 3,
-    "PowerShellPrerequisits": [
-        {
-            "ModuleName": "Posh-SSH",
-            "Version": "3.0.0"
-        },
-        {
-            "ModuleName": "Az.Compute",
-            "Version": "4.0.0"
-        },
-        {
-            "ModuleName": "Az.Network",
-            "Version": "4.0.0"
-        },
-        {
-            "ModuleName": "Az.NetAppFiles",
-            "Version": "0.6.0"
-        }
-    ],
-    "SupportedOSDBCombinations": {
-        "HANA": {
-            "DB": ["SUSE", "RedHat"],
-            "ASCS": ["Windows", "SUSE", "RedHat"],
-            "APP": ["Windows", "SUSE", "RedHat"]
-        },
-        "MSSQL": {
-            "DB": ["Windows"],
-            "ASCS": ["Windows", "SUSE", "RedHat"],
-            "APP": ["Windows", "SUSE", "RedHat"]
-        },
-        "Oracle": {
-            "DB": ["Windows", "OracleLinux"],
-            "ASCS": ["Windows", "OracleLinux", "SUSE", "RedHat"],
-            "APP": ["Windows", "OracleLinux"]
-        },
-        "Db2": {
-            "DB": ["Windows", "RedHat"],
-            "ASCS": ["Windows", "SUSE", "RedHat"],
-            "APP": ["Windows", "SUSE", "RedHat"]
-        },
-        "ASE": {
-            "DB": ["Windows", "RedHat"],
-            "ASCS": ["Windows", "SUSE", "RedHat"],
-            "APP": ["Windows", "SUSE", "RedHat"]
-        }
-    },
-    "SupportedVMs": {
-        "Standard_D11": {
-            "DB": {
-                "SupportedDB": []
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_D12": {
-            "DB": {
-                "SupportedDB": []
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_D13": {
-            "DB": {
-                "SupportedDB": []
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_D14": {
-            "DB": {
-                "SupportedDB": []
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_DS11": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_DS12": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_DS13": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_DS14": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_DS11_v2": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_DS12_v2": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_DS13_v2": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_DS14_v2": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_DS15_v2": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_D2s_v3": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_D4s_v3": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_D8s_v3": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_D16s_v3": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_D32s_v3": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_D48s_v3": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_D64s_v3": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_E2s_v3": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_E4s_v3": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_E8s_v3": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_E16s_v3": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_E20s_v3": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_E32s_v3": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_E48s_v3": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_E64is_v3": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_E64s_v3": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
-                "HANAScenario": ["OLTP", "OLAP"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_D2as_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_D4as_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_D8as_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_D16as_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_D32as_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_D48as_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_D64as_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_D96as_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_E2as_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_E4as_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_E8as_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_E16as_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_E20as_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_E32as_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_E48as_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_E64as_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_E96as_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_D2ds_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_D4ds_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_D8ds_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_D16ds_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_D32ds_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_D48ds_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_D64ds_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_E2ds_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_E4ds_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_E8ds_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_E16ds_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_E20ds_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Standard Sizing"
+    "Version": 2,
+    "GeneralConfig": {
+        "SAPHANA": {
+            "Volumes": [
+                {
+                    "Description": "HANA Data",
+                    "Path": "/hana/data"
+                },
+                {
+                    "Description": "HANA Log",
+                    "Path": "/hana/log"
+                },
+                {
+                    "Description": "HANA Shared",
+                    "Path": "/hana/shared"
                 }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_E32ds_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Standard Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_E48ds_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Standard Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_E64ds_v4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Standard Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_GS1": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_GS2": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_GS3": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_GS4": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_GS5": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_M8ms": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_M16ms": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_M32ts": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Standard Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_M32ls": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Standard Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_M64ls": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Standard Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_M64s": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Standard Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_M64ms": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Standard Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_M128s": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Standard Sizing",
-                    "OLAP-ScaleOut":"Standard Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_M128ms": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Workload Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_M208s_v2": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Standard Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_M208ms_v2": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Workload Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_M416s_v2": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Standard Sizing",
-                    "OLAP-ScaleOut": "Standard Sizing",
-                    "OLTP-ScaleOut": "Standard Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_M416ms_v2": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLTP-ScaleOut": "Standard Sizing",
-                    "OLAP": "Workload Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_M32ms_v2": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Standard Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_M64s_v2": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Standard Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_M64ms_v2": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Standard Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_M128s_v2": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Standard Sizing",
-                    "OLAP-ScaleOut": "Standard Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_M128ms_v2": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Standard Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_M192is_v2": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Standard Sizing",
-                    "OLAP-ScaleOut":"Standard Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_M192ims_v2": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Standard Sizing",
-                    "OLAP-ScaleOut": "Standard Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_M32dms_v2": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Standard Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_M64ds_v2": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Standard Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_M64dms_v2": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Standard Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_M128ds_v2": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Standard Sizing",
-                    "OLAP-ScaleOut": "Standard Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_M128dms_v2": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Standard Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_M192ids_v2": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Standard Sizing",
-                    "OLAP-ScaleOut": "Standard Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            }
-        },
-        "Standard_M192idms_v2": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Workload Sizing",
-                    "OLAP-ScaleOut": "Workload Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+            ],
+            "StripeSizes": {
+                "HANA Data": "256.00k",
+                "HANA Log": "64.00k"
+            },
+            "ScaleOut": {
+                "NICCount": 3
             }
         }
     },
-    "HANAStorageRequirements": {
-        "HANADataMBPS": 400,
-        "HANALogMBPS": 250,
-        "HANADataIOPS": 7000,
-        "HANALogIOPS": 2000
-    },
-    "VMCollectInformation": [
+    "GeneralCollectVMInformation": [
         {
-            "CheckID": "IC-0001",
-            "Description": "Hostname",
-            "OS": ["Windows","SUSE","RedHat","OracleLinux"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
-            "Role": ["DB"],
-            "CommandType": "OS",
             "ProcessingCommand": "hostname",
             "PostProcessingCommand": "",
+            "Description": "Hostname",
             "RootRequired": false,
-            "ShowInReport": true,
-            "HighAvailability": [false,true]
+            "RemoveCRLF": true
         },
         {
-            "CheckID": "IC-0002",
-            "Description": "Kernel",
-            "OS": ["SUSE","RedHat","OracleLinux"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
-            "Role": ["DB"],
-            "CommandType": "OS",
             "ProcessingCommand": "uname -r",
-            "PostProcessingCommand": "Set-Variable -Name _Kernelversion -Scope Script -Value PARAMETER; 'PARAMETER'",
+            "PostProcessingCommand": "",
+            "Description": "Kernel Version",
             "RootRequired": false,
-            "ShowInReport": true,
-            "HighAvailability": [false,true]
+            "RemoveCRLF": true
         },
         {
-            "CheckID": "IC-0003",
+            "ProcessingCommand": "cat /etc/*release*",
+            "PostProcessingCommand": "",
+            "Description": "System Release",
+            "RootRequired": false,
+            "RemoveCRLF": false
+        },
+        {
+            "ProcessingCommand": "strings /var/lib/hyperv/.kvp_pool_3 | sed -n 2p",
+            "PostProcessingCommand": "",
             "Description": "Azure Hypervisor Host",
-            "OS": ["SUSE","RedHat","OracleLinux"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
-            "Role": ["DB"],
-            "CommandType": "OS",
-            "ProcessingCommand": "cat /var/lib/hyperv/.kvp_pool_3 | tr -d '\\000' | grep -o -P '(?<=HostName).*(?=HostingSystemEditionId)'",
-            "PostProcessingCommand": "",
             "RootRequired": false,
-            "ShowInReport": true,
-            "HighAvailability": [false,true]
+            "RemoveCRLF": true
         },
         {
-            "CheckID": "IC-0004",
-            "Description": "VM Type",
-            "OS": ["SUSE","RedHat","OracleLinux"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
-            "Role": ["DB"],
-            "CommandType": "OS",
             "ProcessingCommand": "curl --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/vmSize?api-version=2019-11-01&format=text'",
-            "PostProcessingCommand": "Set-Variable -Name _VMType -Scope Script -Value PARAMETER; 'PARAMETER'",
-            "RootRequired": false,
-            "ShowInReport": true,
-            "HighAvailability": [false,true]
+            "PostProcessingCommand": "",
+            "Description": "VM Type",
+            "RootRequired": true,
+            "RemoveCRLF": false
         },
         {
-            "CheckID": "IC-0005",
-            "Description": "Availability Zone",
-            "OS": ["SUSE","RedHat","OracleLinux"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
-            "Role": ["DB"],
-            "CommandType": "OS",
-            "ProcessingCommand": "curl --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/zone?api-version=2021-03-01&format=text'",
-            "PostProcessingCommand": "",
+            "ProcessingCommand": "echo 1",
+            "PostProcessingCommand": "$ppg = (Get-AzVM -ResourceGroupName $ResourceGroupName -Name $AzVMname).ProximityPlacementGroup; if (!$ppg) { 'No PPG defined' } else { (Get-AzProximityPlacementGroup -ResourceId $ppg.Id).Name }",
+            "Description": "Proximity Placement Group",
             "RootRequired": false,
-            "ShowInReport": true,
-            "HighAvailability": [false,true]
-        },
-        {
-            "CheckID": "IC-0005",
-            "Description": "Availability Set",
-            "OS": ["SUSE","RedHat","OracleLinux"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
-            "Role": ["DB"],
-            "CommandType": "PowerShell",
-            "ProcessingCommand": "(Get-AzVM -ResourceGroupName $AzVMResourceGroup -Name $AzVMName).AvailabilitySetReference.Id",
-            "PostProcessingCommand": "",
-            "RootRequired": false,
-            "ShowInReport": true,
-            "HighAvailability": [false,true]
-        },
-        {
-            "CheckID": "IC-0005",
-            "Description": "Linux Release File",
-            "OS": ["SUSE","RedHat","OracleLinux"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
-            "Role": ["DB"],
-            "CommandType": "OS",
-            "ProcessingCommand": "cat /etc/os-release",
-            "PostProcessingCommand": "",
-            "RootRequired": false,
-            "ShowInReport": true,
-            "HighAvailability": [false,true]
-        },      
-        {
-            "CheckID": "IC-0005",
-            "Description": "Linux Major and Minor Relase",
-            "OS": ["SUSE","RedHat","OracleLinux"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
-            "Role": ["DB"],
-            "CommandType": "OS",
-            "ProcessingCommand": "cat /etc/os-release | grep VERSION_ID",
-            "PostProcessingCommand": "$x = 'PARAMETER'; $x = ($x.replace('VERSION_ID=','')).replace('\"',''); Set-Variable -Name VMOSRelease -Scope script -value $x; $VMOSRelease",
-            "RootRequired": false,
-            "ShowInReport": true,
-            "HighAvailability": [false,true]
-        },      
-        {
-            "CheckID": "IC-0007",
-            "Description": "Proximity Placement Group (PPG)",
-            "OS": ["Windows","SUSE","RedHat","OracleLinux"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
-            "Role": ["DB"],
-            "CommandType": "PowerShell",
-            "ProcessingCommand": "$ppg = (Get-AzVM -ResourceGroupName $AzVMResourceGroup -Name $AzVMName).ProximityPlacementGroup; if (!$ppg) { 'No PPG defined' } else { (Get-AzProximityPlacementGroup -ResourceId $ppg.Id).Name }",
-            "PostProcessingCommand": "",
-            "RootRequired": false,
-            "ShowInReport": true,
-            "HighAvailability": [false,true]
-        },
-        {
-            "CheckID": "IC-0008",
-            "Description": "Proximity Placement Group (PPG) - VMs associated",
-            "OS": ["Windows","SUSE","RedHat","OracleLinux"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
-            "Role": ["DB"],
-            "CommandType": "PowerShell",
-            "ProcessingCommand": "$ppg = (Get-AzVM -ResourceGroupName $AzVMResourceGroup -Name $AzVMName).ProximityPlacementGroup; if (!$ppg) { 'No PPG defined' } else { (Get-AzProximityPlacementGroup -ResourceId $ppg.Id).VirtualMachines.Id }",
-            "PostProcessingCommand": "",
-            "RootRequired": false,
-            "ShowInReport": true,
-            "HighAvailability": [false,true]
-        },
-        {
-            "CheckID": "IC-0009",
-            "Description": "VM Generation",
-            "OS": ["Windows","SUSE","RedHat","OracleLinux"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "Role": ["DB"],
-            "CommandType": "PowerShell",
-            "ProcessingCommand": "$VMGeneration = (Get-AzDisk -Name (Get-AzVM -ResourceGroupName $AzVMResourceGroup -Name $AzVMName).StorageProfile.OsDisk.Name).HyperVGeneration; if ($VMGeneration -eq 'V1') { Set-Variable -Name VMGeneration -Scope Script -Value 'Gen1'; 'Gen1' } else { Set-Variable -Name VMGeneration -Scope Script -Value 'Gen2'; 'Gen2' }",
-            "PostProcessingCommand": "",
-            "RootRequired": false,
-            "ShowInReport": true,
-            "HighAvailability": [false,true]
+            "RemoveCRLF": false
         }
+    ],
+    "VMDiskConfig": [
+        {
+            "VMType": "Standard_M32ts",
+            "DiskConfig": {
+                "Premium": [
+                    {
+                        "DataDiskSize": 64,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 128,
+                        "LogDiskCount": 3,
+                        "SharedDiskSize": 192,
+                        "SharedDiskCount": 1
+                    },
+                    {
+                        "DataDiskSize": 512,
+                        "DataDiskCount": 3,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 2,
+                        "SharedDiskSize": 192,
+                        "SharedDiskCount": 1
+                    }
+                ],
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 250,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 2500,
+                        "DataDiskMBPS": 400,
+                        "LogDiskSize": 96,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 1800,
+                        "LogDiskMBPS": 250,
+                        "SharedDiskSize": 192,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_M32ls",
+            "DiskConfig": {
+                "Premium": [
+                    {
+                        "DataDiskSize": 64,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 128,
+                        "LogDiskCount": 3,
+                        "SharedDiskSize": 256,
+                        "SharedDiskCount": 1
+                    },
+                    {
+                        "DataDiskSize": 512,
+                        "DataDiskCount": 3,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 2,
+                        "SharedDiskSize": 256,
+                        "SharedDiskCount": 1
+                    }
+                ],
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 300,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 2500,
+                        "DataDiskMBPS": 400,
+                        "LogDiskSize": 256,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 1800,
+                        "LogDiskMBPS": 250,
+                        "SharedDiskSize": 256,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_M64ls",
+            "DiskConfig": {
+                "Premium": [
+                    {
+                        "DataDiskSize": 128,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 128,
+                        "LogDiskCount": 3,
+                        "SharedDiskSize": 512,
+                        "SharedDiskCount": 1
+                    },
+                    {
+                        "DataDiskSize": 512,
+                        "DataDiskCount": 3,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 2,
+                        "SharedDiskSize": 512,
+                        "SharedDiskCount": 1
+                    }
+                ],
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 620,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 3500,
+                        "DataDiskMBPS": 400,
+                        "LogDiskSize": 256,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 1800,
+                        "LogDiskMBPS": 250,
+                        "SharedDiskSize": 512,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_M64s",
+            "DiskConfig": {
+                "Premium": [
+                    {
+                        "DataDiskSize": 256,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 256,
+                        "LogDiskCount": 3,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    },
+                    {
+                        "DataDiskSize": 512,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 2,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    }
+                ],
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 1200,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 5000,
+                        "DataDiskMBPS": 600,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 2500,
+                        "LogDiskMBPS": 250,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_M64ms",
+            "DiskConfig": {
+                "Premium": [
+                    {
+                        "DataDiskSize": 512,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 256,
+                        "LogDiskCount": 3,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    },
+                    {
+                        "DataDiskSize": 1024,
+                        "DataDiskCount": 3,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 2,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    }
+                ],
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 2100,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 5000,
+                        "DataDiskMBPS": 600,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 2500,
+                        "LogDiskMBPS": 250,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_M128s",
+            "DiskConfig": {
+                "Premium": [
+                    {
+                        "DataDiskSize": 512,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 256,
+                        "LogDiskCount": 3,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    },
+                    {
+                        "DataDiskSize": 1024,
+                        "DataDiskCount": 3,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 2,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    }
+                ],
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 2400,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 7000,
+                        "DataDiskMBPS": 750,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 2500,
+                        "LogDiskMBPS": 250,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_M128ms",
+            "DiskConfig": {
+                "Premium": [
+                    {
+                        "DataDiskSize": 1024,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 256,
+                        "LogDiskCount": 3,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    },
+                    {
+                        "DataDiskSize": 1024,
+                        "DataDiskCount": 5,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 2,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    }
+                ],
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 4800,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 7000,
+                        "DataDiskMBPS": 750,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 2500,
+                        "LogDiskMBPS": 250,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_M208s_v2",
+            "DiskConfig": {
+                "Premium": [
+                    {
+                        "DataDiskSize": 1024,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 256,
+                        "LogDiskCount": 3,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    },
+                    {
+                        "DataDiskSize": 1024,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 2,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    }
+                ],
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 3500,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 7000,
+                        "DataDiskMBPS": 750,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 2500,
+                        "LogDiskMBPS": 250,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_M208ms_v2",
+            "DiskConfig": {
+                "Premium": [
+                    {
+                        "DataDiskSize": 2048,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 256,
+                        "LogDiskCount": 3,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    },
+                    {
+                        "DataDiskSize": 2048,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 2,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    }
+                ],
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 7200,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 7000,
+                        "DataDiskMBPS": 750,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 2500,
+                        "LogDiskMBPS": 250,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_M416s_v2",
+            "DiskConfig": {
+                "Premium": [
+                    {
+                        "DataDiskSize": 2048,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 256,
+                        "LogDiskCount": 3,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    },
+                    {
+                        "DataDiskSize": 2048,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 2,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    }
+                ],
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 7200,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 9000,
+                        "DataDiskMBPS": 1000,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 4000,
+                        "LogDiskMBPS": 400,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_M416ms_v2",
+            "DiskConfig": {
+                "Premium": [
+                    {
+                        "DataDiskSize": 4095,
+                        "DataDiskCount": 4,
+                        "LogDiskSize": 256,
+                        "LogDiskCount": 3,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    },
+                    {
+                        "DataDiskSize": 2048,
+                        "DataDiskCount": 8,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 2,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1
+                    }
+                ],
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 14400,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 9000,
+                        "DataDiskMBPS": 1500,
+                        "LogDiskSize": 512,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 4000,
+                        "LogDiskMBPS": 400,
+                        "SharedDiskSize": 1024,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_E64s_v3",
+            "DiskConfig": {
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 610,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 3500,
+                        "DataDiskMBPS": 400,
+                        "LogDiskSize": 220,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 1800,
+                        "LogDiskMBPS": 250,
+                        "SharedDiskSize": 432,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_E20ds_v4",
+            "DiskConfig": {
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 200,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 2500,
+                        "DataDiskMBPS": 400,
+                        "LogDiskSize": 80,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 1800,
+                        "LogDiskMBPS": 250,
+                        "SharedDiskSize": 160,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_E32ds_v4",
+            "DiskConfig": {
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 300,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 2500,
+                        "DataDiskMBPS": 400,
+                        "LogDiskSize": 128,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 1800,
+                        "LogDiskMBPS": 256,
+                        "SharedDiskSize": 384,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_E48ds_v4",
+            "DiskConfig": {
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 460,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 3000,
+                        "DataDiskMBPS": 400,
+                        "LogDiskSize": 192,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 1800,
+                        "LogDiskMBPS": 250,
+                        "SharedDiskSize": 384,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        },
+        {
+            "VMType": "Standard_E64ds_v4",
+            "DiskConfig": {
+                "UltraDisk": [
+                    {
+                        "DataDiskSize": 610,
+                        "DataDiskCount": 1,
+                        "DataDiskIOPS": 3500,
+                        "DataDiskMBPS": 400,
+                        "LogDiskSize": 256,
+                        "LogDiskCount": 1,
+                        "LogDiskIOPS": 1800,
+                        "LogDiskMBPS": 250,
+                        "SharedDiskSize": 512,
+                        "SharedDiskCount": 1,
+                        "SharedDiskIOPS": 500,
+                        "SharedDiskMBPS": 100
+                    }
+                ],
+                "ANF": {
+                    "Dummy": ""
+                }
+            }
+        }
+    ],
+    "KnownIssues": {
+        "SUSE": {
+            "Kernel": [
+                {
+                    "MinVersion": "4.12.14-94.41.1",
+                    "MaxVersion": "4.12.14-95.37.1",
+                    "Description": "Please check SAP Note https://launchpad.support.sap.com/#/notes/2814271"
+                }
+            ]
+        },
+        "RedHat": {
+            "Kernel": [
+            ]
+        }
+    },
+    "Checks": {
+        "General": [
+            {
+                "Type": "OS",
+                "Enabled": true,
+                "RootRequired": true,
+                "PreProcessingCommand": "",
+                "ProcessingCommand": "curl --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/vmSize?api-version=2019-11-01&format=text'",
+                "PostProcessingCommand": "$found=0; foreach ($x in $configFile.VMDiskConfig) { if ($x.VMType -eq 'PARAMETER') { $found = 1; Set-Variable -scope global -name vmtype -value $x.VMType } }; $found",
+                "ExpectedOutput": "1",
+                "Description": "Check if VM is supported",
+                "ErrorMessage": "Unsupported VM Type",
+                "HelpMessage": "see more details at https://www.sap.com/dmc/exp/2014-09-02-hana-hardware/enEN/iaas.html#categories=Microsoft%20Azure"
+            },
+            {
+                "Type": "OS",
+                "Enabled": true,
+                "RootRequired": true,
+                "PreProcessingCommand": "",
+                "ProcessingCommand": "hostname",
+                "PostProcessingCommand": "Set-Variable -scope global -name hostname -value PARAMETER; 1",
+                "ExpectedOutput": "1",
+                "Description": "Check Hostname",
+                "ErrorMessage": "",
+                "HelpMessage": ""
+            },
+            {
+                "Type": "OS",
+                "Enabled": true,
+                "RootRequired": false,
+                "PreProcessingCommand": "",
+                "ProcessingCommand": "hostnamectl | grep 'Operating'",
+                "PostProcessingCommand": "if ('PARAMETER' -match 'SUSE') { Set-Variable -scope global -name distribution -value 'SUSE' }; if ('PARAMETER' -match 'Red Hat') { Set-Variable -scope global -name distribution -value 'RedHat' } ; 1",
+                "ExpectedOutput": "1",
+                "Description": "Check Distribution",
+                "ErrorMessage": "",
+                "HelpMessage": ""
+            }
+        ],
+        "SUSE": [
+            {
+                "Type": "OS",
+                "Enabled": true,
+                "RootRequired": true,
+                "PreProcessingCommand": "",
+                "ProcessingCommand": "cat /var/lib/sapconf/act_profile",
+                "PostProcessingCommand": "",
+                "ExpectedOutput": "sapconf-hana",
+                "Description": "Check if sapconf profile for SAP HANA applied",
+                "ErrorMessage": "",
+                "HelpMessage": ""
+            }
+        ],
+        "RedHat": [
+            {
+                "Type": "OS",
+                "Enabled": true,
+                "RootRequired": true,
+                "PreProcessingCommand": "",
+                "ProcessingCommand": "tuned-adm active",
+                "PostProcessingCommand": "",
+                "ExpectedOutput": "Current active profile: sap-hana",
+                "Description": "Check if tuned profile for SAP HANA is applied",
+                "ErrorMessage": "",
+                "HelpMessage": ""
+            }
 
-    ],
-    "VMCollectInformationAdditional": [
-        {
-            "CheckID": "IC-9001",
-            "Description": "hosts",
-            "OS": ["SUSE","RedHat","OracleLinux"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
-            "CommandType": "OS",
-            "Role": ["DB"],
-            "ProcessingCommand": "cat /etc/hosts",
-            "PostProcessingCommand": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "HighAvailability": [false,true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"]
-        },        
-        {
-            "CheckID": "IC-9002",
-            "Description": "sysctl",
-            "OS": ["SUSE","RedHat","OracleLinux"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
-            "Role": ["DB"],
-            "CommandType": "OS",
-            "ProcessingCommand": "sysctl -a",
-            "PostProcessingCommand": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "HighAvailability": [false,true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"]
-        },  
-        {
-            "CheckID": "IC-9003",
-            "Description": "fstab",
-            "OS": ["SUSE","RedHat","OracleLinux"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
-            "Role": ["DB"],
-            "CommandType": "OS",
-            "ProcessingCommand": "cat /etc/fstab",
-            "PostProcessingCommand": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "HighAvailability": [false,true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"]
-        },  
-        {
-            "CheckID": "IC-9004",
-            "Description": "systemctl",
-            "OS": ["SUSE","RedHat","OracleLinux"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
-            "Role": ["DB"],
-            "CommandType": "OS",
-            "ProcessingCommand": "systemctl",
-            "PostProcessingCommand": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "HighAvailability": [false,true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"]
+        ],
+        "Storage": {
+            "ANF": [
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.core.rmem_max",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.core.rmem_max = 16777216",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.core.wmem_max",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.core.wmem_max = 16777216",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.core.rmem_default",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.core.rmem_default = 16777216",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.core.wmem_default",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.core.wmem_default = 16777216",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.core.optmem_max",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.core.optmem_max = 16777216",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.ipv4.tcp_rmem",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.ipv4.tcp_rmem = 65536 16777216 16777216",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.ipv4.tcp_wmem",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.ipv4.tcp_wmem = 65536 16777216 16777216",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.core.netdev_max_backlog",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.core.netdev_max_backlog = 300000",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.ipv4.tcp_slow_start_after_idle",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.ipv4.tcp_slow_start_after_idle=0",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.ipv4.tcp_no_metrics_save",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.ipv4.tcp_no_metrics_save = 1",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },                
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.ipv4.tcp_moderate_rcvbuf",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.ipv4.tcp_moderate_rcvbuf = 1",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },                
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.ipv4.tcp_window_scaling",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.ipv4.tcp_window_scaling = 1",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },                
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.ipv4.tcp_timestamps",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.ipv4.tcp_timestamps = 1",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },                
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.ipv4.tcp_sack",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.ipv4.tcp_sack = 1",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl ipv6.conf.all.disable_ipv6",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "ipv6.conf.all.disable_ipv6 = 1",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.ipv4.tcp_max_syn_backlog",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.ipv4.tcp_max_syn_backlog = 16348",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.ipv4.ip_local_port_range",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.ipv4.ip_local_port_range = 40000 65300",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl net.ipv4.conf.all.rp_filter",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "net.ipv4.conf.all.rp_filter = 0",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl sunrpc.tcp_slot_table_entries",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "sunrpc.tcp_slot_table_entries = 128",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "sysctl vm.swappiness",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "vm.swappiness = 10",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                },
+                {
+                    "Type": "OS",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "cat /etc/modprobe.d/* | grep tcp_max_slot_table_entries",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "options sunrpc tcp_max_slot_table_entries=128",
+                    "ErrorMessage": "sysctl parameter missing or missconfigured",
+                    "HelpMessage": "see more details at https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse"
+                }
+            ]
         },
-        {
-            "CheckID": "IC-9005",
-            "Description": "chkconfig",
-            "OS": ["SUSE","RedHat","OracleLinux"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
-            "Role": ["DB"],
-            "CommandType": "OS",
-            "ProcessingCommand": "chkconfig",
-            "PostProcessingCommand": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "HighAvailability": [false,true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"]
-        },
-        {
-            "CheckID": "IC-9006",
-            "Description": "installed packages",
-            "OS": ["SUSE","RedHat","OracleLinux"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
-            "Role": ["DB"],
-            "CommandType": "OS",
-            "ProcessingCommand": "rpm -qa",
-            "PostProcessingCommand": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "HighAvailability": [false,true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"]
-        },
-        {
-            "CheckID": "IC-9007",
-            "Description": "SBDconfig",
-            "OS": ["SUSE"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
-            "Role": ["DB"],
-            "CommandType": "OS",
-            "ProcessingCommand": "cat /etc/sysconfig/sbd",
-            "PostProcessingCommand": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "HighAvailability": [true],
-            "HighAvailabilityAgent": ["SBD"]
+        "HighAvailability": {
+            "SUSE": [
+                {
+                    "RunForSBD": true,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "crm configure show | grep 'PREFER_SITE_TAKEOVER=true' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check pacemaker setting for PREFER_SITE_TAKEOVER=true",
+                    "ErrorMessage": "change to recommended setting PREFER_SITE_TAKEOVER=true",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": true,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "crm configure show | grep 'AUTOMATED_REGISTER=true' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check pacemaker setting for AUTOMATED_REGISTER=true",
+                    "ErrorMessage": "change to recommended setting AUTOMATED_REGISTER=true",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": true,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "crm configure show | grep 'stonith-enabled=true' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check pacemaker setting for stonith-enabled=true",
+                    "ErrorMessage": "change to recommended setting stonith-enabled=true",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": true,
+                    "RunForAgent": true,
+                   "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "crm configure show | grep 'stonith-timeout=144' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check pacemaker setting for stonith-timeout=144",
+                    "ErrorMessage": "change to recommended setting stonith-timeout=144",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": true,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "cat /etc/corosync/corosync.conf | xargs | grep 'token: 30000 ' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check corosync token 30000 setting",
+                    "ErrorMessage": "change to recommended setting token: 30000",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": true,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "cat /etc/corosync/corosync.conf | xargs | grep 'token_retransmits_before_loss_const: 10 ' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check corosync token_retransmits_before_loss_const: 10 setting",
+                    "ErrorMessage": "change to recommended setting token_retransmits_before_loss_const: 10",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": true,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "cat /etc/corosync/corosync.conf | xargs | grep 'join: 60 ' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check corosync join: 60 setting",
+                    "ErrorMessage": "change to recommended setting join: 60",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": true,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "cat /etc/corosync/corosync.conf | xargs | grep 'consensus: 36000 ' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check corosync consensus: 36000  setting",
+                    "ErrorMessage": "change to recommended setting consensus: 36000 ",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": true,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "cat /etc/corosync/corosync.conf | xargs | grep 'max_messages: 20 ' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check corosync max_messages: 20 setting",
+                    "ErrorMessage": "change to recommended setting max_messages: 20",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": true,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "cat /etc/corosync/corosync.conf | xargs | grep 'expected_votes: 2 ' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check corosync expected_votes: 2 setting",
+                    "ErrorMessage": "change to recommended setting expected_votes: 2",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": true,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "cat /etc/corosync/corosync.conf | xargs | grep 'two_node: 1 ' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check corosync two_node: 1 setting",
+                    "ErrorMessage": "change to recommended setting two_node: 1",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": true,
+                    "RunForAgent": false,
+                    "Type": "SBD",
+                    "Enabled": true,
+                    "RootRequired": false,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "expectedresult='Timeout (watchdog) : 60'; result=0; for i in $(echo $p_password | sudo -S cat /etc/sysconfig/sbd | grep '^SBD_DEVICE' | cut -d '=' -f 2 | tr ';' ' '); do resultcommand=$(echo $p_password | sudo -S sbd -d ${i} dump | grep watchdog); if [[ $resultcommand == $expectedresult ]]; then result=$((result + 1)); else result=$((result - 10)); fi; done; if [ $result -gt 0 ]; then echo 'OK'; else echo 'ERROR'; fi",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "OK",
+                    "Description": "Check SBD watchdog timeout 60",
+                    "ErrorMessage": "change the SBD watchdog timeout to 60",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": true,
+                    "RunForAgent": false,
+                    "Type": "SBD",
+                    "Enabled": true,
+                    "RootRequired": false,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "expectedresult='Timeout (msgwait)  : 120'; result=0; for i in $(echo $p_password | sudo -S cat /etc/sysconfig/sbd | grep '^SBD_DEVICE' | cut -d '=' -f 2 | tr ';' ' '); do resultcommand=$(echo $p_password | sudo -S sbd -d ${i} dump | grep msgwait); if [[ $resultcommand == $expectedresult ]]; then result=$((result + 1)); else result=$((result - 10)); fi; done; if [ $result -gt 0 ]; then echo 'OK'; else echo 'ERROR'; fi",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "OK",
+                    "Description": "Check SBD msgwait timeout 120",
+                    "ErrorMessage": "change the SBD msgwait timeout to 120",
+                    "HelpMessage": ""
+                }
+
+            ],
+            "RedHat": [
+                {
+                    "RunForSBD": false,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "pcs config show | grep 'PREFER_SITE_TAKEOVER=true' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check pacemaker setting for PREFER_SITE_TAKEOVER=true",
+                    "ErrorMessage": "change to recommended setting PREFER_SITE_TAKEOVER=true",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": false,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "pcs config show | grep 'AUTOMATED_REGISTER=true' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check pacemaker setting for AUTOMATED_REGISTER=true",
+                    "ErrorMessage": "change to recommended setting AUTOMATED_REGISTER=true",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": false,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "pcs config show | grep 'stonith-enabled: true' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check pacemaker setting for stonith-enabled: true",
+                    "ErrorMessage": "change to recommended setting stonith-enabled: true",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": false,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "cat /etc/corosync/corosync.conf | xargs | grep 'token: 30000 ' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check corosync token 30000 setting",
+                    "ErrorMessage": "change to recommended setting token: 30000",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": false,
+                    "RunForAgent": true,
+                    "Type": "Pacemaker",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "pcs quorum status | xargs | grep 'Expected votes: 2' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check corosync expected_votes: 2 setting",
+                    "ErrorMessage": "change to recommended setting expected_votes: 2",
+                    "HelpMessage": ""
+                },
+                {
+                    "RunForSBD": false,
+                    "RunForAgent": true,
+                    "Type": "Fencing",
+                    "Enabled": true,
+                    "RootRequired": true,
+                    "PreProcessingCommand": "",
+                    "ProcessingCommand": "pcs config show | grep 'concurrent-fencing: true' | wc -l",
+                    "PostProcessingCommand": "",
+                    "ExpectedOutput": "1",
+                    "Description": "Check concurrent-fencing: true setting",
+                    "ErrorMessage": "change to recommended setting concurrent-fencing: true",
+                    "HelpMessage": ""
+                }
+            ]
         }
-    ],
-    "Checks": [
-        {
-            "CheckID": "HDB-0001",
-            "Description": "sysctl ip_local_port_range",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [false, true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "sysctl net.ipv4.ip_local_port_range",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "net.ipv4.ip_local_port_range = 9000 65499",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "Optimizing the Network Configuration on HANA- and OS-Level",
-            "MicrosoftDocs": "",
-            "SAPNote": "2382421"
-        },
-        {
-            "CheckID": "NET-0001",
-            "Description": "Load Balancer timestamps",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB", "ASCS"],
-            "DB": ["HANA", "Db2"],
-            "HighAvailability": [true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "sysctl net.ipv4.tcp_timestamps",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "net.ipv4.tcp_timestamps = 0",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "Timestamp parameter for HA Load Balancers",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "VM-0001",
-            "Description": "Supported VM with supplied VM Role and Database",
-            "OS": ["SUSE","RedHat","OracleLinux","Windows"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB","ASCS","APP"],
-            "DB": ["HANA","Db2","MSSQL","Oracle"],
-            "HighAvailability": [false, true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "PowerShell",
-            "ProcessingCommand": "if (($_jsonconfig.SupportedVMs.$_VMType.$VMRole.SupportedDB -contains $VMDatabase) -eq $true) {1} else {0}",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "$_VMType",
-            "RootRequired": false,
-            "ShowInReport": true,
-            "AdditionalInfo": "Is the VM Type support for SAP on Azure in this scenario",
-            "MicrosoftDocs": "",
-            "SAPNote": "1928533"
-        },
-        {
-            "CheckID": "VM-0002",
-            "Description": "Supported HANA scenario on VM type",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [false, true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "PowerShell",
-            "ProcessingCommand": "if (($_jsonconfig.SupportedVMs.$_VMType.$VMRole.HANAScenario.$HANADeployment -like '*Sizing') -eq $true) {1} else {0}",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "$HANADeployment + ' ' + $_jsonconfig.SupportedVMs.$_VMType.$VMRole.HANAScenario.$HANADeployment",
-            "RootRequired": false,
-            "ShowInReport": true,
-            "AdditionalInfo": "Is the VM Type support for the specified HANA workload",
-            "MicrosoftDocs": "",
-            "SAPNote": "1928533"
-        },
-        {
-            "CheckID": "VM-0003",
-            "Description": "OS/DB combination supported",
-            "OS": ["SUSE","RedHat","OracleLinux","Windows"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB","ASCS","APP"],
-            "DB": ["HANA","MSSQL","Oracle","Db2"],
-            "HighAvailability": [false, true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "PowerShell",
-            "ProcessingCommand": "if (($_jsonconfig.SupportedOSDBCombinations.$VMDatabase.$VMRole -contains $VMOperatingSystem) -eq $true) {1} else {0}",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "'OS DB combination supported'",
-            "RootRequired": false,
-            "ShowInReport": true,
-            "AdditionalInfo": "Is OS/DB combination supported for SAP on Azure",
-            "MicrosoftDocs": "",
-            "SAPNote": "1928533"
-        },
-        {
-            "CheckID": "ANF-0001",
-            "Description": "ANF rmem_max",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [false, true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "sysctl net.core.rmem_max",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "net.core.rmem_max = 16777216",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "OS parameter for ANF performance",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "ANF-0002",
-            "Description": "ANF wmem_max",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [false, true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "sysctl net.core.wmem_max",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "net.core.wmem_max = 16777216",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "OS parameter for ANF performance",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "ANF-0003",
-            "Description": "ANF rmem_default",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [false, true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "sysctl net.core.rmem_default",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "net.core.rmem_default = 16777216",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "OS parameter for ANF performance",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "ANF-0004",
-            "Description": "ANF wmem_default",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [false, true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "sysctl net.core.wmem_default",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "net.core.wmem_default = 16777216",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "OS parameter for ANF performance",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "ANF-0005",
-            "Description": "ANF optmem_max",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [false, true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "sysctl net.core.optmem_max",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "net.core.optmem_max = 16777216",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "OS parameter for ANF performance",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "ANF-0006",
-            "Description": "ANF tcp_rmem",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [false, true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "sysctl net.ipv4.tcp_rmem",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "net.ipv4.tcp_rmem = 65536 16777216 16777216",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "OS parameter for ANF performance",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "ANF-0007",
-            "Description": "ANF tcp_wmem",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [false, true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "sysctl net.ipv4.tcp_wmem",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "net.ipv4.tcp_wmem = 65536 16777216 16777216",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "OS parameter for ANF performance",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "ANF-0008",
-            "Description": "ANF netdev_max_backlog",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [false, true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "sysctl net.core.netdev_max_backlog",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "net.core.netdev_max_backlog = 300000",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "OS parameter for ANF performance",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "ANF-0009",
-            "Description": "ANF tcp_slow_start_after_idle",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [false, true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "sysctl net.ipv4.tcp_slow_start_after_idle",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "net.ipv4.tcp_slow_start_after_idle = 0",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "OS parameter for ANF performance",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "ANF-0010",
-            "Description": "ANF tcp_moderate_rcvbuf",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [false, true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "sysctl net.ipv4.tcp_moderate_rcvbuf",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "net.ipv4.tcp_moderate_rcvbuf = 1",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "OS parameter for ANF performance",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "ANF-0011",
-            "Description": "ANF tcp_window_scaling",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [false, true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "sysctl net.ipv4.tcp_window_scaling",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "net.ipv4.tcp_window_scaling = 1",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "OS parameter for ANF performance",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "ANF-0012",
-            "Description": "ANF tcp_timestamps",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [false],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "sysctl net.ipv4.tcp_timestamps",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "net.ipv4.tcp_timestamps = 1",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "OS parameter for ANF performance",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "ANF-0013",
-            "Description": "ANF tcp_timestamps",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "sysctl net.ipv4.tcp_timestamps",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "net.ipv4.tcp_timestamps = 0",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "OS parameter for ANF performance",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "ANF-0014",
-            "Description": "ANF tcp_sack",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [false, true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "sysctl net.ipv4.tcp_sack",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "net.ipv4.tcp_sack = 1",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "OS parameter for ANF performance",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "ANF-0015",
-            "Description": "ANF disable_ipv6",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [false, true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "sysctl ipv6.conf.all.disable_ipv6",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "ipv6.conf.all.disable_ipv6 = 1",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "OS parameter for ANF performance",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "ANF-0016",
-            "Description": "ANF tcp_max_syn_backlog",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [false, true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "sysctl net.ipv4.tcp_max_syn_backlog",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "net.ipv4.tcp_max_syn_backlog = 16348",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "OS parameter for ANF performance",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "ANF-0017",
-            "Description": "ANF ip_local_port_range",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [false, true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "sysctl net.ipv4.ip_local_port_range",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "net.ipv4.ip_local_port_range = 9000 65300",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "OS parameter for ANF performance",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "ANF-0018",
-            "Description": "ANF rp_filter",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [false, true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "sysctl net.ipv4.conf.all.rp_filter",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "net.ipv4.conf.all.rp_filter = 0",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "OS parameter for ANF performance",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "ANF-0019",
-            "Description": "ANF tcp_slot_table_entries",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [false, true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "sysctl sunrpc.tcp_slot_table_entries",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "sunrpc.tcp_slot_table_entries = 128",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "OS parameter for ANF performance",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "ANF-0020",
-            "Description": "ANF swappiness",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [false, true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "sysctl vm.swappiness",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "vm.swappiness = 10",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "OS parameter for ANF performance",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "ANF-0021",
-            "Description": "ANF tcp_max_slot_table_entries",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [false, true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "cat /etc/modprobe.d/* | grep tcp_max_slot_table_entries",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "options sunrpc tcp_max_slot_table_entries=128",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "OS parameter for ANF performance",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "RH-0001",
-            "Description": "Red Hat tuned-adm profile",
-            "OS": ["RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [false, true],
-            "HighAvailabilityAgent": ["FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "tuned-adm active",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "Current active profile: sap-hana",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "Checking if tuned profile for SAP HANA is applied",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "HA-SLE-0001",
-            "Description": "SAP HANA Automatic Site Takerover",
-            "OS": ["SUSE"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "crm configure show | grep 'PREFER_SITE_TAKEOVER=true' | wc -l",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'PREFER_SITE_TAKEOVER=true'",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "Checking for PREFER_SITE_TAKEOVER",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "HA-SLE-0002",
-            "Description": "SAP HANA Automated Register",
-            "OS": ["SUSE"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "crm configure show | grep 'AUTOMATED_REGISTER=true' | wc -l",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'AUTOMATED_REGISTER=true'",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "Checking for AUTOMATED_REGISTER=true",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "HA-SLE-0003",
-            "Description": "Pacemaker Stonith enabled",
-            "OS": ["SUSE"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "crm configure show | grep 'stonith-enabled=true' | wc -l",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'stonith-enabled=true'",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "Checking for stonith-enabled=true",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "HA-SLE-0004",
-            "Description": "Pacemaker Stonith timeout",
-            "OS": ["SUSE"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "crm configure show | grep 'stonith-timeout=144' | wc -l",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'stonith-timeout=144'",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "Checking for stonith-timeout=144",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "HA-SLE-0005",
-            "Description": "Pacemaker corosync token",
-            "OS": ["SUSE"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "cat /etc/corosync/corosync.conf | xargs | grep 'token: 30000 ' | wc -l",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'token: 30000'",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "Checking for token: 30000",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "HA-SLE-0006",
-            "Description": "Pacemaker token_retransmits_before_loss_const",
-            "OS": ["SUSE"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "cat /etc/corosync/corosync.conf | xargs | grep 'token_retransmits_before_loss_const: 10 ' | wc -l",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'token_retransmits_before_loss_const: 10'",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "Checking for token_retransmits_before_loss_const: 10",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "HA-SLE-0007",
-            "Description": "Pacemaker corosync join",
-            "OS": ["SUSE"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "cat /etc/corosync/corosync.conf | xargs | grep 'join: 60 ' | wc -l",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'join: 60'",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "Checking for join: 60",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "HA-SLE-0008",
-            "Description": "Pacemaker corosync consensus",
-            "OS": ["SUSE"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "cat /etc/corosync/corosync.conf | xargs | grep 'consensus: 36000 ' | wc -l",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'consensus: 36000'",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "Checking for consensus: 36000",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "HA-SLE-0009",
-            "Description": "Pacemaker corosync max_messages",
-            "OS": ["SUSE"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "cat /etc/corosync/corosync.conf | xargs | grep 'max_messages: 20 ' | wc -l",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'max_messages: 20'",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "Checking for max_messages: 20",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "HA-SLE-0010",
-            "Description": "Pacemaker corosync expected_votes",
-            "OS": ["SUSE"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "cat /etc/corosync/corosync.conf | xargs | grep 'expected_votes: 2 ' | wc -l",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'expected_votes: 2'",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "Checking for expected_votes: 2",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "HA-SLE-0011",
-            "Description": "Pacemaker corosync two_node",
-            "OS": ["SUSE"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "cat /etc/corosync/corosync.conf | xargs | grep 'two_node: 1 ' | wc -l",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'two_node: 1'",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "Checking for two_node: 1",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "HA-SLE-0012",
-            "Description": "Pacemaker watchdog timeout",
-            "OS": ["SUSE"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [true],
-            "HighAvailabilityAgent": ["SBD"],
-            "CommandType": "OS",
-            "ProcessingCommand": "expectedresult='Timeout (watchdog) : 60'; result=0; for i in $(echo $_ClearTextPassword | sudo -S cat /etc/sysconfig/sbd | grep '^SBD_DEVICE' | cut -d '=' -f 2 | tr ';' ' '); do resultcommand=$(echo $_ClearTextPassword | sudo -S sbd -d ${i} dump | grep watchdog); if [[ $resultcommand == $expectedresult ]]; then result=$((result + 1)); else result=$((result - 10)); fi; done; if [ $result -gt 0 ]; then echo 'OK'; else echo 'ERROR'; fi",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "OK",
-            "ShowAlternativeRequirement": "'Timeout (watchdog) : 60'",
-            "ShowAlternativeResult": "",
-            "RootRequired": false,
-            "ShowInReport": true,
-            "AdditionalInfo": "Checking for watchdog timeout 60",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "HA-SLE-0013",
-            "Description": "Pacemaker msgwait timeout",
-            "OS": ["SUSE"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [true],
-            "HighAvailabilityAgent": ["SBD"],
-            "CommandType": "OS",
-            "ProcessingCommand": "expectedresult='Timeout (msgwait)  : 120'; result=0; for i in $(echo $_ClearTextPassword | sudo -S cat /etc/sysconfig/sbd | grep '^SBD_DEVICE' | cut -d '=' -f 2 | tr ';' ' '); do resultcommand=$(echo $_ClearTextPassword | sudo -S sbd -d ${i} dump | grep msgwait); if [[ $resultcommand == $expectedresult ]]; then result=$((result + 1)); else result=$((result - 10)); fi; done; if [ $result -gt 0 ]; then echo 'OK'; else echo 'ERROR'; fi",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "OK",
-            "ShowAlternativeRequirement": "'Timeout (msgwait) : 120'",
-            "ShowAlternativeResult": "",
-            "RootRequired": false,
-            "ShowInReport": true,
-            "AdditionalInfo": "Checking for msgwait timeout 60",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "HA-SLE-0014",
-            "Description": "Pacemaker concurrent fencing",
-            "OS": ["SUSE"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [true],
-            "HighAvailabilityAgent": ["FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "crm configure show | grep 'concurrent-fencing: true' | wc -l",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'concurrent-fencing: true'",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "Checking for concurrent-fencing: true",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "HA-RH-0001",
-            "Description": "SAP HANA Automatic Site Takerover",
-            "OS": ["RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [true],
-            "HighAvailabilityAgent": ["FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "pcs config show | grep 'PREFER_SITE_TAKEOVER=true' | wc -l",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'PREFER_SITE_TAKEOVER=true'",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "Checking for PREFER_SITE_TAKEOVER",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "HA-RH-0002",
-            "Description": "SAP HANA Automated Register",
-            "OS": ["RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [true],
-            "HighAvailabilityAgent": ["FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "pcs config show | grep 'AUTOMATED_REGISTER=true' | wc -l",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'AUTOMATED_REGISTER=true'",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "Checking for AUTOMATED_REGISTER=true",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "HA-RH-0003",
-            "Description": "Pacemaker Stonith",
-            "OS": ["RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [true],
-            "HighAvailabilityAgent": ["FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "pcs config show | grep 'stonith-enabled: true' | wc -l",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'stonith-enabled=true'",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "Checking for stonith-enabled=true",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "HA-RH-0004",
-            "Description": "Pacemaker corosync token",
-            "OS": ["RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [true],
-            "HighAvailabilityAgent": ["FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "cat /etc/corosync/corosync.conf | xargs | grep 'token: 30000 ' | wc -l",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'token: 30000'",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "Checking for token: 30000",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "HA-RH-0005",
-            "Description": "Pacemaker expected_votes",
-            "OS": ["RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [true],
-            "HighAvailabilityAgent": ["FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "pcs quorum status | xargs | grep 'Expected votes: 2' | wc -l",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'Expected votes: 2'",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "Checking for Expected votes: 2",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "HA-RH-0006",
-            "Description": "Pacemaker concurrent-fencing",
-            "OS": ["RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [true],
-            "HighAvailabilityAgent": ["FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "pcs config show | grep 'concurrent-fencing: true' | wc -l",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'concurrent-fencing: true'",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "Checking for concurrent-fencing: true",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "HA-LB-0001",
-            "Description": "Load Balancer Idle Timeout",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "PowerShell",
-            "ProcessingCommand": "$_result=0; foreach ($_loadbalancer in $Script:_LoadBalancers) { if ($_loadbalancer.idletimeout -eq 30) { $_result+=1 } else { $_result-=10 }; }; if ($_result -gt 0) {1} else {0}",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'idle timeout: 30'",
-            "ShowAlternativeResult": "$Script:_Loadbalancers.idletimeout",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "Checking for Idle Timeout 30",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "HA-LB-0002",
-            "Description": "Load Balancer Floating IP",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "PowerShell",
-            "ProcessingCommand": "$_result=0; foreach ($_loadbalancer in $Script:_LoadBalancers) { if ($_loadbalancer.floatingip -eq $true) { $_result+=1 } else { $_result-=10 }; }; if ($_result -gt 0) {1} else {0}",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'floating IP: true'",
-            "ShowAlternativeResult": "$Script:_Loadbalancers.FloatingIP",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "Checking for Floating IP",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "HA-LB-0002",
-            "Description": "Load Balancer HA Ports",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "PowerShell",
-            "ProcessingCommand": "$_result=0; foreach ($_loadbalancer in $Script:_LoadBalancers) { if ($_loadbalancer.protocols -eq 'All') { $_result+=1 } else { $_result-=10 }; }; if ($_result -gt 0) {1} else {0}",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'HA Ports: enabled'",
-            "ShowAlternativeResult": "$Script:_Loadbalancers.Protocols",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "Checking for HA Ports",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "HDB-OS-0001",
-            "Description": "SAP HANA Backup fails on Azure - SLES 12.4",
-            "OS": ["SUSE"],
-            "OSVersion": ["12.4"],
-            "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [true,false],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "PowerShell",
-            "ProcessingCommand": "if ((CheckForKernelVersion -version $Script:_Kernelversion -startversion '4.0.0-0.0.0' -endversion '4.12.14-95.37.1') -eq $true) {0} else {1}",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'Kernel version higher than 4.12.14-95.37.1'",
-            "ShowAlternativeResult": "$Script:_Kernelversion",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "",
-            "MicrosoftDocs": "",
-            "SAPNote": "2814271"
-        },
-        {
-            "CheckID": "HDB-OS-0002",
-            "Description": "SAP HANA Backup fails on Azure - SLES 12.5",
-            "OS": ["SUSE"],
-            "OSVersion": ["12.5"],
-            "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [true,false],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "PowerShell",
-            "ProcessingCommand": "if ((CheckForKernelVersion -version $Script:_Kernelversion -startversion '4.0.0-0.0.0' -endversion '4.12.14-122.7.1') -eq $true) {0} else {1}",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'Kernel version higher than 4.12.14-122.7.1'",
-            "ShowAlternativeResult": "$Script:_Kernelversion",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "",
-            "MicrosoftDocs": "",
-            "SAPNote": "2814271"
-        },
-        {
-            "CheckID": "HDB-OS-0003",
-            "Description": "SAP HANA Backup fails on Azure - SLES 15",
-            "OS": ["SUSE"],
-            "OSVersion": ["15.0"],
-            "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [true,false],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "PowerShell",
-            "ProcessingCommand": "if ((CheckForKernelVersion -version $Script:_Kernelversion -startversion '4.0.0-0.0.0' -endversion '4.12.14-150.38.1') -eq $true) {0} else {1}",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'Kernel version higher than 4.12.14-150.38.1'",
-            "ShowAlternativeResult": "$Script:_Kernelversion",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "",
-            "MicrosoftDocs": "",
-            "SAPNote": "2814271"
-        },        
-        {
-            "CheckID": "HDB-OS-0004",
-            "Description": "SAP HANA Backup fails on Azure - SLES 15.1",
-            "OS": ["SUSE"],
-            "OSVersion": ["15.1"],
-            "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "HighAvailability": [true,false],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "PowerShell",
-            "ProcessingCommand": "if ((CheckForKernelVersion -version $Script:_Kernelversion -startversion '4.0.0-0.0.0' -endversion '4.12.14-197.21.1') -eq $true) {0} else {1}",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'Kernel version higher than 4.12.14-197.21.1'",
-            "ShowAlternativeResult": "$Script:_Kernelversion",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "",
-            "MicrosoftDocs": "",
-            "SAPNote": "2814271"
-        },
-        {
-            "CheckID": "APP-OS-0001",
-            "Description": "IPv4 keepalive time",
-            "OS": ["SUSE","RedHat","OracleLinux"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["APP"],
-            "DB": ["HANA","MSSQL","Oracle","Db2"],
-            "HighAvailability": [false,true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "sysctl net.ipv4.tcp_keepalive_time",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "net.ipv4.tcp_keepalive_time = 120",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        }, 
-        {
-            "CheckID": "APP-OS-0002",
-            "Description": "IPv4 tcp_retries2",
-            "OS": ["SUSE","RedHat","OracleLinux"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["APP"],
-            "DB": ["HANA","MSSQL","Oracle","Db2"],
-            "HighAvailability": [false,true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "sysctl net.ipv4.tcp_retries2",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "net.ipv4.tcp_retries2 = 3",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },             
-        {
-            "CheckID": "APP-OS-0003",
-            "Description": "IPv4 keepalive interval",
-            "OS": ["SUSE","RedHat","OracleLinux"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["APP"],
-            "DB": ["HANA","MSSQL","Oracle","Db2"],
-            "HighAvailability": [false,true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "sysctl net.ipv4.tcp_keepalive_intvl",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "net.ipv4.tcp_keepalive_intvl = 75",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },             
-        {
-            "CheckID": "APP-OS-0004",
-            "Description": "IPv4 keepalive time",
-            "OS": ["SUSE","RedHat","OracleLinux"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["APP"],
-            "DB": ["HANA","MSSQL","Oracle","Db2"],
-            "HighAvailability": [false,true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "sysctl net.ipv4.tcp_keepalive_probes",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "net.ipv4.tcp_keepalive_probes = 9",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "",
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        }                  
-    ]
+    }
 }
