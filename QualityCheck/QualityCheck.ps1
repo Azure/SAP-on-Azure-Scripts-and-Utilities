@@ -198,12 +198,14 @@ function CheckRequiredModules {
             if ($_foundmoduleversion -eq 0) {
                 # required module version not found
                 Write-Host "Please install" $_requiredmodule.ModuleName "with version greater than" $_requiredmodule.Version
+                exit
             }
 
         }
         else {
             # Get-Module didn't come back with a result
             Write-Host "Please install" $_requiredmodule.ModuleName "with version greater than" $_requiredmodule.Version
+            exit
         }
     }
 }
@@ -217,9 +219,7 @@ function ConvertFrom-String_sgmap {
     )
 
     $_output = @()
-
     $_x = $p.Trim() -replace '\s+',','
-
     $_x | Foreach-Object {
 	    $_output += $_ | ConvertFrom-Csv -Header P1,P2,P3,P4,P5,P6,P7
     }
@@ -235,9 +235,7 @@ function ConvertFrom-String_df {
     )
 
     $_output = @()
-
     $_x = $p.Trim() -replace '\s+',','
-
     $_x | Foreach-Object {
 	    $_output += $_ | ConvertFrom-Csv -Header Filesystem,Size,Used,Free,UsedPercent,Mountpoint
     }
@@ -253,9 +251,7 @@ function ConvertFrom-String_findmnt {
     )
 
     $_output = @()
-
     $_x = $p.Trim() -replace '\s+',','
-
     $_x | Foreach-Object {
 	    $_output += $_ | ConvertFrom-Csv -Header target,source,fstype,options
     }
