@@ -303,9 +303,17 @@ function ConnectVM {
         
         $script:_ClearTextPassword = ConvertFrom-SecureString -SecureString $VMPassword -AsPlainText
         $script:_credentials = New-Object System.Management.Automation.PSCredential ($VMUsername, $VMPassword);
-        $script:_sshsession = New-SSHSession -ComputerName $VMHostname -Credential $_credentials -Port $VMConnectionPort -AcceptKey -ConnectionTimeout 5
+        $script:_sshsession = New-SSHSession -ComputerName $VMHostname -Credential $_credentials -Port $VMConnectionPort -AcceptKey -ConnectionTimeout 5 -ErrorAction SilentlyContinue
 
-        $_sshsession.SessionId
+        if ($script:_sshsession.Connected -eq $true) {
+            return $script:_sshsession.SessionId
+        }
+        else {
+            # not able to connect
+            Write-Host "Please check your credentials, unable to logon"
+            exit 
+        }
+        
     }
 
 }
@@ -947,10 +955,19 @@ function RunQualityCheck {
     $script:_Checks = @()
     $script:_StorageType = @()
 
+    # adding premium storage for app and ASCS nodes
+    if ($VMRole -eq "ASCS" -or $VMRole -eq "APP") {
+        $script:_StorageType += "Premium_LRS"
+    }
+
+    # adding premium storage for app and ASCS nodes
+    if ($VMRole -eq "DB" -and $VMDatabase -ne "HANA") {
+        $script:_StorageType += "Premium_LRS"
+    }
 
     # STORAGE CHECKS SAP HANA
     # checking for data disks
-    if ($VMDatabase -eq "HANA") {
+    if (($VMDatabase -eq "HANA") -and ($VMRole -eq "DB")) {
 
         ## getting file system for /hana/data
         $_filesystem_hana = ($Script:_filesystems | Where-Object {$_.Target -in $DBDataDir})
