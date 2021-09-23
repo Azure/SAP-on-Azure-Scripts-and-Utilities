@@ -471,18 +471,18 @@ function CollectVMInformationAdditional {
                     #$_outputarray_row.Output = $_output
 
                     $_outputarray += $_outputarray_row
+
+                    $_htmllink = "additionalinfo" + $_counter
+                    $_description = $_CollectVMInformationCheck.Description
+                    $_outputarray = $_outputarray | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""$_htmllink"">$_description</h2>"
+                    $script:_Content += "<a href=""#$_htmllink"">$_description</a><br>"
+                    $_outputarray = $_outputarray.Replace(";;:;;","<br/>")
+        
+                    $_counter += 1
+                    $_outputarray_total += $_outputarray
+        
                 }
             }
-
-        $_htmllink = "additionalinfo" + $_counter
-        $_description = $_CollectVMInformationCheck.Description
-        $_outputarray = $_outputarray | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""$_htmllink"">$_description</h2>"
-        $script:_Content += "<a href=""#$_htmllink"">$_description</a><br>"
-        $_outputarray = $_outputarray.Replace(";;:;;","<br/>")
-
-        $_counter += 1
-        $_outputarray_total += $_outputarray
-
         }
     }
 
