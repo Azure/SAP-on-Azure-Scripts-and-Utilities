@@ -1,4 +1,4 @@
-<#
+﻿<#
 
 .SYNOPSIS
     SAP on Azure Quality Check
@@ -301,7 +301,7 @@ function ConnectVM {
     else {
         
         
-        $script:_ClearTextPassword = ConvertFrom-SecureString -SecureString $VMPassword -AsPlainText
+#        $script:_ClearTextPassword = ConvertFrom-SecureString -SecureString $VMPassword -AsPlainText -force
         $script:_credentials = New-Object System.Management.Automation.PSCredential ($VMUsername, $VMPassword);
         $script:_sshsession = New-SSHSession -ComputerName $VMHostname -Credential $_credentials -Port $VMConnectionPort -AcceptKey -ConnectionTimeout 5 -ErrorAction SilentlyContinue
 
@@ -1141,13 +1141,13 @@ function RunQualityCheck {
 
     # run checks from JSON file
     foreach ($_check in $_jsonconfig.Checks) {
-
+    write-host $_check.checkid -ForegroundColor Cyan
         # does the check apply to this system?
         if ( $_check.OS.Contains($VMOperatingSystem) -and `
           $_check.DB.Contains($VMDatabase) -and `
           $_check.Role.Contains($VMRole) -and `
           ( $_check.OSVersion.Contains("all") -or $_check.OSVersion.Contains($VMOSRelease)) -and `
-          ((Compare-Object -ReferenceObject $_check.StorageType -DifferenceObject $script:_StorageType -IncludeEqual -ExcludeDifferent).count -gt 0) -and `
+          (((Compare-Object -ReferenceObject $_check.StorageType -DifferenceObject $script:_StorageType -IncludeEqual -ExcludeDifferent) | measure).count -gt 0) -and `
           $_check.Hardwaretype.Contains($Hardwaretype)) {
 
             # check if check applies to HA or not and if HA check for HA-Agent
