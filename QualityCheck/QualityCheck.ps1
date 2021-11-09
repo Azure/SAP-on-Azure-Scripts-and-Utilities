@@ -237,7 +237,8 @@ function ConvertSizeStringToNumber {
     }
 
     # return size in GB
-    [int]$size = $inputsize.Substring(0,($inputsize.Length - 3)) * $multiplier
+    [int]$size = $inputsize.Substring(0,($inputsize.Length - 3))
+    $size = $size * $multiplier
 
     $size
 }
