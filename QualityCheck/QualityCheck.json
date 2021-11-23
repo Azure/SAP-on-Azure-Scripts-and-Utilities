@@ -1261,7 +1261,9 @@
         "HANADataMBPS": 400,
         "HANALogMBPS": 250,
         "HANADataIOPS": 7000,
-        "HANALogIOPS": 2000
+        "HANALogIOPS": 2000,
+        "HANADataStripeSize": "256.00k",
+        "HANALOGStripeSize": "64.00k"
     },
     "VMCollectInformation": [
         {
