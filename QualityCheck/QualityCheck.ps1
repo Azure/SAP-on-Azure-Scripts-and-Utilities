@@ -623,18 +623,26 @@ function RunCommand {
 # check if there is connectivity to Azure using Get-AzVM command
 function CheckAzureConnectivity {
 
-    $_VMinfo = Get-AzVM -ResourceGroupName $AzVMResourceGroup -Name $AzVMName -ErrorAction SilentlyContinue
+    # check if connected to Azure
+    $_SubscriptionInfo = Get-AzSubscription
 
-    if ($_VMinfo) {
+    # if $_SubscritpionInfo then it got subscriptions
+    if ($_SubscriptionInfo)
+    {
+        # check if connected to right subscription
+        $_VMinfo = Get-AzVM -ResourceGroupName $AzVMResourceGroup -Name $AzVMName -ErrorAction SilentlyContinue
 
-        # connected to Azure
-
+        if ($_VMinfo) {
+            # connected to Azure
+        }
+        else {
+            Write-Host "Unable to find resource group or VM, please check if you are connected to the correct subscription or if you had a typo"
+            exit
+        }
     }
     else {
-
         Write-Host "Please connect to Azure using the Connect-AzAccount command, if you are connected use the Select-AzSubscription command to set the correct context"
         exit
-
     }
 
 }
@@ -1316,6 +1324,12 @@ function RunQualityCheck {
 
     # remove duplicates from used storage types
     $script:_StorageType = $script:_StorageType | Select-Object -Unique
+
+    if (($VMDatabase -eq "HANA") -and ($script:_StorageType.Length -lt 1)) {
+        Write-Host "please check your parameters, HANA directories not found"
+        exit
+    }
+
 
     # run checks from JSON file
     foreach ($_check in $_jsonconfig.Checks) {
