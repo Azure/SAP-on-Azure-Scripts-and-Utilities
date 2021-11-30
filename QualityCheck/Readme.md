@@ -20,7 +20,7 @@ It will query your system for required parameters and match it with Microsoft's 
 
 ## What's required
 
-* PowerShell 7.1 (PowerShell 5.1 works as well, version 7.1 strongly recommended)
+* PowerShell 7.1 (PowerShell 5.1 works as well, version 7.1 or newer strongly recommended), you can download Powershell [here](https://aka.ms/powershell-release?tag=stable)
 * Az Powershell Module (Az.Compute, Az.Network, Az.NetAppFiles, Az.Account)
 * Posh-SSH Module available through PowerShell Gallery, thanks to [darkoperator](https://github.com/darkoperator/Posh-SSH)
 
@@ -127,4 +127,14 @@ PARAMETERS
 
 ## What will be checked
 
-adding checks here
+### General
+
+| Check-ID    | Type | Command                                              | Description               | OS        | VM Role | Database   | High Availability | Expected values | SAP Notes |
+|-------------|------|------------------------------------------------------|---------------------------|-----------|---------|------------|-------------------|-----------------|-----------|
+| NET-0001    | OS   | sysctl net.ipv4.tcp_timestamps                       | Timestamp parameter for HA Load Balancers | SUSE, RH  | DB      | AnyDB,HANA | yes               | 0               | 2382421   |
+
+### HANA
+
+| Check-ID    | Type | Command                                              | Description               | OS        | VM Role | Database   | High Availability | Expected values | SAP Notes |
+|-------------|------|------------------------------------------------------|---------------------------|-----------|---------|------------|-------------------|-----------------|-----------|
+| HDB-OS-0001 | OS   | sysctl net.ipv4.ip_local_port_range                  |                           | SUSE, RH  | DB      | HANA       | yes/no            | 9000-65499      | 2382421   |
