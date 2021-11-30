@@ -143,3 +143,15 @@ PARAMETERS
 | HDB-OS-0001 | OS   | sysctl net.ipv4.ip_local_port_range                  |                           | SUSE, RH  | DB      | HANA       | yes/no            | 9000-65499      | 2382421   |
 | HDB-ANF-0001| OS   | sysctl net.core.rmem_max                             | required ANF parameter    | SUSE,RH   | DB      | HANA       | yes/no            | 16777216        | |
 
+| Check ID | NET-0001 |
+|---------------|--------|
+| Type        | OS  |
+| Command | sysctl net.ipv4.ip_local_port_range |
+| Description | |
+| OS | SUSE,RH |
+| VM Role | DB |
+| Database | HANA |
+| High Availability | yes/no |
+| Expected Value | 9000-65499 |
+| SAP Note | 1928533 |
+
