@@ -129,29 +129,46 @@ PARAMETERS
 
 ### General
 
-| Check-ID    | Type | Command                                              | Description               | OS        | VM Role | Database   | High Availability | Expected values | SAP Notes |
-|-------------|------|------------------------------------------------------|---------------------------|-----------|---------|------------|-------------------|-----------------|-----------|
-| NET-0001    | OS   | sysctl net.ipv4.tcp_timestamps                       | Timestamp parameter for HA Load Balancers | SUSE, RH  | DB      | AnyDB,HANA | yes               | 0               | 2382421   |
-| VM-0001     | PwSh | see code                                             | check if VM type is supported | all | all | AnyDB, HANA | yes/no |  | 1928533 |
-| VM-0002     | PwSh | see code                                             | check if VM type is supported for HANA scenario | SUSE, RH | DB | HANA | yes/no | supported | 1928533 |
-| VM-0003     | PwSh | see code                                             | check if OS/DB combination is supported | all | all | all | yes/no | supported | 1928533 |
+| *Check ID*            | VM-0001 |
+|---------------------|--------|
+| *Type*                | PowerShell  |
+| *Command*             | see code |
+| *Description*         | check if VM type is supported for SAP on Azure |
+| *OS*                  | all |
+| *VM Role*             | all |
+| *Database*            | all |
+| *High Availability*   | all |
+| *Expected Value*      | supported |
+| *SAP Note*            | 1928533 |
+| *added/modified*      | initial version | 
 
 ### HANA
 
-| Check-ID    | Type | Command                                              | Description               | OS        | VM Role | Database   | High Availability | Expected values | SAP Notes / link |
-|-------------|------|------------------------------------------------------|---------------------------|-----------|---------|------------|-------------------|-----------------|-----------|
-| HDB-OS-0001 | OS   | sysctl net.ipv4.ip_local_port_range                  |                           | SUSE, RH  | DB      | HANA       | yes/no            | 9000-65499      | 2382421   |
-| HDB-ANF-0001| OS   | sysctl net.core.rmem_max                             | required ANF parameter    | SUSE,RH   | DB      | HANA       | yes/no            | 16777216        | |
+| *Check ID*            | HDB-OS-0001 |
+|---------------------|--------|
+| *Type*                | OS  |
+| *Command*             | sysctl net.ipv4.ip_local_port_range |
+| *Description*         | |
+| *OS*                  | SUSE,RH |
+| *VM Role*             | DB |
+| *Database*            | HANA |
+| *High Availability*   | yes/no |
+| *Expected Value*      | 9000-65499 |
+| *SAP Note*            | 1928533 |
+| *Microsoft link*      | |
+| *added/modified*      | initial version |  
 
-| Check ID | NET-0001 |
-|---------------|--------|
-| Type        | OS  |
-| Command | sysctl net.ipv4.ip_local_port_range |
-| Description | |
-| OS | SUSE,RH |
-| VM Role | DB |
-| Database | HANA |
-| High Availability | yes/no |
-| Expected Value | 9000-65499 |
-| SAP Note | 1928533 |
+| *Check ID*            | HDB-ANF-0001 |
+|---------------------|--------|
+| *Type*                | OS  |
+| *Command*             | sysctl net.core.rmem_max |
+| *Description*         | OS Performance parameters for ANF scenarios |
+| *OS*                  | SUSE,RH |
+| *VM Role*             | DB |
+| *Database*            | HANA |
+| *High Availability*   | yes/no |
+| *Expected Value*      | 16777216 |
+| *SAP Note*            | 1928533 |
+| *Microsoft link*      | |
+| *added/modified*      | initial version |  
 
