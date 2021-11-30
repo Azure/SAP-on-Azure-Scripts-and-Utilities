@@ -130,7 +130,7 @@ PARAMETERS
 ### General
 
 | *Check ID*            | VM-0001 |
-|---------------------|--------|
+|:----------------------|:--------|
 | *Type*                | PowerShell  |
 | *Command*             | see code |
 | *Description*         | check if VM type is supported for SAP on Azure |
@@ -145,7 +145,7 @@ PARAMETERS
 ### HANA
 
 | *Check ID*            | HDB-OS-0001 |
-|---------------------|--------|
+|:----------------------|:--------|
 | *Type*                | OS  |
 | *Command*             | sysctl net.ipv4.ip_local_port_range |
 | *Description*         | |
@@ -158,8 +158,8 @@ PARAMETERS
 | *Microsoft link*      | |
 | *added/modified*      | initial version |  
 
-| *Check ID*            | HDB-ANF-0001 |
-|---------------------|--------|
+| *Check ID*            |HDB-ANF-0001 |
+|:----------------------|:--------|
 | *Type*                | OS  |
 | *Command*             | sysctl net.core.rmem_max |
 | *Description*         | OS Performance parameters for ANF scenarios |
