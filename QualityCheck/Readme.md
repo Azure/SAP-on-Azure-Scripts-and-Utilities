@@ -133,14 +133,61 @@ PARAMETERS
 |:----------------------|:--------|
 | *Type*                | PowerShell  |
 | *Command*             | see code |
-| *Description*         | check if VM type is supported for SAP on Azure |
+| *Description*         | Check if VM type is supported for SAP on Azure |
 | *OS*                  | all |
 | *VM Role*             | all |
 | *Database*            | all |
-| *High Availability*   | all |
-| *Expected Value*      | supported |
+| *High Availability*   | yes/no |
+| *Expected Value*      | Supported |
 | *SAP Note*            | 1928533 |
-| *added/modified*      | initial version | 
+| *Microsoft link*      | |
+| *added/modified*      | initial version |  
+
+| *Check ID*            | VM-0002 |
+|:----------------------|:--------|
+| *Type*                | PowerShell  |
+| *Command*             | see code |
+| *Description*         | Check if VM type is supported for SAP HANA on Azure |
+| *OS*                  | SUSE, RedHat |
+| *VM Role*             | DB |
+| *Database*            | HANA |
+| *High Availability*   | yes/no |
+| *Expected Value*      | Supported |
+| *SAP Note*            | 1928533 |
+| *Microsoft link*      | |
+| *added/modified*      | initial version |  
+
+| *Check ID*            | VM-0003 |
+|:----------------------|:--------|
+| *Type*                | PowerShell  |
+| *Command*             | see code |
+| *Description*         | Check if OS/DB combination is supported |
+| *OS*                  | all |
+| *VM Role*             | all |
+| *Database*            | all |
+| *High Availability*   | yes/no |
+| *Expected Value*      | Supported |
+| *SAP Note*            | 1928533 |
+| *Microsoft link*      | |
+| *added/modified*      | initial version |  
+
+
+
+### Networking
+
+| *Check ID*            | NET-0001 |
+|:----------------------|:--------|
+| *Type*                | OS  |
+| *Command*             | sysctl net.ipv4.tcp_timestamps |
+| *Description*         | TCP timestamps needs to be set to 0 because of Azure Load Balancers |
+| *OS*                  | SUSE, RedHat |
+| *VM Role*             | DB, ASCS |
+| *Database*            | HANA, Db2 |
+| *High Availability*   | yes/no |
+| *Expected Value*      | 0 |
+| *SAP Note*            | 2382421 |
+| *Microsoft link*      | multiple docs.microsoft.com articles, e.g. [this](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-netapp-files) article|
+| *added/modified*      | initial version |  
 
 ### HANA
 
@@ -149,7 +196,7 @@ PARAMETERS
 | *Type*                | OS  |
 | *Command*             | sysctl net.ipv4.ip_local_port_range |
 | *Description*         | |
-| *OS*                  | SUSE,RH |
+| *OS*                  | SUSE, RedHat |
 | *VM Role*             | DB |
 | *Database*            | HANA |
 | *High Availability*   | yes/no |
@@ -158,12 +205,12 @@ PARAMETERS
 | *Microsoft link*      | |
 | *added/modified*      | initial version |  
 
-| *Check ID*            |HDB-ANF-0001 |
+| *Check ID*            | HDB-ANF-0001 |
 |:----------------------|:--------|
 | *Type*                | OS  |
 | *Command*             | sysctl net.core.rmem_max |
 | *Description*         | OS Performance parameters for ANF scenarios |
-| *OS*                  | SUSE,RH |
+| *OS*                  | SUSE, RedHat |
 | *VM Role*             | DB |
 | *Database*            | HANA |
 | *High Availability*   | yes/no |
@@ -172,3 +219,18 @@ PARAMETERS
 | *Microsoft link*      | |
 | *added/modified*      | initial version |  
 
+### HANA on ANF
+
+| *Check ID*            | HDB-ANF-0001 |
+|:----------------------|:--------|
+| *Type*                | OS  |
+| *Command*             | sysctl net.core.rmem_max |
+| *Description*         | OS parameter for ANF performance |
+| *OS*                  | SUSE, RedHat |
+| *VM Role*             | DB |
+| *Database*            | HANA |
+| *High Availability*   | yes/no |
+| *Expected Value*      | 16777216 |
+| *SAP Note*            | 1928533 |
+| *Microsoft link*      | |
+| *added/modified*      | multiple docs.microsoft.com articles, e.g. [this](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse) article |
