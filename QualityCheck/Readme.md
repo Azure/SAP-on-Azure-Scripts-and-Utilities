@@ -29,20 +29,27 @@ It will query your system for required parameters and match it with Microsoft's 
 
 1. Install PowerShell on your Windows or Linux system
 2. Install PowerShell modules by running the following commands
+
     ```powershell
     Install-Module Az -Force
     Install-Module Az.NetAppFiles -Force
     Install-Module Posh-SSH -Force
     ```
+
 3. Set the Execution Policy to unrestricted (we are working on signing the script)
+
     ```powershell
     Set-ExecutionPolicy Unrestricted
     ```
+
 4. Sign in to Azure using
+
     ```powershell
     Connect-AzAccount
     ```
-4. Connect to the correct subscription (see [here](https://docs.microsoft.com/en-us/powershell/module/servicemanagement/azure.service/select-azuresubscription?view=azuresmps-4.0.0) for details)
+
+5. Connect to the correct subscription (see [here](https://docs.microsoft.com/en-us/powershell/module/servicemanagement/azure.service/select-azuresubscription?view=azuresmps-4.0.0) for details)
+
     ```powershell
     Select-AzureSubscription -SubscriptionName 'your-subscription-name'
     ```
@@ -61,7 +68,7 @@ You can access a sample output file [here](sample/hana-sample.html)
 
 ```powershell
 get-help .\QualityCheck.ps1 -detailed
-
+```
 
 ## What will be checked
 
@@ -197,7 +204,7 @@ get-help .\QualityCheck.ps1 -detailed
 | *Expected Value*      | 2GB |
 | *SAP Note*            | [1999997](https://launchpad.support.sap.com/#/notes/1999997) |
 | *Microsoft link*      | |
-| *added/modified*      | initial version | 
+| *added/modified*      | initial version |
 
 | *Check ID*            | HDB-ANF-0001 |
 |:----------------------|:--------|
