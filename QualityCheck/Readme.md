@@ -1,12 +1,13 @@
-# Quality Check for SAP on Azure
+# QualityCheck for SAP on Azure
 
-Current Version: V2
+QualityCheck is an open-source tool to validate SAP on Azure installations. It connects to Azure Resource Manager and the operating system and validates the system configurations against Microsoft's best practise.
+Running it regulary will always keep your system up to date.
 
-## Disclaimer
+QualityCheck supports SUSE, RedHat and Oracle Linux as well as HANA, Db2 and Oracle Database.
 
-THE SCRIPTS ARE PROVIDED AS IS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
+We are continouasly improving the tool and will add e.g. support for Windows and MSSQL in the near future.
 
-## Description
+If you have additional ideas on what to check please open an issue.
 
 When installing SAP on Azure please follow our guidelines available [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/get-started).
 Please pay close attention to the storage layout for HANA systems available [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-vm-operations-storage).
@@ -20,111 +21,47 @@ It will query your system for required parameters and match it with Microsoft's 
 
 ## What's required
 
-* PowerShell 7.1 (PowerShell 5.1 works as well, version 7.1 or newer strongly recommended), you can download Powershell [here](https://aka.ms/powershell-release?tag=stable)
+* PowerShell 7.1 or newer, you can download Powershell [here](https://aka.ms/powershell-release?tag=stable)
 * Az Powershell Module (Az.Compute, Az.Network, Az.NetAppFiles, Az.Account)
 * Posh-SSH Module available through PowerShell Gallery, thanks to [darkoperator](https://github.com/darkoperator/Posh-SSH)
 
-To install the required modules you can use
+## Getting Started
 
-```powershell
-Install-Module Az -Force
-Install-Module Az.NetAppFiles -Force
-Install-Module Posh-SSH -Force
-```
-
-## How to run it
-
-Download the PowerShell Script and put it into your preferred folder.
-When downloading from GitHub please make sure you download the raw file.
-
-Start PowerShell, install the requirements and then connect to Azure using
-
-```powershell
-Connect-AzAccount
-```
-
-also check if you selected the correct Context and Subscription.
-For more help about Azure Powershell and how to connect please visit [this](https://github.com/Azure/azure-powershell) website.
-
-Then simply run the script.
+1. Install PowerShell on your Windows or Linux system
+2. Install PowerShell modules by running the following commands
+    ```powershell
+    Install-Module Az -Force
+    Install-Module Az.NetAppFiles -Force
+    Install-Module Posh-SSH -Force
+    ```
+3. Set the Execution Policy to unrestricted (we are working on signing the script)
+    ```powershell
+    Set-ExecutionPolicy Unrestricted
+    ```
+4. Sign in to Azure using
+    ```powershell
+    Connect-AzAccount
+    ```
+4. Connect to the correct subscription (see [here](https://docs.microsoft.com/en-us/powershell/module/servicemanagement/azure.service/select-azuresubscription?view=azuresmps-4.0.0) for details)
+    ```powershell
+    Select-AzureSubscription -SubscriptionName 'your-subscription-name'
+    ```
 
 ### Sample Commands
 
 ```powershell
-. 'QualityCheck.ps1' -ResourceGroupName <ResourceGroupName for VMs> -SubscriptionName <subscription name> -AzVMname <Azure VM name> -vm_hostname <IP address or DNS name> -vm_username <OS user> -hanadeployment <ScaleUp or ScaleOut> -hanastoragetype <Premium or UltraDisk or ANF> -highavailability <$true or $false>
+. QualityCheck.ps1 [-VMOperatingSystem] Windows,SUSE,RedHat,OracleLinux [-VMDatabase] HANA,Oracle,MSSQL,Db2,ASE [-VMRole] DB,ASCS,APP [-AzVMResourceGroup] resourcegroupname [-AzVMName] AzureVMName [-VMHostname] hostname or ip address [-VMUsername] username [[-HighAvailability] $true or $false] [[-VMConnectionPort] 22>] [[-DBDataDir] /hana/data] [[-DBLogDir] /hana/log] [[-DBSharedDir] /hana/shared] [[-ANFResourceGroup] resourcegroup-for-anf] [[-ANFAccountName] anf-account-name] [[-Hardwaretype] VM] [[-HANADeployment] OLTP,OLAP,OLTP-ScaleOut,OLAP-ScaleOut] [[-HighAvailabilityAgent] SBD,FencingAgent]
 ```
 
 ### Sample Output
+
+You can access a sample output file [here](sample/hana-sample.html)
 
 ### Full Help
 
 ```powershell
 get-help .\QualityCheck.ps1 -detailed
 
-
-NAME
-    QualityCheck.ps1
-
-SYNOPSIS
-    Check HANA System Configuration
-
-
-SYNTAX
-    \QualityCheck.ps1 [-SubscriptionName] <String> [-ResourceGroupName] <String> [-AzVMname] <String> [-vm_hostname] <String> [[-ANFResourceGroupName] <String>] [[-ANFAccountName] <String>] [-vm_username] <String> [-vm_password] <SecureString> [[-hanadeployment] <String>] [[-hanastoragetype] <String>]      
-    [[-highavailability] <Boolean>] [[-sshport] <String>] [[-createlogfile] <Boolean>] [[-ConfigFileName] <Object>] [[-fastconnect] <Object>] [<CommonParameters>]
-
-
-DESCRIPTION
-    The script will check the configuration of a VM for running SAP HANA
-
-
-PARAMETERS
-    -SubscriptionName <String>
-        Azure Subscription Name
-
-    -ResourceGroupName <String>
-        Azure Resource Group Name
-
-    -AzVMname <String>
-        Azure VM Name
-
-    -vm_hostname <String>
-        hostname or IP address used for SSH connection
-        
-    -ANFResourceGroupName <String>
-        Azure NetApp Files ResourceGroup
-
-    -ANFAccountName <String>
-        Azure NetApp Files Account Name
-
-    -vm_username <String>
-        Username used to logon
-
-    -vm_password <SecureString>
-        Password used to logon
-
-    -hanadeployment <String>
-        HANA ScaleUp or ScaleOut
-
-    -hanastoragetype <String>
-        HANA Storage Option
-
-    -highavailability <Boolean>
-        HighAvailability Check
-
-    -sshport <String>
-        ssh port
-
-    -createlogfile <Boolean>
-        create logfile
-
-    -ConfigFileName <String>
-        QualityCheck Configfile
-
-    -fastconnect <Boolean>
-        FastConnect - already connected to Azure
-
-```
 
 ## What will be checked
 
@@ -1089,3 +1026,7 @@ PARAMETERS
 | *SAP Note*            | |
 | *Microsoft link*      | |
 | *added/modified*      | initial version |
+
+## Disclaimer
+
+THE SCRIPTS ARE PROVIDED AS IS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
