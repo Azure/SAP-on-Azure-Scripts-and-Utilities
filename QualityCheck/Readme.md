@@ -172,6 +172,20 @@ PARAMETERS
 | *Microsoft link*      | |
 | *added/modified*      | initial version |
 
+| *Check ID*            | VM-0004 |
+|:----------------------|:--------|
+| *Type*                | PowerShell |
+| *Command*             | if (($script:_NetworkInterfaces | Where-Object { $_.AcceleratedNetworking -eq $false } | Measure-Object).Count -eq 0) { 'OK' } else { 'ERROR'} |
+| *Description*         | Check if Accelerated Networking is enabled on all interfaces |
+| *OS*                  | SUSE, RedHat, OracleLinux, Windows |
+| *VM Role*             | DB, ASCS, APP |
+| *Database*            | HANA, Db2, Oracle, MSSQL |
+| *High Availability*   | no/yes (SBD/FencingAgent) |
+| *Expected Value*      | supported |
+| *SAP Note*            | [1928533](https://launchpad.support.sap.com/#/notes/1928533) |
+| *Microsoft link*      | |
+| *added/modified*      | initial version |
+
 | *Check ID*            | OS-0001 |
 |:----------------------|:--------|
 | *Type*                | OS |

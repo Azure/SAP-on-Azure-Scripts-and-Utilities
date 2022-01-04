@@ -3154,6 +3154,30 @@
             "AdditionalInfo": "swap space on HANA systems should be 2GB",
             "MicrosoftDocs": "",
             "SAPNote": "1999997"
+        },
+        {
+            "CheckID": "VM-0004",
+            "Description": "Accelerated Networking Enabled",
+            "OS": ["SUSE","RedHat","OracleLinux","Windows"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "Role": ["DB","ASCS","APP"],
+            "DB": ["HANA","Db2","Oracle","MSSQL"],
+            "HighAvailability": [false,true],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"],
+            "CommandType": "PowerShell",
+            "ProcessingCommand": "if (($script:_NetworkInterfaces | Where-Object { $_.AcceleratedNetworking -eq $false } | Measure-Object).Count -eq 0) { 'OK' } else { 'ERROR'}",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "OK",
+            "ShowAlternativeRequirement": "",
+            "ShowAlternativeResult": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "checking if Accelerated Networking is enabled on all interfaces",
+            "MicrosoftDocs": "",
+            "SAPNote": "1928533"
         }
+  
     ]
 }
