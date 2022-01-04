@@ -7,7 +7,9 @@ QualityCheck supports SUSE, RedHat and Oracle Linux as well as HANA, Db2 and Ora
 
 We are continouasly improving the tool and will add e.g. support for Windows and MSSQL in the near future.
 
-If you have additional ideas on what to check please open an issue.
+> If you have additional ideas on what to check please open an issue.
+
+> V1 is still available in the subfolder [here](V1)
 
 When installing SAP on Azure please follow our guidelines available [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/get-started).
 Please pay close attention to the storage layout for HANA systems available [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-vm-operations-storage).
