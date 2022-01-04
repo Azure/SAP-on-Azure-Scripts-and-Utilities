@@ -19,6 +19,8 @@ The certified SAP HANA on Azure instances are available in the [Certified And Su
 Quality Check is a script that runs on Windows and Linux and connects to Azure and your SAP system.
 It will query your system for required parameters and match it with Microsoft's best practice.
 
+![qualitycheck-connect](images/qualitycheck-connect.jpg)
+
 ## What's required
 
 * PowerShell 7.1 or newer, you can download Powershell [here](https://aka.ms/powershell-release?tag=stable)
