@@ -917,7 +917,7 @@ function CollectNetworkInterfaces {
     $script:_NetworkInterfacesOutput = $script:_NetworkInterfaces | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""NetworkInterfaces"">Collect Network Interfaces</h2>"
 
     # create entry in HTML index
-    $script:_Content += "<a href=""#NetworkInterfaces"">Network Interfaes</a><br>"
+    $script:_Content += "<a href=""#NetworkInterfaces"">Network Interfaces</a><br>"
 
     return $script:_NetworkInterfacesOutput
 
@@ -1343,7 +1343,7 @@ function RunQualityCheck {
           $_check.Hardwaretype.Contains($Hardwaretype)) {
 
             # check if check applies to HA or not and if HA check for HA-Agent
-            if (($_check.HighAvailability.Contains($HighAvailability)) -or (($_check.HighAvailability.Contains($HighAvailability)) -and ($_check.HighAvailabilityAgent.Contains($HighAvailabilityAgent)))) {
+            if (($_check.HighAvailability.Contains($false)) -or (($_check.HighAvailability.Contains($HighAvailability)) -and ($_check.HighAvailabilityAgent.Contains($HighAvailabilityAgent)))) {
 
                 $_Check_row = "" | Select-Object CheckID, Description, AdditionalInfo, Testresult, ExpectedResult, Status, SAPNote, MicrosoftDocs
 

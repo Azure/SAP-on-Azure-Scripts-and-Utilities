@@ -606,8 +606,8 @@ PARAMETERS
 | *OS*                  | SUSE |
 | *VM Role*             | DB |
 | *Database*            | HANA |
-| *High Availability*   | yes (SBD/FencingAgent) |
-| *Expected Value*      | 1 |
+| *High Availability*   | yes (SBD) |
+| *Expected Value*      | stonith-timeout=144 |
 | *SAP Note*            | |
 | *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability) |
 | *added/modified*      | initial version |
@@ -748,6 +748,34 @@ PARAMETERS
 | *Database*            | HANA |
 | *High Availability*   | yes (FencingAgent) |
 | *Expected Value*      | concurrent-fencing: true |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | HDB-HA-SLE-0015 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | crm config show &#124; grep 'stonith:fence_azure_arm' &#124; wc -l |
+| *Description*         | Pacemaker number of fence_azure_arm instances |
+| *OS*                  | SUSE |
+| *VM Role*             | DB |
+| *Database*            | HANA |
+| *High Availability*   | yes (FencingAgent) |
+| *Expected Value*      | 1 |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | HDB-HA-SLE-0016 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | crm configure show &#124; grep 'stonith-timeout=900' &#124; wc -l |
+| *Description*         | Pacemaker Stonith timeout |
+| *OS*                  | SUSE |
+| *VM Role*             | DB |
+| *Database*            | HANA |
+| *High Availability*   | yes (FencingAgent) |
+| *Expected Value*      | stonith-timeout=900 |
 | *SAP Note*            | |
 | *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability) |
 | *added/modified*      | initial version |
@@ -1006,3 +1034,44 @@ PARAMETERS
 | *Microsoft link*      | |
 | *added/modified*      | initial version |
 
+| *Check ID*            | APP-OS-0005 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | sysctl net.ipv4.tcp_tw_recycle |
+| *Description*         | IPv4 tcp_tw_recycle, optimize for faster reconnect after ASCS failover |
+| *OS*                  | SLES, RedHat, OracleLinux |
+| *VM Role*             | DB |
+| *Database*            | HANA |
+| *High Availability*   | n/a |
+| *Expected Value*      | net.ipv4.tcp_tw_recycle = 0 |
+| *SAP Note*            | |
+| *Microsoft link*      | |
+| *added/modified*      | initial version |
+
+| *Check ID*            | APP-OS-0006 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | sysctl net.ipv4.tcp_tw_reuse |
+| *Description*         | IPv4 tcp_tw_recycle, optimize for faster reconnect after ASCS failover |
+| *OS*                  | SLES, RedHat, OracleLinux |
+| *VM Role*             | DB |
+| *Database*            | HANA |
+| *High Availability*   | n/a |
+| *Expected Value*      | net.ipv4.tcp_tw_reuse = 0 |
+| *SAP Note*            | |
+| *Microsoft link*      | |
+| *added/modified*      | initial version |
+
+| *Check ID*            | APP-OS-0007 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | sysctl tcp_retries1 |
+| *Description*         | IPv4 tcp_retries1, optimize for faster reconnect after ASCS failover |
+| *OS*                  | SLES, RedHat, OracleLinux |
+| *VM Role*             | DB |
+| *Database*            | HANA |
+| *High Availability*   | n/a |
+| *Expected Value*      | net.ipv4.tcp_retries1 = 3 |
+| *SAP Note*            | |
+| *Microsoft link*      | |
+| *added/modified*      | initial version |
