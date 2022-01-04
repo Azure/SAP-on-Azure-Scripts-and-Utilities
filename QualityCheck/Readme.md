@@ -21,6 +21,10 @@ It will query your system for required parameters and match it with Microsoft's 
 
 ![qualitycheck-connect](images/qualitycheck-connect.jpg)
 
+> There is no need to install any software on the SAP on Azure operating system.
+>
+> The commands are query only and don't change anything on the destination system.
+
 ## What's required
 
 * PowerShell 7.1 or newer, you can download Powershell [here](https://aka.ms/powershell-release?tag=stable)
