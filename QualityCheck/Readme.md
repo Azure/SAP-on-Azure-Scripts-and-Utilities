@@ -28,7 +28,7 @@ To install the required modules you can use
 
 ```powershell
 Install-Module Az -Force
-Install-Module Az.AzureNetAppFiles -Force
+Install-Module Az.NetAppFiles -Force
 Install-Module Posh-SSH -Force
 ```
 
