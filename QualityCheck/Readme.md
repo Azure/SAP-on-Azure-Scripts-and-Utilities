@@ -70,7 +70,7 @@ It will query your system for required parameters and match it with Microsoft's 
 
 ### Sample Output
 
-You can access a sample output file [here](sample/hana-sample.html)
+You can access a sample output file [here](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/main/QualityCheck/sample/hana-sample.html)
 
 ### Full Help
 
