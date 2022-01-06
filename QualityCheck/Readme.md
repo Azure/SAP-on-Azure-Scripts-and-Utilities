@@ -27,22 +27,26 @@ It will query your system for required parameters and match it with Microsoft's 
 >
 > The commands are query only and don't change anything on the destination system.
 
-## What's required
+## What's required on jumpbox
 
-* PowerShell 7.1 or newer, you can download Powershell [here](https://aka.ms/powershell-release?tag=stable)
-* Az Powershell Module (Az.Compute, Az.Network, Az.NetAppFiles, Az.Account)
+* PowerShell 7.2 or newer, you can download Powershell [here](https://aka.ms/powershell-release?tag=stable)
+* Azure Az Powershell Module (Az.Compute, Az.Network, Az.NetAppFiles, Az.Account)
 * Posh-SSH Module available through PowerShell Gallery, thanks to [darkoperator](https://github.com/darkoperator/Posh-SSH)
 
-## Getting Started
+## Getting Started on jumpbox
 
-1. Install PowerShell on your Windows or Linux system
-2. Install PowerShell modules by running the following commands
+1. Install PowerShell 7.2 on your Windows https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows or Linux jumpbox https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-linux
+
+    * Make sure not to use older versions of PowerShell which is pre-installed in Windows. Type "PowerShell 7" from Start menu 
+
+3. Install Azure Az PowerShell modules by running the following commands
 
     ```powershell
     Install-Module Az -Force
     Install-Module Az.NetAppFiles -Force
     Install-Module Posh-SSH -Force
     ```
+    * Note that Install-Module Az -Force may take over 15 minutes to complete 
 
 3. Set the Execution Policy to unrestricted (we are working on signing the script)
 
@@ -50,7 +54,7 @@ It will query your system for required parameters and match it with Microsoft's 
     Set-ExecutionPolicy Unrestricted
     ```
 
-4. Sign in to Azure using
+4. Sign in to Azure Resource Manager using
 
     ```powershell
     Connect-AzAccount
@@ -61,12 +65,18 @@ It will query your system for required parameters and match it with Microsoft's 
     ```powershell
     Select-AzureSubscription -SubscriptionName 'your-subscription-name'
     ```
+6. Download the repo in a zip file and extract QualityCheck folder locally 
 
 ### Sample Commands
 
 ```powershell
 . QualityCheck.ps1 [-VMOperatingSystem] Windows,SUSE,RedHat,OracleLinux [-VMDatabase] HANA,Oracle,MSSQL,Db2,ASE [-VMRole] DB,ASCS,APP [-AzVMResourceGroup] resourcegroupname [-AzVMName] AzureVMName [-VMHostname] hostname or ip address [-VMUsername] username [[-HighAvailability] $true or $false] [[-VMConnectionPort] 22>] [[-DBDataDir] /hana/data] [[-DBLogDir] /hana/log] [[-DBSharedDir] /hana/shared] [[-ANFResourceGroup] resourcegroup-for-anf] [[-ANFAccountName] anf-account-name] [[-Hardwaretype] VM] [[-HANADeployment] OLTP,OLAP,OLTP-ScaleOut,OLAP-ScaleOut] [[-HighAvailabilityAgent] SBD,FencingAgent]
 ```
+```powershell (need confirmation - replaced "." with ".\" and removed [] for parameters ) 
+.\QualityCheck.ps1 -VMOperatingSystem Windows,SUSE,RedHat,OracleLinux -VMDatabase HANA,Oracle,MSSQL,Db2,ASE -VMRole DB,ASCS,APP -AzVMResourceGroup resourcegroupname -AzVMName AzureVMName -VMHostname hostname or ip address -VMUsername username [-HighAvailability $true or $false] [-VMConnectionPort 22>] [-DBDataDir /hana/data] [-DBLogDir /hana/log] [-DBSharedDir /hana/shared] [-ANFResourceGroup resourcegroup-for-anf] [-ANFAccountName anf-account-name] [-Hardwaretype VM] [-HANADeployment OLTP,OLAP,OLTP-ScaleOut,OLAP-ScaleOut] [-HighAvailabilityAgent SBD,FencingAgent]
+```
+* For Security warning message type "R" to run the script
+* Then enter guest OS password 
 
 ### Sample Output
 
