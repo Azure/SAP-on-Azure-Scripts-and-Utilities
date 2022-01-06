@@ -35,18 +35,23 @@ It will query your system for required parameters and match it with Microsoft's 
 
 ## Getting Started on jumpbox
 
-1. Install PowerShell 7.2 on your Windows https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows or Linux jumpbox https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-linux
+A jumpbox could be a special VM to access your SAP system or your local machine, we'll just call ist jumpbox.
 
-    * Make sure not to use older versions of PowerShell which is pre-installed in Windows. Type "PowerShell 7" from Start menu 
+1. Install PowerShell 7.2
+    * Windows [https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows)
+    * Linux [https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-linux](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-linux)
 
-3. Install Azure Az PowerShell modules by running the following commands
+    > Make sure not to use older versions of PowerShell which is pre-installed in Windows. Type "PowerShell 7" from Start menu
+
+2. Install Azure Az PowerShell modules by running the following commands
 
     ```powershell
     Install-Module Az -Force
     Install-Module Az.NetAppFiles -Force
     Install-Module Posh-SSH -Force
     ```
-    * Note that Install-Module Az -Force may take over 15 minutes to complete 
+
+    * Note that Install-Module Az -Force may take over 15 minutes to complete
 
 3. Set the Execution Policy to unrestricted (we are working on signing the script)
 
@@ -65,18 +70,34 @@ It will query your system for required parameters and match it with Microsoft's 
     ```powershell
     Select-AzureSubscription -SubscriptionName 'your-subscription-name'
     ```
-6. Download the repo in a zip file and extract QualityCheck folder locally 
+
+6. Download the script
+
+    * Option 1: Clone the GitHub repo using
+
+        ```bash
+        git clone https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities.git
+        ```
+
+    * Option 2: Download the required script files using wget or curl
+
+        ```bash
+        wget https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/main/QualityCheck/QualityCheck.ps1
+        wget https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/main/QualityCheck/QualityCheck.json
+        ```
+
+    * Option 3: Download ZIP file from GitHub and extract it on your jumpbox
+
+        You can directly download the latest ZIP file [here](https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities/archive/refs/heads/main.zip)
 
 ### Sample Commands
 
 ```powershell
-. QualityCheck.ps1 [-VMOperatingSystem] Windows,SUSE,RedHat,OracleLinux [-VMDatabase] HANA,Oracle,MSSQL,Db2,ASE [-VMRole] DB,ASCS,APP [-AzVMResourceGroup] resourcegroupname [-AzVMName] AzureVMName [-VMHostname] hostname or ip address [-VMUsername] username [[-HighAvailability] $true or $false] [[-VMConnectionPort] 22>] [[-DBDataDir] /hana/data] [[-DBLogDir] /hana/log] [[-DBSharedDir] /hana/shared] [[-ANFResourceGroup] resourcegroup-for-anf] [[-ANFAccountName] anf-account-name] [[-Hardwaretype] VM] [[-HANADeployment] OLTP,OLAP,OLTP-ScaleOut,OLAP-ScaleOut] [[-HighAvailabilityAgent] SBD,FencingAgent]
-```
-```powershell (need confirmation - replaced "." with ".\" and removed [] for parameters ) 
 .\QualityCheck.ps1 -VMOperatingSystem Windows,SUSE,RedHat,OracleLinux -VMDatabase HANA,Oracle,MSSQL,Db2,ASE -VMRole DB,ASCS,APP -AzVMResourceGroup resourcegroupname -AzVMName AzureVMName -VMHostname hostname or ip address -VMUsername username [-HighAvailability $true or $false] [-VMConnectionPort 22>] [-DBDataDir /hana/data] [-DBLogDir /hana/log] [-DBSharedDir /hana/shared] [-ANFResourceGroup resourcegroup-for-anf] [-ANFAccountName anf-account-name] [-Hardwaretype VM] [-HANADeployment OLTP,OLAP,OLTP-ScaleOut,OLAP-ScaleOut] [-HighAvailabilityAgent SBD,FencingAgent]
 ```
+
 * For Security warning message type "R" to run the script
-* Then enter guest OS password 
+* Then enter guest OS password
 
 ### Sample Output
 
