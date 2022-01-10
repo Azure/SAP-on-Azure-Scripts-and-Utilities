@@ -245,6 +245,202 @@ get-help .\QualityCheck.ps1 -detailed
 | *Microsoft link*      | |
 | *added/modified*      | initial version |
 
+| *Check ID*            | HDB-FS-0001 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | see script |
+| *Description*         | SAP HANA data filesystem type xfs, nfs or nfs4 |
+| *OS*                  | SUSE, RedHat |
+| *VM Role*             | DB |
+| *Database*            | HANA |
+| *High Availability*   | no/yes (SBD/FencingAgent) |
+| *Expected Value*      | xfs, nfs or nfs4 |
+| *SAP Note*            | [2972496](https://launchpad.support.sap.com/#/notes/2972496) |
+| *Microsoft link*      | |
+| *added/modified*      | initial version |
+
+| *Check ID*            | HDB-FS-0002 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | see script |
+| *Description*         | SAP HANA data filesystem needs to have >= 400 MB/s |
+| *OS*                  | SUSE, RedHat |
+| *VM Role*             | DB |
+| *Database*            | HANA |
+| *High Availability*   | no/yes (SBD/FencingAgent) |
+| *Expected Value*      | >= 400 MB/s |
+| *SAP Note*            | |
+| *Microsoft link*      | [https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-vm-operations-storage](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-vm-operations-storage) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | HDB-FS-0003 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | see script |
+| *Description*         | SAP HANA data filesystem needs to have >= 7000 IOPS |
+| *OS*                  | SUSE, RedHat |
+| *VM Role*             | DB |
+| *Database*            | HANA |
+| *High Availability*   | no/yes (SBD/FencingAgent) |
+| *Expected Value*      | >= 7000 IOPS |
+| *SAP Note*            | |
+| *Microsoft link*      | [https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-vm-operations-storage](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-vm-operations-storage) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | HDB-FS-0004 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | see script |
+| *Description*         | SAP HANA data filesystem size needs to be 256kb when striped |
+| *OS*                  | SUSE, RedHat |
+| *VM Role*             | DB |
+| *Database*            | HANA |
+| *High Availability*   | no/yes (SBD/FencingAgent) |
+| *Expected Value*      | 256kb stripe size |
+| *SAP Note*            | |
+| *Microsoft link*      | [https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-vm-operations-storage](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-vm-operations-storage) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | HDB-FS-0005 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | see script |
+| *Description*         | SAP HANA data filesystem disks in LVM need to be of same disk type |
+| *OS*                  | SUSE, RedHat |
+| *VM Role*             | DB |
+| *Database*            | HANA |
+| *High Availability*   | no/yes (SBD/FencingAgent) |
+| *Expected Value*      | all disks same disk type |
+| *SAP Note*            | |
+| *Microsoft link*      | [https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-vm-operations-storage](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-vm-operations-storage) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | HDB-FS-0006 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | see script |
+| *Description*         | SAP HANA data filesystem disks in LVM need to be of same disk performance type |
+| *OS*                  | SUSE, RedHat |
+| *VM Role*             | DB |
+| *Database*            | HANA |
+| *High Availability*   | no/yes (SBD/FencingAgent) |
+| *Expected Value*      | all disks same disk performance type |
+| *SAP Note*            | |
+| *Microsoft link*      | [https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-vm-operations-storage](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-vm-operations-storage) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | HDB-FS-0007 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | see script |
+| *Description*         | SAP HANA log filesystem type xfs, nfs or nfs4 |
+| *OS*                  | SUSE, RedHat |
+| *VM Role*             | DB |
+| *Database*            | HANA |
+| *High Availability*   | no/yes (SBD/FencingAgent) |
+| *Expected Value*      | xfs, nfs or nfs4 |
+| *SAP Note*            | [2972496](https://launchpad.support.sap.com/#/notes/2972496) |
+| *Microsoft link*      | |
+| *added/modified*      | initial version |
+
+| *Check ID*            | HDB-FS-0008 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | see script |
+| *Description*         | SAP HANA log filesystem needs to have >= 250 MB/s |
+| *OS*                  | SUSE, RedHat |
+| *VM Role*             | DB |
+| *Database*            | HANA |
+| *High Availability*   | no/yes (SBD/FencingAgent) |
+| *Expected Value*      | >= 250 MB/s |
+| *SAP Note*            | |
+| *Microsoft link*      | [https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-vm-operations-storage](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-vm-operations-storage) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | HDB-FS-0009 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | see script |
+| *Description*         | SAP HANA log filesystem needs to have >= 2000 IOPS |
+| *OS*                  | SUSE, RedHat |
+| *VM Role*             | DB |
+| *Database*            | HANA |
+| *High Availability*   | no/yes (SBD/FencingAgent) |
+| *Expected Value*      | >= 2000 IOPS |
+| *SAP Note*            | |
+| *Microsoft link*      | [https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-vm-operations-storage](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-vm-operations-storage) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | HDB-FS-0010 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | see script |
+| *Description*         | SAP HANA log filesystem size needs to be 64kb when striped |
+| *OS*                  | SUSE, RedHat |
+| *VM Role*             | DB |
+| *Database*            | HANA |
+| *High Availability*   | no/yes (SBD/FencingAgent) |
+| *Expected Value*      | 64kb stripe size |
+| *SAP Note*            | |
+| *Microsoft link*      | [https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-vm-operations-storage](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-vm-operations-storage) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | HDB-FS-0011 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | see script |
+| *Description*         | SAP HANA log filesystem disks in LVM need to be of same disk type |
+| *OS*                  | SUSE, RedHat |
+| *VM Role*             | DB |
+| *Database*            | HANA |
+| *High Availability*   | no/yes (SBD/FencingAgent) |
+| *Expected Value*      | all disks same disk type |
+| *SAP Note*            | |
+| *Microsoft link*      | [https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-vm-operations-storage](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-vm-operations-storage) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | HDB-FS-0012 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | see script |
+| *Description*         | SAP HANA log filesystem disks in LVM need to be of same disk performance type |
+| *OS*                  | SUSE, RedHat |
+| *VM Role*             | DB |
+| *Database*            | HANA |
+| *High Availability*   | no/yes (SBD/FencingAgent) |
+| *Expected Value*      | all disks same disk performance type |
+| *SAP Note*            | |
+| *Microsoft link*      | [https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-vm-operations-storage](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-vm-operations-storage) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | HDB-FS-0013 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | see script |
+| *Description*         | SAP HANA log filesystem disks need to have Write Acclerator enabled for Premium_LRS disks |
+| *OS*                  | SUSE, RedHat |
+| *VM Role*             | DB |
+| *Database*            | HANA |
+| *High Availability*   | no/yes (SBD/FencingAgent) |
+| *Expected Value*      | Write Accelerator enabled |
+| *SAP Note*            | |
+| *Microsoft link*      | [https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-vm-operations-storage](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-vm-operations-storage) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | HDB-FS-0014 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | see script |
+| *Description*         | SAP HANA shared filesystem type xfs, nfs or nfs4 |
+| *OS*                  | SUSE, RedHat |
+| *VM Role*             | DB |
+| *Database*            | HANA |
+| *High Availability*   | no/yes (SBD/FencingAgent) |
+| *Expected Value*      | xfs, nfs or nfs4 |
+| *SAP Note*            | [2972496](https://launchpad.support.sap.com/#/notes/2972496) |
+| *Microsoft link*      | |
+| *added/modified*      | initial version |
+
 | *Check ID*            | HDB-ANF-0001 |
 |:----------------------|:--------|
 | *Type*                | OS |
