@@ -16,6 +16,8 @@ Please pay close attention to the storage layout for HANA systems available [her
 
 The certified SAP HANA on Azure instances are available in the [Certified And Supported SAP HANA Hardware Directory](https://www.sap.com/dmc/exp/2014-09-02-hana-hardware/enEN/#/solutions?filters=iaas;ve:24)
 
+Change Log is available [here](changelog.md)
+
 ## How does it work
 
 Quality Check is a script that runs on Windows and Linux and connects to Azure and your SAP system.
