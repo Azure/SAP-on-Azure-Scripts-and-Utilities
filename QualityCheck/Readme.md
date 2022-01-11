@@ -1161,15 +1161,15 @@ get-help .\QualityCheck.ps1 -detailed
 |:----------------------|:--------|
 | *Type*                | PowerShell |
 | *Command*             | using PowerShell function to determinate the Kernel Version and compare it |
-| *Description*         | blk-mq issue when too many outstanding disk I/O in SLES 12.4 |
+| *Description*         | CPU soft lockup in SLES 12 and SLES 15 prior kernel 5.0 |
 | *OS*                  | SLES |
 | *VM Role*             | DB |
 | *Database*            | HANA |
 | *High Availability*   | no/yes (SBD/FencingAgent) |
 | *Expected Value*      | Kernel version higher than 4.12.14-95.xx, set hv_storvsc.storvsc_ringbuffer_size=131072 and hv_storvsc.storvsc_vcpus_per_sub_channel=1024 in sysctl |
 | *SAP Note*            | [2814271](https://launchpad.support.sap.com/#/notes/2814271) |
-| *Microsoft link*      | |
-| *added/modified*      | initial version |
+| *Microsoft link*      | [https://www.suse.com/support/kb/doc/?id=000020248](https://www.suse.com/support/kb/doc/?id=000020248) |
+| *added/modified*      | initial version, updated in version 2022011101 |
 
 ### Application Server
 

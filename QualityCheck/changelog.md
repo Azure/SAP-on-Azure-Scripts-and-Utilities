@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 2022011101
+
+* fixing description for CPU softlockup check HDB-OS-SLES-0005
+
 ## Version 2022011001
 
 * added support for HANA multi disk scenario

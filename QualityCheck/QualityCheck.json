@@ -1,5 +1,5 @@
 {
-    "Version": 2022011001,
+    "Version": 2022011101,
     "PowerShellPrerequisits": [
         {
             "ModuleName": "Posh-SSH",
@@ -3279,7 +3279,7 @@
         },
         {
             "CheckID": "HDB-OS-SLES-0005",
-            "Description": "Mellanox TX timeout",
+            "Description": "Mellanox TX timeout - CPU soft lockup",
             "OS": ["SUSE"],
             "OSVersion": ["12.4"],
             "HardwareType": ["VM"],
@@ -3296,8 +3296,8 @@
             "ShowAlternativeResult": "$Script:_Kernelversion",
             "RootRequired": true,
             "ShowInReport": true,
-            "AdditionalInfo": "set hv_storvsc.storvsc_ringbuffer_size=131072 and hv_storvsc.storvsc_vcpus_per_sub_channel=1024 in sysctl.conf",
-            "MicrosoftDocs": "",
+            "AdditionalInfo": "set hv_storvsc.storvsc_ringbuffer_size=131072 and hv_storvsc.storvsc_vcpus_per_sub_channel=1024 in kernel boot line",
+            "MicrosoftDocs": "https://www.suse.com/support/kb/doc/?id=000020248",
             "SAPNote": ""
         },
         {
