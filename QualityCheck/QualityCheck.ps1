@@ -76,7 +76,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2022011101
+$scriptversion = 2022011801
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -1665,6 +1665,6 @@ function CollectFooter {
     $_HTMLReportFileName = $AzVMName + "-" + $(Get-Date -Format "yyyyMMdd-HHmm") + ".html"
     $_HTMLReport | Out-File .\$_HTMLReportFileName
 
-    Remove-SSHSession -SessionId $_SessionID 
+    Remove-SSHSession -SessionId $_SessionID | Out-Null
     exit
 

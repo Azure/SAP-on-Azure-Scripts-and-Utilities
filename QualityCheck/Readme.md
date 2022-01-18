@@ -1171,6 +1171,302 @@ get-help .\QualityCheck.ps1 -detailed
 | *Microsoft link*      | [https://www.suse.com/support/kb/doc/?id=000020248](https://www.suse.com/support/kb/doc/?id=000020248) |
 | *added/modified*      | initial version, updated in version 2022011101 |
 
+### ASCS Server
+
+| *Check ID*            | ASCS-HA-SLE-0001 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | crm configure show &#124; grep 'stonith-enabled=true' &#124; wc -l |
+| *Description*         | Pacemaker Stonith enabled |
+| *OS*                  | SUSE |
+| *VM Role*             | ASCS |
+| *Database*            | HANA, Db2, Oracle |
+| *High Availability*   | yes (SBD/FencingAgent) |
+| *Expected Value*      | 1 |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | ASCS-HA-SLE-0002 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | crm configure show &#124; grep 'stonith-timeout=144' &#124; wc -l |
+| *Description*         | Pacemaker Stonith timeout |
+| *OS*                  | SUSE |
+| *VM Role*             | ASCS |
+| *Database*            | HANA, Db2, Oracle |
+| *High Availability*   | yes (SBD) |
+| *Expected Value*      | stonith-timeout=144 |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | ASCS-HA-SLE-0003 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | crm corosync get totem.token |
+| *Description*         | Pacemaker corosync token |
+| *OS*                  | SUSE |
+| *VM Role*             | ASCS |
+| *Database*            | HANA, Db2, Oracle |
+| *High Availability*   | yes (SBD/FencingAgent) |
+| *Expected Value*      | 30000 |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | ASCS-HA-SLE-0004 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | crm corosync get totem.token_retransmits_before_loss_const |
+| *Description*         | Pacemaker totem.token_retransmits_before_loss_const |
+| *OS*                  | SUSE |
+| *VM Role*             | ASCS |
+| *Database*            | HANA, Db2, Oracle |
+| *High Availability*   | yes (SBD/FencingAgent) |
+| *Expected Value*      | 10 |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | ASCS-HA-SLE-0005 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | crm corosync get totem.join |
+| *Description*         | Pacemaker corosync join |
+| *OS*                  | SUSE |
+| *VM Role*             | ASCS |
+| *Database*            | HANA, Db2, Oracle |
+| *High Availability*   | yes (SBD/FencingAgent) |
+| *Expected Value*      | 60 |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | ASCS-HA-SLE-0006 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | crm corosync get totem.consensus |
+| *Description*         | Pacemaker corosync consensus |
+| *OS*                  | SUSE |
+| *VM Role*             | ASCS |
+| *Database*            | HANA, Db2, Oracle |
+| *High Availability*   | yes (SBD/FencingAgent) |
+| *Expected Value*      | 36000 |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | ASCS-HA-SLE-0007 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | crm corosync get totem.max_messages |
+| *Description*         | Pacemaker corosync max_messages |
+| *OS*                  | SUSE |
+| *VM Role*             | ASCS |
+| *Database*            | HANA, Db2, Oracle |
+| *High Availability*   | yes (SBD/FencingAgent) |
+| *Expected Value*      | 20 |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | ASCS-HA-SLE-0008 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | crm corosync get quorum.expected_votes |
+| *Description*         | Pacemaker corosync expected_votes |
+| *OS*                  | SUSE |
+| *VM Role*             | ASCS |
+| *Database*            | HANA, Db2, Oracle |
+| *High Availability*   | yes (SBD/FencingAgent) |
+| *Expected Value*      | 2 |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | ASCS-HA-SLE-0009 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | crm corosync get quorum.two_node |
+| *Description*         | Pacemaker corosync two_node |
+| *OS*                  | SUSE |
+| *VM Role*             | ASCS |
+| *Database*            | HANA, Db2, Oracle |
+| *High Availability*   | yes (SBD/FencingAgent) |
+| *Expected Value*      | 1 |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | ASCS-HA-SLE-0010 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | see json, complex command, command loops through sbdconfig and queries sbd devices for correct values |
+| *Description*         | Pacemaker watchdog timeout |
+| *OS*                  | SUSE |
+| *VM Role*             | ASCS |
+| *Database*            | HANA, Db2, Oracle |
+| *High Availability*   | yes (SBD) |
+| *Expected Value*      | Timeout (watchdog) : 60 |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | ASCS-HA-SLE-0011 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | see json, complex command, command loops through sbdconfig and queries sbd devices for correct values |
+| *Description*         | Pacemaker msgwait timeout |
+| *OS*                  | SUSE |
+| *VM Role*             | ASCS |
+| *Database*            | HANA, Db2, Oracle |
+| *High Availability*   | yes (SBD) |
+| *Expected Value*      | Timeout (msgwait) : 120 |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | ASCS-HA-SLE-0012 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | crm configure show &#124; grep 'concurrent-fencing: true' &#124; wc -l |
+| *Description*         | Pacemaker concurrent fencing |
+| *OS*                  | SUSE |
+| *VM Role*             | ASCS |
+| *Database*            | HANA, Db2, Oracle |
+| *High Availability*   | yes (FencingAgent) |
+| *Expected Value*      | concurrent-fencing: true |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | ASCS-HA-SLE-0013 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | crm config show &#124; grep 'stonith:fence_azure_arm' &#124; wc -l |
+| *Description*         | Pacemaker number of fence_azure_arm instances |
+| *OS*                  | SUSE |
+| *VM Role*             | ASCS |
+| *Database*            | HANA, Db2, Oracle |
+| *High Availability*   | yes (FencingAgent) |
+| *Expected Value*      | 1 |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | ASCS-HA-SLE-0014 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | crm configure show &#124; grep 'stonith-timeout=900' &#124; wc -l |
+| *Description*         | Pacemaker Stonith timeout |
+| *OS*                  | SUSE |
+| *VM Role*             | ASCS |
+| *Database*            | HANA, Db2, Oracle |
+| *High Availability*   | yes (FencingAgent) |
+| *Expected Value*      | stonith-timeout=900 |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | ASCS-HA-RH-0001 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | pcs config show &#124; grep 'stonith-enabled: true' &#124; wc -l |
+| *Description*         | Pacemaker Stonith |
+| *OS*                  | RedHat |
+| *VM Role*             | ASCS |
+| *Database*            | HANA, Db2, Oracle |
+| *High Availability*   | yes (FencingAgent) |
+| *Expected Value*      | stonith-enabled=true |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | ASCS-HA-RH-0002 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | cat /etc/corosync/corosync.conf &#124; xargs &#124; grep 'token: 30000 ' &#124; wc -l |
+| *Description*         | Pacemaker corosync token |
+| *OS*                  | RedHat |
+| *VM Role*             | ASCS |
+| *Database*            | HANA, Db2, Oracle |
+| *High Availability*   | yes (FencingAgent) |
+| *Expected Value*      | token: 30000 |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | ASCS-HA-RH-0003 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | pcs quorum status &#124; xargs &#124; grep 'Expected votes: 2' &#124; wc -l |
+| *Description*         | Pacemaker expected_votes |
+| *OS*                  | RedHat |
+| *VM Role*             | ASCS |
+| *Database*            | HANA, Db2, Oracle |
+| *High Availability*   | yes (FencingAgent) |
+| *Expected Value*      | Expected votes: 2 |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | ASCS-HA-RH-0004 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | pcs config show &#124; grep 'concurrent-fencing: true' &#124; wc -l |
+| *Description*         | Pacemaker concurrent-fencing |
+| *OS*                  | RedHat |
+| *VM Role*             | ASCS |
+| *Database*            | HANA, Db2, Oracle |
+| *High Availability*   | yes (FencingAgent) |
+| *Expected Value*      | concurrent-fencing: true |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | ASCS-HA-LB-0001 |
+|:----------------------|:--------|
+| *Type*                | PowerShell |
+| *Command*             | see code, complex command, checks all load balancers for timeout 30 |
+| *Description*         | Load Balancer Idle Timeout |
+| *OS*                  | SLES, RedHat |
+| *VM Role*             | ASCS |
+| *Database*            | HANA, Db2, Oracle |
+| *High Availability*   | no/yes (SBD/FencingAgent) |
+| *Expected Value*      | Idle Timeout 30 |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | ASCS-HA-LB-0002 |
+|:----------------------|:--------|
+| *Type*                | PowerShell |
+| *Command*             | see code, complex command, checks all load balancers for floating IP enabled |
+| *Description*         | Load Balancer Floating IP |
+| *OS*                  | SLES, RedHat |
+| *VM Role*             | ASCS |
+| *Database*            | HANA, Db2, Oracle |
+| *High Availability*   | no/yes (SBD/FencingAgent) |
+| *Expected Value*      | floating IP: true |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel) |
+| *added/modified*      | initial version |
+
+| *Check ID*            | ASCS-HA-LB-0003 |
+|:----------------------|:--------|
+| *Type*                | PowerShell |
+| *Command*             | see code, complex command, checks all load balancers for HA Ports enabled |
+| *Description*         | Load Balancer Floating IP |
+| *OS*                  | SLES, RedHat |
+| *VM Role*             | ASCS |
+| *Database*            | HANA, Db2, Oracle |
+| *High Availability*   | no/yes (SBD/FencingAgent) |
+| *Expected Value*      | HA Ports: enabled |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel) |
+| *added/modified*      | initial version |
+
 ### Application Server
 
 | *Check ID*            | APP-OS-0001 |

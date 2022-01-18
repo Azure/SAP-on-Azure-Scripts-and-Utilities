@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 2022011801
+
+* adding ASCS HA checks
+
 ## Version 2022011101
 
 * fixing description for CPU softlockup check HDB-OS-SLES-0005
