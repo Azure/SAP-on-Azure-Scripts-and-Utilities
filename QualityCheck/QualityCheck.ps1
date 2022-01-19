@@ -76,7 +76,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2022011801
+$scriptversion = 2022011901
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -104,7 +104,7 @@ $script:_HTMLHeader = @"
     }
     
     
-table {
+    table {
         font-size: 12px;
         border: 0px; 
         font-family: Lucida Console, monospace;
@@ -132,41 +132,33 @@ table {
     tbody tr:nth-child(even) {
         background: #f0f0f2;
     }
-    
-
 
     #CreationDate {
-
         font-family: Arial, Helvetica, sans-serif;
         color: #ff3300;
         font-size: 12px;
-
     }
 
     #Code {
-
         font-family: Courier New, monospace;
         font-size: 12px;
     }
 
-
     .StatusError {
-
         color: #ff0000;
     }
     
     .StatusWarning {
-
         color: #ffa500;
     }
 
     .StatusOK {
-
         color: #008000;
     }
 
-
-
+    .StatusInfo {
+        color: #0026ff;
+    }
 
 </style>
 "@
@@ -1072,7 +1064,8 @@ function AddCheckResultEntry {
         [string]$ExptectedResult="",
         [string]$Status="",
         [string]$SAPNote="",
-        [string]$MicrosoftDocs=""
+        [string]$MicrosoftDocs="",
+        [string]$ErrorCategory=""
     )
 
     # create empty object per line
@@ -1084,7 +1077,16 @@ function AddCheckResultEntry {
     $_Check_row.AdditionalInfo = $AdditionalInfo
     $_Check_row.Testresult = $TestResult
     $_Check_row.ExpectedResult = $ExptectedResult
-    $_Check_row.Status = $Status
+    
+    #$_Check_row.Status = $Status
+    
+    # taking input from JSON and adding INFO, ERROR or WARNING
+    if ($Status -eq "ERROR") {
+        $_Check_row.Status = $ErrorCategory
+    }
+    else {
+        $_Check_row.Status = $Status
+    }
     
     # if SAPNote is defined it will add the HTML code for the link
     if ($SAPNote -ne "") {
@@ -1143,14 +1145,14 @@ function RunQualityCheck {
             AddCheckResultEntry -CheckID "HDB-FS-0001" -Description "SAP HANA Data: File System" -TestResult $_filesystem_hana.fstype -ExptectedResult "xfs, nfs or nfs4" -Status "OK"  -MicrosoftDocs $_saphanastorageurl -SAPNote "2972496"
         }
         else {
-            AddCheckResultEntry -CheckID "HDB-FS-0001" -Description "SAP HANA Data: File System" -TestResult $_filesystem_hana.fstype -ExptectedResult "xfs, nfs or nfs4" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl -SAPNote "2972496"
+            AddCheckResultEntry -CheckID "HDB-FS-0001" -Description "SAP HANA Data: File System" -TestResult $_filesystem_hana.fstype -ExptectedResult "xfs, nfs or nfs4" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl -SAPNote "2972496" -ErrorCategory "ERROR"
         }
 
         if ( (($script:_filesystems | Where-Object {$_.target -in $DBDataDir}).MaxMBPS | Measure-Object -Sum).Sum -ge $_jsonconfig.HANAStorageRequirements.HANADataMBPS) {
             AddCheckResultEntry -CheckID "HDB-FS-0002" -Description "SAP HANA Data: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBDataDir}).MaxMBPS -ExptectedResult ">= 400 MByte/s" -Status "OK"  -MicrosoftDocs $_saphanastorageurl
         }
         else {
-            AddCheckResultEntry -CheckID "HDB-FS-0002" -Description "SAP HANA Data: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBDataDir}).MaxMBPS -ExptectedResult ">= 400 MByte/s" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl
+            AddCheckResultEntry -CheckID "HDB-FS-0002" -Description "SAP HANA Data: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBDataDir}).MaxMBPS -ExptectedResult ">= 400 MByte/s" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
         }
 
         if ( ($_filesystem_hana.fstype | Select-Object -Unique) -in @('xfs')) {
@@ -1158,7 +1160,7 @@ function RunQualityCheck {
                 AddCheckResultEntry -CheckID "HDB-FS-0003" -Description "SAP HANA Data: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBDataDir}).MaxIOPS -ExptectedResult ">= 7000 IOPS" -Status "OK"  -MicrosoftDocs $_saphanastorageurl
             }
             else {
-                AddCheckResultEntry -CheckID "HDB-FS-0003" -Description "SAP HANA Data: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBDataDir}).MaxIOPS -ExptectedResult ">= 7000 IOPS" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl
+                AddCheckResultEntry -CheckID "HDB-FS-0003" -Description "SAP HANA Data: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBDataDir}).MaxIOPS -ExptectedResult ">= 7000 IOPS" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
             }
         }
 
@@ -1179,7 +1181,7 @@ function RunQualityCheck {
                 }
                 else {
                     # Wrong Disk Type
-                    AddCheckResultEntry -CheckID "HDB-FS-0004" -Description "SAP HANA Data: stripe size" -AdditionalInfo ("Disk " + $_AzureDisk_hana.name) -TestResult $_filesystem_hana.StripeSize -ExptectedResult $_HANAStripeSize -Status "ERROR" -MicrosoftDocs $_saphanastorageurl
+                    AddCheckResultEntry -CheckID "HDB-FS-0004" -Description "SAP HANA Data: stripe size" -AdditionalInfo ("Disk " + $_AzureDisk_hana.name) -TestResult $_filesystem_hana.StripeSize -ExptectedResult $_HANAStripeSize -Status "ERROR" -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
                 }
             }
 
@@ -1193,7 +1195,7 @@ function RunQualityCheck {
                     }
                     else {
                         # Wrong Disk Type
-                        AddCheckResultEntry -CheckID "HDB-FS-0005" -Description "SAP HANA Data: same disk type" -AdditionalInfo ("Disk " + $_AzureDisk_hana.name) -TestResult $_AzureDisk_hana.Disktype -ExptectedResult $_FirstDisk.Disktype -Status "ERROR" -MicrosoftDocs $_saphanastorageurl
+                        AddCheckResultEntry -CheckID "HDB-FS-0005" -Description "SAP HANA Data: same disk type" -AdditionalInfo ("Disk " + $_AzureDisk_hana.name) -TestResult $_AzureDisk_hana.Disktype -ExptectedResult $_FirstDisk.Disktype -Status "ERROR" -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
 
                     }
 
@@ -1204,7 +1206,7 @@ function RunQualityCheck {
                     }
                     else {
                         # Wrong Disk Type
-                        AddCheckResultEntry -CheckID "HDB-FS-0006" -Description "SAP HANA Data: same disk performance type" -AdditionalInfo ("Disk " + $_AzureDisk_hana.name) -TestResult $_AzureDisk_hana.Disktype -ExptectedResult $_FirstDisk.Disktype -Status "ERROR" -MicrosoftDocs $_saphanastorageurl
+                        AddCheckResultEntry -CheckID "HDB-FS-0006" -Description "SAP HANA Data: same disk performance type" -AdditionalInfo ("Disk " + $_AzureDisk_hana.name) -TestResult $_AzureDisk_hana.Disktype -ExptectedResult $_FirstDisk.Disktype -Status "ERROR" -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
                     }
 
                     # setting storage type for later checks
@@ -1237,14 +1239,14 @@ function RunQualityCheck {
             AddCheckResultEntry -CheckID "HDB-FS-0007" -Description "SAP HANA Log: File System" -TestResult $_filesystem_hana.fstype -ExptectedResult "xfs, nfs or nfs4" -Status "OK"  -MicrosoftDocs $_saphanastorageurl
         }
         else {
-            AddCheckResultEntry -CheckID "HDB-FS-0007" -Description "SAP HANA Log: File System" -TestResult $_filesystem_hana.fstype -ExptectedResult "xfs, nfs or nfs4" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl
+            AddCheckResultEntry -CheckID "HDB-FS-0007" -Description "SAP HANA Log: File System" -TestResult $_filesystem_hana.fstype -ExptectedResult "xfs, nfs or nfs4" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
         }
 
         if ( (($script:_filesystems | Where-Object {$_.target -in $DBLogDir}).MaxMBPS | Measure-Object -Sum).Sum -ge $_jsonconfig.HANAStorageRequirements.HANALogMBPS) {
             AddCheckResultEntry -CheckID "HDB-FS-0008" -Description "SAP HANA Log: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBLogDir}).MaxMBPS -ExptectedResult ">= 250 MByte/s" -Status "OK"  -MicrosoftDocs $_saphanastorageurl
         }
         else {
-            AddCheckResultEntry -CheckID "HDB-FS-0008" -Description "SAP HANA Log: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBLogDir}).MaxMBPS -ExptectedResult ">= 250 MByte/s" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl
+            AddCheckResultEntry -CheckID "HDB-FS-0008" -Description "SAP HANA Log: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBLogDir}).MaxMBPS -ExptectedResult ">= 250 MByte/s" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
         }
 
         if ($_filesystem_hana.fstype -in @('xfs')) {
@@ -1252,7 +1254,7 @@ function RunQualityCheck {
                 AddCheckResultEntry -CheckID "HDB-FS-0009" -Description "SAP HANA Log: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBLogDir}).MaxIOPS -ExptectedResult ">= 2000 IOPS" -Status "OK"  -MicrosoftDocs $_saphanastorageurl
             }
             else {
-                AddCheckResultEntry -CheckID "HDB-FS-0009" -Description "SAP HANA Log: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBLogDir}).MaxIOPS -ExptectedResult ">= 2000 IOPS" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl
+                AddCheckResultEntry -CheckID "HDB-FS-0009" -Description "SAP HANA Log: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBLogDir}).MaxIOPS -ExptectedResult ">= 2000 IOPS" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
             }
         }
 
@@ -1278,7 +1280,7 @@ function RunQualityCheck {
                 }
                 else {
                     # Wrong Disk Type
-                    AddCheckResultEntry -CheckID "HDB-FS-0010" -Description "SAP HANA Log: stripe size" -AdditionalInfo ("Disk " + $_AzureDisk_hana.name) -TestResult $_filesystem_hana.StripeSize -ExptectedResult $_HANAStripeSize -Status "ERROR" -MicrosoftDocs $_saphanastorageurl
+                    AddCheckResultEntry -CheckID "HDB-FS-0010" -Description "SAP HANA Log: stripe size" -AdditionalInfo ("Disk " + $_AzureDisk_hana.name) -TestResult $_filesystem_hana.StripeSize -ExptectedResult $_HANAStripeSize -Status "ERROR" -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
                 }
             }
 
@@ -1290,7 +1292,7 @@ function RunQualityCheck {
                 }
                 else {
                     # Wrong Disk Type
-                    AddCheckResultEntry -CheckID "HDB-FS-0011" -Description "SAP HANA Log: same disk type" -AdditionalInfo ("Disk " + $_AzureDisk_hana.name) -TestResult $_AzureDisk_hana.Disktype -ExptectedResult $_FirstDisk.Disktype -Status "ERROR" -MicrosoftDocs $_saphanastorageurl
+                    AddCheckResultEntry -CheckID "HDB-FS-0011" -Description "SAP HANA Log: same disk type" -AdditionalInfo ("Disk " + $_AzureDisk_hana.name) -TestResult $_AzureDisk_hana.Disktype -ExptectedResult $_FirstDisk.Disktype -Status "ERROR" -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
 
                 }
 
@@ -1301,7 +1303,7 @@ function RunQualityCheck {
                 }
                 else {
                     # Wrong Disk Type
-                    AddCheckResultEntry -CheckID "HDB-FS-0012" -Description "SAP HANA Log: same disk performance type" -AdditionalInfo ("Disk " + $_AzureDisk_hana.name) -TestResult $_AzureDisk_hana.PERFORMANCETIER -ExptectedResult $_FirstDisk.PERFORMANCETIER -Status "ERROR" -MicrosoftDocs $_saphanastorageurl
+                    AddCheckResultEntry -CheckID "HDB-FS-0012" -Description "SAP HANA Log: same disk performance type" -AdditionalInfo ("Disk " + $_AzureDisk_hana.name) -TestResult $_AzureDisk_hana.PERFORMANCETIER -ExptectedResult $_FirstDisk.PERFORMANCETIER -Status "ERROR" -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
                 }
 
                 if ($_AzureDisk_hana.StorageType -eq "Premium_LRS") {
@@ -1311,7 +1313,7 @@ function RunQualityCheck {
                         AddCheckResultEntry -CheckID "HDB-FS-0013" -Description "SAP HANA Log: Write Accelerator enabled" -AdditionalInfo ("Disk " + $_AzureDisk_hana.name) -TestResult $_AzureDisk_hana.WriteAccelerator -ExptectedResult "true" -Status "OK"  -MicrosoftDocs $_saphanastorageurl
                     }
                     else {
-                        AddCheckResultEntry -CheckID "HDB-FS-0013" -Description "SAP HANA Log: Write Accelerator enabled" -AdditionalInfo ("Disk " + $_AzureDisk_hana.name) -TestResult $_AzureDisk_hana.WriteAccelerator -ExptectedResult "true" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl
+                        AddCheckResultEntry -CheckID "HDB-FS-0013" -Description "SAP HANA Log: Write Accelerator enabled" -AdditionalInfo ("Disk " + $_AzureDisk_hana.name) -TestResult $_AzureDisk_hana.WriteAccelerator -ExptectedResult "true" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
                     }
                 }
                 
@@ -1339,7 +1341,7 @@ function RunQualityCheck {
             AddCheckResultEntry -CheckID "HDB-FS-0014" -Description "SAP HANA Shared: File System" -TestResult $_filesystem_hana.fstype -ExptectedResult "xfs, nfs or nfs4" -Status "OK"  -MicrosoftDocs $_saphanastorageurl
         }
         else {
-            AddCheckResultEntry -CheckID "HDB-FS-0014" -Description "SAP HANA Shared: File System" -TestResult $_filesystem_hana.fstype -ExptectedResult "xfs, nfs or nfs4" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl
+            AddCheckResultEntry -CheckID "HDB-FS-0014" -Description "SAP HANA Shared: File System" -TestResult $_filesystem_hana.fstype -ExptectedResult "xfs, nfs or nfs4" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
         }
     }
 
@@ -1387,7 +1389,8 @@ function RunQualityCheck {
                     $_Check_row.Status = "OK"
                 }
                 else {
-                    $_Check_row.Status = "ERROR"
+                    # $_Check_row.Status = "ERROR"
+                    $_Check_row.Status = $_check.ErrorCategory
                 }
                 
                 if (($_check.ShowAlternativeRequirement) -ne "" -or ($_check.ShowAlternativeResult -ne ""))
@@ -1418,7 +1421,8 @@ function RunQualityCheck {
     ## SAP Part
     $_ChecksOutput = $_ChecksOutput -replace '<td>OK</td>','<td class="StatusOK">OK</td>'
     $_ChecksOutput = $_ChecksOutput -replace '<td>ERROR</td>','<td class="StatusError">ERROR</td>'
-    $_ChecksOutput = $_ChecksOutput -replace '<td>WARN</td>','<td class="StatusWarning">WARN</td>'
+    $_ChecksOutput = $_ChecksOutput -replace '<td>WARNING</td>','<td class="StatusWarning">WARNING</td>'
+    $_ChecksOutput = $_ChecksOutput -replace '<td>INFO</td>','<td class="StatusInfo">INFO</td>'
     $_ChecksOutput = $_ChecksOutput -replace '::SAPNOTEHTML1::','<a href="https://launchpad.support.sap.com/#/notes/'
     $_ChecksOutput = $_ChecksOutput -replace '::SAPNOTEHTML2::','" target="_blank">'
     $_ChecksOutput = $_ChecksOutput -replace '::SAPNOTEHTML3::','</a>'

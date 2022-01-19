@@ -70,7 +70,13 @@ A jumpbox could be a special VM to access your SAP system or your local machine,
 5. Connect to the correct subscription (see [here](https://docs.microsoft.com/en-us/powershell/module/servicemanagement/azure.service/select-azuresubscription?view=azuresmps-4.0.0) for details)
 
     ```powershell
-    Select-AZSubscription -SubscriptionName 'your-subscription-name'
+    Select-AzSubscription -SubscriptionName 'your-subscription-name'
+    ```
+
+    OR
+
+    ```powershell
+    Select-AzSubscription -SubscriptionId 'your-subscription-id'
     ```
 
 6. Download the script
