@@ -1065,6 +1065,20 @@ get-help .\QualityCheck.ps1 -detailed
 | *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel) |
 | *added/modified*      | initial version |
 
+| *Check ID*            | HDB-HA-RH-0007 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | pcs config show &#124; grep 'fence_kdump' &#124; wc -l |
+| *Description*         | Pacemaker fence_kdump |
+| *OS*                  | RedHat |
+| *VM Role*             | DB |
+| *Database*            | HANA |
+| *High Availability*   | yes (FencingAgent) |
+| *Expected Value*      | Optionally configured fence_kdump |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel) |
+| *added/modified*      | 2022011902 |
+
 | *Check ID*            | HDB-HA-LB-0001 |
 |:----------------------|:--------|
 | *Type*                | PowerShell |
