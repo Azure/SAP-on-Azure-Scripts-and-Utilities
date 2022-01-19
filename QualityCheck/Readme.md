@@ -981,6 +981,34 @@ get-help .\QualityCheck.ps1 -detailed
 | *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability) |
 | *added/modified*      | initial version |
 
+| *Check ID*            | HDB-HA-SLE-0017 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | cat /etc/modules-load.d/softdog.conf &#124; grep 'softdog' &#124; wc -l |
+| *Description*         | softdog config file |
+| *OS*                  | SUSE |
+| *VM Role*             | ASCS |
+| *Database*            | HANA, Db2, Oracle |
+| *High Availability*   | yes (SBD) |
+| *Expected Value*      | softdog |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here]https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker) |
+| *added/modified*      | 2022011903 |
+
+| *Check ID*            | HDB-HA-SLE-0018 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | lsmod &#124; grep 'softdog' &#124; wc -l |
+| *Description*         | Pacemaker Stonith timeout |
+| *OS*                  | SUSE |
+| *VM Role*             | ASCS |
+| *Database*            | HANA, Db2, Oracle |
+| *High Availability*   | yes (SBD) |
+| *Expected Value*      | softdog loaded |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here]https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker) |
+| *added/modified*      | 2022011903 |
+
 | *Check ID*            | HDB-HA-RH-0001 |
 |:----------------------|:--------|
 | *Type*                | OS |
@@ -1389,6 +1417,34 @@ get-help .\QualityCheck.ps1 -detailed
 | *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability) |
 | *added/modified*      | initial version |
 
+| *Check ID*            | ASCS-HA-SLE-0015 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | cat /etc/modules-load.d/softdog.conf &#124; grep 'softdog' &#124; wc -l |
+| *Description*         | softdog config file |
+| *OS*                  | SUSE |
+| *VM Role*             | ASCS |
+| *Database*            | HANA, Db2, Oracle |
+| *High Availability*   | yes (SBD) |
+| *Expected Value*      | softdog |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here]https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker) |
+| *added/modified*      | 2022011903 |
+
+| *Check ID*            | ASCS-HA-SLE-0016 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | lsmod &#124; grep 'softdog' &#124; wc -l |
+| *Description*         | Pacemaker Stonith timeout |
+| *OS*                  | SUSE |
+| *VM Role*             | ASCS |
+| *Database*            | HANA, Db2, Oracle |
+| *High Availability*   | yes (SBD) |
+| *Expected Value*      | softdog loaded |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here]https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker) |
+| *added/modified*      | 2022011903 |
+
 | *Check ID*            | ASCS-HA-RH-0001 |
 |:----------------------|:--------|
 | *Type*                | OS |
@@ -1444,6 +1500,21 @@ get-help .\QualityCheck.ps1 -detailed
 | *SAP Note*            | |
 | *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel) |
 | *added/modified*      | initial version |
+
+| *Check ID*            | ASCS-HA-RH-0005 |
+|:----------------------|:--------|
+| *Type*                | OS |
+| *Command*             | pcs config show &#124; grep 'fence_kdump' &#124; wc -l |
+| *Description*         | Pacemaker fence_kdump |
+| *OS*                  | RedHat |
+| *VM Role*             | ASCS |
+| *Database*            | HANA, Db2, Oracle |
+| *High Availability*   | yes (FencingAgent) |
+| *Expected Value*      | Optionally configured fence_kdump |
+| *SAP Note*            | |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel) |
+| *added/modified*      | 2022011902 |
+
 
 | *Check ID*            | ASCS-HA-LB-0001 |
 |:----------------------|:--------|
