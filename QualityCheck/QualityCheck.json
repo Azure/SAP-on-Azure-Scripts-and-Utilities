@@ -1,5 +1,5 @@
 {
-    "Version": 2022011901,
+    "Version": 2022011902,
     "PowerShellPrerequisits": [
         {
             "ModuleName": "Posh-SSH",
@@ -3164,6 +3164,30 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for concurrent-fencing: true",
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "HDB-HA-RH-0007",
+            "Description": "Pacemaker optional fence_kdump",
+            "OS": ["RedHat"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM", "HLI"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "Role": ["DB"],
+            "DB": ["HANA"],
+            "ErrorCategory": "INFO",
+            "HighAvailability": [true],
+            "HighAvailabilityAgent": ["FencingAgent"],
+            "CommandType": "OS",
+            "ProcessingCommand": "pcs config show | grep 'fence_dump' | wc -l",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "1",
+            "ShowAlternativeRequirement": "",
+            "ShowAlternativeResult": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "Checking for optional fence_kdump device",
+            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
         },
         {
