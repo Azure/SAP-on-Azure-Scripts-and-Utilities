@@ -1,5 +1,17 @@
 # Changelog
 
+## Version 2022011903
+
+* adding softdog checks for SLES/SBD
+
+## Version 2022011902
+
+* adding fence_kdump as optional check
+
+## Version 2022011901
+
+* adding info and warning as errorcatory in json and ps1
+
 ## Version 2022011801
 
 * adding ASCS HA checks
