@@ -164,7 +164,7 @@ $script:_HTMLHeader = @"
 "@
 
 
-    $script:_Content  = "<h1>SAP on Azure Quality Check</h1><h2>Use the links to jump to the section:</h2>"
+    $script:_Content  = "<h1>SAP on Azure Quality Check</h1><h2>Use the links to jump to the sections:</h2>"
 
 }
 
@@ -1611,6 +1611,22 @@ function CollectFooter {
     else {
         Write-Host "Versions of script and json file don't match"
         exit
+    }
+
+    # parameter check and modification if required
+
+    if ($VMOperatingSystem -in @("SUSE","RedHat","OracleLinux"))
+    {
+        #check if filesystem parameters end with /
+        if ($DBDataDir.EndsWith("/")) {
+            $DBDataDir = $DBDataDir.Substring(0,$DBDataDir.Length-1)
+        }
+        if ($DBLogDir.EndsWith("/")) {
+            $DBLogDir = $DBLogDir.Substring(0,$DBLogDir.Length-1)
+        }
+        if ($DBSharedDir.EndsWith("/")) {
+            $DBSharedDir = $DBSharedDir.Substring(0,$DBSharedDir.Length-1)
+        }
     }
 
     # Check for required PowerShell modules

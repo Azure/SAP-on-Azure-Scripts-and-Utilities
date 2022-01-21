@@ -2135,7 +2135,7 @@
             "SAPNote": ""
         },
         {
-            "CheckID": "ANF-0002",
+            "CheckID": "HDB-ANF-0002",
             "Description": "sysctl net.core.wmem_max",
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
@@ -2159,7 +2159,7 @@
             "SAPNote": ""
         },
         {
-            "CheckID": "ANF-0003",
+            "CheckID": "HDB-ANF-0003",
             "Description": "sysctl net.core.rmem_default",
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
@@ -2183,7 +2183,7 @@
             "SAPNote": ""
         },
         {
-            "CheckID": "ANF-0004",
+            "CheckID": "HDB-ANF-0004",
             "Description": "sysctl net.core.wmem_default",
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
@@ -2207,7 +2207,7 @@
             "SAPNote": ""
         },
         {
-            "CheckID": "ANF-0005",
+            "CheckID": "HDB-ANF-0005",
             "Description": "sysctl net.core.optmem_max",
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
@@ -2231,7 +2231,7 @@
             "SAPNote": ""
         },
         {
-            "CheckID": "ANF-0006",
+            "CheckID": "HDB-ANF-0006",
             "Description": "sysctl net.ipv4.tcp_rmem",
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
@@ -2255,7 +2255,7 @@
             "SAPNote": ""
         },
         {
-            "CheckID": "ANF-0007",
+            "CheckID": "HDB-ANF-0007",
             "Description": "sysctl net.ipv4.tcp_wmem",
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
@@ -2279,7 +2279,7 @@
             "SAPNote": ""
         },
         {
-            "CheckID": "ANF-0008",
+            "CheckID": "HDB-ANF-0008",
             "Description": "sysctl net.core.netdev_max_backlog",
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
@@ -2303,7 +2303,7 @@
             "SAPNote": ""
         },
         {
-            "CheckID": "ANF-0009",
+            "CheckID": "HDB-ANF-0009",
             "Description": "sysctl net.ipv4.tcp_slow_start_after_idle",
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
@@ -2327,7 +2327,7 @@
             "SAPNote": ""
         },
         {
-            "CheckID": "ANF-0010",
+            "CheckID": "HDB-ANF-0010",
             "Description": "sysctl net.ipv4.tcp_moderate_rcvbuf",
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
@@ -2351,7 +2351,7 @@
             "SAPNote": ""
         },
         {
-            "CheckID": "ANF-0011",
+            "CheckID": "HDB-ANF-0011",
             "Description": "sysctl net.ipv4.tcp_window_scaling",
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
@@ -2375,7 +2375,7 @@
             "SAPNote": ""
         },
         {
-            "CheckID": "ANF-0012",
+            "CheckID": "HDB-ANF-0012",
             "Description": "sysctl net.ipv4.tcp_timestamps",
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
@@ -2399,7 +2399,7 @@
             "SAPNote": ""
         },
         {
-            "CheckID": "ANF-0013",
+            "CheckID": "HDB-ANF-0013",
             "Description": "sysctl net.ipv4.tcp_timestamps",
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
@@ -2423,7 +2423,7 @@
             "SAPNote": ""
         },
         {
-            "CheckID": "ANF-0014",
+            "CheckID": "HDB-ANF-0014",
             "Description": "sysctl net.ipv4.tcp_sack",
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
@@ -2447,7 +2447,7 @@
             "SAPNote": ""
         },
         {
-            "CheckID": "ANF-0015",
+            "CheckID": "HDB-ANF-0015",
             "Description": "sysctl ipv6.conf.all.disable_ipv6",
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
@@ -2471,7 +2471,7 @@
             "SAPNote": ""
         },
         {
-            "CheckID": "ANF-0016",
+            "CheckID": "HDB-ANF-0016",
             "Description": "sysctl net.ipv4.tcp_max_syn_backlog",
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
@@ -2495,7 +2495,7 @@
             "SAPNote": ""
         },
         {
-            "CheckID": "ANF-0017",
+            "CheckID": "HDB-ANF-0017",
             "Description": "sysctl net.ipv4.ip_local_port_range",
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
@@ -2519,7 +2519,7 @@
             "SAPNote": ""
         },
         {
-            "CheckID": "ANF-0018",
+            "CheckID": "HDB-ANF-0018",
             "Description": "sysctl net.ipv4.conf.all.rp_filter",
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
@@ -2543,7 +2543,7 @@
             "SAPNote": ""
         },
         {
-            "CheckID": "ANF-0019",
+            "CheckID": "HDB-ANF-0019",
             "Description": "sysctl sunrpc.tcp_slot_table_entries",
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
@@ -2567,7 +2567,7 @@
             "SAPNote": ""
         },
         {
-            "CheckID": "ANF-0020",
+            "CheckID": "HDB-ANF-0020",
             "Description": "sysctl vm.swappiness",
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
@@ -2591,7 +2591,7 @@
             "SAPNote": ""
         },
         {
-            "CheckID": "ANF-0021",
+            "CheckID": "HDB-ANF-0021",
             "Description": "ANF tcp_max_slot_table_entries",
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
@@ -3227,7 +3227,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "pcs config show | grep 'fence_dump' | wc -l",
+            "ProcessingCommand": "pcs config show | grep 'fence_kdump' | wc -l",
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
             "ShowAlternativeRequirement": "",
@@ -4163,7 +4163,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "pcs config show | grep 'fence_dump' | wc -l",
+            "ProcessingCommand": "pcs config show | grep 'fence_kdump' | wc -l",
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
             "ShowAlternativeRequirement": "",
