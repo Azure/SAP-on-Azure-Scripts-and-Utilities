@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 2022012101
+
+* fixing a typo in fence_kdump check
+* fixing a case there LVM is used on partitions instead of full disk (e.g. /dev/sdc1 instead of /dev/sdc)
+* fixing IOPS check, only applies for Ultra Disk
+
 ## Version 2022011903
 
 * adding softdog checks for SLES/SBD

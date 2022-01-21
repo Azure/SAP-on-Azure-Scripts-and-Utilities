@@ -76,7 +76,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2022011903
+$scriptversion = 2022012101
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -749,7 +749,7 @@ function CollectVMStorage {
         $_AzureDisk_row.MBPS = ($script:_AzureDiskDetails | Where-Object { $_.Name -eq $script:_azurediskconfig.osDisk.name }).DiskMBpsReadWrite
         $_AzureDisk_row.PerformanceTier = ($script:_AzureDiskDetails | Where-Object { $_.Name -eq $script:_azurediskconfig.osDisk.name }).Tier
         $_AzureDisk_row.DeviceName = "/dev/sda"
-        $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -eq $_AzureDisk_row.DeviceName}).vg.vg_name
+        $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -like ($_AzureDisk_row.DeviceName + "*")}).vg.vg_name
 
         $script:_AzureDisks += $_AzureDisk_row
 
@@ -768,7 +768,8 @@ function CollectVMStorage {
             $_AzureDisk_row.WriteAccelerator = $_datadisk.writeAcceleratorEnabled
 
             $_AzureDisk_row.DeviceName = ($script:_diskmapping | Where-Object { ($_.P5 -eq $_datadisk.lun) -and ($_.P2 -eq $script:_DataDiskSCSIControllerID) }).P7
-            $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -eq $_AzureDisk_row.DeviceName}).vg.vg_name
+            # $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -eq $_AzureDisk_row.DeviceName}).vg.vg_name
+            $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -like ($_AzureDisk_row.DeviceName + "*")}).vg.vg_name
 
             $_AzureDisk_row.IOPS = ($_AzureDiskDetails | Where-Object { $_.Name -eq $_datadisk.name }).DiskIOPSReadWrite
             $_AzureDisk_row.MBPS = ($_AzureDiskDetails | Where-Object { $_.Name -eq $_datadisk.name }).DiskMBpsReadWrite
@@ -1155,21 +1156,24 @@ function RunQualityCheck {
             AddCheckResultEntry -CheckID "HDB-FS-0002" -Description "SAP HANA Data: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBDataDir}).MaxMBPS -ExptectedResult ">= 400 MByte/s" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
         }
 
-        if ( ($_filesystem_hana.fstype | Select-Object -Unique) -in @('xfs')) {
-            if ( (($script:_filesystems | Where-Object {$_.target -in $DBDataDir}).MaxIOPS | Measure-Object -Sum).Sum -ge $_jsonconfig.HANAStorageRequirements.HANADataIOPS) {
-                AddCheckResultEntry -CheckID "HDB-FS-0003" -Description "SAP HANA Data: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBDataDir}).MaxIOPS -ExptectedResult ">= 7000 IOPS" -Status "OK"  -MicrosoftDocs $_saphanastorageurl
-            }
-            else {
-                AddCheckResultEntry -CheckID "HDB-FS-0003" -Description "SAP HANA Data: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBDataDir}).MaxIOPS -ExptectedResult ">= 7000 IOPS" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
-            }
-        }
-
         if ($_filesystem_hana.fstype -eq 'xfs') {
 
             ## getting disks for /hana/data
             $_AzureDisks_hana = ($_AzureDisks | Where-Object {$_.VolumeGroup -in $_filesystem_hana.vg})
 
             $_FirstDisk = $_AzureDisks_hana[0]
+
+            # checking if IOPS need to be checked (Ultra Disk)
+            if ($_FirstDisk.StorageType -eq "UltraSSD_LRS") {
+                if ( ($_filesystem_hana.fstype | Select-Object -Unique) -in @('xfs')) {
+                    if ( (($script:_filesystems | Where-Object {$_.target -in $DBDataDir}).MaxIOPS | Measure-Object -Sum).Sum -ge $_jsonconfig.HANAStorageRequirements.HANADataIOPS) {
+                        AddCheckResultEntry -CheckID "HDB-FS-0003" -Description "SAP HANA Data: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBDataDir}).MaxIOPS -ExptectedResult ">= 7000 IOPS" -Status "OK"  -MicrosoftDocs $_saphanastorageurl
+                    }
+                    else {
+                        AddCheckResultEntry -CheckID "HDB-FS-0003" -Description "SAP HANA Data: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBDataDir}).MaxIOPS -ExptectedResult ">= 7000 IOPS" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
+                    }
+                }
+            }
 
             # check if stripe size check required (no of disks greater than 1 in VG) and disk type is LVM
             if (($_AzureDisks_hana.count -gt 1) -and ($_filesystem_hana_type -eq "lvm")) {
@@ -1249,15 +1253,6 @@ function RunQualityCheck {
             AddCheckResultEntry -CheckID "HDB-FS-0008" -Description "SAP HANA Log: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBLogDir}).MaxMBPS -ExptectedResult ">= 250 MByte/s" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
         }
 
-        if ($_filesystem_hana.fstype -in @('xfs')) {
-            if ( (($script:_filesystems | Where-Object {$_.target -in $DBLogDir}).MaxIOPS | Measure-Object -Sum).Sum -ge $_jsonconfig.HANAStorageRequirements.HANALogIOPS) {
-                AddCheckResultEntry -CheckID "HDB-FS-0009" -Description "SAP HANA Log: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBLogDir}).MaxIOPS -ExptectedResult ">= 2000 IOPS" -Status "OK"  -MicrosoftDocs $_saphanastorageurl
-            }
-            else {
-                AddCheckResultEntry -CheckID "HDB-FS-0009" -Description "SAP HANA Log: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBLogDir}).MaxIOPS -ExptectedResult ">= 2000 IOPS" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
-            }
-        }
-
         if ($_filesystem_hana.fstype -eq 'xfs') {
 
             ## getting disks for /hana/log
@@ -1269,6 +1264,20 @@ function RunQualityCheck {
                 $_AzureDisks_hana = ($_AzureDisks | Where-Object { $_.DeviceName -in $_AzureDisks_for_hanalog_filesystems.Source})
             }
             $_FirstDisk = $_AzureDisks_hana[0]
+
+            # checking if IOPS need to be checked (Ultra Disk)
+            if ($_FirstDisk.StorageType -eq "UltraSSD_LRS") {
+
+                if ($_filesystem_hana.fstype -in @('xfs')) {
+                    if ( (($script:_filesystems | Where-Object {$_.target -in $DBLogDir}).MaxIOPS | Measure-Object -Sum).Sum -ge $_jsonconfig.HANAStorageRequirements.HANALogIOPS) {
+                        AddCheckResultEntry -CheckID "HDB-FS-0009" -Description "SAP HANA Log: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBLogDir}).MaxIOPS -ExptectedResult ">= 2000 IOPS" -Status "OK"  -MicrosoftDocs $_saphanastorageurl
+                    }
+                    else {
+                        AddCheckResultEntry -CheckID "HDB-FS-0009" -Description "SAP HANA Log: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBLogDir}).MaxIOPS -ExptectedResult ">= 2000 IOPS" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
+                    }
+                }
+
+            }
 
             # check if stripe size check required (no of disks greater than 1 in VG)
             if (($_AzureDisks_hana.count -gt 1) -and ($_filesystem_hana_type -eq "lvm")) {
