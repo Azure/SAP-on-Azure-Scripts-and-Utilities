@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 2022012401
+
+* fixing IC checks for APP and ASCS servers
+
 ## Version 2022012101
 
 * fixing a typo in fence_kdump check
