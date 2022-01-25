@@ -50,10 +50,9 @@ Copyright (c) Microsoft Corporation.
 Licensed under the MIT license.
 #>
 
-#Requires -Modules Posh-SSH
+#Requires -Version 7.1
 #Requires -Modules Az.Compute
-#Requires -Version 5.1
-#requires -PSEdition Desktop
+#Requires -Modules @{ ModuleName="Posh-SSH"; ModuleVersion="3.0.0" }
 
 param(
     #Azure Subscription Name
@@ -77,7 +76,7 @@ param(
     #OS Type
     [string]$OSOffer = "CentOS", 
     #OS Verion
-    [string]$OSSku = "8.0", 
+    [string]$OSSku = "8_4", 
     #Latest OS image
     [string]$OSVersion = "latest", 
     #OS username
@@ -107,6 +106,8 @@ param(
     #path to niping
     [string]$nipingpath
 )
+
+    Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
 
     if ($testtool -eq "niping") {
         if (!$nipingpath) {
@@ -377,7 +378,7 @@ param(
 
     # Removing SSH sessions
     Write-Host -ForegroundColor Green "Removing SSH Sessions"
-    Get-SSHSession | Remove-SSHSession -ErrorAction SilentlyContinue
+    Get-SSHSession | Remove-SSHSession -ErrorAction SilentlyContinue | Out-Null
     
     #destroy resource group
     if ($DestroyAfterTest) {
