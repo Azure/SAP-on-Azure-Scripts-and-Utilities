@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 2022012601
+
+* fixing issue for /dev/sda not being rootvg
+
 ## Version 2022012401
 
 * fixing IC checks for APP and ASCS servers

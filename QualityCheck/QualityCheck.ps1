@@ -76,7 +76,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2022012401
+$scriptversion = 2022012601
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -731,9 +731,11 @@ function CollectVMStorage {
         # if VM is Gen1 then SCSI Controller ID is 5, otherwise it is 1 (Gen2)
         if ($VMGeneration -eq "Gen1") {
             $script:_DataDiskSCSIControllerID = 5
+            $script:_OSDiskSCSIControllerID = 2
         }
         else {
             $script:_DataDiskSCSIControllerID = 1
+            $script:_OSDiskSCSIControllerID = 0
         }
 
         # add OS Disk Infos
@@ -748,7 +750,7 @@ function CollectVMStorage {
         $_AzureDisk_row.IOPS = ($script:_AzureDiskDetails | Where-Object { $_.Name -eq $script:_azurediskconfig.osDisk.name }).DiskIOPSReadWrite
         $_AzureDisk_row.MBPS = ($script:_AzureDiskDetails | Where-Object { $_.Name -eq $script:_azurediskconfig.osDisk.name }).DiskMBpsReadWrite
         $_AzureDisk_row.PerformanceTier = ($script:_AzureDiskDetails | Where-Object { $_.Name -eq $script:_azurediskconfig.osDisk.name }).Tier
-        $_AzureDisk_row.DeviceName = "/dev/sda"
+        $_AzureDisk_row.DeviceName = ($script:_diskmapping | Where-Object { ($_.P5 -eq 0) -and ($_.P2 -eq $script:_OSDiskSCSIControllerID) }).P7
         $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -like ($_AzureDisk_row.DeviceName + "*")}).vg.vg_name
 
         $script:_AzureDisks += $_AzureDisk_row
