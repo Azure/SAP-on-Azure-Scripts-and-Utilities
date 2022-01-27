@@ -76,7 +76,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2022012601
+$scriptversion = 2022012701
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -1183,11 +1183,11 @@ function RunQualityCheck {
 
                 if ($_filesystem_hana.StripeSize -eq $_HANAStripeSize) {
                     # stripe size correct
-                    AddCheckResultEntry -CheckID "HDB-FS-0004" -Description "SAP HANA Data: stripe size" -AdditionalInfo ("Disk " + $_AzureDisk_hana.name) -TestResult $_filesystem_hana.StripeSize -ExptectedResult $_HANAStripeSize -Status "OK" -MicrosoftDocs $_saphanastorageurl
+                    AddCheckResultEntry -CheckID "HDB-FS-0004" -Description "SAP HANA Data: stripe size" -AdditionalInfo ("Disk " + $_FirstDisk.name) -TestResult $_filesystem_hana.StripeSize -ExptectedResult $_HANAStripeSize -Status "OK" -MicrosoftDocs $_saphanastorageurl
                 }
                 else {
                     # Wrong Disk Type
-                    AddCheckResultEntry -CheckID "HDB-FS-0004" -Description "SAP HANA Data: stripe size" -AdditionalInfo ("Disk " + $_AzureDisk_hana.name) -TestResult $_filesystem_hana.StripeSize -ExptectedResult $_HANAStripeSize -Status "ERROR" -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
+                    AddCheckResultEntry -CheckID "HDB-FS-0004" -Description "SAP HANA Data: stripe size" -AdditionalInfo ("Disk " + $_FirstDisk.name) -TestResult $_filesystem_hana.StripeSize -ExptectedResult $_HANAStripeSize -Status "ERROR" -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
                 }
             }
 
@@ -1287,11 +1287,11 @@ function RunQualityCheck {
 
                 if ($_filesystem_hana.StripeSize -eq $_HANAStripeSize) {
                     # stripe size correct
-                    AddCheckResultEntry -CheckID "HDB-FS-0010" -Description "SAP HANA Log: stripe size" -AdditionalInfo ("Disk " + $_AzureDisk_hana.name) -TestResult $_filesystem_hana.StripeSize -ExptectedResult $_HANAStripeSize -Status "OK" -MicrosoftDocs $_saphanastorageurl
+                    AddCheckResultEntry -CheckID "HDB-FS-0010" -Description "SAP HANA Log: stripe size" -AdditionalInfo ("Disk " + $_FirstDisk.name) -TestResult $_filesystem_hana.StripeSize -ExptectedResult $_HANAStripeSize -Status "OK" -MicrosoftDocs $_saphanastorageurl
                 }
                 else {
                     # Wrong Disk Type
-                    AddCheckResultEntry -CheckID "HDB-FS-0010" -Description "SAP HANA Log: stripe size" -AdditionalInfo ("Disk " + $_AzureDisk_hana.name) -TestResult $_filesystem_hana.StripeSize -ExptectedResult $_HANAStripeSize -Status "ERROR" -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
+                    AddCheckResultEntry -CheckID "HDB-FS-0010" -Description "SAP HANA Log: stripe size" -AdditionalInfo ("Disk " + $_FirstDisk.name) -TestResult $_filesystem_hana.StripeSize -ExptectedResult $_HANAStripeSize -Status "ERROR" -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
                 }
             }
 

@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 2022012701
+
+* fixing display issue for disks showing in stripe size check
+
 ## Version 2022012601
 
 * fixing issue for /dev/sda not being rootvg
