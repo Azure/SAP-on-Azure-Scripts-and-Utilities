@@ -1,5 +1,5 @@
 {
-    "Version": 2022013001,
+    "Version": 2022013002,
     "PowerShellPrerequisits": [
         {
             "ModuleName": "Posh-SSH",
@@ -1843,7 +1843,7 @@
             "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
             "Role": ["DB","ASCS","APP"],
             "CommandType": "OS",
-            "ProcessingCommand": "systemctl",
+            "ProcessingCommand": "systemctl list-unit-files --state=enabled",
             "PostProcessingCommand": "",
             "RootRequired": true,
             "ShowInReport": true,
@@ -3578,7 +3578,7 @@
             "CheckID": "APP-OS-0005",
             "Description": "IPv4 tcp_tw_recycle",
             "OS": ["SUSE","RedHat","OracleLinux"],
-            "OSVersion": ["all"],
+            "OSVersion": ["12.3"],
             "HardwareType": ["VM"],
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["APP"],
@@ -3635,7 +3635,7 @@
             "HighAvailability": [false,true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "sysctl tcp_retries1",
+            "ProcessingCommand": "sysctl net.ipv4.tcp_retries1",
             "PostProcessingCommand": "",
             "ExpectedResult": "net.ipv4.tcp_retries1 = 3",
             "ShowAlternativeRequirement": "",

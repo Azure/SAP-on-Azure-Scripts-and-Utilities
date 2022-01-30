@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 2022013002
+
+* fixing an issue for tcp_retries1 (thanks @iklema)
+* APP-OS-0005 only applies to SLES 12.3 as newer versions have kernel 4.12 (thanks @iklema)
+* updaing systemctl to 'systemctl list-unit-files --state=enabled' (thanks @iklema)
+
 ## Version 2022013001
 
 * adding script version to footer

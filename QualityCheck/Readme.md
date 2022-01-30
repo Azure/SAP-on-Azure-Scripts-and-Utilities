@@ -1649,7 +1649,7 @@ get-help .\QualityCheck.ps1 -detailed
 | *Type*                | OS |
 | *Command*             | sysctl tcp_retries1 |
 | *Description*         | IPv4 tcp_retries1, optimize for faster reconnect after ASCS failover |
-| *OS*                  | SLES, RedHat, OracleLinux |
+| *OS*                  | SLES (12.3), RedHat, OracleLinux |
 | *VM Role*             | DB |
 | *Database*            | HANA |
 | *High Availability*   | n/a |
