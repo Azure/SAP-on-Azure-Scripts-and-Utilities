@@ -1,5 +1,5 @@
 {
-    "Version": 2022012701,
+    "Version": 2022013001,
     "PowerShellPrerequisits": [
         {
             "ModuleName": "Posh-SSH",
@@ -1961,6 +1961,54 @@
             "ShowInReport": true,
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"]
+        },
+        {
+            "CheckID": "IC-9012",
+            "Description": "sg_map",
+            "OS": ["SUSE","RedHat"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "DB": ["HANA", "MSSQL", "Db2"],
+            "Role": ["DB","ASCS","APP"],
+            "CommandType": "OS",
+            "ProcessingCommand": "sg_map -x",
+            "PostProcessingCommand": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"]
+        },
+        {
+            "CheckID": "IC-9013",
+            "Description": "storage-metadata",
+            "OS": ["SUSE","RedHat"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "DB": ["HANA", "MSSQL", "Db2"],
+            "Role": ["DB","ASCS","APP"],
+            "CommandType": "OS",
+            "ProcessingCommand": "curl --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/storageProfile?api-version=2021-11-01'",
+            "PostProcessingCommand": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"]
+        },
+        {
+            "CheckID": "IC-9014",
+            "Description": "AzDisk",
+            "OS": ["SUSE","RedHat"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "DB": ["HANA", "MSSQL", "Db2"],
+            "Role": ["DB","ASCS","APP"],
+            "CommandType": "PowerShell",
+            "ProcessingCommand": "(Get-AzVM -Name $AzVMName -ResourceGroupName $AzVMResourceGroup).StorageProfile.DataDisks | Get-AzDisk | ConvertTo-JSON",
+            "PostProcessingCommand": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"]
         }
     ],
     "Checks": [

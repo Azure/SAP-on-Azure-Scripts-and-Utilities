@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 2022013001
+
+* adding script version to footer
+* adding more checks to analyze storage errors
+* updating storage API version call
+
 ## Version 2022012701
 
 * fixing display issue for disks showing in stripe size check

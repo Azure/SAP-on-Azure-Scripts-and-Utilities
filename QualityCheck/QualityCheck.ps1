@@ -76,7 +76,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2022012701
+$scriptversion = 2022013001
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -709,6 +709,9 @@ function CollectVMStorage {
     }
     else {
 
+        # get VM info
+        $script:_VMinfo = Get-AzVM -ResourceGroupName $AzVMResourceGroup -Name $AzVMName
+
         # collect LVM configuration
         $_command = PrepareCommand -Command "lvm fullreport --reportformat json" 
         $script:_lvmconfig = RunCommand -p $_command | ConvertFrom-Json
@@ -719,13 +722,13 @@ function CollectVMStorage {
         $script:_diskmapping = ConvertFrom-String_sgmap -p $script:_diskmapping
 
         # get storage using metadata service
-        $_command = PrepareCommand -Command "curl --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/storageProfile?api-version=2019-08-15'"
+        $_command = PrepareCommand -Command "curl --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/storageProfile?api-version=2021-11-01'"
         $script:_azurediskconfig = RunCommand -p $_command | ConvertFrom-Json
 
         # get Azure Disks in Resource Group
         $_command = PrepareCommand -Command "Get-AzDisk -ResourceGroupName $AzVMResourceGroup" -CommandType "PowerShell"
         $script:_AzureDiskDetails = RunCommand -p $_command
-
+        
         $script:_AzureDisks = @()
 
         # if VM is Gen1 then SCSI Controller ID is 5, otherwise it is 1 (Gen2)
@@ -1692,7 +1695,7 @@ function CollectFooter {
     $_CollectFooter = CollectFooter
 
 
-    $_HTMLReport = ConvertTo-Html -Body "$_Content $_CollectScriptParameter $_CollectVMInfo $_RunQualityCheck $_CollectFileSystems $_CollectVMStorage $_CollectLVMGroups $_CollectLVMVolumes $_CollectANFVolumes $_CollectNetworkInterfaces $_CollectLoadBalancer $_CollectVMInfoAdditional $_CollectFooter" -Head $script:_HTMLHeader -Title "SAP on Azure Quality Check" -PostContent "<p id='CreationDate'>Creation Date: $(Get-Date)</p>"
+    $_HTMLReport = ConvertTo-Html -Body "$_Content $_CollectScriptParameter $_CollectVMInfo $_RunQualityCheck $_CollectFileSystems $_CollectVMStorage $_CollectLVMGroups $_CollectLVMVolumes $_CollectANFVolumes $_CollectNetworkInterfaces $_CollectLoadBalancer $_CollectVMInfoAdditional $_CollectFooter" -Head $script:_HTMLHeader -Title "SAP on Azure Quality Check" -PostContent "<p id='CreationDate'>Creation Date: $(Get-Date)</p><p id='CreationDate'>Script Version: $scriptversion</p>"
     $_HTMLReportFileName = $AzVMName + "-" + $(Get-Date -Format "yyyyMMdd-HHmm") + ".html"
     $_HTMLReport | Out-File .\$_HTMLReportFileName
 
