@@ -76,7 +76,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2022013002
+$scriptversion = 2022020301
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -551,7 +551,7 @@ function RunCommand {
             # root permissions required?
             if ($p.RootRequired) {
                 # add sudo to the command
-                $_command = "echo $_ClearTextPassword | sudo -S " + $p.ProcessingCommand
+                $_command = "echo $_ClearTextPassword | sudo -E -S " + $p.ProcessingCommand
             }
             else {
                 # command will be used without sudo
@@ -774,7 +774,7 @@ function CollectVMStorage {
 
             $_AzureDisk_row.DeviceName = ($script:_diskmapping | Where-Object { ($_.P5 -eq $_datadisk.lun) -and ($_.P2 -eq $script:_DataDiskSCSIControllerID) }).P7
             # $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -eq $_AzureDisk_row.DeviceName}).vg.vg_name
-            $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -like ($_AzureDisk_row.DeviceName + "*")}).vg.vg_name
+            $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -like ($_AzureDisk_row.DeviceName + "*")}).vg[0].vg_name
 
             $_AzureDisk_row.IOPS = ($_AzureDiskDetails | Where-Object { $_.Name -eq $_datadisk.name }).DiskIOPSReadWrite
             $_AzureDisk_row.MBPS = ($_AzureDiskDetails | Where-Object { $_.Name -eq $_datadisk.name }).DiskMBpsReadWrite
