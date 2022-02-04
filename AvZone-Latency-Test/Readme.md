@@ -19,8 +19,8 @@ To provide an easy way of testing you can use this script.
 * Azure Subscription
 * Core quota assigned to the subscription incl zone deployment (we recommend to use D8s_v3 or bigger, so at least 24 cores required)
 * possibility to connect to the VMs using SSH (Public IP addresses or existing VNET with private IP addresses)
-* PowerShell 5.1 or newer
-* PowerShell modules Posh-SSH and Az
+* PowerShell 7.1 or newer
+* PowerShell modules Posh-SSH 3.0 and Az
 
 ### What the script does
 
@@ -31,6 +31,22 @@ If you want to use niping please provide a URL to e.g. a BLOB storage which prov
 The output for qperf and niping is the same.
 
 In addition you will receive a list of Azure hypervisor hosts where your VM is running.
+
+### How to run the script
+
+#### Testing with qperf
+
+```powershell
+AvZone-Latency-Test.ps1' -SubscriptionName <your subscription name> -region <your region, e.g. northeurope>
+```
+
+#### Testing with niping
+
+Niping is provided by SAP, please download the file to e.g. a storage account and provide a link to the file for the script.
+
+```powershell
+AvZone-Latency-Test.ps1' -SubscriptionName <your subscription name> -region <your region, e.g. northeurope> -testtool niping -nipingpath <your URL to niping linux executable>
+```
 
 ### Sample Output
 

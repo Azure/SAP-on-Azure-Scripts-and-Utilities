@@ -340,3 +340,4 @@ AzureImageBuilder/local-demoGalleryImageFromMarketPlace.ps1
 AzureImageBuilder/demoCreateInfrastructure.ps1
 AzureImageBuilder/local-loadModules.ps1
 AzureImageBuilder/Temp/*
+AvZone-Latency-Test/.vscode/launch.json

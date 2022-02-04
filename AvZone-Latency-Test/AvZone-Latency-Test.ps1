@@ -206,8 +206,8 @@ param(
 	    Get-AzVM -ResourceGroupName $ResourceGroupName
 
         # adding some time as it sometimes helps :-)
-        "Waiting for three minute for all systems to come up ..."
-        Start-Sleep -Seconds 180
+        "Waiting for four minute for all systems to come up ..."
+        Start-Sleep -Seconds 240
     }
 
     # creating SSH sessions to VMs
@@ -316,7 +316,7 @@ param(
             $output = Invoke-SSHCommand -Command "/tmp/niping -c -B 10 -L 100 -H $vmtoping1 | grep av2" -SessionId $sshsessions[$zone-1].SessionId
             $latencytemp = [string]$output.Output
             $latencytemp = $latencytemp -replace '\s+', ' '
-            $latencytemp = $latencytemp.Split(" ")
+            $latencytemp = $latencytemp -Split " "
             $latencytemp = [string]$latencytemp[1] + " " + $latencytemp[2]
             $latencytemp = $latencytemp.PadLeft(12)
             $latency[$zone -1][$vmtopingno1 -1] = $latencytemp
@@ -324,7 +324,7 @@ param(
             $output = Invoke-SSHCommand -Command "/tmp/niping -c -B 100000 -L 100 -H $vmtoping1 | grep tr2" -SessionId $sshsessions[$zone-1].SessionId
             $bandwidthtemp = [string]$output.Output
             $bandwidthtemp = $bandwidthtemp -replace '\s+', ' '
-            $bandwidthtemp = $bandwidthtemp.Split(" .")
+            $bandwidthtemp = $bandwidthtemp -Split ". "
             $bandwidthtemp = [int]$bandwidthtemp[1] / 1024
             $bandwidthtemp = [string]([math]::ceiling($bandwidthtemp)) + " MB/s"
             $bandwidthtemp = $bandwidthtemp.PadLeft(12)
@@ -333,7 +333,7 @@ param(
             $output = Invoke-SSHCommand -Command "/tmp/niping -c -B 10 -L 100 -H $vmtoping2 | grep av2" -SessionId $sshsessions[$zone-1].SessionId
             $latencytemp = [string]$output.Output
             $latencytemp = $latencytemp -replace '\s+', ' '
-            $latencytemp = $latencytemp.Split(" ")
+            $latencytemp = $latencytemp -Split " "
             $latencytemp = [string]$latencytemp[1] + " " + $latencytemp[2]
             $latencytemp = $latencytemp.PadLeft(12)
             $latency[$zone -1][$vmtopingno2 -1] = $latencytemp
@@ -341,7 +341,7 @@ param(
             $output = Invoke-SSHCommand -Command "/tmp/niping -c -B 100000 -L 100 -H $vmtoping2 | grep tr2" -SessionId $sshsessions[$zone-1].SessionId
             $bandwidthtemp = [string]$output.Output
             $bandwidthtemp = $bandwidthtemp -replace '\s+', ' '
-            $bandwidthtemp = $bandwidthtemp.Split(" .")
+            $bandwidthtemp = $bandwidthtemp -Split ". "
             $bandwidthtemp = [int]$bandwidthtemp[1] / 1024
             $bandwidthtemp = [string]([math]::ceiling($bandwidthtemp)) + " MB/s"
             $bandwidthtemp = $bandwidthtemp.PadLeft(12)
