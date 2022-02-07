@@ -16,10 +16,9 @@ A set of **SAP on Azure PowerShell cmdlets** is helping to:
 
 ![](Pictures/media/image30.png)
 
-> [!IMPORTANT]
-> Before you execute the migration and scripts on the productive SAP system, make sure to test it on the test VMs. Ideally, a HA SAP system is also installed on the test VMs. Make sure that test VMs have the same configuration as productive VMs. That means they should
+**IMPORTANT**
+Before you execute the migration and scripts on the productive SAP system, make sure to test it on the test VMs. Ideally, a HA SAP system is also installed on the test VMs. Make sure that test VMs have the same configuration as productive VMs. That means they should
 have the same VM SKU, disk types, disk numbers and sizes, same number of NIC cards, same subscription, load balancers etc. If possible, place test VMs inside of the same subnet as productive VMs and in the same resource groups.
->
 
 
 Here's high level procedure:
@@ -200,14 +199,13 @@ $ProximityPlacementGroupName = "PR2-PPG\_Zone3"
 Move-AzSAPApplicationServerWindowsVMToAzureAvaialbilitySetAndOrProximityPlacementGroup -SAPSID $SAPSID -SAPInstanceNumber $SAPInstanceNumber -SIDADMUserCredential $SAPSIDADMUserCred -PathToSAPControl $FullPathToSAPControl -SoftShutdownTimeInSeconds $SAPApplicationServerGracefullSoftShutdownTimeInSeconds -VMResourceGroupName $VMResourceGroupName -VirtualMachineName $VirtualMachineName -AvailabilitySetName $AvailabilitySetName -PPGResourceGroupName $PPGResourceGroupName -ProximityPlacementGroupName $ProximityPlacementGroupName
 ```
 
-> [!TIP]
->
-> PowerShell cmdlet will ask you for confirmation to stop VM, remove VM definition. If you want to skip confirmation, specify parameter extra parameter `-Force` in the cmdlet.
-> 
-> If you like or need to change the VM size, specify parameter extra parameter `-NewVMSize <DesiredVMSize>`  in the cmdlet.
->
-> New zonal disks will be created from snapshots in the same resource group. Default behavior is that new zonal disk naming convention will be `<OriginalDiskName>-z<ZoneNumber>`.  
->
-> If you would like to keep the same disk names, use an extra flag `-KeepSameDiskNames`. 
->Here, out of snapshot will be created a copy of the original disk with naming convention `<OriginalDiskName>-orig<FreeNumber>`, original disk will be deleted (as it isn't possible to have two disks with the same name in the same resource group), and new zonal disk with the name `<OriginalDiskName>` will be created from the snapshot.
->
+**TIP**
+
+PowerShell cmdlet will ask you for confirmation to stop VM, remove VM definition. If you want to skip confirmation, specify parameter extra parameter `-Force` in the cmdlet.
+ 
+If you like or need to change the VM size, specify parameter extra parameter `-NewVMSize <DesiredVMSize>`  in the cmdlet.
+
+New zonal disks will be created from snapshots in the same resource group. Default behavior is that new zonal disk naming convention will be `<OriginalDiskName>-z<ZoneNumber>`.  
+
+If you would like to keep the same disk names, use an extra flag `-KeepSameDiskNames`. 
+Here, out of snapshot will be created a copy of the original disk with naming convention `<OriginalDiskName>-orig<FreeNumber>`, original disk will be deleted (as it isn't possible to have two disks with the same name in the same resource group), and new zonal disk with the name `<OriginalDiskName>` will be created from the snapshot.
