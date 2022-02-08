@@ -209,3 +209,25 @@ New zonal disks will be created from snapshots in the same resource group. Defau
 
 If you would like to keep the same disk names, use an extra flag `-KeepSameDiskNames`. 
 Here, out of snapshot will be created a copy of the original disk with naming convention `<OriginalDiskName>-orig<FreeNumber>`, original disk will be deleted (as it isn't possible to have two disks with the same name in the same resource group), and new zonal disk with the name `<OriginalDiskName>` will be created from the snapshot.
+
+## Recovery of Original VM in the Case of PowerShell cmdlets Failure
+
+During the VM migration to the either zone or to the availability set, original VM is deleted, and new VM is created. If recreating VM fails during the migration to zones or to new availability set, you can always restore original VM using the original a disk.
+
+**IMPORTANT:** PowerShell cmdlets could fail when some constraints are not met. A typical example is when you are using PPG. PPG is forcing a VM SKU to land not just in the same zone, but land in the same data center, as the anchor VM. It could happen that VM SKU is available in the same zone as the anchor VM, but not available in the same data center as the anchor VM. In this scenario VM recreation will fail. 
+Although cmdlets are doing many prechecks to make sure that all constraints are met, not everything can be checked programmatically, and VM recreation could fail.  
+
+
+### Recovery of failed VM when moving to Availability Set 
+
+You can use Azure portal to restore original VM, which is described in the document [How to restore Azure VM data in Azure portal](https://docs.microsoft.com/en-us/azure/backup/backup-azure-arm-restore-vms).
+
+Original OS and data disk names are unchanged during migration to an Availability Set.
+
+### Recovery of failed VM when moving to Availability Zone 
+
+You can use Azure portal to restore original VM, which is described in the document [How to restore Azure VM data in Azure portal](https://docs.microsoft.com/en-us/azure/backup/backup-azure-arm-restore-vms).
+
+If you did NOT specified flag `-KeepSameDiskNames`, original OS and data disk names are unchanged during migration to zone.
+
+In case you did specify flag `-KeepSameDiskNames`, original OS and data disk names are changed/copied during migration to zone to a new disk `<OriginalDiskName>-orig<FreeNumber>`. These new disk names of the original disks are printed in the PowerShell console.
