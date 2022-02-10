@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 2022021002
+
+* moving to absolute paths for all executables
+
 ## Version 2022021001
 
 * fixing an issue when PATH doesn't include e.g. the lvm command

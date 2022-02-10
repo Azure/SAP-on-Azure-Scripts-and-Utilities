@@ -76,7 +76,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2022021001
+$scriptversion = 2022021002
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
