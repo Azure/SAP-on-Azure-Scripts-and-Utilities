@@ -1,5 +1,5 @@
 {
-    "Version": 2022020301,
+    "Version": 2022021001,
     "PowerShellPrerequisits": [
         {
             "ModuleName": "Posh-SSH",
@@ -1672,7 +1672,7 @@
             "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
             "Role": ["DB","ASCS","APP"],
             "CommandType": "OS",
-            "ProcessingCommand": "curl --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/vmSize?api-version=2019-11-01&format=text'",
+            "ProcessingCommand": "/usr/bin/curl --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/vmSize?api-version=2019-11-01&format=text'",
             "PostProcessingCommand": "Set-Variable -Name _VMType -Scope Script -Value PARAMETER; 'PARAMETER'",
             "RootRequired": false,
             "ShowInReport": true,
@@ -1687,7 +1687,7 @@
             "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
             "Role": ["DB","ASCS","APP"],
             "CommandType": "OS",
-            "ProcessingCommand": "curl --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/zone?api-version=2021-03-01&format=text'",
+            "ProcessingCommand": "/usr/bin/curl --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/zone?api-version=2021-03-01&format=text'",
             "PostProcessingCommand": "",
             "RootRequired": false,
             "ShowInReport": true,
@@ -1971,7 +1971,7 @@
             "DB": ["HANA", "MSSQL", "Db2"],
             "Role": ["DB","ASCS","APP"],
             "CommandType": "OS",
-            "ProcessingCommand": "sg_map -x",
+            "ProcessingCommand": "/usr/bin/sg_map -x",
             "PostProcessingCommand": "",
             "RootRequired": true,
             "ShowInReport": true,
@@ -1987,7 +1987,7 @@
             "DB": ["HANA", "MSSQL", "Db2"],
             "Role": ["DB","ASCS","APP"],
             "CommandType": "OS",
-            "ProcessingCommand": "curl --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/storageProfile?api-version=2021-11-01'",
+            "ProcessingCommand": "/usr/bin/curl --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/storageProfile?api-version=2021-11-01'",
             "PostProcessingCommand": "",
             "RootRequired": true,
             "ShowInReport": true,
@@ -2009,7 +2009,23 @@
             "ShowInReport": true,
             "HighAvailability": [true,false],
             "HighAvailabilityAgent": ["SBD","FencingAgent"]
-        }
+        },
+        {
+            "CheckID": "IC-9015",
+            "Description": "lvm fullreport",
+            "OS": ["SUSE","RedHat"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "DB": ["HANA", "MSSQL", "Db2"],
+            "Role": ["DB","ASCS","APP"],
+            "CommandType": "OS",
+            "ProcessingCommand": "/sbin/lvm fullreport --reportformat json",
+            "PostProcessingCommand": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"]
+        }        
     ],
     "Checks": [
         {

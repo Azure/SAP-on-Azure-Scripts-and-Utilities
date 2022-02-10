@@ -76,7 +76,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2022020301
+$scriptversion = 2022021001
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -549,7 +549,7 @@ function RunCommand {
             # Linux
 
             # root permissions required?
-            if ($p.RootRequired) {
+            if (($p.RootRequired) -and ($VMUsername -ne "root")) {
                 # add sudo to the command
                 $_command = "echo $_ClearTextPassword | sudo -E -S " + $p.ProcessingCommand
             }
@@ -713,16 +713,16 @@ function CollectVMStorage {
         $script:_VMinfo = Get-AzVM -ResourceGroupName $AzVMResourceGroup -Name $AzVMName
 
         # collect LVM configuration
-        $_command = PrepareCommand -Command "lvm fullreport --reportformat json" 
+        $_command = PrepareCommand -Command "/sbin/lvm fullreport --reportformat json" 
         $script:_lvmconfig = RunCommand -p $_command | ConvertFrom-Json
 
         # get sg_map output for LUN-ID to disk mapping
-        $_command = PrepareCommand -Command "sg_map -x" -CommandType "OS"
+        $_command = PrepareCommand -Command "/usr/bin/sg_map -x" -CommandType "OS"
         $script:_diskmapping = RunCommand -p $_command
         $script:_diskmapping = ConvertFrom-String_sgmap -p $script:_diskmapping
 
         # get storage using metadata service
-        $_command = PrepareCommand -Command "curl --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/storageProfile?api-version=2021-11-01'"
+        $_command = PrepareCommand -Command "/usr/bin/curl --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/storageProfile?api-version=2021-11-01'"
         $script:_azurediskconfig = RunCommand -p $_command | ConvertFrom-Json
 
         # get Azure Disks in Resource Group

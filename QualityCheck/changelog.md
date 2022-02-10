@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 2022021001
+
+* fixing an issue when PATH doesn't include e.g. the lvm command
+* fixing an issue when using root user (no sudo required)
+
 ## Version 2022020301
 
 * fixing an issue for sudo command that don't get the environment variables
