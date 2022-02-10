@@ -992,7 +992,7 @@ get-help .\QualityCheck.ps1 -detailed
 | *High Availability*   | yes (SBD) |
 | *Expected Value*      | softdog |
 | *SAP Note*            | |
-| *Microsoft link*      | multiple docs sites, e.g. [here]https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker) |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker) |
 | *added/modified*      | 2022011903 |
 
 | *Check ID*            | HDB-HA-SLE-0018 |
@@ -1006,7 +1006,7 @@ get-help .\QualityCheck.ps1 -detailed
 | *High Availability*   | yes (SBD) |
 | *Expected Value*      | softdog loaded |
 | *SAP Note*            | |
-| *Microsoft link*      | multiple docs sites, e.g. [here]https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker) |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker) |
 | *added/modified*      | 2022011903 |
 
 | *Check ID*            | HDB-HA-RH-0001 |
@@ -1428,7 +1428,7 @@ get-help .\QualityCheck.ps1 -detailed
 | *High Availability*   | yes (SBD) |
 | *Expected Value*      | softdog |
 | *SAP Note*            | |
-| *Microsoft link*      | multiple docs sites, e.g. [here]https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker) |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker) |
 | *added/modified*      | 2022011903 |
 
 | *Check ID*            | ASCS-HA-SLE-0016 |
@@ -1442,7 +1442,7 @@ get-help .\QualityCheck.ps1 -detailed
 | *High Availability*   | yes (SBD) |
 | *Expected Value*      | softdog loaded |
 | *SAP Note*            | |
-| *Microsoft link*      | multiple docs sites, e.g. [here]https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker) |
+| *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker) |
 | *added/modified*      | 2022011903 |
 
 | *Check ID*            | ASCS-HA-RH-0001 |
@@ -1514,7 +1514,6 @@ get-help .\QualityCheck.ps1 -detailed
 | *SAP Note*            | |
 | *Microsoft link*      | multiple docs sites, e.g. [here](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel) |
 | *added/modified*      | 2022011902 |
-
 
 | *Check ID*            | ASCS-HA-LB-0001 |
 |:----------------------|:--------|
