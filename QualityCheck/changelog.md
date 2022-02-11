@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 2022021101
+
+* fixing issue where passwords start with a special character
+
 ## Version 2022021002
 
 * moving to absolute paths for all executables

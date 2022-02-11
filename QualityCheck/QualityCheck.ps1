@@ -76,7 +76,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2022021002
+$scriptversion = 2022021101
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -551,7 +551,7 @@ function RunCommand {
             # root permissions required?
             if (($p.RootRequired) -and ($VMUsername -ne "root")) {
                 # add sudo to the command
-                $_command = "echo $_ClearTextPassword | sudo -E -S " + $p.ProcessingCommand
+                $_command = "echo '$_ClearTextPassword' | sudo -E -S " + $p.ProcessingCommand
             }
             else {
                 # command will be used without sudo
