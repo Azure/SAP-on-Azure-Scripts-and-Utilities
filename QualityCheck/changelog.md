@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 2022021801
+
+* fixing concurrent fencing for SLES, thanks to @1lomeno3
+
 ## Version 2022021101
 
 * fixing issue where passwords start with a special character

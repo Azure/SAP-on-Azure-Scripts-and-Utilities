@@ -1,5 +1,5 @@
 {
-    "Version": 2022021101,
+    "Version": 2022021801,
     "PowerShellPrerequisits": [
         {
             "ModuleName": "Posh-SSH",
@@ -4011,14 +4011,14 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/sbin/crm configure show | grep 'concurrent-fencing: true' | wc -l",
+            "ProcessingCommand": "/usr/sbin/crm configure show | grep 'concurrent-fencing=true' | wc -l",
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'concurrent-fencing: true'",
+            "ShowAlternativeRequirement": "'concurrent-fencing=true'",
             "ShowAlternativeResult": "",
             "RootRequired": true,
             "ShowInReport": true,
-            "AdditionalInfo": "Checking for concurrent-fencing: true",
+            "AdditionalInfo": "Checking for concurrent-fencing=true",
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
