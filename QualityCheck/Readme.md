@@ -40,12 +40,33 @@ It will query your system for required parameters and match it with Microsoft's 
 A jumpbox could be a special VM to access your SAP system or your local machine, we'll just call ist jumpbox.
 
 1. Install PowerShell 7.2
-    * Windows [https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows)
-    * Linux [https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-linux](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-linux)
+    * Windows
 
-    > Make sure not to use older versions of PowerShell which is pre-installed in Windows. Type "PowerShell 7" from Start menu
+        To install Powershell on Windows use the link below, after installation search for "PowerShell 7" from the Start Menu
 
-2. Install Azure Az PowerShell modules by running the following commands
+        [https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows)
+
+    * Linux
+
+        Download PowerShell 7 using the link and installation guide below.
+
+        [https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-linux](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-linux)
+
+        After installing PowerShell start it using the command pwsh
+
+        ```bash
+        pwsh
+        ```
+
+        Due to license constraints Microsoft doesn't provide PowerShell for SUSE operating systems.
+
+    * Mac
+
+        Download and install PowerShell 7 on Mac using the link bwlow.
+
+        [https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-macos](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-macos)
+
+2. After starting PowerShell you need to install the required PowerShell modules using:
 
     ```powershell
     Install-Module Az -Force
@@ -53,7 +74,7 @@ A jumpbox could be a special VM to access your SAP system or your local machine,
     Install-Module Posh-SSH -Force
     ```
 
-    * Note that Install-Module Az -Force may take over 15 minutes to complete
+    > Note that Install-Module Az -Force may take over 15 minutes to complete
 
 3. Set the Execution Policy to unrestricted (we are working on signing the script)
 
