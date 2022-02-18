@@ -1,0 +1,129 @@
+---
+- name: Configure scaserver
+  hosts: scaservers
+  become: true
+
+  tasks:
+    - name: Update all packages
+      community.general.zypper:
+        name: '*'
+        state: latest
+
+    - zypper:
+        name: lamp_server
+        type: pattern
+        state: present
+        disable_recommends: no
+        update_cache: yes
+
+    - name: Add supporttools factory
+      community.general.zypper_repository:
+        repo: 'https://download.opensuse.org/repositories/isv:/SUSE:/SupportTools:/Factory/openSUSE_Leap_15.2/'
+        name: SCA Appliance
+        disable_gpg_check: yes
+        state: present
+        runrefresh: yes
+
+    - community.general.zypper_repository:
+         repo: '*'
+         runrefresh: yes
+
+    - name: Package Installation supportutils
+      package:
+        name:
+          - supportutils
+
+    - name: Package Installation3 sca-patterns-base
+      package:
+        name:
+          - sca-patterns-base
+
+    - name: Package Installation3A sca-patterns-hae
+      package:
+        name:
+          - sca-patterns-hae
+
+    - name: Package Installation3B sca-patterns-sle11
+      package:
+        name:
+          - sca-patterns-sle11
+
+    - name: Package Installation3C sca-patterns-sle12
+      package:
+        name:          
+          - sca-patterns-sle12
+
+    - name: Package Installation3D sca-patterns-sle15
+      package:
+        name:          
+          - sca-patterns-sle15
+          
+    - name: Package Installation4 sca-appliance-common
+      package:
+        name:
+          - sca-appliance-common
+
+    - name: Package Installation4A sca-appliance-agent
+      package:
+        name:          
+          - sca-appliance-agent
+
+    - name: Package Installation4B sca-appliance-broker
+      package:
+        name:
+          - sca-appliance-broker
+
+    - name: Package Installation4C sca-appliance-patdev
+      package:
+        name:
+          - sca-appliance-patdev
+          
+    - name: Package Installation2 findutils-locate
+      package:
+        name:
+          - findutils-locate
+
+    - name: Package Installation2 sca-server-report
+      package:
+        name:
+          - sca-server-report
+
+    - name: Package Installation apache2
+      package:
+        name:
+          - apache2
+
+    - name: Package Installation git
+      package:
+        name:
+          - git
+
+    - name: Package Installation patch
+      package:
+        name:
+          - patch
+
+    - name: install azcopy
+      unarchive:
+        src: "https://aka.ms/downloadazcopy-v10-linux"
+        dest: /usr/local/bin
+        remote_src: yes
+        exclude:
+          - ThirdPartyNotice.txt
+          - NOTICE.txt
+        extra_opts: [--strip-components=1]
+
+    - git:
+        repo: "https://github.com/rsponholtz/azsapsca.git"
+        dest: "/root/azsapsca"
+        update: yes
+
+    - name: Copy file with owner and permissions
+      copy:
+        src: /root/azsapsca/patterns/AZSAP/
+        dest: /usr/lib/sca/patterns/local
+        owner: root
+        group: root
+        mode: '744'        
+        remote_src: yes
+        
