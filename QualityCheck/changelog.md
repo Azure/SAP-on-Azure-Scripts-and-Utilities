@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 2022022201
+
+* adding HANA support for E(d)s_v5 instances
+
 ## Version 2022021801
 
 * fixing concurrent fencing for SLES, thanks to @1lomeno3

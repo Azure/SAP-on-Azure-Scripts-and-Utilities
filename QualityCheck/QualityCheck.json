@@ -1,5 +1,5 @@
 {
-    "Version": 2022021801,
+    "Version": 2022022201,
     "PowerShellPrerequisits": [
         {
             "ModuleName": "Posh-SSH",
@@ -1476,9 +1476,30 @@
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
             }
         },
+        "Standard_E20s_v5": {
+            "DB": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
+                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
+            },
+            "APP": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+            },
+            "ASCS": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+            }
+        },
         "Standard_E32s_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
+                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
             },
             "APP": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
@@ -1489,7 +1510,12 @@
         },
         "Standard_E48s_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
+                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
             },
             "APP": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
@@ -1500,7 +1526,12 @@
         },
         "Standard_E64s_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
+                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
             },
             "APP": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
@@ -1511,7 +1542,12 @@
         },
         "Standard_E96s_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
+                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
             },
             "APP": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
@@ -1564,9 +1600,30 @@
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
             }
         },
+        "Standard_E20ds_v5": {
+            "DB": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
+                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
+            },
+            "APP": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+            },
+            "ASCS": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+            }
+        },
         "Standard_E32ds_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
+                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
             },
             "APP": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
@@ -1577,7 +1634,12 @@
         },
         "Standard_E48ds_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
+                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
             },
             "APP": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
@@ -1588,7 +1650,12 @@
         },
         "Standard_E64ds_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
+                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
             },
             "APP": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
@@ -1599,7 +1666,12 @@
         },
         "Standard_E96ds_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
+                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
             },
             "APP": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
@@ -3027,14 +3099,14 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/sbin/crm configure show | grep 'concurrent-fencing=true' | wc -l",
+            "ProcessingCommand": "/usr/sbin/crm configure show | grep 'concurrent-fencing: true' | wc -l",
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'concurrent-fencing=true'",
+            "ShowAlternativeRequirement": "'concurrent-fencing: true'",
             "ShowAlternativeResult": "",
             "RootRequired": true,
             "ShowInReport": true,
-            "AdditionalInfo": "Checking for concurrent-fencing=true",
+            "AdditionalInfo": "Checking for concurrent-fencing: true",
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
