@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 2022022301
+
+* changing naming to "Quality Check for SAP workloads on Azure"
+
 ## Version 2022022201
 
 * adding HANA support for E(d)s_v5 instances

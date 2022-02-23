@@ -1,4 +1,4 @@
-# QualityCheck for SAP on Azure
+# Quality Check for SAP workloads on Azure
 
 QualityCheck is an open-source tool to validate SAP on Azure installations. It connects to Azure Resource Manager and the operating system and validates the system configurations against Microsoft's best practise.
 Running it regulary will always keep your system up to date.

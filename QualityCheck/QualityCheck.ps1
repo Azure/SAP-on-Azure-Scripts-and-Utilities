@@ -9,26 +9,17 @@
 .LINK
     https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities
 
-.NOTES
-    v1.0 -  Initial version
-    v2.0 -  fixing some typos
-            adding some additional checks for non-supported VM types
-    v3.0 -  rewriting code
-            changing how modules are checked because of different modules types (sometimes Get-InstalledModule doesn't come back with correct result)
-
 #>
 <#
 Copyright (c) Microsoft Corporation.
 Licensed under the MIT license.
 #>
 
-
 #Requires -Version 7.1
 #Requires -Module Az.Compute
 #Requires -Module Az.Network
 #Requires -Module Az.NetAppFiles
 #Requires -Modules @{ ModuleName="Posh-SSH"; ModuleVersion="3.0.0" }
-
 
 [CmdletBinding()]
 param (
@@ -76,7 +67,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2022022201
+$scriptversion = 2022022301
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -1695,7 +1686,7 @@ function CollectFooter {
     $_CollectFooter = CollectFooter
 
 
-    $_HTMLReport = ConvertTo-Html -Body "$_Content $_CollectScriptParameter $_CollectVMInfo $_RunQualityCheck $_CollectFileSystems $_CollectVMStorage $_CollectLVMGroups $_CollectLVMVolumes $_CollectANFVolumes $_CollectNetworkInterfaces $_CollectLoadBalancer $_CollectVMInfoAdditional $_CollectFooter" -Head $script:_HTMLHeader -Title "SAP on Azure Quality Check" -PostContent "<p id='CreationDate'>Creation Date: $(Get-Date)</p><p id='CreationDate'>Script Version: $scriptversion</p>"
+    $_HTMLReport = ConvertTo-Html -Body "$_Content $_CollectScriptParameter $_CollectVMInfo $_RunQualityCheck $_CollectFileSystems $_CollectVMStorage $_CollectLVMGroups $_CollectLVMVolumes $_CollectANFVolumes $_CollectNetworkInterfaces $_CollectLoadBalancer $_CollectVMInfoAdditional $_CollectFooter" -Head $script:_HTMLHeader -Title "Quality Check for SAP Worloads on Azure" -PostContent "<p id='CreationDate'>Creation Date: $(Get-Date)</p><p id='CreationDate'>Script Version: $scriptversion</p>"
     $_HTMLReportFileName = $AzVMName + "-" + $(Get-Date -Format "yyyyMMdd-HHmm") + ".html"
     $_HTMLReport | Out-File .\$_HTMLReportFileName
 
