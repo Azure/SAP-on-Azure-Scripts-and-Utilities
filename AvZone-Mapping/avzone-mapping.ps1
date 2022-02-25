@@ -56,6 +56,20 @@ $authHeader = @{
     'Authorization'='Bearer ' + $token.AccessToken
 }
 
+$feature = Get-AzProviderFeature -ProviderNamespace Microsoft.Resources -FeatureName AvailabilityZonePeering
+
+if ($feature.RegistrationState -eq "Registered") {
+    # feature registered
+    # continuing
+}
+else {
+    Write-Host "Feature not registered"
+    Write-Host "Please register feature using:"
+    Write-Host "Register-AzProviderFeature -FeatureName AvailabilityZonePeering -ProviderNamespace Microsoft.Resources"
+    exit
+}
+
+
 # create parameter
 $param = @{
     Uri = "https://management.azure.com/subscriptions/${subscriptionId}/providers/Microsoft.Resources/checkZonePeers/?api-version=2020-01-01";
