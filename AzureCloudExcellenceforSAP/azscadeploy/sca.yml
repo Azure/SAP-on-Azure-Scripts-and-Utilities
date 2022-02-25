@@ -114,13 +114,13 @@
         extra_opts: [--strip-components=1]
 
     - git:
-        repo: "https://github.com/rsponholtz/azsapsca.git"
-        dest: "/root/azsapsca"
+        repo: "https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities.git"
+        dest: "/root/SAP-on-Azure-Scripts-and-Utilities"
         update: yes
 
     - name: Copy file with owner and permissions
       copy:
-        src: /root/azsapsca/patterns/AZSAP/
+        src: /root/SAP-on-Azure-Scripts-and-Utilities/AzureCloudExcellenceforSAP/azsapsca/patterns/AZSAP/
         dest: /usr/lib/sca/patterns/local
         owner: root
         group: root

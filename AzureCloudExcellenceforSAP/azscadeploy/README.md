@@ -5,8 +5,8 @@
 To deploy SCA, do the following.  It is convenient to use cloudshell bash for this:
 
 ```bash
-git clone https://github.com/rsponholtz/azscadeploy.git
-cd azscadeploy
+git clone https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities.git
+cd SAP-on-Azure-Scripts-and-Utilities/AzureCloudExcellenceforSAP/azscadeploy
 ./scadeploy.sh
 ```
 
@@ -51,7 +51,7 @@ This will output a HTML file that you will have to download or put into your sto
 
 ## Development of new SCA patterns
 
-To start developing new patterns, you should fork the Azure SCA pattern repo (https://github.com/rsponholtz/azsapsca.git), and then clone your repo to your own SCA appliance.  Develop new pattern tests, commit to your repo, and then submit them as pull requests.
+To start developing new patterns, you should fork this repo, and then clone your repo to your own SCA appliance.  Develop new pattern tests, commit to your repo, and then submit them as pull requests.
 
 There is a program for testing individual SCA patterns called "pat" which is located in /usr/bin/pat.  There is an error in this program though, so sudo to root, copy to your home directory and edit the script.  Find the section that looks like this:
 
