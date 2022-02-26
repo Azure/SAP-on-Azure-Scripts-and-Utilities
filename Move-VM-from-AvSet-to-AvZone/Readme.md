@@ -234,7 +234,7 @@ In case you did specify flag `-KeepSameDiskNames`, original OS and data disk nam
 
 ## Detailed Migration White Paper
 
-In this white paper [How to Migrate a Highly Available SAP System in Azure from Availability Set to Availability Zone.](./Move-Regional-SAP-HA-To-Zonal-SAP-HA-WhitePaper), you can check detail information.
+In this white paper [How to Migrate a Highly Available SAP System in Azure from Availability Set to Availability Zone](./Move-Regional-SAP-HA-To-Zonal-SAP-HA-WhitePaper), you have detail information on how to plan and execute migration.
 
 ## Disclaimer
 
