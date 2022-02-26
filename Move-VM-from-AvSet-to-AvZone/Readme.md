@@ -232,6 +232,9 @@ If you did NOT specified flag `-KeepSameDiskNames`, original OS and data disk na
 
 In case you did specify flag `-KeepSameDiskNames`, original OS and data disk names are changed/copied during migration to zone to a new disk `<OriginalDiskName>-orig<FreeNumber>`. These new disk names of the original disks are printed in the PowerShell console.
 
+## Detailed Migration White Paper
+
+In this white paper [How to Migrate a Highly Available SAP System in Azure from Availability Set to Availability Zone.](./Move-Regional-SAP-HA-To-Zonal-SAP-HA-WhitePaper), you can check detail information.
 
 ## Disclaimer
 
