@@ -231,3 +231,8 @@ You can use Azure portal to restore original VM, which is described in the docum
 If you did NOT specified flag `-KeepSameDiskNames`, original OS and data disk names are unchanged during migration to zone.
 
 In case you did specify flag `-KeepSameDiskNames`, original OS and data disk names are changed/copied during migration to zone to a new disk `<OriginalDiskName>-orig<FreeNumber>`. These new disk names of the original disks are printed in the PowerShell console.
+
+
+## Disclaimer
+
+THE SCRIPTS ARE PROVIDED AS IS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
