@@ -1,6 +1,6 @@
 # How to Migrate a Highly Available SAP System in Azure from Availability Set to Availability Zone
 
-SAP is a business-critical system for many companies. Business continuity (BC) and high availability (HA) is a must have for many companies ruining SAP.
+SAP is a business-critical system for many companies. **Business continuity** (**BC**) and **high availability** (**HA**) is a must have for many companies ruining SAP.
 
 **Availability set** is the first HA concept for SAP systems in Azure, that protect an application against unplanned downtime of a physical server and racks inside **ONE data center (DC)**. It also minimizes planned maintenance downtime. Two or more VMs that as parts of an availability set are automatically distributed across the so-called [fault domains](https://docs.microsoft.com/en-us/azure/virtual-machines/availability-set-overview) (physical racks), and [update domains](https://docs.microsoft.com/en-us/azure/virtual-machines/availability-set-overview) to avoid service outage due to host failure or maintenance activities (only one instance is taken down at the time for the planned maintenance).
 
