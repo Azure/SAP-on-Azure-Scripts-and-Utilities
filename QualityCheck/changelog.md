@@ -1,5 +1,14 @@
 # Changelog
 
+## Version 2022041102
+
+* adding case sensitivity to parameters
+
+## Version 2022041101
+
+* adding sudo check
+* adding version check
+
 ## Version 2022022301
 
 * changing naming to "Quality Check for SAP workloads on Azure"

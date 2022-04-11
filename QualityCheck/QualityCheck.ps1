@@ -24,11 +24,11 @@ Licensed under the MIT license.
 [CmdletBinding()]
 param (
     # VM Operating System
-    [Parameter(Mandatory=$true)][string][ValidateSet("Windows", "SUSE", "RedHat", "OracleLinux")]$VMOperatingSystem,
+    [Parameter(Mandatory=$true)][string][ValidateSet("Windows", "SUSE", "RedHat", "OracleLinux",IgnoreCase = $false)]$VMOperatingSystem,
     # Database running SAP
-    [Parameter(Mandatory=$true)][string][ValidateSet("HANA","Oracle","MSSQL","Db2","ASE")]$VMDatabase,
+    [Parameter(Mandatory=$true)][string][ValidateSet("HANA","Oracle","MSSQL","Db2","ASE",IgnoreCase = $false)]$VMDatabase,
     # Which component to check
-    [Parameter(Mandatory=$true)][string][ValidateSet("DB", "ASCS", "APP")]$VMRole,
+    [Parameter(Mandatory=$true)][string][ValidateSet("DB", "ASCS", "APP",IgnoreCase = $false)]$VMRole,
     # VM Resource Group Name
     [Parameter(Mandatory=$true)][string]$AzVMResourceGroup,
     # Azure VM Name
@@ -60,14 +60,14 @@ param (
     # Hardwaretype (VM or HLI)
     [string]$Hardwaretype="VM",
     # HANA Deployment Model
-    [string][ValidateSet("OLTP","OLAP","OLTP-ScaleOut","OLAP-ScaleOut")]$HANADeployment="OLTP",
+    [string][ValidateSet("OLTP","OLAP","OLTP-ScaleOut","OLAP-ScaleOut",IgnoreCase = $false)]$HANADeployment="OLTP",
     # High Availability Agent
-    [string][ValidateSet("SBD","FencingAgent","WCF")]$HighAvailabilityAgent="SBD"
+    [string][ValidateSet("SBD","FencingAgent","WCF",IgnoreCase = $false)]$HighAvailabilityAgent="SBD"
 )
 
 
 # defining script version
-$scriptversion = 2022041101
+$scriptversion = 2022041102
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
