@@ -38,11 +38,13 @@
     https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities
 
 .NOTES
-    v0.1 - Initial version
-    v0.2 - adding usage of existing VNET
-    v0.3 - switching from variables to parameters
-         - adding documentation
-         - adding logon check
+    v0.1        - Initial version
+    v0.2        - adding usage of existing VNET
+    v0.3        - switching from variables to parameters
+                - adding documentation
+                - adding logon check
+    2022041101  - using IP address instead of hostname to avoid issues in existing VNETs
+                - creating storage account for diagnostic information
 
 #>
 <#
@@ -107,6 +109,22 @@ param(
     [string]$nipingpath
 )
 
+
+Function Get-RandomAlphanumericString {
+	
+	[CmdletBinding()]
+	Param (
+        [int] $length = 8
+	)
+
+	Begin{
+	}
+
+	Process{
+        Write-Output ( -join (( 0x61..0x7A) | Get-Random -Count $length  | % {[char]$_}) )
+	}	
+}
+
     Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
 
     if ($testtool -eq "niping") {
@@ -156,6 +174,10 @@ param(
         # create resource group
         Write-Host -ForegroundColor Green "Creating resource group"
         $ResourceGroup = New-AzResourceGroup -Location $region -Name $ResourceGroupName
+
+        # creating storage account for diagnostic information
+        $StorageAccountName = Get-RandomAlphanumericString
+        $StorageAccount = New-AzStorageAccount -ResourceGroupName $ResourceGroupName -Name $StorageAccountName -SkuName Standard_LRS -Location $region
     
         # create vNET and Subnet or getting existing
 	    if ($UseExistingVnet) {
@@ -195,6 +217,7 @@ param(
             $VirtualMachine = Set-AzVMOperatingSystem -VM $VirtualMachine -Linux -ComputerName $ComputerName -Credential $Credential
             $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine -Id $NIC.Id
             $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $OSPublisher -Offer $OSOffer -Skus $OSSku -Version $OSVersion
+            $VirtualMachine = Set-AzVMBootDiagnostic -VM $VirtualMachine -StorageAccountName $StorageAccountName -Enable -ResourceGroupName $ResourceGroupName
             $vm = New-AzVM -ResourceGroupName $ResourceGroupName -Location $region -VM $VirtualMachine -zone $zone -Verbose -AsJob
                 
         }
@@ -214,6 +237,8 @@ param(
 
     Get-SSHTrustedHost | Remove-SSHTrustedHost
 
+    $ipaddresses = @()
+
     Write-Host -ForegroundColor Green "Creating SSH sessions"
     For ($zone=1; $zone -le $zones; $zone++) {
         $ComputerName = $VMPrefix + $zone
@@ -221,7 +246,11 @@ param(
         $NICName = $ComputerName + $NICPostfix
 
         if ($UsePublicIPAddresses) {
-			$pipname = $VMPrefix + $zone + $NICPostfix + $pippostfix 
+			$nic = Get-AzNetworkInterface -Name $NICName
+			$networkinterfaceconfig = Get-AzNetworkInterfaceIpConfig -NetworkInterface $nic
+            $ipaddresses[$ComputerName] += $networkinterfaceconfig.PrivateIpAddress
+
+            $pipname = $VMPrefix + $zone + $NICPostfix + $pippostfix 
 			$PIP = Get-AzPublicIpAddress -Name $pipname
 			$ipaddress = $PIP.IpAddress
         }
@@ -229,8 +258,14 @@ param(
 			$nic = Get-AzNetworkInterface -Name $NICName
 			$networkinterfaceconfig = Get-AzNetworkInterfaceIpConfig -NetworkInterface $nic
             $ipaddress = $networkinterfaceconfig.PrivateIpAddress
+            $ipaddresses[$ComputerName] += $networkinterfaceconfig.PrivateIpAddress
         }
         $sshsession = New-SSHSession -ComputerName $ipaddress -Credential $Credential -AcceptKey -Force
+        if ($sshsession.connected -ne $true)
+        {
+            Write-Host "Unable to connect to IP address $ipaddress"
+            exit
+        }
     }
 
     $sshsessions = Get-SSHSession
@@ -262,28 +297,30 @@ param(
 
             $vmtopingno1 = (( $zone   %3)+1)
             $vmtoping1 = $VMPrefix + (( $zone   %3)+1)
+            $ipaddresstoping1 = $ipaddresses[$vmtoping1]
             $vmtopingno2 = ((($zone+1)%3)+1)
             $vmtoping2 = $VMPrefix + ((($zone+1)%3)+1)
+            $ipaddresstoping1 = $ipaddresses[$vmtoping2]
 
-            $output = Invoke-SSHCommand -Command "qperf $vmtoping1 tcp_lat" -SessionId $sshsessions[$zone-1].SessionId
+            $output = Invoke-SSHCommand -Command "qperf $ipaddresstoping1 tcp_lat" -SessionId $sshsessions[$zone-1].SessionId
             $latencytemp = [string]$output.Output[1]
             $latencytemp = $latencytemp.substring($latencytemp.IndexOf("=")+3)
             $latencytemp = $latencytemp.PadLeft(12)
             $latency[$zone -1][$vmtopingno1 -1] = $latencytemp
 
-            $output = Invoke-SSHCommand -Command "qperf $vmtoping1 tcp_bw" -SessionId $sshsessions[$zone-1].SessionId
+            $output = Invoke-SSHCommand -Command "qperf $ipaddresstoping1 tcp_bw" -SessionId $sshsessions[$zone-1].SessionId
             $bandwidthtemp = [string]$output.Output[1]
             $bandwidthtemp = $bandwidthtemp.substring($bandwidthtemp.IndexOf("=")+3)
             $bandwidthtemp = $bandwidthtemp.PadLeft(12)
             $bandwidth[$zone -1][$vmtopingno1 -1] = $bandwidthtemp
 
-            $output = Invoke-SSHCommand -Command "qperf $vmtoping2 tcp_lat" -SessionId $sshsessions[$zone-1].SessionId
+            $output = Invoke-SSHCommand -Command "qperf $ipaddresstoping2 tcp_lat" -SessionId $sshsessions[$zone-1].SessionId
             $latencytemp = [string]$output.Output[1]
             $latencytemp = $latencytemp.substring($latencytemp.IndexOf("=")+3)
             $latencytemp = $latencytemp.PadLeft(12)
             $latency[$zone -1][$vmtopingno2 -1] = $latencytemp
 
-            $output = Invoke-SSHCommand -Command "qperf $vmtoping2 tcp_bw" -SessionId $sshsessions[$zone-1].SessionId
+            $output = Invoke-SSHCommand -Command "qperf $ipaddresstoping2 tcp_bw" -SessionId $sshsessions[$zone-1].SessionId
             $bandwidthtemp = [string]$output.Output[1]
             $bandwidthtemp = $bandwidthtemp.substring($bandwidthtemp.IndexOf("=")+3)
             $bandwidthtemp = $bandwidthtemp.PadLeft(12)
@@ -310,10 +347,12 @@ param(
 
             $vmtopingno1 = (( $zone   %3)+1)
             $vmtoping1 = $VMPrefix + (( $zone   %3)+1)
+            $ipaddresstoping1 = $ipaddresses[$vmtoping1]
             $vmtopingno2 = ((($zone+1)%3)+1)
             $vmtoping2 = $VMPrefix + ((($zone+1)%3)+1)
+            $ipaddresstoping1 = $ipaddresses[$vmtoping2]
 
-            $output = Invoke-SSHCommand -Command "/tmp/niping -c -B 10 -L 100 -H $vmtoping1 | grep av2" -SessionId $sshsessions[$zone-1].SessionId
+            $output = Invoke-SSHCommand -Command "/tmp/niping -c -B 10 -L 100 -H $ipaddresstoping1 | grep av2" -SessionId $sshsessions[$zone-1].SessionId
             $latencytemp = [string]$output.Output
             $latencytemp = $latencytemp -replace '\s+', ' '
             $latencytemp = $latencytemp -Split " "
@@ -321,7 +360,7 @@ param(
             $latencytemp = $latencytemp.PadLeft(12)
             $latency[$zone -1][$vmtopingno1 -1] = $latencytemp
 
-            $output = Invoke-SSHCommand -Command "/tmp/niping -c -B 100000 -L 100 -H $vmtoping1 | grep tr2" -SessionId $sshsessions[$zone-1].SessionId
+            $output = Invoke-SSHCommand -Command "/tmp/niping -c -B 100000 -L 100 -H $ipaddresstoping1 | grep tr2" -SessionId $sshsessions[$zone-1].SessionId
             $bandwidthtemp = [string]$output.Output
             $bandwidthtemp = $bandwidthtemp -replace '\s+', ' '
             $bandwidthtemp = $bandwidthtemp -Split ". "
@@ -330,7 +369,7 @@ param(
             $bandwidthtemp = $bandwidthtemp.PadLeft(12)
             $bandwidth[$zone -1][$vmtopingno1 -1] = $bandwidthtemp
 
-            $output = Invoke-SSHCommand -Command "/tmp/niping -c -B 10 -L 100 -H $vmtoping2 | grep av2" -SessionId $sshsessions[$zone-1].SessionId
+            $output = Invoke-SSHCommand -Command "/tmp/niping -c -B 10 -L 100 -H $ipaddresstoping2 | grep av2" -SessionId $sshsessions[$zone-1].SessionId
             $latencytemp = [string]$output.Output
             $latencytemp = $latencytemp -replace '\s+', ' '
             $latencytemp = $latencytemp -Split " "
@@ -338,7 +377,7 @@ param(
             $latencytemp = $latencytemp.PadLeft(12)
             $latency[$zone -1][$vmtopingno2 -1] = $latencytemp
 
-            $output = Invoke-SSHCommand -Command "/tmp/niping -c -B 100000 -L 100 -H $vmtoping2 | grep tr2" -SessionId $sshsessions[$zone-1].SessionId
+            $output = Invoke-SSHCommand -Command "/tmp/niping -c -B 100000 -L 100 -H $ipaddresstoping2 | grep tr2" -SessionId $sshsessions[$zone-1].SessionId
             $bandwidthtemp = [string]$output.Output
             $bandwidthtemp = $bandwidthtemp -replace '\s+', ' '
             $bandwidthtemp = $bandwidthtemp -Split ". "

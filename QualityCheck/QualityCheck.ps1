@@ -67,7 +67,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2022022301
+$scriptversion = 2022041101
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -1604,6 +1604,48 @@ function CollectFooter {
 
 }
 
+function CheckSudoPermission {
+
+    # Check is user is able to sudo
+    
+    if ($VMUsername -ne "root") {
+        $_command = PrepareCommand -Command "id" -CommandType "OS" -RootRequired $true
+        $_rootrights = RunCommand -p $_command
+
+        if ($_rootrights.Contains("root")) {
+            # everything ok
+            Write-Host "User is able to sudo"
+        }
+        else {
+            Write-Host "User not able to sudo, please check sudoers" -ForegroundColor Red
+            exit
+        }
+    }
+
+}
+
+function CheckForNewerVersion {
+
+    # download online version
+    # and compare it with version numbers in files to see if there is a newer version available on GitHub
+    $ConfigFileUpdateURL = "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/main/QualityCheck/version.json"
+    try {
+        $OnlineFileVersion = (Invoke-WebRequest -Uri $ConfigFileUpdateURL -UseBasicParsing -ErrorAction SilentlyContinue).Content  | ConvertFrom-Json
+
+        if ($OnlineFileVersion.Version -gt $scriptversion) {
+            Write-Host "There is a newer version of QualityCheck available on GitHub, please consider downloading it" -ForegroundColor Red
+            Write-Host "You can download it on https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities/tree/main/QualityCheck" -ForegroundColor Red
+            Write-Host "Script will continue" -ForegroundColor Red
+            Start-Sleep -Seconds 3
+        }
+
+    }
+    catch {
+        Write-Host "Can't connect to GitHub to check version" -ForegroundColor Yellow
+    }
+
+}
+
 #########
 # Main module
 #########
@@ -1637,6 +1679,9 @@ function CollectFooter {
     # Check for required PowerShell modules
     CheckRequiredModules
 
+    # Check for newer version of QualityCheck
+    CheckForNewerVersion
+    
     # Check TCP connectivity
     CheckTCPConnectivity
 
@@ -1645,6 +1690,9 @@ function CollectFooter {
 
     # Connect to VM
     $_SessionID = ConnectVM
+
+    # Check if user is able to sudo
+    CheckSudoPermission
 
     # Load HTML Header
     LoadHTMLHeader

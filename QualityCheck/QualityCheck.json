@@ -1,5 +1,5 @@
 {
-    "Version": 2022022301,
+    "Version": 2022041101,
     "PowerShellPrerequisits": [
         {
             "ModuleName": "Posh-SSH",
@@ -3755,7 +3755,7 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Disable fstrim",
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://www.suse.com/support/kb/doc/?id=000019447",
             "SAPNote": ""
         },                  
         {
