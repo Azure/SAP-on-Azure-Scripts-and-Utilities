@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 2022041301
+
+* adding a check if sg_map is installed
+
 ## Version 2022041102
 
 * adding case sensitivity to parameters

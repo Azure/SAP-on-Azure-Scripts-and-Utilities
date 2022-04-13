@@ -67,7 +67,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2022041102
+$scriptversion = 2022041301
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -706,6 +706,15 @@ function CollectVMStorage {
         # collect LVM configuration
         $_command = PrepareCommand -Command "/sbin/lvm fullreport --reportformat json" 
         $script:_lvmconfig = RunCommand -p $_command | ConvertFrom-Json
+
+        # checking if sg_map tool is available
+        $_command = PrepareCommand -Command "ls -l /usr/bin/sg_map | wc -l" -CommandType "OS"
+        $_sgmap_installed = RunCommand -p $_command
+        if ($_sgmap_installed -eq "0") {
+            Write-Host "sg_map not installed, please install sg3_utils package" -ForegroundColor Red
+            Write-Host "sg_map is required to match SCSI IDs to disk names" -ForegroundColor Red
+            exit
+        }
 
         # get sg_map output for LUN-ID to disk mapping
         $_command = PrepareCommand -Command "/usr/bin/sg_map -x" -CommandType "OS"
