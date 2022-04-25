@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 2022042501
+
+* fixing issue when customers don't have sg3_utils installed, moving to lsscsi instead of sg_map
+* adding exception handling for disks that are not used, just attached
+* fixing an issue where Db2 OS/DB combination wasn't working
+
 ## Version 2022041301
 
 * adding a check if sg_map is installed

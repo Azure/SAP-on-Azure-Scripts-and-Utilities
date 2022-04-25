@@ -1,5 +1,5 @@
 {
-    "Version": 2022041301,
+    "Version": 2022042501,
     "PowerShellPrerequisits": [
         {
             "ModuleName": "Posh-SSH",
@@ -35,12 +35,12 @@
             "APP": ["Windows", "OracleLinux"]
         },
         "Db2": {
-            "DB": ["Windows", "RedHat"],
+            "DB": ["Windows", "SUSE", "RedHat"],
             "ASCS": ["Windows", "SUSE", "RedHat"],
             "APP": ["Windows", "SUSE", "RedHat"]
         },
         "ASE": {
-            "DB": ["Windows", "RedHat"],
+            "DB": ["Windows", "SUSE", "RedHat"],
             "ASCS": ["Windows", "SUSE", "RedHat"],
             "APP": ["Windows", "SUSE", "RedHat"]
         }
