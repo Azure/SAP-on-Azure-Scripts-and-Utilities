@@ -237,7 +237,7 @@ Function Get-RandomAlphanumericString {
 
     Get-SSHTrustedHost | Remove-SSHTrustedHost
 
-    $ipaddresses = @()
+    $ipaddresses = @{}
 
     Write-Host -ForegroundColor Green "Creating SSH sessions"
     For ($zone=1; $zone -le $zones; $zone++) {
