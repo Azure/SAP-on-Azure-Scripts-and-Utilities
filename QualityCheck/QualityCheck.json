@@ -1,5 +1,5 @@
 {
-    "Version": 2022022301,
+    "Version": 2022042501,
     "PowerShellPrerequisits": [
         {
             "ModuleName": "Posh-SSH",
@@ -35,12 +35,12 @@
             "APP": ["Windows", "OracleLinux"]
         },
         "Db2": {
-            "DB": ["Windows", "RedHat"],
+            "DB": ["Windows", "SUSE", "RedHat"],
             "ASCS": ["Windows", "SUSE", "RedHat"],
             "APP": ["Windows", "SUSE", "RedHat"]
         },
         "ASE": {
-            "DB": ["Windows", "RedHat"],
+            "DB": ["Windows", "SUSE", "RedHat"],
             "ASCS": ["Windows", "SUSE", "RedHat"],
             "APP": ["Windows", "SUSE", "RedHat"]
         }
@@ -3755,7 +3755,7 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Disable fstrim",
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://www.suse.com/support/kb/doc/?id=000019447",
             "SAPNote": ""
         },                  
         {

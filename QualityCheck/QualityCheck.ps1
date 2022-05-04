@@ -24,11 +24,11 @@ Licensed under the MIT license.
 [CmdletBinding()]
 param (
     # VM Operating System
-    [Parameter(Mandatory=$true)][string][ValidateSet("Windows", "SUSE", "RedHat", "OracleLinux")]$VMOperatingSystem,
+    [Parameter(Mandatory=$true)][string][ValidateSet("Windows", "SUSE", "RedHat", "OracleLinux",IgnoreCase = $false)]$VMOperatingSystem,
     # Database running SAP
-    [Parameter(Mandatory=$true)][string][ValidateSet("HANA","Oracle","MSSQL","Db2","ASE")]$VMDatabase,
+    [Parameter(Mandatory=$true)][string][ValidateSet("HANA","Oracle","MSSQL","Db2","ASE",IgnoreCase = $false)]$VMDatabase,
     # Which component to check
-    [Parameter(Mandatory=$true)][string][ValidateSet("DB", "ASCS", "APP")]$VMRole,
+    [Parameter(Mandatory=$true)][string][ValidateSet("DB", "ASCS", "APP",IgnoreCase = $false)]$VMRole,
     # VM Resource Group Name
     [Parameter(Mandatory=$true)][string]$AzVMResourceGroup,
     # Azure VM Name
@@ -60,14 +60,14 @@ param (
     # Hardwaretype (VM or HLI)
     [string]$Hardwaretype="VM",
     # HANA Deployment Model
-    [string][ValidateSet("OLTP","OLAP","OLTP-ScaleOut","OLAP-ScaleOut")]$HANADeployment="OLTP",
+    [string][ValidateSet("OLTP","OLAP","OLTP-ScaleOut","OLAP-ScaleOut",IgnoreCase = $false)]$HANADeployment="OLTP",
     # High Availability Agent
-    [string][ValidateSet("SBD","FencingAgent","WCF")]$HighAvailabilityAgent="SBD"
+    [string][ValidateSet("SBD","FencingAgent","WCF",IgnoreCase = $false)]$HighAvailabilityAgent="SBD"
 )
 
 
 # defining script version
-$scriptversion = 2022022301
+$scriptversion = 2022042501
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -218,7 +218,29 @@ function ConvertFrom-String_sgmap {
     
     # create a table object
     $_x | Foreach-Object {
-	    $_output += $_ | ConvertFrom-Csv -Header P1,P2,P3,P4,P5,P6,P7
+	    $_output += $_ | ConvertFrom-Csv -Header P1,P2,P3,P4,P5,P6,P7,P8,P9,P10,P11
+    }
+
+    # return object
+    return $_output
+}
+
+function ConvertFrom-String_lsscsi {
+
+    [CmdletBinding()]
+    param (
+        [object]$p
+    )
+
+    # create empty array
+    $_output = @()
+    
+    # replace characters between numbers with a ','
+    $_x = $p.Trim() -replace '\s+',','
+    
+    # create a table object
+    $_x | Foreach-Object {
+	    $_output += $_ | ConvertFrom-Csv -Header P1,P2,P3,P4,P5,P6,P7,P8,P9,P10
     }
 
     # return object
@@ -707,11 +729,23 @@ function CollectVMStorage {
         $_command = PrepareCommand -Command "/sbin/lvm fullreport --reportformat json" 
         $script:_lvmconfig = RunCommand -p $_command | ConvertFrom-Json
 
-        # get sg_map output for LUN-ID to disk mapping
-        $_command = PrepareCommand -Command "/usr/bin/sg_map -x" -CommandType "OS"
-        $script:_diskmapping = RunCommand -p $_command
-        $script:_diskmapping = ConvertFrom-String_sgmap -p $script:_diskmapping
+        # checking if sg_map tool is available
+        #$_command = PrepareCommand -Command "ls -l /usr/bin/sg_map | wc -l" -CommandType "OS"
+        #$_sgmap_installed = RunCommand -p $_command
+        #if ($_sgmap_installed -eq "0") {
+        #    Write-Host "sg_map not installed, please install sg3_utils package" -ForegroundColor Red
+        #    Write-Host "sg_map is required to match SCSI IDs to disk names" -ForegroundColor Red
+        #    exit
+        #}
 
+        # get device for root
+        $_command = PrepareCommand -Command "realpath /dev/disk/azure/root" -CommandType "OS"
+        $_rootdisk = RunCommand -p $_command
+
+        # get device for root
+        $_command = PrepareCommand -Command "realpath /dev/disk/azure/resource" -CommandType "OS"
+        $_resourcedisk = RunCommand -p $_command
+        
         # get storage using metadata service
         $_command = PrepareCommand -Command "/usr/bin/curl --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/storageProfile?api-version=2021-11-01'"
         $script:_azurediskconfig = RunCommand -p $_command | ConvertFrom-Json
@@ -719,18 +753,8 @@ function CollectVMStorage {
         # get Azure Disks in Resource Group
         $_command = PrepareCommand -Command "Get-AzDisk -ResourceGroupName $AzVMResourceGroup" -CommandType "PowerShell"
         $script:_AzureDiskDetails = RunCommand -p $_command
-        
-        $script:_AzureDisks = @()
 
-        # if VM is Gen1 then SCSI Controller ID is 5, otherwise it is 1 (Gen2)
-        if ($VMGeneration -eq "Gen1") {
-            $script:_DataDiskSCSIControllerID = 5
-            $script:_OSDiskSCSIControllerID = 2
-        }
-        else {
-            $script:_DataDiskSCSIControllerID = 1
-            $script:_OSDiskSCSIControllerID = 0
-        }
+        $script:_AzureDisks = @()
 
         # add OS Disk Infos
         $_AzureDisk_row = "" | Select-Object LUNID, Name, DeviceName, VolumeGroup, Size, DiskType, IOPS, MBPS, PerformanceTier, StorageType, Caching, WriteAccelerator
@@ -744,10 +768,24 @@ function CollectVMStorage {
         $_AzureDisk_row.IOPS = ($script:_AzureDiskDetails | Where-Object { $_.Name -eq $script:_azurediskconfig.osDisk.name }).DiskIOPSReadWrite
         $_AzureDisk_row.MBPS = ($script:_AzureDiskDetails | Where-Object { $_.Name -eq $script:_azurediskconfig.osDisk.name }).DiskMBpsReadWrite
         $_AzureDisk_row.PerformanceTier = ($script:_AzureDiskDetails | Where-Object { $_.Name -eq $script:_azurediskconfig.osDisk.name }).Tier
-        $_AzureDisk_row.DeviceName = ($script:_diskmapping | Where-Object { ($_.P5 -eq 0) -and ($_.P2 -eq $script:_OSDiskSCSIControllerID) }).P7
+        # $_AzureDisk_row.DeviceName = ($script:_diskmapping | Where-Object { ($_.P5 -eq 0) -and ($_.P2 -eq $script:_OSDiskSCSIControllerID) }).P7
+        $_AzureDisk_row.DeviceName = $_rootdisk
         $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -like ($_AzureDisk_row.DeviceName + "*")}).vg.vg_name
 
         $script:_AzureDisks += $_AzureDisk_row
+
+        # get sg_map output for LUN-ID to disk mapping
+        $_rootdisk.Replace("/dev/","") 
+        $_resourcedisk.Replace("/dev/","")
+        #$_sgmap_command = "sg_map -i -x | grep Virtual | grep -v " + $_rootdisk + " | grep -v " + $_resourcedisk
+        #$_command = PrepareCommand -Command $_sgmap_command -CommandType "OS"
+        #$script:_diskmapping = RunCommand -p $_command
+        #$script:_diskmapping = ConvertFrom-String_sgmap -p $script:_diskmapping
+
+        $_lsscsi_command = "lsscsi | sed 's/\[//; s/\]//; s/\.//' | sed 's/:/ /g' | grep Virtual | grep -v " + $_rootdisk + " | grep -v " + $_resourcedisk
+        $_command = PrepareCommand -Command $_lsscsi_command -CommandType OS
+        $script:_diskmapping = RunCommand -p $_command
+        $script:_diskmapping = ConvertFrom-String_lsscsi -p $script:_diskmapping
 
         # add datadisks to table
         foreach ($_datadisk in $script:_azurediskconfig.dataDisks) {
@@ -763,9 +801,20 @@ function CollectVMStorage {
             $_AzureDisk_row.Caching = $_datadisk.caching
             $_AzureDisk_row.WriteAccelerator = $_datadisk.writeAcceleratorEnabled
 
-            $_AzureDisk_row.DeviceName = ($script:_diskmapping | Where-Object { ($_.P5 -eq $_datadisk.lun) -and ($_.P2 -eq $script:_DataDiskSCSIControllerID) }).P7
-            # $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -eq $_AzureDisk_row.DeviceName}).vg.vg_name
-            $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -like ($_AzureDisk_row.DeviceName + "*")}).vg[0].vg_name
+            # $_AzureDisk_row.DeviceName = ($script:_diskmapping | Where-Object { ($_.P5 -eq $_datadisk.lun) -and ($_.P2 -eq $script:_DataDiskSCSIControllerID) }).P7
+            # $_AzureDisk_row.DeviceName = ($script:_diskmapping | Where-Object { ($_.P5 -eq $_datadisk.lun) }).P7
+            try {
+                $_AzureDisk_row.DeviceName = ($script:_diskmapping | Where-Object { ($_.P4 -eq $_datadisk.lun) }).P10
+            }
+            catch {
+                Write-Host ("Couldn't find device name for LUN " + $_datadisk.lun)
+            }
+            try {
+                $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -like ($_AzureDisk_row.DeviceName + "*")}).vg[0].vg_name
+            }
+            catch {
+                Write-Host ("Couldn't find Volume Group for device " + $_AzureDisk_row.DeviceName)
+            }
 
             $_AzureDisk_row.IOPS = ($_AzureDiskDetails | Where-Object { $_.Name -eq $_datadisk.name }).DiskIOPSReadWrite
             $_AzureDisk_row.MBPS = ($_AzureDiskDetails | Where-Object { $_.Name -eq $_datadisk.name }).DiskMBpsReadWrite
@@ -1604,6 +1653,48 @@ function CollectFooter {
 
 }
 
+function CheckSudoPermission {
+
+    # Check is user is able to sudo
+    
+    if ($VMUsername -ne "root") {
+        $_command = PrepareCommand -Command "id" -CommandType "OS" -RootRequired $true
+        $_rootrights = RunCommand -p $_command
+
+        if ($_rootrights.Contains("root")) {
+            # everything ok
+            Write-Host "User is able to sudo"
+        }
+        else {
+            Write-Host "User not able to sudo, please check sudoers" -ForegroundColor Red
+            exit
+        }
+    }
+
+}
+
+function CheckForNewerVersion {
+
+    # download online version
+    # and compare it with version numbers in files to see if there is a newer version available on GitHub
+    $ConfigFileUpdateURL = "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/main/QualityCheck/version.json"
+    try {
+        $OnlineFileVersion = (Invoke-WebRequest -Uri $ConfigFileUpdateURL -UseBasicParsing -ErrorAction SilentlyContinue).Content  | ConvertFrom-Json
+
+        if ($OnlineFileVersion.Version -gt $scriptversion) {
+            Write-Host "There is a newer version of QualityCheck available on GitHub, please consider downloading it" -ForegroundColor Red
+            Write-Host "You can download it on https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities/tree/main/QualityCheck" -ForegroundColor Red
+            Write-Host "Script will continue" -ForegroundColor Red
+            Start-Sleep -Seconds 3
+        }
+
+    }
+    catch {
+        Write-Host "Can't connect to GitHub to check version" -ForegroundColor Yellow
+    }
+
+}
+
 #########
 # Main module
 #########
@@ -1637,6 +1728,9 @@ function CollectFooter {
     # Check for required PowerShell modules
     CheckRequiredModules
 
+    # Check for newer version of QualityCheck
+    CheckForNewerVersion
+    
     # Check TCP connectivity
     CheckTCPConnectivity
 
@@ -1645,6 +1739,9 @@ function CollectFooter {
 
     # Connect to VM
     $_SessionID = ConnectVM
+
+    # Check if user is able to sudo
+    CheckSudoPermission
 
     # Load HTML Header
     LoadHTMLHeader
