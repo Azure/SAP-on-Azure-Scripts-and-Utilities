@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 2022050901
+
+* fixing parameters
+
 ## Version 2022042501
 
 * fixing issue when customers don't have sg3_utils installed, moving to lsscsi instead of sg_map

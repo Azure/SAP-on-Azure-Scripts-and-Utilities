@@ -1,5 +1,5 @@
 {
-    "Version": 2022042501,
+    "Version": 2022050901,
     "PowerShellPrerequisits": [
         {
             "ModuleName": "Posh-SSH",
@@ -2584,7 +2584,7 @@
         },
         {
             "CheckID": "HDB-ANF-0015",
-            "Description": "sysctl ipv6.conf.all.disable_ipv6",
+            "Description": "sysctl net.ipv6.conf.all.disable_ipv6",
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
@@ -2595,7 +2595,7 @@
             "HighAvailability": [false, true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/sbin/sysctl ipv6.conf.all.disable_ipv6 -n",
+            "ProcessingCommand": "/sbin/sysctl net.ipv6.conf.all.disable_ipv6 -n",
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
             "ShowAlternativeRequirement": "",
@@ -2615,7 +2615,7 @@
             "StorageType": ["ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
-            "ErrorCategory": "ERROR",
+            "ErrorCategory": "WARN",
             "HighAvailability": [false, true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
             "CommandType": "OS",
