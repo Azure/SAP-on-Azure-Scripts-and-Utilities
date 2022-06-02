@@ -38,6 +38,10 @@ troubleshooting and resolution of support issues related to SAP.
 2.  Download the workbook json from github repository or Microsoft team
     can share it on email as part of engagement process.
 
+## How to access *Azure Inventory Checks* for SAP Workbook:
+
+https://aka.ms/ACESInventoryCheckSAP
+
 ## How to import *Azure Inventory Checks* for SAP Workbook:
 
 1.  Login to Azure Portal
