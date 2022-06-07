@@ -300,7 +300,7 @@ Function Get-RandomAlphanumericString {
             $ipaddresstoping1 = $ipaddresses[$vmtoping1]
             $vmtopingno2 = ((($zone+1)%3)+1)
             $vmtoping2 = $VMPrefix + ((($zone+1)%3)+1)
-            $ipaddresstoping1 = $ipaddresses[$vmtoping2]
+            $ipaddresstoping2 = $ipaddresses[$vmtoping2]
 
             $output = Invoke-SSHCommand -Command "qperf $ipaddresstoping1 tcp_lat" -SessionId $sshsessions[$zone-1].SessionId
             $latencytemp = [string]$output.Output[1]
@@ -350,7 +350,7 @@ Function Get-RandomAlphanumericString {
             $ipaddresstoping1 = $ipaddresses[$vmtoping1]
             $vmtopingno2 = ((($zone+1)%3)+1)
             $vmtoping2 = $VMPrefix + ((($zone+1)%3)+1)
-            $ipaddresstoping1 = $ipaddresses[$vmtoping2]
+            $ipaddresstoping2 = $ipaddresses[$vmtoping2]
 
             $output = Invoke-SSHCommand -Command "/tmp/niping -c -B 10 -L 100 -H $ipaddresstoping1 | grep av2" -SessionId $sshsessions[$zone-1].SessionId
             $latencytemp = [string]$output.Output
