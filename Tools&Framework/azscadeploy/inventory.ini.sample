@@ -1,0 +1,8 @@
+[scaservers]
+scaVM ansible_port=22
+        
+[scaservers:vars]
+ansible_host= 20.83.123.73
+ansible_user = azureuser
+ansible_private_key_file = pkey.out
+ansible_python_interpreter=/usr/bin/python3
