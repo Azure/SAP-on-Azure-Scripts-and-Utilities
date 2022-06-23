@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 2022062301
+
+* fixing an issue with root and resource disk causing the script not to find the correct LUN ID for data disks
+
 ## Version 2022050901
 
 * fixing parameters
