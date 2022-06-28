@@ -67,7 +67,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2022050901
+$scriptversion = 2022062302
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -739,11 +739,13 @@ function CollectVMStorage {
         #}
 
         # get device for root
-        $_command = PrepareCommand -Command "realpath /dev/disk/azure/root" -CommandType "OS"
+        # $_command = PrepareCommand -Command "realpath /dev/disk/azure/root" -CommandType "OS"
+        $_command = PrepareCommand -Command "realpath /dev/disk/cloud/azure_root" -CommandType "OS"
         $_rootdisk = RunCommand -p $_command
 
         # get device for root
-        $_command = PrepareCommand -Command "realpath /dev/disk/azure/resource" -CommandType "OS"
+        # $_command = PrepareCommand -Command "realpath /dev/disk/azure/resource" -CommandType "OS"
+        $_command = PrepareCommand -Command "realpath /dev/disk/cloud/azure_resource" -CommandType "OS"
         $_resourcedisk = RunCommand -p $_command
         
         # get storage using metadata service
@@ -1789,4 +1791,3 @@ function CheckForNewerVersion {
 
     Remove-SSHSession -SessionId $_SessionID | Out-Null
     exit
-
