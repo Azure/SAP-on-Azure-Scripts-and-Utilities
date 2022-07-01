@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 2022070101
+
+* hotfix for OSdisk VG identification
+* changing information collection sg_map to lsscsi
+
 ## Version 2022062302
 
 * fixing a typo for HANA SLES Fencing Agent configuration

@@ -1,5 +1,5 @@
 {
-    "Version": 2022062302,
+    "Version": 2022070101,
     "PowerShellPrerequisits": [
         {
             "ModuleName": "Posh-SSH",
@@ -2036,14 +2036,14 @@
         },
         {
             "CheckID": "IC-9012",
-            "Description": "sg_map",
+            "Description": "lsscsi",
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
             "DB": ["HANA", "MSSQL", "Db2"],
             "Role": ["DB","ASCS","APP"],
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/bin/sg_map -x",
+            "ProcessingCommand": "/usr/bin/lsscsi",
             "PostProcessingCommand": "",
             "RootRequired": true,
             "ShowInReport": true,

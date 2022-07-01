@@ -67,7 +67,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2022062302
+$scriptversion = 2022070101
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -729,6 +729,10 @@ function CollectVMStorage {
         $_command = PrepareCommand -Command "/sbin/lvm fullreport --reportformat json" 
         $script:_lvmconfig = RunCommand -p $_command | ConvertFrom-Json
 
+        # get storage using metadata service
+        $_command = PrepareCommand -Command "/usr/bin/curl --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/storageProfile?api-version=2021-11-01'"
+        $script:_azurediskconfig = RunCommand -p $_command | ConvertFrom-Json
+        
         # checking if sg_map tool is available
         #$_command = PrepareCommand -Command "ls -l /usr/bin/sg_map | wc -l" -CommandType "OS"
         #$_sgmap_installed = RunCommand -p $_command
@@ -740,17 +744,27 @@ function CollectVMStorage {
 
         # get device for root
         # $_command = PrepareCommand -Command "realpath /dev/disk/azure/root" -CommandType "OS"
-        $_command = PrepareCommand -Command "realpath /dev/disk/cloud/azure_root" -CommandType "OS"
+        $_command = PrepareCommand -Command "realpath -m /dev/disk/cloud/azure_root" -CommandType "OS"
         $_rootdisk = RunCommand -p $_command
+        if ($_rootdisk -eq "/dev/disk/cloud/azure_root") {
+            # backup if the virtual device doesn't exist
+            $_rootdisk = "/dev/sda"
+        }
 
         # get device for root
         # $_command = PrepareCommand -Command "realpath /dev/disk/azure/resource" -CommandType "OS"
-        $_command = PrepareCommand -Command "realpath /dev/disk/cloud/azure_resource" -CommandType "OS"
-        $_resourcedisk = RunCommand -p $_command
-        
-        # get storage using metadata service
-        $_command = PrepareCommand -Command "/usr/bin/curl --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/storageProfile?api-version=2021-11-01'"
-        $script:_azurediskconfig = RunCommand -p $_command | ConvertFrom-Json
+        if ($script:_azurediskconfig.resourceDisk.size -gt 0) {
+            $_command = PrepareCommand -Command "realpath -m /dev/disk/cloud/azure_resource" -CommandType "OS"
+            $_resourcedisk = RunCommand -p $_command
+            if ($_resourcedisk -eq "/dev/disk/cloud/azure_resource") {
+                # backup if the virtual device doesn't exist
+                $_resourcedisk = "/dev/sdb"
+            }
+        }
+        else {
+            # setting a value for systems that don't have a resource disk for lsscsi grep command
+            $_resourcedisk = "/dev/noresourcedisk"
+        }
 
         # get Azure Disks in Resource Group
         $_command = PrepareCommand -Command "Get-AzDisk -ResourceGroupName $AzVMResourceGroup" -CommandType "PowerShell"
@@ -772,7 +786,7 @@ function CollectVMStorage {
         $_AzureDisk_row.PerformanceTier = ($script:_AzureDiskDetails | Where-Object { $_.Name -eq $script:_azurediskconfig.osDisk.name }).Tier
         # $_AzureDisk_row.DeviceName = ($script:_diskmapping | Where-Object { ($_.P5 -eq 0) -and ($_.P2 -eq $script:_OSDiskSCSIControllerID) }).P7
         $_AzureDisk_row.DeviceName = $_rootdisk
-        $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -like ($_AzureDisk_row.DeviceName + "*")}).vg.vg_name
+        $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -like ($_AzureDisk_row.DeviceName + "*")}).vg[0].vg_name
 
         $script:_AzureDisks += $_AzureDisk_row
 
