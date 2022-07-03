@@ -1,5 +1,5 @@
 {
-    "Version": 2022070101,
+    "Version": 2022070301,
     "PowerShellPrerequisits": [
         {
             "ModuleName": "Posh-SSH",
@@ -1698,6 +1698,7 @@
             "HardwareType": ["VM", "HLI"],
             "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
             "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": true,
             "CommandType": "OS",
             "ProcessingCommand": "/bin/hostname",
             "PostProcessingCommand": "",
@@ -1713,6 +1714,7 @@
             "HardwareType": ["VM", "HLI"],
             "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
             "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": true,
             "CommandType": "OS",
             "ProcessingCommand": "/bin/uname -r",
             "PostProcessingCommand": "Set-Variable -Name _Kernelversion -Scope Script -Value PARAMETER; 'PARAMETER'",
@@ -1728,6 +1730,7 @@
             "HardwareType": ["VM", "HLI"],
             "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
             "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": true,
             "CommandType": "OS",
             "ProcessingCommand": "/bin/cat /var/lib/hyperv/.kvp_pool_3 | tr -d '\\000' | grep -o -P '(?<=HostName).*(?=HostingSystemEditionId)'",
             "PostProcessingCommand": "",
@@ -1743,8 +1746,9 @@
             "HardwareType": ["VM", "HLI"],
             "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
             "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": true,
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/bin/curl --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/vmSize?api-version=2019-11-01&format=text'",
+            "ProcessingCommand": "/usr/bin/curl -s --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/vmSize?api-version=2019-11-01&format=text'",
             "PostProcessingCommand": "Set-Variable -Name _VMType -Scope Script -Value PARAMETER; 'PARAMETER'",
             "RootRequired": false,
             "ShowInReport": true,
@@ -1758,8 +1762,9 @@
             "HardwareType": ["VM", "HLI"],
             "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
             "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": true,
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/bin/curl --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/zone?api-version=2021-03-01&format=text'",
+            "ProcessingCommand": "/usr/bin/curl -s --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/zone?api-version=2021-03-01&format=text'",
             "PostProcessingCommand": "",
             "RootRequired": false,
             "ShowInReport": true,
@@ -1773,6 +1778,7 @@
             "HardwareType": ["VM", "HLI"],
             "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
             "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": false,
             "CommandType": "PowerShell",
             "ProcessingCommand": "(Get-AzVM -ResourceGroupName $AzVMResourceGroup -Name $AzVMName).AvailabilitySetReference.Id",
             "PostProcessingCommand": "",
@@ -1788,6 +1794,7 @@
             "HardwareType": ["VM", "HLI"],
             "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
             "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": true,
             "CommandType": "OS",
             "ProcessingCommand": "/bin/cat /etc/os-release",
             "PostProcessingCommand": "",
@@ -1803,6 +1810,7 @@
             "HardwareType": ["VM", "HLI"],
             "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
             "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": true,
             "CommandType": "OS",
             "ProcessingCommand": "/bin/cat /etc/os-release | grep VERSION_ID",
             "PostProcessingCommand": "$x = 'PARAMETER'; $x = ($x.replace('VERSION_ID=','')).replace('\"',''); Set-Variable -Name VMOSRelease -Scope script -value $x; $VMOSRelease",
@@ -1818,6 +1826,7 @@
             "HardwareType": ["VM", "HLI"],
             "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
             "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": false,
             "CommandType": "PowerShell",
             "ProcessingCommand": "$ppg = (Get-AzVM -ResourceGroupName $AzVMResourceGroup -Name $AzVMName).ProximityPlacementGroup; if (!$ppg) { 'No PPG defined' } else { (Get-AzProximityPlacementGroup -ResourceId $ppg.Id).Name }",
             "PostProcessingCommand": "",
@@ -1833,6 +1842,7 @@
             "HardwareType": ["VM", "HLI"],
             "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
             "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": false,
             "CommandType": "PowerShell",
             "ProcessingCommand": "$ppg = (Get-AzVM -ResourceGroupName $AzVMResourceGroup -Name $AzVMName).ProximityPlacementGroup; if (!$ppg) { 'No PPG defined' } else { (Get-AzProximityPlacementGroup -ResourceId $ppg.Id).VirtualMachines.Id }",
             "PostProcessingCommand": "",
@@ -1848,6 +1858,7 @@
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
             "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": false,
             "CommandType": "PowerShell",
             "ProcessingCommand": "$VMGeneration = (Get-AzDisk -Name (Get-AzVM -ResourceGroupName $AzVMResourceGroup -Name $AzVMName).StorageProfile.OsDisk.Name).HyperVGeneration; if ($VMGeneration -eq 'V1') { Set-Variable -Name VMGeneration -Scope Script -Value 'Gen1'; 'Gen1' } else { Set-Variable -Name VMGeneration -Scope Script -Value 'Gen2'; 'Gen2' }",
             "PostProcessingCommand": "",
@@ -1867,6 +1878,7 @@
             "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
             "CommandType": "OS",
             "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": true,
             "ProcessingCommand": "/bin/cat /etc/hosts",
             "PostProcessingCommand": "",
             "RootRequired": true,
@@ -1882,6 +1894,7 @@
             "HardwareType": ["VM", "HLI"],
             "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
             "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": true,
             "CommandType": "OS",
             "ProcessingCommand": "/sbin/sysctl -a",
             "PostProcessingCommand": "",
@@ -1898,6 +1911,7 @@
             "HardwareType": ["VM", "HLI"],
             "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
             "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": true,
             "CommandType": "OS",
             "ProcessingCommand": "/bin/cat /etc/fstab",
             "PostProcessingCommand": "",
@@ -1914,6 +1928,7 @@
             "HardwareType": ["VM", "HLI"],
             "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
             "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": true,
             "CommandType": "OS",
             "ProcessingCommand": "/bin/systemctl list-unit-files --state=enabled",
             "PostProcessingCommand": "",
@@ -1930,6 +1945,7 @@
             "HardwareType": ["VM", "HLI"],
             "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
             "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": true,
             "CommandType": "OS",
             "ProcessingCommand": "/sbin/chkconfig",
             "PostProcessingCommand": "",
@@ -1946,6 +1962,7 @@
             "HardwareType": ["VM", "HLI"],
             "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
             "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": true,
             "CommandType": "OS",
             "ProcessingCommand": "rpm -qa",
             "PostProcessingCommand": "",
@@ -1962,6 +1979,7 @@
             "HardwareType": ["VM"],
             "DB": ["HANA", "MSSQL", "Db2"],
             "Role": ["DB","ASCS"],
+            "RunInLocalMode": true,
             "CommandType": "OS",
             "ProcessingCommand": "/bin/cat /etc/sysconfig/sbd",
             "PostProcessingCommand": "",
@@ -1978,6 +1996,7 @@
             "HardwareType": ["VM"],
             "DB": ["HANA", "MSSQL", "Db2"],
             "Role": ["DB","ASCS"],
+            "RunInLocalMode": true,
             "CommandType": "OS",
             "ProcessingCommand": "/usr/sbin/crm configure show",
             "PostProcessingCommand": "",
@@ -1994,6 +2013,7 @@
             "HardwareType": ["VM"],
             "DB": ["HANA", "MSSQL", "Db2"],
             "Role": ["DB","ASCS"],
+            "RunInLocalMode": true,
             "CommandType": "OS",
             "ProcessingCommand": "/usr/sbin/crm status",
             "PostProcessingCommand": "",
@@ -2010,6 +2030,7 @@
             "HardwareType": ["VM"],
             "DB": ["HANA", "MSSQL", "Db2"],
             "Role": ["DB","ASCS"],
+            "RunInLocalMode": true,
             "CommandType": "OS",
             "ProcessingCommand": "/sbin/pcs config",
             "PostProcessingCommand": "",
@@ -2026,6 +2047,7 @@
             "HardwareType": ["VM"],
             "DB": ["HANA", "MSSQL", "Db2"],
             "Role": ["DB","ASCS"],
+            "RunInLocalMode": true,
             "CommandType": "OS",
             "ProcessingCommand": "/sbin/pcs status",
             "PostProcessingCommand": "",
@@ -2042,6 +2064,7 @@
             "HardwareType": ["VM"],
             "DB": ["HANA", "MSSQL", "Db2"],
             "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": true,
             "CommandType": "OS",
             "ProcessingCommand": "/usr/bin/lsscsi",
             "PostProcessingCommand": "",
@@ -2058,8 +2081,9 @@
             "HardwareType": ["VM"],
             "DB": ["HANA", "MSSQL", "Db2"],
             "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": true,
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/bin/curl --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/storageProfile?api-version=2021-11-01'",
+            "ProcessingCommand": "/usr/bin/curl -s --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/storageProfile?api-version=2021-11-01'",
             "PostProcessingCommand": "",
             "RootRequired": true,
             "ShowInReport": true,
@@ -2074,6 +2098,7 @@
             "HardwareType": ["VM"],
             "DB": ["HANA", "MSSQL", "Db2"],
             "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": false,
             "CommandType": "PowerShell",
             "ProcessingCommand": "(Get-AzVM -Name $AzVMName -ResourceGroupName $AzVMResourceGroup).StorageProfile.DataDisks | Get-AzDisk | ConvertTo-JSON",
             "PostProcessingCommand": "",
@@ -2090,6 +2115,7 @@
             "HardwareType": ["VM"],
             "DB": ["HANA", "MSSQL", "Db2"],
             "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": true,
             "CommandType": "OS",
             "ProcessingCommand": "/sbin/lvm fullreport --reportformat json",
             "PostProcessingCommand": "",
@@ -2101,30 +2127,6 @@
     ],
     "Checks": [
         {
-            "CheckID": "HDB-OS-0001",
-            "Description": "sysctl net.ipv4.ip_local_port_range",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "ErrorCategory": "WARNING",
-            "HighAvailability": [false, true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "/sbin/sysctl net.ipv4.ip_local_port_range -n",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "9000 65499",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "Optimizing the Network Configuration on HANA- and OS-Level",
-            "MicrosoftDocs": "",
-            "SAPNote": "2382421"
-        },
-        {
             "CheckID": "ASCS-NET-0001",
             "Description": "Load Balancer timestamps",
             "OS": ["SUSE","RedHat"],
@@ -2133,6 +2135,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["ASCS"],
             "DB": ["HANA", "Db2", "Oracle"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2145,6 +2148,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Timestamp parameter for HA Load Balancers",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-nfs-azure-files",
             "SAPNote": "2382421"
         },
@@ -2159,6 +2165,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA", "Db2"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2171,6 +2178,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Timestamp parameter for HA Load Balancers",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-netapp-files",
             "SAPNote": "2382421"
         },
@@ -2183,6 +2193,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB","ASCS","APP"],
             "DB": ["HANA","Db2","MSSQL","Oracle"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false, true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2195,6 +2206,9 @@
             "RootRequired": false,
             "ShowInReport": true,
             "AdditionalInfo": "Is the VM Type support for SAP on Azure in this scenario",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": "1928533"
         },
@@ -2207,6 +2221,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false, true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2219,6 +2234,9 @@
             "RootRequired": false,
             "ShowInReport": true,
             "AdditionalInfo": "Is the VM Type support for the specified HANA workload",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": "1928533"
         },
@@ -2231,6 +2249,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB","ASCS","APP"],
             "DB": ["HANA","MSSQL","Oracle","Db2"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false, true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2243,6 +2262,9 @@
             "RootRequired": false,
             "ShowInReport": true,
             "AdditionalInfo": "Is OS/DB combination supported for SAP on Azure",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": "1928533"
         },
@@ -2255,6 +2277,7 @@
             "StorageType": ["ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false, true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2267,8 +2290,11 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "OS parameter for ANF performance",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse",
-            "SAPNote": ""
+            "SAPNote": "3024346"
         },
         {
             "CheckID": "HDB-ANF-0002",
@@ -2279,6 +2305,7 @@
             "StorageType": ["ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false, true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2291,56 +2318,11 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "OS parameter for ANF performance",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "HDB-ANF-0003",
-            "Description": "sysctl net.core.rmem_default",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "ErrorCategory": "ERROR",
-            "HighAvailability": [false, true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "/sbin/sysctl net.core.rmem_default -n",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "16777216",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "OS parameter for ANF performance",
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse",
-            "SAPNote": ""
-        },
-        {
-            "CheckID": "HDB-ANF-0004",
-            "Description": "sysctl net.core.wmem_default",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "ErrorCategory": "ERROR",
-            "HighAvailability": [false, true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "/sbin/sysctl net.core.wmem_default -n",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "16777216",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "OS parameter for ANF performance",
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse",
-            "SAPNote": ""
+            "SAPNote": "3024346"
         },
         {
             "CheckID": "HDB-ANF-0005",
@@ -2351,6 +2333,7 @@
             "StorageType": ["ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false, true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2363,8 +2346,11 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "OS parameter for ANF performance",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse",
-            "SAPNote": ""
+            "SAPNote": "3024346"
         },
         {
             "CheckID": "HDB-ANF-0006",
@@ -2375,20 +2361,25 @@
             "StorageType": ["ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false, true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
             "CommandType": "OS",
             "ProcessingCommand": "/sbin/sysctl net.ipv4.tcp_rmem -n",
             "PostProcessingCommand": "",
-            "ExpectedResult": "65536 16777216 16777216",
+            "ExpectedResult": "4096 131072 16777216",
             "ShowAlternativeRequirement": "",
             "ShowAlternativeResult": "",
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "OS parameter for ANF performance",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20220703", "ChangeLog": "new recommendations in SAP note" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse",
-            "SAPNote": ""
+            "SAPNote": "3024346"
         },
         {
             "CheckID": "HDB-ANF-0007",
@@ -2399,20 +2390,25 @@
             "StorageType": ["ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false, true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
             "CommandType": "OS",
             "ProcessingCommand": "/sbin/sysctl net.ipv4.tcp_wmem -n",
             "PostProcessingCommand": "",
-            "ExpectedResult": "65536 16777216 16777216",
+            "ExpectedResult": "4096 16384 16777216",
             "ShowAlternativeRequirement": "",
             "ShowAlternativeResult": "",
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "OS parameter for ANF performance",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20220703", "ChangeLog": "new recommendations in SAP note" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse",
-            "SAPNote": ""
+            "SAPNote": "3024346"
         },
         {
             "CheckID": "HDB-ANF-0008",
@@ -2423,6 +2419,7 @@
             "StorageType": ["ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false, true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2435,8 +2432,11 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "OS parameter for ANF performance",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse",
-            "SAPNote": ""
+            "SAPNote": "3024346"
         },
         {
             "CheckID": "HDB-ANF-0009",
@@ -2447,6 +2447,7 @@
             "StorageType": ["ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false, true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2459,8 +2460,11 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "OS parameter for ANF performance",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse",
-            "SAPNote": ""
+            "SAPNote": "3024346"
         },
         {
             "CheckID": "HDB-ANF-0010",
@@ -2471,6 +2475,7 @@
             "StorageType": ["ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false, true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2483,8 +2488,11 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "OS parameter for ANF performance",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse",
-            "SAPNote": ""
+            "SAPNote": "3024346"
         },
         {
             "CheckID": "HDB-ANF-0011",
@@ -2495,6 +2503,7 @@
             "StorageType": ["ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false, true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2507,8 +2516,11 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "OS parameter for ANF performance",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse",
-            "SAPNote": ""
+            "SAPNote": "3024346"
         },
         {
             "CheckID": "HDB-ANF-0012",
@@ -2519,6 +2531,7 @@
             "StorageType": ["ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false],
             "HighAvailabilityAgent": [],
@@ -2531,8 +2544,11 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "OS parameter for ANF performance",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse",
-            "SAPNote": ""
+            "SAPNote": "3024346"
         },
         {
             "CheckID": "HDB-ANF-0013",
@@ -2543,6 +2559,7 @@
             "StorageType": ["ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2555,8 +2572,11 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "OS parameter for ANF performance",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse",
-            "SAPNote": ""
+            "SAPNote": "3024346"
         },
         {
             "CheckID": "HDB-ANF-0014",
@@ -2567,6 +2587,7 @@
             "StorageType": ["ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false, true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2579,8 +2600,11 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "OS parameter for ANF performance",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse",
-            "SAPNote": ""
+            "SAPNote": "3024346"
         },
         {
             "CheckID": "HDB-ANF-0015",
@@ -2591,6 +2615,7 @@
             "StorageType": ["ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false, true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2603,6 +2628,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "OS parameter for ANF performance",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse",
             "SAPNote": ""
         },
@@ -2615,6 +2643,7 @@
             "StorageType": ["ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "WARN",
             "HighAvailability": [false, true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2627,6 +2656,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "OS parameter for ANF performance",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse",
             "SAPNote": ""
         },
@@ -2639,6 +2671,7 @@
             "StorageType": ["ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "WARNING",
             "HighAvailability": [false, true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2651,6 +2684,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "OS parameter for ANF performance",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse",
             "SAPNote": ""
         },
@@ -2663,6 +2699,7 @@
             "StorageType": ["ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false, true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2675,6 +2712,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "OS parameter for ANF performance",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse",
             "SAPNote": ""
         },
@@ -2687,6 +2727,7 @@
             "StorageType": ["ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false, true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2699,6 +2740,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "OS parameter for ANF performance",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse",
             "SAPNote": ""
         },
@@ -2711,6 +2755,7 @@
             "StorageType": ["ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false, true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2723,6 +2768,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "OS parameter for ANF performance",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse",
             "SAPNote": ""
         },
@@ -2735,6 +2783,7 @@
             "StorageType": ["ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false, true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2747,6 +2796,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "OS parameter for ANF performance",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse",
             "SAPNote": ""
         },
@@ -2759,6 +2811,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false, true],
             "HighAvailabilityAgent": ["FencingAgent"],
@@ -2771,6 +2824,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking if tuned profile for SAP HANA is applied",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -2783,6 +2839,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "WARNING",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2795,6 +2852,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for PREFER_SITE_TAKEOVER",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -2807,6 +2867,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "WARNING",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2819,6 +2880,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for AUTOMATED_REGISTER=true",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -2831,6 +2895,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2843,6 +2908,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for stonith-enabled=true",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -2855,6 +2923,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD"],
@@ -2867,6 +2936,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for stonith-timeout=144",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -2879,6 +2951,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2891,6 +2964,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for token: 30000",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -2903,6 +2979,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2915,6 +2992,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for token_retransmits_before_loss_const: 10",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -2927,6 +3007,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2939,6 +3020,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for join: 60",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -2951,6 +3035,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2963,6 +3048,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for consensus: 36000",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -2975,6 +3063,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -2987,6 +3076,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for max_messages: 20",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -2999,6 +3091,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -3011,6 +3104,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for expected_votes: 2",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -3023,6 +3119,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -3035,6 +3132,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for two_node: 1",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -3047,6 +3147,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD"],
@@ -3059,6 +3160,9 @@
             "RootRequired": false,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for watchdog timeout 60",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -3071,6 +3175,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD"],
@@ -3083,6 +3188,9 @@
             "RootRequired": false,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for msgwait timeout 60",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -3095,6 +3203,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
@@ -3107,6 +3216,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for concurrent-fencing=true",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -3119,6 +3231,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
@@ -3131,6 +3244,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -3143,6 +3259,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
@@ -3155,6 +3272,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for stonith-timeout=900",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -3167,6 +3287,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD"],
@@ -3179,6 +3300,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "/etc/modules-load.d/softdog.conf",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
@@ -3191,6 +3315,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD"],
@@ -3203,6 +3328,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "checking lsmod for softdog",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
@@ -3215,6 +3343,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "WARNING",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
@@ -3227,6 +3356,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for PREFER_SITE_TAKEOVER",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
             "SAPNote": ""
         },
@@ -3239,6 +3371,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "WARNING",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
@@ -3251,6 +3384,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for AUTOMATED_REGISTER=true",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
             "SAPNote": ""
         },
@@ -3263,6 +3399,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
@@ -3275,6 +3412,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for stonith-enabled=true",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
             "SAPNote": ""
         },
@@ -3287,6 +3427,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
@@ -3299,6 +3440,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for token: 30000",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
             "SAPNote": ""
         },
@@ -3311,6 +3455,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
@@ -3323,6 +3468,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for Expected votes: 2",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
             "SAPNote": ""
         },
@@ -3335,6 +3483,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
@@ -3347,6 +3496,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for concurrent-fencing: true",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
             "SAPNote": ""
         },
@@ -3359,6 +3511,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "INFO",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
@@ -3371,6 +3524,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for optional fence_kdump device",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
         },
@@ -3383,6 +3539,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -3395,6 +3552,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for Idle Timeout 30",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -3407,6 +3567,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -3419,6 +3580,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for Floating IP",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -3431,6 +3595,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -3443,6 +3608,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for HA Ports",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -3455,6 +3623,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "WARNING",
             "HighAvailability": [true,false],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -3467,6 +3636,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": "2814271"
         },
@@ -3479,6 +3651,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "WARNING",
             "HighAvailability": [true,false],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -3491,6 +3664,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": "2814271"
         },
@@ -3503,6 +3679,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "WARNING",
             "HighAvailability": [true,false],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -3515,6 +3692,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": "2814271"
         },        
@@ -3527,6 +3707,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "WARNING",
             "HighAvailability": [true,false],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -3539,6 +3720,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": "2814271"
         },
@@ -3551,6 +3735,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS"],
             "Role": ["DB","APP","ASCS"],
             "DB": ["HANA","Db2"],
+            "RunInLocalMode": true,
             "ErrorCategory": "WARNING",
             "HighAvailability": [true,false],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -3563,6 +3748,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "set hv_storvsc.storvsc_ringbuffer_size=131072 and hv_storvsc.storvsc_vcpus_per_sub_channel=1024 in kernel boot line",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://www.suse.com/support/kb/doc/?id=000020248",
             "SAPNote": ""
         },
@@ -3575,6 +3763,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["APP"],
             "DB": ["HANA","MSSQL","Oracle","Db2"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false,true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -3587,6 +3776,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "optimize for faster reconnect after ASCS failover",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         }, 
@@ -3599,6 +3791,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["APP"],
             "DB": ["HANA","MSSQL","Oracle","Db2"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false,true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -3611,6 +3804,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "optimize for faster reconnect after ASCS failover",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },             
@@ -3623,6 +3819,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["APP"],
             "DB": ["HANA","MSSQL","Oracle","Db2"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false,true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -3635,6 +3832,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "optimize for faster reconnect after ASCS failover",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },             
@@ -3647,6 +3847,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["APP"],
             "DB": ["HANA","MSSQL","Oracle","Db2"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false,true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -3659,6 +3860,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -3671,6 +3875,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["APP"],
             "DB": ["HANA","MSSQL","Oracle","Db2"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false,true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -3683,6 +3888,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://www.suse.com/support/kb/doc/?id=000019722",
             "SAPNote": ""
         },
@@ -3695,6 +3903,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["APP"],
             "DB": ["HANA","MSSQL","Oracle","Db2"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false,true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -3707,6 +3916,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://www.suse.com/support/kb/doc/?id=000019722",
             "SAPNote": ""
         },
@@ -3719,6 +3931,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["APP"],
             "DB": ["HANA","MSSQL","Oracle","Db2"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false,true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -3731,6 +3944,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://www.suse.com/support/kb/doc/?id=000019722",
             "SAPNote": ""
         },
@@ -3743,6 +3959,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB","ASCS","APP"],
             "DB": ["HANA","MSSQL","Oracle","Db2"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false,true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -3755,6 +3972,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Disable fstrim",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://www.suse.com/support/kb/doc/?id=000019447",
             "SAPNote": ""
         },                  
@@ -3767,6 +3987,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
             "DB": ["HANA"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false,true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -3779,6 +4000,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "swap space on HANA systems should be 2GB",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": "1999997"
         },
@@ -3791,6 +4015,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB","ASCS","APP"],
             "DB": ["HANA","Db2","Oracle","MSSQL"],
+            "RunInLocalMode": false,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false,true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -3803,6 +4028,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "checking if Accelerated Networking is enabled on all interfaces",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": "1928533"
         },
@@ -3815,6 +4043,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -3827,6 +4056,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for stonith-enabled=true",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -3839,6 +4071,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD"],
@@ -3851,6 +4084,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for stonith-timeout=144",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -3863,6 +4099,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -3875,6 +4112,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for token: 30000",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -3887,6 +4127,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -3899,6 +4140,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for token_retransmits_before_loss_const: 10",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -3911,6 +4155,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -3923,6 +4168,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for join: 60",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -3935,6 +4183,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -3947,6 +4196,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for consensus: 36000",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -3959,6 +4211,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -3971,6 +4224,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for max_messages: 20",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -3983,6 +4239,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -3995,6 +4252,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for expected_votes: 2",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -4007,6 +4267,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -4019,6 +4280,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for two_node: 1",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -4031,6 +4295,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD"],
@@ -4043,6 +4308,9 @@
             "RootRequired": false,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for watchdog timeout 60",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -4055,6 +4323,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD"],
@@ -4067,6 +4336,9 @@
             "RootRequired": false,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for msgwait timeout 60",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -4079,6 +4351,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
@@ -4091,6 +4364,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for concurrent-fencing=true",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -4103,6 +4379,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
@@ -4115,6 +4392,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -4127,6 +4407,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
@@ -4139,6 +4420,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for stonith-timeout=900",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -4151,6 +4435,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD"],
@@ -4163,6 +4448,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "/etc/modules-load.d/softdog.conf",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
@@ -4175,6 +4463,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD"],
@@ -4187,6 +4476,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "checking lsmod for softdog",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },        
@@ -4199,6 +4491,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
@@ -4211,6 +4504,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for stonith-enabled=true",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
             "SAPNote": ""
         },
@@ -4223,6 +4519,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
@@ -4235,6 +4532,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for token: 30000",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
             "SAPNote": ""
         },
@@ -4247,6 +4547,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
@@ -4259,6 +4560,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for Expected votes: 2",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
             "SAPNote": ""
         },
@@ -4271,6 +4575,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
+            "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
@@ -4283,6 +4588,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for concurrent-fencing: true",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
             "SAPNote": ""
         },
@@ -4295,6 +4603,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
+            "RunInLocalMode": true,
             "ErrorCategory": "INFO",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
@@ -4307,6 +4616,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for optional fence_kdump device",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
         },
@@ -4319,6 +4631,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
+            "RunInLocalMode": false,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -4331,6 +4644,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for Idle Timeout 30",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -4343,6 +4659,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
+            "RunInLocalMode": false,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -4355,6 +4672,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for Floating IP",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         },
@@ -4367,6 +4687,7 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
+            "RunInLocalMode": false,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
@@ -4379,6 +4700,9 @@
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for HA Ports",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
             "MicrosoftDocs": "",
             "SAPNote": ""
         }

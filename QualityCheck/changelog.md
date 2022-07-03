@@ -1,5 +1,16 @@
 # Changelog
 
+## Version 2022070301
+
+* add and update SAP note 3024346, HANA with Azure NetApp Files
+* add RunInLocalMode option in JSON file
+* moving version history from readme.md to JSON file
+* updating parameters for PowerShell script to use ParameterSets
+* enabling SSH keys for different combinations incl Azure Key Vault
+* add runlocally to run the script on the system itself without outside connectivity to Azure, requires PowerShell to be installed on the system and needs to run as root user
+* add options for GUI, will be implemented in a future release
+* removing required PowerShell modules from #requires section to be able to run in RunInLocalMode, module requirements are checked within the code
+
 ## Version 2022070101
 
 * hotfix for OSdisk VG identification

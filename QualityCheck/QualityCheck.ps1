@@ -16,53 +16,233 @@ Licensed under the MIT license.
 #>
 
 #Requires -Version 7.1
-#Requires -Module Az.Compute
-#Requires -Module Az.Network
-#Requires -Module Az.NetAppFiles
-#Requires -Modules @{ ModuleName="Posh-SSH"; ModuleVersion="3.0.0" }
 
 [CmdletBinding()]
 param (
-    # VM Operating System
-    [Parameter(Mandatory=$true)][string][ValidateSet("Windows", "SUSE", "RedHat", "OracleLinux",IgnoreCase = $false)]$VMOperatingSystem,
-    # Database running SAP
-    [Parameter(Mandatory=$true)][string][ValidateSet("HANA","Oracle","MSSQL","Db2","ASE",IgnoreCase = $false)]$VMDatabase,
-    # Which component to check
-    [Parameter(Mandatory=$true)][string][ValidateSet("DB", "ASCS", "APP",IgnoreCase = $false)]$VMRole,
-    # VM Resource Group Name
-    [Parameter(Mandatory=$true)][string]$AzVMResourceGroup,
-    # Azure VM Name
-    [Parameter(Mandatory=$true)][string]$AzVMName,
-    # VM Hostname or IP address (used to connect)
-    [Parameter(Mandatory=$true)][string]$VMHostname,
-    # VM Username
-    [Parameter(Mandatory=$true)][string]$VMUsername,
-    # VM Password
-    [Parameter(Mandatory=$true)][System.Security.SecureString]$VMPassword,
-    # SSH Keys
-    [string]$SSHKey,
-    # VM Connection Port (Linux SSH Port)
-    [string]$VMConnectionPort="22",
-    # Run HA checks
-    [boolean]$HighAvailability=$false,
-    # ConfigFile that contains the checks to be executed
-    [string]$ConfigFileName="QualityCheck.json",
-    # HANA Data Directories
-    [string[]]$DBDataDir="/hana/data",
-    # HANA Log Directories
-    [string[]]$DBLogDir="/hana/log",
-    # HANA Shared Directory
-    [string]$DBSharedDir="/hana/shared",
-    # ANF Resource Group
-    [string]$ANFResourceGroup,
-    # ANF Account Name
-    [string]$ANFAccountName,
-    # Hardwaretype (VM or HLI)
-    [string]$Hardwaretype="VM",
-    # HANA Deployment Model
-    [string][ValidateSet("OLTP","OLAP","OLTP-ScaleOut","OLAP-ScaleOut",IgnoreCase = $false)]$HANADeployment="OLTP",
-    # High Availability Agent
-    [string][ValidateSet("SBD","FencingAgent","WCF",IgnoreCase = $false)]$HighAvailabilityAgent="SBD"
+        # GUI
+        [Parameter(Mandatory=$true, ParameterSetName='GUI')]
+        [switch]$GUI,
+        # only run on VM guest OS
+        [Parameter(Mandatory=$true, ParameterSetName='runlocally')]
+        [switch]$RunLocally,
+        [Parameter(Mandatory=$true, ParameterSetName='UserPassword')]
+        [switch]$LogonWithUserPassword,
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordSSHKey')]
+        [switch]$LogonWithUserPasswordSSHKey,
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordSSHKeyPassphrase')]
+        [switch]$LogonWithUserPasswordSSHKeyPassphrase,
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvault')]
+        [switch]$LogonWithUserPasswordAzureKeyvault,
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
+        [switch]$LogonWithUserPasswordAzureKeyvaultSSHKey,
+        [Parameter(Mandatory=$true, ParameterSetName='UserAsRootSSHKey')]
+        [switch]$LogonAsRootSSHKey,
+        [Parameter(Mandatory=$true, ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [switch]$LogonAsRootAzureKeyvaultSSHKey,
+        # VM Operating System
+        [Parameter(Mandatory=$true, ParameterSetName='runlocally')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPassword')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordSSHKeyPassphrase')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvault')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserAsRootSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [ValidateSet("Windows", "SUSE", "RedHat", "OracleLinux",IgnoreCase = $false)]
+        [string]$VMOperatingSystem,
+        # Database running SAP
+        [Parameter(Mandatory=$true, ParameterSetName='runlocally')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPassword')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordSSHKeyPassphrase')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvault')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserAsRootSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [ValidateSet("HANA","Oracle","MSSQL","Db2","ASE",IgnoreCase = $false)]
+        [string]$VMDatabase,
+        # Which component to check
+        [Parameter(Mandatory=$true, ParameterSetName='runlocally')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPassword')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordSSHKeyPassphrase')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvault')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserAsRootSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [ValidateSet("DB", "ASCS", "APP",IgnoreCase = $false)]
+        [string]$VMRole,
+        # VM Resource Group Name
+        [Parameter(Mandatory=$true, ParameterSetName='UserPassword')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordSSHKeyPassphrase')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvault')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserAsRootSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [string]$AzVMResourceGroup,
+        # Azure VM Name
+        [Parameter(Mandatory=$true, ParameterSetName='UserPassword')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordSSHKeyPassphrase')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvault')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserAsRootSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [string]$AzVMName,
+        # VM Hostname or IP address (used to connect)
+        [Parameter(Mandatory=$true, ParameterSetName='UserPassword')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordSSHKeyPassphrase')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvault')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserAsRootSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [string]$VMHostname,
+        # VM Username
+        [Parameter(Mandatory=$true, ParameterSetName='UserPassword')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordSSHKeyPassphrase')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvault')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserAsRootSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [string]$VMUsername,
+        # VM Password
+        [Parameter(Mandatory=$true, ParameterSetName='UserPassword')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordSSHKeyPassphrase')]
+        [System.Security.SecureString]$VMPassword,
+        # VM Connection Port (Linux SSH Port)
+        [Parameter(ParameterSetName='UserPassword')]
+        [Parameter(ParameterSetName='UserPasswordSSHKey')]
+        [Parameter(ParameterSetName='UserPasswordSSHKeyPassphrase')]
+        [Parameter(ParameterSetName='UserPasswordAzureKeyvault')]
+        [Parameter(ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
+        [Parameter(ParameterSetName='UserAsRootSSHKey')]
+        [Parameter(ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [string]$VMConnectionPort="22",
+        # Run HA checks
+        [Parameter(ParameterSetName='runlocally')]
+        [Parameter(ParameterSetName='UserPassword')]
+        [Parameter(ParameterSetName='UserPasswordSSHKey')]
+        [Parameter(ParameterSetName='UserPasswordSSHKeyPassphrase')]
+        [Parameter(ParameterSetName='UserPasswordAzureKeyvault')]
+        [Parameter(ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
+        [Parameter(ParameterSetName='UserAsRootSSHKey')]
+        [Parameter(ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [boolean]$HighAvailability=$false,
+        # ConfigFile that contains the checks to be executed
+        [Parameter(ParameterSetName='runlocally')]
+        [Parameter(ParameterSetName='UserPassword')]
+        [Parameter(ParameterSetName='UserPasswordSSHKey')]
+        [Parameter(ParameterSetName='UserPasswordSSHKeyPassphrase')]
+        [Parameter(ParameterSetName='UserPasswordAzureKeyvault')]
+        [Parameter(ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
+        [Parameter(ParameterSetName='UserAsRootSSHKey')]
+        [Parameter(ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [string]$ConfigFileName="QualityCheck.json",
+        # HANA Data Directories
+        [Parameter(ParameterSetName='runlocally')]
+        [Parameter(ParameterSetName='UserPassword')]
+        [Parameter(ParameterSetName='UserPasswordSSHKey')]
+        [Parameter(ParameterSetName='UserPasswordSSHKeyPassphrase')]
+        [Parameter(ParameterSetName='UserPasswordAzureKeyvault')]
+        [Parameter(ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
+        [Parameter(ParameterSetName='UserAsRootSSHKey')]
+        [Parameter(ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [string[]]$DBDataDir="/hana/data",
+        # HANA Log Directories
+        [Parameter(ParameterSetName='runlocally')]
+        [Parameter(ParameterSetName='UserPassword')]
+        [Parameter(ParameterSetName='UserPasswordSSHKey')]
+        [Parameter(ParameterSetName='UserPasswordSSHKeyPassphrase')]
+        [Parameter(ParameterSetName='UserPasswordAzureKeyvault')]
+        [Parameter(ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
+        [Parameter(ParameterSetName='UserAsRootSSHKey')]
+        [Parameter(ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [string[]]$DBLogDir="/hana/log",
+        # HANA Shared Directory
+        [Parameter(ParameterSetName='runlocally')]
+        [Parameter(ParameterSetName='UserPassword')]
+        [Parameter(ParameterSetName='UserPasswordSSHKey')]
+        [Parameter(ParameterSetName='UserPasswordSSHKeyPassphrase')]
+        [Parameter(ParameterSetName='UserPasswordAzureKeyvault')]
+        [Parameter(ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
+        [Parameter(ParameterSetName='UserAsRootSSHKey')]
+        [Parameter(ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [string]$DBSharedDir="/hana/shared",
+        # SSH Keys
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordSSHKeyPassphrase')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserAsRootSSHKey')]
+        [string]$SSHKey,
+        # SSH Key Passphrase
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordSSHKeyPassphrase')]
+        [System.Security.SecureString]$SSHKeyPassphrase,
+        # Keyvault Resource Group
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvault')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [string]$KeyVaultResourceGroup,
+        # Keyvault Name
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvault')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [string]$KeyVaultName,
+        # Keyvault Entry
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvault')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [string]$KeyVaultEntry,
+        # ANF Resource Group
+        [Parameter(ParameterSetName='UserPassword')]
+        [Parameter(ParameterSetName='UserPasswordSSHKey')]
+        [Parameter(ParameterSetName='UserPasswordSSHKeyPassphrase')]
+        [Parameter(ParameterSetName='UserPasswordAzureKeyvault')]
+        [Parameter(ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
+        [Parameter(ParameterSetName='UserAsRootSSHKey')]
+        [Parameter(ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [string]$ANFResourceGroup,
+        # ANF Account Name
+        [Parameter(ParameterSetName='UserPassword')]
+        [Parameter(ParameterSetName='UserPasswordSSHKey')]
+        [Parameter(ParameterSetName='UserPasswordSSHKeyPassphrase')]
+        [Parameter(ParameterSetName='UserPasswordAzureKeyvault')]
+        [Parameter(ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
+        [Parameter(ParameterSetName='UserAsRootSSHKey')]
+        [Parameter(ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [string]$ANFAccountName,
+        # Hardwaretype (VM or HLI)
+        [Parameter(ParameterSetName='UserPassword')]
+        [Parameter(ParameterSetName='UserPasswordSSHKey')]
+        [Parameter(ParameterSetName='UserPasswordSSHKeyPassphrase')]
+        [Parameter(ParameterSetName='UserPasswordAzureKeyvault')]
+        [Parameter(ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
+        [Parameter(ParameterSetName='UserAsRootSSHKey')]
+        [Parameter(ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [string]$Hardwaretype="VM",
+        # HANA Deployment Model
+        [Parameter(ParameterSetName='runlocally')]
+        [Parameter(ParameterSetName='UserPassword')]
+        [Parameter(ParameterSetName='UserPasswordSSHKey')]
+        [Parameter(ParameterSetName='UserPasswordSSHKeyPassphrase')]
+        [Parameter(ParameterSetName='UserPasswordAzureKeyvault')]
+        [Parameter(ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
+        [Parameter(ParameterSetName='UserAsRootSSHKey')]
+        [Parameter(ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [string][ValidateSet("OLTP","OLAP","OLTP-ScaleOut","OLAP-ScaleOut",IgnoreCase = $false)]$HANADeployment="OLTP",
+        # High Availability Agent
+        [Parameter(ParameterSetName='runlocally')]
+        [Parameter(ParameterSetName='UserPassword')]
+        [Parameter(ParameterSetName='UserPasswordSSHKey')]
+        [Parameter(ParameterSetName='UserPasswordSSHKeyPassphrase')]
+        [Parameter(ParameterSetName='UserPasswordAzureKeyvault')]
+        [Parameter(ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
+        [Parameter(ParameterSetName='UserAsRootSSHKey')]
+        [Parameter(ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [string][ValidateSet("SBD","FencingAgent","WCF",IgnoreCase = $false)]$HighAvailabilityAgent="SBD"
+    
 )
 
 
@@ -163,6 +343,17 @@ $script:_HTMLHeader = @"
 # CheckRequiredModules - checking for installed Modules and their versions
 function CheckRequiredModules {
 
+    # checking PowerShell version
+    if (($PSVersionTable.PSVersion.Major -ge 7) -and ($PSVersionTable.PSVersion.Minor -ge 1)) {
+        # PowerSehll 7.1 installed
+    }
+    else {
+        # PowerShell 7.1 or higher required
+        Write-Error "Please install PowerShell 7.1 or newer"
+        exit
+    }
+    
+    
     # looping through modules in json file
     foreach ($_requiredmodule in $_jsonconfig.PowerShellPrerequisits) {
 
@@ -304,8 +495,11 @@ function CheckTCPConnectivity {
 
         try {
 
-        # create a TCP connection to VM using specified port
-        $_testresult = New-Object System.Net.Sockets.TcpClient($VMHostname, $VMConnectionPort)
+            # create a TCP connection to VM using specified port
+            $_testresult = New-Object System.Net.Sockets.TcpClient($VMHostname, $VMConnectionPort)
+            if ($_testresult.Connected) {
+                # connected
+            }
         }
         catch {
             Write-Host "Error connecting to $AzVMName using $VMHostname, please check network connection and firewall rules"
@@ -326,21 +520,103 @@ function ConnectVM {
     }
     else {
         
-        # create a pasword hash that will be used to connect when using sudo commands
-        $script:_ClearTextPassword = ConvertFrom-SecureString -SecureString $VMPassword -AsPlainText
+           
+        switch ($PsCmdlet.ParameterSetName) {
 
-        # create credentials object
-        $script:_credentials = New-Object System.Management.Automation.PSCredential ($VMUsername, $VMPassword);
+            "UserPassword" {
+
+                # create a pasword hash that will be used to connect when using sudo commands
+                $script:_ClearTextPassword = ConvertFrom-SecureString -SecureString $VMPassword -AsPlainText
+
+                # create credentials object
+                $script:_credentials = New-Object System.Management.Automation.PSCredential ($VMUsername, $VMPassword);
+
+                # connect to VM
+                $script:_sshsession = New-SSHSession -ComputerName $VMHostname -Credential $_credentials -Port $VMConnectionPort -AcceptKey -ConnectionTimeout 5 -ErrorAction SilentlyContinue
+
+            }
+            "UserPasswordSSHKey" {
+
+                # create a pasword hash that will be used to connect when using sudo commands
+                $script:_ClearTextPassword = ConvertFrom-SecureString -SecureString $VMPassword -AsPlainText
+
+                # create credentials object
+                $script:_credentials = New-Object System.Management.Automation.PSCredential ($VMUsername);
+
+                # connect to VM
+                $script:_sshsession = New-SSHSession -ComputerName $VMHostname -Credential $_credentials -Port $VMConnectionPort -KeyFile $SSHKey -AcceptKey -ConnectionTimeout 5 -ErrorAction SilentlyContinue
+                
+
+            }
+            "UserPasswordSSHKeyPassphrase" {
+
+                # create a pasword hash that will be used to connect when using sudo commands
+                $script:_ClearTextPassword = ConvertFrom-SecureString -SecureString $VMPassword -AsPlainText
+
+                # create credentials object
+                $script:_credentials = New-Object System.Management.Automation.PSCredential ($VMUsername, $SSHKeyPassphrase);
+
+                # connect to VM
+                $script:_sshsession = New-SSHSession -ComputerName $VMHostname -Credential $_credentials -Port $VMConnectionPort -KeyFile $SSHKey -AcceptKey -ConnectionTimeout 5 -ErrorAction SilentlyContinue
+
+
+            }
+            "UserPasswordAzureKeyvault" {
+
+                # create a pasword hash that will be used to connect when using sudo commands
+                $script:_ClearTextPassword = Get-AzKeyVaultSecret -VaultName $KeyVaultName -Name $KeyVaultEntry -AsPlainText
+                $VMPassword = ConvertTo-SecureString -String $script:_ClearTextPassword
+
+                # create credentials object
+                $script:_credentials = New-Object System.Management.Automation.PSCredential ($VMUsername, $VMPassword);
+
+                # connect to VM
+                $script:_sshsession = New-SSHSession -ComputerName $VMHostname -Credential $_credentials -Port $VMConnectionPort -AcceptKey -ConnectionTimeout 5 -ErrorAction SilentlyContinue
+
+            }
+            "UserPasswordAzureKeyvaultSSHKey" {
+
+                # create a pasword hash that will be used to connect when using sudo commands
+                $script:_ClearTextPassword = ConvertFrom-SecureString -SecureString $VMPassword -AsPlainText
+
+                $_keystring = Get-AzKeyVaultKey -VaultName $KeyVaultName -Name $KeyVaultEntry -AsPlainText
+
+                # create credentials object
+                $script:_credentials = New-Object System.Management.Automation.PSCredential ($VMUsername);
+
+                # connect to VM
+                $script:_sshsession = New-SSHSession -ComputerName $VMHostname -Credential $_credentials -Port $VMConnectionPort -KeyString $_keystring -AcceptKey -ConnectionTimeout 5 -ErrorAction SilentlyContinue
+
+            }
+            "UserAsRootSSHKey" {
+
+                # create a pasword hash that will be used to connect when using sudo commands
+                $script:_ClearTextPassword = ""
+
+                # create credentials object
+                $script:_credentials = New-Object System.Management.Automation.PSCredential ($VMUsername);
+
+                # connect to VM
+                $script:_sshsession = New-SSHSession -ComputerName $VMHostname -Credential $_credentials -Port $VMConnectionPort -KeyFile $SSHKey -AcceptKey -ConnectionTimeout 5 -ErrorAction SilentlyContinue
+                
+
+            }
+            "UserAsRootAzureKeyvaultSSHKey" {
+
+                $_keystring = Get-AzKeyVaultKey -VaultName $KeyVaultName -Name $KeyVaultEntry -AsPlainText
+
+                # create credentials object
+                $script:_credentials = New-Object System.Management.Automation.PSCredential ($VMUsername);
+
+                # connect to VM
+                $script:_sshsession = New-SSHSession -ComputerName $VMHostname -Credential $_credentials -Port $VMConnectionPort -KeyString $_keystring -AcceptKey -ConnectionTimeout 5 -ErrorAction SilentlyContinue
+
+            }
+        }
         
-        # check if SSH Keys are used
-        if ($SSHKey.Length -eq 0) {
-            # connecting to linux without SSH keys
-            $script:_sshsession = New-SSHSession -ComputerName $VMHostname -Credential $_credentials -Port $VMConnectionPort -AcceptKey -ConnectionTimeout 5 -ErrorAction SilentlyContinue
-        }
-        else {
-            # connecting to linux with SSH keys
-            $script:_sshsession = New-SSHSession -ComputerName $VMHostname -Credential $_credentials -Port $VMConnectionPort -KeyFile $SSHKey -AcceptKey -ConnectionTimeout 5 -ErrorAction SilentlyContinue
-        }
+
+        # connecting to linux with SSH keys
+        # $script:_sshsession = New-SSHSession -ComputerName $VMHostname -Credential $_credentials -Port $VMConnectionPort -KeyFile $SSHKey -AcceptKey -ConnectionTimeout 5 -ErrorAction SilentlyContinue
 
         # check if connection is successful (user/password/sshkeys correct)
         if ($script:_sshsession.Connected -eq $true) {
@@ -352,9 +628,7 @@ function ConnectVM {
             Write-Host "Please check your credentials, unable to logon"
             exit 
         }
-        
     }
-
 }
 
 # collect script parameters and put them into a table object
@@ -466,20 +740,23 @@ function CollectVMInformation {
             # check if check applies to HA or not and if HA check for HA-Agent
             if (($_CollectVMInformationCheck.HighAvailability.Contains($HighAvailability)) -or (($_CollectVMInformationCheck.HighAvailability.Contains($HighAvailability)) -and ($_CollectVMInformationCheck.HighAvailabilityAgent.Contains($HighAvailabilityAgent)))) {
 
-                # Write-Host "Running Check" $_CollectVMInformationCheck.Description
-                $_output = RunCommand -p $_CollectVMInformationCheck
+                if ((-not $RunLocally) -or ($RunLocally -and ($_check.RunInLocalMode))) {
 
-                # check if result should be shown in report
-                if ($_CollectVMInformationCheck.ShowInReport) {
+                    # Write-Host "Running Check" $_CollectVMInformationCheck.Description
+                    $_output = RunCommand -p $_CollectVMInformationCheck
 
-                    # create a new empty object per line
-                    $_outputarray_row = "" | Select-Object CheckID, Description, Output
-                    $_outputarray_row.CheckID = $_CollectVMInformationCheck.CheckID
-                    $_outputarray_row.Description = $_CollectVMInformationCheck.Description
-                    $_outputarray_row.Output = $_output -join ';;:;;'
+                    # check if result should be shown in report
+                    if ($_CollectVMInformationCheck.ShowInReport) {
 
-                    # add line to outputarray
-                    $_outputarray += $_outputarray_row
+                        # create a new empty object per line
+                        $_outputarray_row = "" | Select-Object CheckID, Description, Output
+                        $_outputarray_row.CheckID = $_CollectVMInformationCheck.CheckID
+                        $_outputarray_row.Description = $_CollectVMInformationCheck.Description
+                        $_outputarray_row.Output = $_output -join ';;:;;'
+
+                        # add line to outputarray
+                        $_outputarray += $_outputarray_row
+                    }
                 }
             }
         }
@@ -514,26 +791,30 @@ function CollectVMInformationAdditional {
             # check if check applies to HA or not and if HA check for HA-Agent
             if (($_CollectVMInformationCheck.HighAvailability.Contains($HighAvailability)) -or (($_CollectVMInformationCheck.HighAvailability.Contains($HighAvailability)) -and ($_CollectVMInformationCheck.HighAvailabilityAgent.Contains($HighAvailabilityAgent)))) {
 
-                # Write-Host "Running Check" $_CollectVMInformationCheck.Description
-                $_output = RunCommand -p $_CollectVMInformationCheck
+                
+                if ((-not $RunLocally) -or ($RunLocally -and ($_check.RunInLocalMode))) {
 
-                # check if result should be shown in report
-                if ($_CollectVMInformationCheck.ShowInReport) {
+                    # Write-Host "Running Check" $_CollectVMInformationCheck.Description
+                    $_output = RunCommand -p $_CollectVMInformationCheck
 
-                    $_outputarray_row = "" | Select-Object Output
-                    $_outputarray_row.Output = $_output -join ';;:;;'
+                    # check if result should be shown in report
+                    if ($_CollectVMInformationCheck.ShowInReport) {
 
-                    $_outputarray += $_outputarray_row
+                        $_outputarray_row = "" | Select-Object Output
+                        $_outputarray_row.Output = $_output -join ';;:;;'
 
-                    $_htmllink = "additionalinfo" + $_counter
-                    $_description = $_CollectVMInformationCheck.Description
-                    $_outputarray = $_outputarray | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""$_htmllink"">$_description</h2>"
-                    $script:_Content += "<a href=""#$_htmllink"">$_description</a><br>"
-                    $_outputarray = $_outputarray.Replace(";;:;;","<br/>")
-        
-                    $_counter += 1
-                    $_outputarray_total += $_outputarray
-        
+                        $_outputarray += $_outputarray_row
+
+                        $_htmllink = "additionalinfo" + $_counter
+                        $_description = $_CollectVMInformationCheck.Description
+                        $_outputarray = $_outputarray | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""$_htmllink"">$_description</h2>"
+                        $script:_Content += "<a href=""#$_htmllink"">$_description</a><br>"
+                        $_outputarray = $_outputarray.Replace(";;:;;","<br/>")
+            
+                        $_counter += 1
+                        $_outputarray_total += $_outputarray
+            
+                    }
                 }
             }
         }
@@ -555,42 +836,55 @@ function RunCommand {
     # command needs to run inside OS
     if ($p.CommandType -eq "OS") {
     
-        if ($VMOperatingSystem -eq "Windows") {
-            # Windows
-        }
-        else {
-            # Linux
-
-            # root permissions required?
-            if (($p.RootRequired) -and ($VMUsername -ne "root")) {
-                # add sudo to the command
-                $_command = "echo '$_ClearTextPassword' | sudo -E -S " + $p.ProcessingCommand
+        # check if run in local mode
+        if (-not $RunLocally) {
+        
+            if ($VMOperatingSystem -eq "Windows") {
+                # Windows
             }
             else {
-                # command will be used without sudo
-                $_command = $p.ProcessingCommand
-            }
+                # Linux
 
-            # run the command
-            $_result = Invoke-SSHCommand -Command $_command -SessionId $script:_SessionID
-            # just store theoutput of the command in $_result
-            $_result = $_result.Output
-        
-            # if postprocessingcommand is defined in JSON
-            if (($p.PostProcessingCommand -ne "") -or ($p.PostProcessingCommand)) {
-        
-                # run postprocessing command
-                $_command = $p.PostProcessingCommand
-                $_command = $_command -replace "PARAMETER",$_result
-                $_result = Invoke-Expression $_command
-        
-            }
-        
-            # store the result in script variable to access it for alternative output in JSON
-            $script:_CommandResult = $_result
+                # root permissions required?
+                if (($p.RootRequired) -and ($VMUsername -ne "root")) {
+                    # add sudo to the command
+                    $_command = "echo '$_ClearTextPassword' | sudo -E -S " + $p.ProcessingCommand
+                }
+                else {
+                    # command will be used without sudo
+                    $_command = $p.ProcessingCommand
+                }
 
-            # return result
-            return $_result
+                # run the command
+                $_result = Invoke-SSHCommand -Command $_command -SessionId $script:_SessionID
+                # just store theoutput of the command in $_result
+                $_result = $_result.Output
+            
+                # if postprocessingcommand is defined in JSON
+                if (($p.PostProcessingCommand -ne "") -or ($p.PostProcessingCommand)) {
+            
+                    # run postprocessing command
+                    $_command = $p.PostProcessingCommand
+                    $_command = $_command -replace "PARAMETER",$_result
+                    $_result = Invoke-Expression $_command
+            
+                }
+            
+                # store the result in script variable to access it for alternative output in JSON
+                $script:_CommandResult = $_result
+
+                # return result
+                return $_result
+            }
+        }
+        else {
+            try {
+                # run command locally
+                Invoke-Expression $p.ProcessingCommand
+            }
+            catch {
+                Write-Host $p.ProcessingCommand
+            }
         }
     }
 
@@ -722,17 +1016,19 @@ function CollectVMStorage {
     }
     else {
 
-        # get VM info
-        $script:_VMinfo = Get-AzVM -ResourceGroupName $AzVMResourceGroup -Name $AzVMName
+        if (-not $RunLocally) {
+            # get VM info
+            $script:_VMinfo = Get-AzVM -ResourceGroupName $AzVMResourceGroup -Name $AzVMName
+        }
 
         # collect LVM configuration
         $_command = PrepareCommand -Command "/sbin/lvm fullreport --reportformat json" 
         $script:_lvmconfig = RunCommand -p $_command | ConvertFrom-Json
 
         # get storage using metadata service
-        $_command = PrepareCommand -Command "/usr/bin/curl --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/storageProfile?api-version=2021-11-01'"
+        $_command = PrepareCommand -Command "/usr/bin/curl -s --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/storageProfile?api-version=2021-11-01'"
         $script:_azurediskconfig = RunCommand -p $_command | ConvertFrom-Json
-        
+
         # checking if sg_map tool is available
         #$_command = PrepareCommand -Command "ls -l /usr/bin/sg_map | wc -l" -CommandType "OS"
         #$_sgmap_installed = RunCommand -p $_command
@@ -751,7 +1047,7 @@ function CollectVMStorage {
             $_rootdisk = "/dev/sda"
         }
 
-        # get device for root
+        # get device for resource disk
         # $_command = PrepareCommand -Command "realpath /dev/disk/azure/resource" -CommandType "OS"
         if ($script:_azurediskconfig.resourceDisk.size -gt 0) {
             $_command = PrepareCommand -Command "realpath -m /dev/disk/cloud/azure_resource" -CommandType "OS"
@@ -765,10 +1061,12 @@ function CollectVMStorage {
             # setting a value for systems that don't have a resource disk for lsscsi grep command
             $_resourcedisk = "/dev/noresourcedisk"
         }
-
-        # get Azure Disks in Resource Group
-        $_command = PrepareCommand -Command "Get-AzDisk -ResourceGroupName $AzVMResourceGroup" -CommandType "PowerShell"
-        $script:_AzureDiskDetails = RunCommand -p $_command
+        
+        if (-not $RunLocally) {
+            # get Azure Disks in Resource Group
+            $_command = PrepareCommand -Command "Get-AzDisk -ResourceGroupName $AzVMResourceGroup" -CommandType "PowerShell"
+            $script:_AzureDiskDetails = RunCommand -p $_command
+        }
 
         $script:_AzureDisks = @()
 
@@ -781,9 +1079,11 @@ function CollectVMStorage {
         $_AzureDisk_row.Caching = $script:_azurediskconfig.osDisk.caching
         $_AzureDisk_row.WriteAccelerator = $script:_azurediskconfig.osDisk.writeAcceleratorEnabled
         $_AzureDisk_row.DiskType = CalculateDiskTypeSKU -size $script:_azurediskconfig.osDisk.DiskSizeGB -tier $script:_azurediskconfig.osDisk.managedDisk.storageAccountType
-        $_AzureDisk_row.IOPS = ($script:_AzureDiskDetails | Where-Object { $_.Name -eq $script:_azurediskconfig.osDisk.name }).DiskIOPSReadWrite
-        $_AzureDisk_row.MBPS = ($script:_AzureDiskDetails | Where-Object { $_.Name -eq $script:_azurediskconfig.osDisk.name }).DiskMBpsReadWrite
-        $_AzureDisk_row.PerformanceTier = ($script:_AzureDiskDetails | Where-Object { $_.Name -eq $script:_azurediskconfig.osDisk.name }).Tier
+        if (-not $RunLocally) {
+            $_AzureDisk_row.IOPS = ($script:_AzureDiskDetails | Where-Object { $_.Name -eq $script:_azurediskconfig.osDisk.name }).DiskIOPSReadWrite
+            $_AzureDisk_row.MBPS = ($script:_AzureDiskDetails | Where-Object { $_.Name -eq $script:_azurediskconfig.osDisk.name }).DiskMBpsReadWrite
+            $_AzureDisk_row.PerformanceTier = ($script:_AzureDiskDetails | Where-Object { $_.Name -eq $script:_azurediskconfig.osDisk.name }).Tier
+        }
         # $_AzureDisk_row.DeviceName = ($script:_diskmapping | Where-Object { ($_.P5 -eq 0) -and ($_.P2 -eq $script:_OSDiskSCSIControllerID) }).P7
         $_AzureDisk_row.DeviceName = $_rootdisk
         $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -like ($_AzureDisk_row.DeviceName + "*")}).vg[0].vg_name
@@ -832,9 +1132,11 @@ function CollectVMStorage {
                 Write-Host ("Couldn't find Volume Group for device " + $_AzureDisk_row.DeviceName)
             }
 
-            $_AzureDisk_row.IOPS = ($_AzureDiskDetails | Where-Object { $_.Name -eq $_datadisk.name }).DiskIOPSReadWrite
-            $_AzureDisk_row.MBPS = ($_AzureDiskDetails | Where-Object { $_.Name -eq $_datadisk.name }).DiskMBpsReadWrite
-            $_AzureDisk_row.PerformanceTier = ($_AzureDiskDetails | Where-Object { $_.Name -eq $_datadisk.name }).Tier
+            if (-not $RunLocally) {
+                $_AzureDisk_row.IOPS = ($script:_AzureDiskDetails | Where-Object { $_.Name -eq $_datadisk.name }).DiskIOPSReadWrite
+                $_AzureDisk_row.MBPS = ($script:_AzureDiskDetails | Where-Object { $_.Name -eq $_datadisk.name }).DiskMBpsReadWrite
+                $_AzureDisk_row.PerformanceTier = ($script:_AzureDiskDetails | Where-Object { $_.Name -eq $_datadisk.name }).Tier
+            }
 
             $_AzureDisk_row.DiskType = CalculateDiskTypeSKU -size $_datadisk.DiskSizeGB -tier $_datadisk.managedDisk.storageAccountType
 
@@ -1152,12 +1454,22 @@ function AddCheckResultEntry {
     
     # if SAPNote is defined it will add the HTML code for the link
     if ($SAPNote -ne "") {
-        $_Check_row.SAPNote = "::SAPNOTEHTML1::" + $SAPNote + "::SAPNOTEHTML2::" + $SAPNote + "::SAPNOTEHTML3::"
+        if (-not $RunLocally) {
+            $_Check_row.SAPNote = "::SAPNOTEHTML1::" + $SAPNote + "::SAPNOTEHTML2::" + $SAPNote + "::SAPNOTEHTML3::"
+        }
+        else {
+            $_Check_row.SAPNote = "$SAPNote"
+        }
     }
 
     # if MicrosoftDocs is defined it will add HTML code for the link
     if ($MicrosoftDocs -ne "") {
-        $_Check_row.MicrosoftDocs = "::MSFTDOCS1::" + $MicrosoftDocs + "::MSFTDOCS2::" + "Link" + "::MSFTDOCS3::"
+        if (-not $RunLocally) {
+            $_Check_row.MicrosoftDocs = "::MSFTDOCS1::" + $MicrosoftDocs + "::MSFTDOCS2::" + "Link" + "::MSFTDOCS3::"
+        }
+        else {
+            $_Check_row.MicrosoftDocs = "$MicrosoftDocs"
+        }
     }
 
     # add data to checks
@@ -1438,48 +1750,56 @@ function RunQualityCheck {
 
             # check if check applies to HA or not and if HA check for HA-Agent
             if (($_check.HighAvailability.Contains($false)) -or (($_check.HighAvailability.Contains($HighAvailability)) -and ($_check.HighAvailabilityAgent.Contains($HighAvailabilityAgent)))) {
-
-                $_Check_row = "" | Select-Object CheckID, Description, AdditionalInfo, Testresult, ExpectedResult, Status, SAPNote, MicrosoftDocs
-
-                $_result = RunCommand -p $_check
-
-                $_result = RemoveTabsAndSpaces -OriginalString $_result
-
-                $_Check_row.CheckID = $_check.CheckID
-                $_Check_row.Description = $_check.Description
-                $_Check_row.AdditionalInfo = $_check.AdditionalInfo
-                $_Check_row.Testresult = $_result
-                $_Check_row.ExpectedResult = $_check.ExpectedResult
-
-                if ($_check.SAPNote -ne "") {
-                    $_Check_row.SAPNote = "::SAPNOTEHTML1::" + $_check.SAPNote + "::SAPNOTEHTML2::" + $_check.SAPNote + "::SAPNOTEHTML3::"
-                }
                 
-                if ($_result -eq $_check.ExpectedResult) {
-                    $_Check_row.Status = "OK"
-                }
-                else {
-                    # $_Check_row.Status = "ERROR"
-                    $_Check_row.Status = $_check.ErrorCategory
-                }
-                
-                if (($_check.ShowAlternativeRequirement) -ne "" -or ($_check.ShowAlternativeResult -ne ""))
-                {
-                    if ($_check.ShowAlternativeResult -ne "") {
-                        $_Check_row.Testresult = Invoke-Expression $_check.ShowAlternativeResult
+                if ((-not $RunLocally) -or ($RunLocally -and ($_check.RunInLocalMode))) {
+
+                    $_Check_row = "" | Select-Object CheckID, Description, AdditionalInfo, Testresult, ExpectedResult, Status, SAPNote, MicrosoftDocs
+
+                    $_result = RunCommand -p $_check
+
+                    $_result = RemoveTabsAndSpaces -OriginalString $_result
+
+                    $_Check_row.CheckID = $_check.CheckID
+                    $_Check_row.Description = $_check.Description
+                    $_Check_row.AdditionalInfo = $_check.AdditionalInfo
+                    $_Check_row.Testresult = $_result
+                    $_Check_row.ExpectedResult = $_check.ExpectedResult
+
+                    if ($_check.SAPNote -ne "") {
+                        if (-not $RunLocally) {
+                            $_Check_row.SAPNote = "::SAPNOTEHTML1::" + $_check.SAPNote + "::SAPNOTEHTML2::" + $_check.SAPNote + "::SAPNOTEHTML3::"
+                        }
+                        else {
+                            $_Check_row.SAPNote = $_check.SAPNote
+                        }
+                    }
+                    
+                    if ($_result -eq $_check.ExpectedResult) {
+                        $_Check_row.Status = "OK"
                     }
                     else {
-                        $_Check_row.Testresult = ""
+                        # $_Check_row.Status = "ERROR"
+                        $_Check_row.Status = $_check.ErrorCategory
                     }
-                    if ($_check.ShowAlternativeRequirement -ne "") {
-                        $_Check_row.ExpectedResult = Invoke-Expression $_check.ShowAlternativeRequirement
+                    
+                    if (($_check.ShowAlternativeRequirement) -ne "" -or ($_check.ShowAlternativeResult -ne ""))
+                    {
+                        if ($_check.ShowAlternativeResult -ne "") {
+                            $_Check_row.Testresult = Invoke-Expression $_check.ShowAlternativeResult
+                        }
+                        else {
+                            $_Check_row.Testresult = ""
+                        }
+                        if ($_check.ShowAlternativeRequirement -ne "") {
+                            $_Check_row.ExpectedResult = Invoke-Expression $_check.ShowAlternativeRequirement
+                        }
+                        else {
+                            $_Check_row.ExpectedResult = ""
+                        }
                     }
-                    else {
-                        $_Check_row.ExpectedResult = ""
-                    }
+                
+                    $script:_Checks += $_Check_row
                 }
-            
-                $script:_Checks += $_Check_row
             }
         }
     }
@@ -1715,31 +2035,35 @@ function CheckForNewerVersion {
 # Main module
 #########
 
-    # load json configuration
-    $_jsonconfig = Get-Content -Raw -Path $ConfigFileName -ErrorAction Stop | ConvertFrom-Json
-    if ($scriptversion -eq $_jsonconfig.Version) {
-        # everything ok, script and json version match
-    }
-    else {
-        Write-Host "Versions of script and json file don't match"
-        exit
-    }
+$script:_runlog = @()
 
-    # parameter check and modification if required
+# load json configuration
+$_jsonconfig = Get-Content -Raw -Path $ConfigFileName -ErrorAction Stop | ConvertFrom-Json
+if ($scriptversion -eq $_jsonconfig.Version) {
+    # everything ok, script and json version match
+}
+else {
+    Write-Host "Versions of script and json file don't match"
+    exit
+}
 
-    if ($VMOperatingSystem -in @("SUSE","RedHat","OracleLinux"))
-    {
-        #check if filesystem parameters end with /
-        if ($DBDataDir.EndsWith("/")) {
-            $DBDataDir = $DBDataDir.Substring(0,$DBDataDir.Length-1)
-        }
-        if ($DBLogDir.EndsWith("/")) {
-            $DBLogDir = $DBLogDir.Substring(0,$DBLogDir.Length-1)
-        }
-        if ($DBSharedDir.EndsWith("/")) {
-            $DBSharedDir = $DBSharedDir.Substring(0,$DBSharedDir.Length-1)
-        }
+# parameter check and modification if required
+
+if ($VMOperatingSystem -in @("SUSE","RedHat","OracleLinux"))
+{
+    #check if filesystem parameters end with /
+    if ($DBDataDir.EndsWith("/")) {
+        $DBDataDir = $DBDataDir.Substring(0,$DBDataDir.Length-1)
     }
+    if ($DBLogDir.EndsWith("/")) {
+        $DBLogDir = $DBLogDir.Substring(0,$DBLogDir.Length-1)
+    }
+    if ($DBSharedDir.EndsWith("/")) {
+        $DBSharedDir = $DBSharedDir.Substring(0,$DBSharedDir.Length-1)
+    }
+}
+
+if (-not $RunLocally) {
 
     # Check for required PowerShell modules
     CheckRequiredModules
@@ -1759,49 +2083,73 @@ function CheckForNewerVersion {
     # Check if user is able to sudo
     CheckSudoPermission
 
-    # Load HTML Header
-    LoadHTMLHeader
+}
 
-    # Collect Script Parameters
-    $_CollectScriptParameter = CollectScriptParameters
+# Load HTML Header
+LoadHTMLHeader
 
-    # Collect VM info
-    $_CollectVMInfo = CollectVMInformation
+# Collect Script Parameters
+$_CollectScriptParameter = CollectScriptParameters
 
-    # Get Azure Disks assigned to VMs
-    $_CollectVMStorage = CollectVMStorage
+# Collect VM info
+$_CollectVMInfo = CollectVMInformation
 
-    # Get Volume Groups - CollectVMStorage needs to run first to define variables
-    $_CollectLVMGroups = CollectLVMGroups
+# Get Azure Disks assigned to VMs
+$_CollectVMStorage = CollectVMStorage
 
-    # Get Logical Volumes - CollectVMStorage needs to run first to define variables
-    $_CollectLVMVolumes = CollectLVMVolummes
+# Get Volume Groups - CollectVMStorage needs to run first to define variables
+$_CollectLVMGroups = CollectLVMGroups
 
+# Get Logical Volumes - CollectVMStorage needs to run first to define variables
+$_CollectLVMVolumes = CollectLVMVolummes
+
+if (-not $RunLocally) {
     # Get ANF Volume Info
     $_CollectANFVolumes = CollectANFVolumes
+}
 
-    # Get Filesystems
-    $_CollectFileSystems = CollectFileSystems
+# Get Filesystems
+$_CollectFileSystems = CollectFileSystems
 
+if (-not $RunLocally) {
     # Get Network Interfaces
     $_CollectNetworkInterfaces = CollectNetworkInterfaces
 
     # Get Load Balancer - CollectNetworkInterfaces needs to run first to define variables
     $_CollectLoadBalancer = CollectLoadBalancer
+}
 
-    # run Quality Check
-    $_RunQualityCheck = RunQualityCheck
+# run Quality Check
+$_RunQualityCheck = RunQualityCheck
 
-    # Collect VM info
-    $_CollectVMInfoAdditional = CollectVMInformationAdditional
+# Collect VM info
+$_CollectVMInfoAdditional = CollectVMInformationAdditional
 
-    # Collect footer for support cases
-    $_CollectFooter = CollectFooter
+# Collect footer for support cases
+$_CollectFooter = CollectFooter
 
+if (-not $RunLocally) {
 
     $_HTMLReport = ConvertTo-Html -Body "$_Content $_CollectScriptParameter $_CollectVMInfo $_RunQualityCheck $_CollectFileSystems $_CollectVMStorage $_CollectLVMGroups $_CollectLVMVolumes $_CollectANFVolumes $_CollectNetworkInterfaces $_CollectLoadBalancer $_CollectVMInfoAdditional $_CollectFooter" -Head $script:_HTMLHeader -Title "Quality Check for SAP Worloads on Azure" -PostContent "<p id='CreationDate'>Creation Date: $(Get-Date)</p><p id='CreationDate'>Script Version: $scriptversion</p>"
     $_HTMLReportFileName = $AzVMName + "-" + $(Get-Date -Format "yyyyMMdd-HHmm") + ".html"
     $_HTMLReport | Out-File .\$_HTMLReportFileName
+}
+else {
+    # script running locally, convert result to JSON
+    $_jsonoutput = "" | Select-Object Checks, InformationCollection
 
+    $_jsonoutput.Checks = $script:_Checks
+
+    $_jsonoutput = $_jsonoutput | ConvertTo-Json
+
+    Write-Host $_jsonoutput
+    
+
+    
+}
+
+if (-not $RunLocally) {
     Remove-SSHSession -SessionId $_SessionID | Out-Null
-    exit
+}
+
+exit
