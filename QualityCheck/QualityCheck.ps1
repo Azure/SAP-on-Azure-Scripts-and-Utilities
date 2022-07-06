@@ -247,7 +247,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2022070301
+$scriptversion = 2022070601
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -1086,7 +1086,13 @@ function CollectVMStorage {
         }
         # $_AzureDisk_row.DeviceName = ($script:_diskmapping | Where-Object { ($_.P5 -eq 0) -and ($_.P2 -eq $script:_OSDiskSCSIControllerID) }).P7
         $_AzureDisk_row.DeviceName = $_rootdisk
-        $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -like ($_AzureDisk_row.DeviceName + "*")}).vg[0].vg_name
+        try {
+            $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -like ($_AzureDisk_row.DeviceName + "*")}).vg[0].vg_name
+        }
+        catch {
+            Write-Host ("Couldn't find Volume Group for device " + $_AzureDisk_row.DeviceName)
+            $_AzureDisk_row.VolumeGroup = "novg-" + $_AzureDisk_row.DeviceName.Replace("/dev/","") 
+        }
 
         $script:_AzureDisks += $_AzureDisk_row
 
@@ -1130,6 +1136,7 @@ function CollectVMStorage {
             }
             catch {
                 Write-Host ("Couldn't find Volume Group for device " + $_AzureDisk_row.DeviceName)
+                $_AzureDisk_row.VolumeGroup = "novg-" + $_AzureDisk_row.DeviceName.Replace("/dev/","") 
             }
 
             if (-not $RunLocally) {

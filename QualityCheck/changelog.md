@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 2022070601
+
+* fixing issue with OS disk not part of a VG
+
 ## Version 2022070301
 
 * add and update SAP note 3024346, HANA with Azure NetApp Files
