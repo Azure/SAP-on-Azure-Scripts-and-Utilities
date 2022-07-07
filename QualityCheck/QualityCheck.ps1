@@ -247,7 +247,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2022070701
+$scriptversion = 2022070702
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -340,6 +340,31 @@ $script:_HTMLHeader = @"
 }
 
 
+# RunLog function for more detailed data during execution
+function WriteRunLog {
+    [CmdletBinding()]
+    param (
+        [string]$message,
+        [string]$category="INFO"
+    )
+
+    switch ($category) {
+        "INFO"      {   $_prestring = "INFO     - "
+                        $_color = "Green" }
+        "WARNING"   {   $_prestring = "WARNING  - "
+                        $_color = "Yellow" }
+        "ERROR"     {   $_prestring = "ERROR    - "
+                        $_color = "Red" }
+    }
+    $_runlog_row = "" | Select-Object "Log"
+    $_runlog_row.Log = [string]$_prestring + [string]$message
+    $script:_runlog += $_runlog_row
+    if (-not $RunLocally) {
+        Write-Host ($_prestring + $message) -ForegroundColor $_color
+    }
+}
+
+
 # CheckRequiredModules - checking for installed Modules and their versions
 function CheckRequiredModules {
 
@@ -362,7 +387,7 @@ function CheckRequiredModules {
         if ($_modules)
         {
             # module installed, checking for version
-            Write-Host "Module" $_requiredmodule.ModuleName "installed"
+            WriteRunLog -message ("Module " + $_requiredmodule.ModuleName + " installed")
             $_foundmoduleversion = 0
 
             foreach ($_module in $_modules) {
@@ -379,14 +404,14 @@ function CheckRequiredModules {
             # check if loop found the required version
             if ($_foundmoduleversion -eq 0) {
                 # required module version not found
-                Write-Host "Please install" $_requiredmodule.ModuleName "with version greater than" $_requiredmodule.Version
+                WriteRunLog -category "ERROR" -message ("Please install " + $_requiredmodule.ModuleName + " with version greater than " + $_requiredmodule.Version)
                 exit
             }
 
         }
         else {
             # Get-Module didn't come back with a result
-            Write-Host "Please install" $_requiredmodule.ModuleName "with version greater than" $_requiredmodule.Version
+            WriteRunLog -category "ERROR" -message ("Please install " + $_requiredmodule.ModuleName + " with version greater than " + $_requiredmodule.Version)
             exit
         }
     }
@@ -502,7 +527,7 @@ function CheckTCPConnectivity {
             }
         }
         catch {
-            Write-Host "Error connecting to $AzVMName using $VMHostname, please check network connection and firewall rules"
+            WriteRunLog -category "ERROR" -message "Error connecting to $AzVMName using $VMHostname, please check network connection and firewall rules"
             exit
         }
 
@@ -625,7 +650,7 @@ function ConnectVM {
         }
         else {
             # not able to connect
-            Write-Host "Please check your credentials, unable to logon"
+            WriteRunLog -category "ERROR" -message "SSH - Please check your credentials, unable to logon"
             exit 
         }
     }
@@ -742,7 +767,6 @@ function CollectVMInformation {
 
                 if ((-not $RunLocally) -or ($RunLocally -and ($_CollectVMInformationCheck.RunInLocalMode))) {
 
-                    # Write-Host "Running Check" $_CollectVMInformationCheck.Description
                     $_output = RunCommand -p $_CollectVMInformationCheck
 
                     # check if result should be shown in report
@@ -794,7 +818,6 @@ function CollectVMInformationAdditional {
                 
                 if ((-not $RunLocally) -or ($RunLocally -and ($_CollectVMInformationCheck.RunInLocalMode))) {
 
-                    # Write-Host "Running Check" $_CollectVMInformationCheck.Description
                     $_output = RunCommand -p $_CollectVMInformationCheck
 
                     # check if result should be shown in report
@@ -895,7 +918,7 @@ function RunCommand {
 
             }
             catch {
-                Write-Host $p.ProcessingCommand
+                WriteRunLog -category "ERROR" -message ("Running command " + $p.ProcessingCommand)
             }
         }
     }
@@ -946,12 +969,12 @@ function CheckAzureConnectivity {
             $script:_VMName = $_VMinfo.Name
         }
         else {
-            Write-Host "Unable to find resource group or VM, please check if you are connected to the correct subscription or if you had a typo"
+            WriteRunLog -category "ERROR" -message "Unable to find resource group or VM, please check if you are connected to the correct subscription or if you had a typo"
             exit
         }
     }
     else {
-        Write-Host "Please connect to Azure using the Connect-AzAccount command, if you are connected use the Select-AzSubscription command to set the correct context"
+        WriteRunLog -category "ERROR" -message "Please connect to Azure using the Connect-AzAccount command, if you are connected use the Select-AzSubscription command to set the correct context"
         exit
     }
 
@@ -1083,15 +1106,6 @@ function CollectVMStorage {
         $_command = PrepareCommand -Command "/usr/bin/curl -s --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/storageProfile?api-version=2021-11-01'"
         $script:_azurediskconfig = RunCommand -p $_command | ConvertFrom-Json
 
-        # checking if sg_map tool is available
-        #$_command = PrepareCommand -Command "ls -l /usr/bin/sg_map | wc -l" -CommandType "OS"
-        #$_sgmap_installed = RunCommand -p $_command
-        #if ($_sgmap_installed -eq "0") {
-        #    Write-Host "sg_map not installed, please install sg3_utils package" -ForegroundColor Red
-        #    Write-Host "sg_map is required to match SCSI IDs to disk names" -ForegroundColor Red
-        #    exit
-        #}
-
         # get device for root
         # $_command = PrepareCommand -Command "realpath /dev/disk/azure/root" -CommandType "OS"
         $_command = PrepareCommand -Command "realpath -m /dev/disk/cloud/azure_root" -CommandType "OS"
@@ -1149,7 +1163,7 @@ function CollectVMStorage {
         }
         catch {
             if (-not $RunLocally) {
-                Write-Host ("Couldn't find Volume Group for device " + $_AzureDisk_row.DeviceName)
+                WriteRunLog -category "WARNING" -message ("Couldn't find Volume Group for device " + $_AzureDisk_row.DeviceName)
             }
             $_AzureDisk_row.VolumeGroup = "novg-" + $_AzureDisk_row.DeviceName.Replace("/dev/","") 
         }
@@ -1189,14 +1203,14 @@ function CollectVMStorage {
                 $_AzureDisk_row.DeviceName = ($script:_diskmapping | Where-Object { ($_.P4 -eq $_datadisk.lun) }).P10
             }
             catch {
-                Write-Host ("Couldn't find device name for LUN " + $_datadisk.lun)
+                WriteRunLog -category "WARNING" -message ("Couldn't find device name for LUN " + $_datadisk.lun)
             }
             try {
                 $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -like ($_AzureDisk_row.DeviceName + "*")}).vg[0].vg_name
             }
             catch {
                 if (-not $RunLocally) {
-                    Write-Host ("Couldn't find Volume Group for device " + $_AzureDisk_row.DeviceName)
+                    WriteRunLog -category "WARNING" -message ("Couldn't find Volume Group for device " + $_AzureDisk_row.DeviceName)
                 }
                 $_AzureDisk_row.VolumeGroup = "novg-" + $_AzureDisk_row.DeviceName.Replace("/dev/","") 
             }
@@ -1818,7 +1832,7 @@ function RunQualityCheck {
     $script:_StorageType = $script:_StorageType | Select-Object -Unique
 
     if (($VMDatabase -eq "HANA") -and ($script:_StorageType.Length -lt 1)) {
-        Write-Host "please check your parameters, HANA directories not found"
+        WriteRunLog -category "ERROR" -message  "please check your parameters, HANA directories not found"
         exit
     }
 
@@ -2100,10 +2114,10 @@ function CheckSudoPermission {
 
         if ($_rootrights.Contains("root")) {
             # everything ok
-            Write-Host "User is able to sudo"
+            WriteRunLog -category "INFO" -message "User can sudo"
         }
         else {
-            Write-Host "User not able to sudo, please check sudoers" -ForegroundColor Red
+            WriteRunLog -category "ERROR" -message "User not able to sudo, please check sudoers file"
             exit
         }
     }
@@ -2119,15 +2133,18 @@ function CheckForNewerVersion {
         $OnlineFileVersion = (Invoke-WebRequest -Uri $ConfigFileUpdateURL -UseBasicParsing -ErrorAction SilentlyContinue).Content  | ConvertFrom-Json
 
         if ($OnlineFileVersion.Version -gt $scriptversion) {
-            Write-Host "There is a newer version of QualityCheck available on GitHub, please consider downloading it" -ForegroundColor Red
-            Write-Host "You can download it on https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities/tree/main/QualityCheck" -ForegroundColor Red
-            Write-Host "Script will continue" -ForegroundColor Red
+            WriteRunLog -category "WARNING" -message "There is a newer version of QualityCheck available on GitHub, please consider downloading it"
+            WriteRunLog -category "WARNING" -message "You can download it on https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities/tree/main/QualityCheck"
+            WriteRunLog -category "WARNING" -message "Script will continue"
             Start-Sleep -Seconds 3
         }
 
     }
     catch {
-        Write-Host "Can't connect to GitHub to check version" -ForegroundColor Yellow
+        WriteRunLog -category "WARNING" -message "Can't connect to GitHub to check version"
+    }
+    if (-not $RunLocally) {
+        WriteRunLog -category "INFO" -message "Script Version $scriptversion"
     }
 
 }
@@ -2170,13 +2187,15 @@ function LoadGUI {
 
 $script:_runlog = @()
 
+WriteRunLog -category "INFO" -message ("Start " + (Get-Date))
+
 # load json configuration
 $_jsonconfig = Get-Content -Raw -Path $ConfigFileName -ErrorAction Stop | ConvertFrom-Json
 if ($scriptversion -eq $_jsonconfig.Version) {
     # everything ok, script and json version match
 }
 else {
-    Write-Host "Versions of script and json file don't match"
+    WriteRunLog -category "ERROR" -message "Versions of script and json file don't match"
     exit
 }
 
@@ -2185,7 +2204,7 @@ if ($GUI) {
         LoadGUI
     }
     else {
-        Write-Host "Sorry, GUI is only supported on Windows Systems"
+        WriteRunLog -category "ERROR" -message "Sorry, GUI is only supported on Windows Systems"
         exit
     }
 }
@@ -2233,9 +2252,8 @@ if (-not $RunLocally) {
 LoadHTMLHeader
 
 # Collect PowerShell Parameters
-#$_PowerShellParameters = CollectPowerShellParameters
-
 $_ParameterValues = @{}
+$_ParametersToIgnore = @("Verbose", "Debug", "ErrorAction", "WarningAction", "InformationAction", "ErrorVariable", "WarningVariable", "InformationVariable", "OutVariable", "OutBuffer", "PipelineVariable")
 foreach ($_parameter in $MyInvocation.MyCommand.Parameters.GetEnumerator()) {
     try {
         $_key = $_parameter.Key
@@ -2247,11 +2265,11 @@ foreach ($_parameter in $MyInvocation.MyCommand.Parameters.GetEnumerator()) {
         if($PSBoundParameters.ContainsKey($_key)) {
             $_ParameterValues[$_key] = $PSBoundParameters[$_key]
         }
+        if (-not ($_ParametersToIgnore -contains $_key) ) {
+            WriteRunLog -category "INFO" -message "Parameter $_key : $_value"
+        }
     } finally {}
 }
-
-$_ParameterContent = $_ParameterValues | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""Parameters"">Parameters</h2>" 
-
 
 # Collect Script Parameters
 $_CollectScriptParameter = CollectScriptParameters
@@ -2293,20 +2311,28 @@ $_CollectVMInfoAdditional = CollectVMInformationAdditional
 # Collect footer for support cases
 $_CollectFooter = CollectFooter
 
+
 if (-not $RunLocally) {
 
-    $_HTMLReport = ConvertTo-Html -Body "$_Content $_CollectScriptParameter $_CollectVMInfo $_RunQualityCheck $_CollectFileSystems $_CollectVMStorage $_CollectLVMGroups $_CollectLVMVolumes $_CollectANFVolumes $_CollectNetworkInterfaces $_CollectLoadBalancer $_CollectVMInfoAdditional $_CollectFooter $_ParameterContent" -Head $script:_HTMLHeader -Title "Quality Check for SAP Worloads on Azure" -PostContent "<p id='CreationDate'>Creation Date: $(Get-Date)</p><p id='CreationDate'>Script Version: $scriptversion</p>"
+    WriteRunLog -category "INFO" -message ("Creating HTML File ")
+    $_RunLogContent = $script:_runlog | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""RunLog"">RunLog</h2>"
+
+    $_HTMLReport = ConvertTo-Html -Body "$_Content $_CollectScriptParameter $_CollectVMInfo $_RunQualityCheck $_CollectFileSystems $_CollectVMStorage $_CollectLVMGroups $_CollectLVMVolumes $_CollectANFVolumes $_CollectNetworkInterfaces $_CollectLoadBalancer $_CollectVMInfoAdditional $_CollectFooter $_RunLogContent" -Head $script:_HTMLHeader -Title "Quality Check for SAP Worloads on Azure" -PostContent "<p id='CreationDate'>Creation Date: $(Get-Date)</p><p id='CreationDate'>Script Version: $scriptversion</p>"
     $_HTMLReportFileName = $AzVMName + "-" + $(Get-Date -Format "yyyyMMdd-HHmm") + ".html"
     $_HTMLReport | Out-File .\$_HTMLReportFileName
 }
 else {
     # script running locally, convert result to JSON
-    $_jsonoutput = "" | Select-Object Checks, Parameters, InformationCollection, Disks, Filesystems
+    $_jsonoutput = "" | Select-Object Checks, Parameters, InformationCollection, Disks, Filesystems, RunLog
+
+    WriteRunLog -category "INFO" -message ("Preparing JSON Output")
+    WriteRunLog -category "INFO" -message ("End " + (Get-Date))
 
     $_jsonoutput.Checks = $script:_Checks
     $_jsonoutput.Parameters = $_ParameterValues
     $_jsonoutput.Disks = $script:_AzureDisks
     $_jsonoutput.Filesystems = $script:_filesystems
+    $_jsonoutput.RunLog = $script:_runlog
 
     $_jsonoutput = $_jsonoutput | ConvertTo-Json
 
@@ -2318,6 +2344,10 @@ else {
 
 if (-not $RunLocally) {
     Remove-SSHSession -SessionId $_SessionID | Out-Null
+}
+
+if (-not $RunLocally) {
+    WriteRunLog -category "INFO" -message ("End " + (Get-Date))
 }
 
 exit

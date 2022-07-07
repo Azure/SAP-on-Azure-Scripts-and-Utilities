@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 2022070702
+
+* adding runtime log to HTML file
+* formating of log output
+
 ## Version 2022070701
 
 * adding parameters to HTML output
