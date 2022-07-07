@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 2022070701
+
+* adding parameters to HTML output
+* fixing an issue with RunLocally and post processing commands
+* adding storage disk types to script incl performance values for RunLocally command to calculate performance and throughput
+* adding internal values in JSON output for RunLocally
+
 ## Version 2022070601
 
 * fixing issue with OS disk not part of a VG

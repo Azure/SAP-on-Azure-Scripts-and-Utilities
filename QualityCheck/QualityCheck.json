@@ -1,5 +1,5 @@
 {
-    "Version": 2022070601,
+    "Version": 2022070701,
     "PowerShellPrerequisits": [
         {
             "ModuleName": "Posh-SSH",
@@ -1741,7 +1741,7 @@
         {
             "CheckID": "IC-0004",
             "Description": "VM Type",
-            "OS": ["SUSE","RedHat","OracleLinux"],
+            "OS": ["SUSE","RedHat","OracleLinux","Windows"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
             "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
@@ -1896,7 +1896,7 @@
             "Role": ["DB","ASCS","APP"],
             "RunInLocalMode": true,
             "CommandType": "OS",
-            "ProcessingCommand": "/sbin/sysctl -a",
+            "ProcessingCommand": "/sbin/sysctl -a 2> /dev/null",
             "PostProcessingCommand": "",
             "RootRequired": true,
             "ShowInReport": true,
@@ -1947,7 +1947,7 @@
             "Role": ["DB","ASCS","APP"],
             "RunInLocalMode": true,
             "CommandType": "OS",
-            "ProcessingCommand": "/sbin/chkconfig",
+            "ProcessingCommand": "/sbin/chkconfig 2> /dev/null",
             "PostProcessingCommand": "",
             "RootRequired": true,
             "ShowInReport": true,

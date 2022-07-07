@@ -247,7 +247,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2022070601
+$scriptversion = 2022070701
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -740,7 +740,7 @@ function CollectVMInformation {
             # check if check applies to HA or not and if HA check for HA-Agent
             if (($_CollectVMInformationCheck.HighAvailability.Contains($HighAvailability)) -or (($_CollectVMInformationCheck.HighAvailability.Contains($HighAvailability)) -and ($_CollectVMInformationCheck.HighAvailabilityAgent.Contains($HighAvailabilityAgent)))) {
 
-                if ((-not $RunLocally) -or ($RunLocally -and ($_check.RunInLocalMode))) {
+                if ((-not $RunLocally) -or ($RunLocally -and ($_CollectVMInformationCheck.RunInLocalMode))) {
 
                     # Write-Host "Running Check" $_CollectVMInformationCheck.Description
                     $_output = RunCommand -p $_CollectVMInformationCheck
@@ -792,7 +792,7 @@ function CollectVMInformationAdditional {
             if (($_CollectVMInformationCheck.HighAvailability.Contains($HighAvailability)) -or (($_CollectVMInformationCheck.HighAvailability.Contains($HighAvailability)) -and ($_CollectVMInformationCheck.HighAvailabilityAgent.Contains($HighAvailabilityAgent)))) {
 
                 
-                if ((-not $RunLocally) -or ($RunLocally -and ($_check.RunInLocalMode))) {
+                if ((-not $RunLocally) -or ($RunLocally -and ($_CollectVMInformationCheck.RunInLocalMode))) {
 
                     # Write-Host "Running Check" $_CollectVMInformationCheck.Description
                     $_output = RunCommand -p $_CollectVMInformationCheck
@@ -880,7 +880,19 @@ function RunCommand {
         else {
             try {
                 # run command locally
-                Invoke-Expression $p.ProcessingCommand
+                $_result = Invoke-Expression $p.ProcessingCommand
+
+                # if postprocessingcommand is defined in JSON
+                if (($p.PostProcessingCommand -ne "") -or ($p.PostProcessingCommand)) {
+
+                    # run postprocessing command
+                    $_command = $p.PostProcessingCommand
+                    $_command = $_command -replace "PARAMETER",$_result
+                    $_result = Invoke-Expression $_command
+                    
+                }
+                return $_result
+
             }
             catch {
                 Write-Host $p.ProcessingCommand
@@ -1011,6 +1023,48 @@ function CalculateDiskTypeSKU {
 # Show storage configuration of VM
 function CollectVMStorage {
 
+    $script:_DiskPerformance = @(
+        [pscustomobject]@{StorageTier="Premium_LRS";Name="P1";Size=4;MBPS=25;IOPS=120},
+        [pscustomobject]@{StorageTier="Premium_LRS";Name="P2";Size=8;MBPS=25;IOPS=120},
+        [pscustomobject]@{StorageTier="Premium_LRS";Name="P3";Size=16;MBPS=25;IOPS=120},
+        [pscustomobject]@{StorageTier="Premium_LRS";Name="P4";Size=32;MBPS=25;IOPS=120},
+        [pscustomobject]@{StorageTier="Premium_LRS";Name="P6";Size=64;MBPS=50;IOPS=240},
+        [pscustomobject]@{StorageTier="Premium_LRS";Name="P10";Size=128;MBPS=100;IOPS=500},
+        [pscustomobject]@{StorageTier="Premium_LRS";Name="P15";Size=256;MBPS=125;IOPS=1100},
+        [pscustomobject]@{StorageTier="Premium_LRS";Name="P20";Size=512;MBPS=150;IOPS=2300},
+        [pscustomobject]@{StorageTier="Premium_LRS";Name="P30";Size=1024;MBPS=200;IOPS=5000},
+        [pscustomobject]@{StorageTier="Premium_LRS";Name="P40";Size=2048;MBPS=250;IOPS=7500},
+        [pscustomobject]@{StorageTier="Premium_LRS";Name="P50";Size=4096;MBPS=250;IOPS=7500},
+        [pscustomobject]@{StorageTier="Premium_LRS";Name="P60";Size=8192;MBPS=500;IOPS=16000},
+        [pscustomobject]@{StorageTier="Premium_LRS";Name="P70";Size=16384;MBPS=750;IOPS=18000},
+        [pscustomobject]@{StorageTier="Premium_LRS";Name="P80";Size=32767;MBPS=900;IOPS=20000},
+        [pscustomobject]@{StorageTier="StandardSSD_LRS";Name="E1";Size=4;MBPS=60;IOPS=500},
+        [pscustomobject]@{StorageTier="StandardSSD_LRS";Name="E2";Size=8;MBPS=60;IOPS=500},
+        [pscustomobject]@{StorageTier="StandardSSD_LRS";Name="E3";Size=16;MBPS=60;IOPS=500},
+        [pscustomobject]@{StorageTier="StandardSSD_LRS";Name="E4";Size=32;MBPS=60;IOPS=500},
+        [pscustomobject]@{StorageTier="StandardSSD_LRS";Name="E6";Size=64;MBPS=60;IOPS=500},
+        [pscustomobject]@{StorageTier="StandardSSD_LRS";Name="E10";Size=128;MBPS=60;IOPS=500},
+        [pscustomobject]@{StorageTier="StandardSSD_LRS";Name="E15";Size=256;MBPS=60;IOPS=500},
+        [pscustomobject]@{StorageTier="StandardSSD_LRS";Name="E20";Size=512;MBPS=60;IOPS=500},
+        [pscustomobject]@{StorageTier="StandardSSD_LRS";Name="E30";Size=1024;MBPS=60;IOPS=500},
+        [pscustomobject]@{StorageTier="StandardSSD_LRS";Name="E40";Size=2048;MBPS=60;IOPS=500},
+        [pscustomobject]@{StorageTier="StandardSSD_LRS";Name="E50";Size=4096;MBPS=60;IOPS=500},
+        [pscustomobject]@{StorageTier="StandardSSD_LRS";Name="E60";Size=8192;MBPS=400;IOPS=2000},
+        [pscustomobject]@{StorageTier="StandardSSD_LRS";Name="E70";Size=16384;MBPS=600;IOPS=4000},
+        [pscustomobject]@{StorageTier="StandardSSD_LRS";Name="E80";Size=32767;MBPS=750;IOPS=6000},
+        [pscustomobject]@{StorageTier="StandardHDD_LRS";Name="S4";Size=32;MBPS=60;IOPS=500},
+        [pscustomobject]@{StorageTier="StandardHDD_LRS";Name="S6";Size=64;MBPS=60;IOPS=500},
+        [pscustomobject]@{StorageTier="StandardHDD_LRS";Name="S10";Size=128;MBPS=60;IOPS=500},
+        [pscustomobject]@{StorageTier="StandardHDD_LRS";Name="S15";Size=256;MBPS=60;IOPS=500},
+        [pscustomobject]@{StorageTier="StandardHDD_LRS";Name="S20";Size=512;MBPS=60;IOPS=500},
+        [pscustomobject]@{StorageTier="StandardHDD_LRS";Name="S30";Size=1024;MBPS=60;IOPS=500},
+        [pscustomobject]@{StorageTier="StandardHDD_LRS";Name="S40";Size=2048;MBPS=60;IOPS=500},
+        [pscustomobject]@{StorageTier="StandardHDD_LRS";Name="S50";Size=4096;MBPS=60;IOPS=500},
+        [pscustomobject]@{StorageTier="StandardHDD_LRS";Name="S60";Size=8192;MBPS=300;IOPS=1300},
+        [pscustomobject]@{StorageTier="StandardHDD_LRS";Name="S70";Size=16384;MBPS=500;IOPS=2000},
+        [pscustomobject]@{StorageTier="StandardHDD_LRS";Name="S80";Size=32767;MBPS=500;IOPS=2000}
+    ) 
+
     if ($VMOperatingSystem -eq "Windows") {
         # future windows support
     }
@@ -1084,13 +1138,19 @@ function CollectVMStorage {
             $_AzureDisk_row.MBPS = ($script:_AzureDiskDetails | Where-Object { $_.Name -eq $script:_azurediskconfig.osDisk.name }).DiskMBpsReadWrite
             $_AzureDisk_row.PerformanceTier = ($script:_AzureDiskDetails | Where-Object { $_.Name -eq $script:_azurediskconfig.osDisk.name }).Tier
         }
+        else {
+            $_AzureDisk_row.IOPS = ($script:_DiskPerformance | Where-Object { ($_.Size -eq $_AzureDisk_row.Size) -and ($_.StorageTier -eq $_AzureDisk_row.StorageType) }).IOPS
+            $_AzureDisk_row.MBPS = ($script:_DiskPerformance | Where-Object { ($_.Size -eq $_AzureDisk_row.Size) -and ($_.StorageTier -eq $_AzureDisk_row.StorageType) }).MBPS
+        }
         # $_AzureDisk_row.DeviceName = ($script:_diskmapping | Where-Object { ($_.P5 -eq 0) -and ($_.P2 -eq $script:_OSDiskSCSIControllerID) }).P7
         $_AzureDisk_row.DeviceName = $_rootdisk
         try {
             $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -like ($_AzureDisk_row.DeviceName + "*")}).vg[0].vg_name
         }
         catch {
-            Write-Host ("Couldn't find Volume Group for device " + $_AzureDisk_row.DeviceName)
+            if (-not $RunLocally) {
+                Write-Host ("Couldn't find Volume Group for device " + $_AzureDisk_row.DeviceName)
+            }
             $_AzureDisk_row.VolumeGroup = "novg-" + $_AzureDisk_row.DeviceName.Replace("/dev/","") 
         }
 
@@ -1135,7 +1195,9 @@ function CollectVMStorage {
                 $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -like ($_AzureDisk_row.DeviceName + "*")}).vg[0].vg_name
             }
             catch {
-                Write-Host ("Couldn't find Volume Group for device " + $_AzureDisk_row.DeviceName)
+                if (-not $RunLocally) {
+                    Write-Host ("Couldn't find Volume Group for device " + $_AzureDisk_row.DeviceName)
+                }
                 $_AzureDisk_row.VolumeGroup = "novg-" + $_AzureDisk_row.DeviceName.Replace("/dev/","") 
             }
 
@@ -1144,7 +1206,11 @@ function CollectVMStorage {
                 $_AzureDisk_row.MBPS = ($script:_AzureDiskDetails | Where-Object { $_.Name -eq $_datadisk.name }).DiskMBpsReadWrite
                 $_AzureDisk_row.PerformanceTier = ($script:_AzureDiskDetails | Where-Object { $_.Name -eq $_datadisk.name }).Tier
             }
-
+            else {
+                $_AzureDisk_row.IOPS = ($script:_DiskPerformance | Where-Object { ($_.Size -eq $_AzureDisk_row.Size) -and ($_.StorageTier -eq $_AzureDisk_row.StorageType) }).IOPS
+                $_AzureDisk_row.MBPS = ($script:_DiskPerformance | Where-Object { ($_.Size -eq $_AzureDisk_row.Size) -and ($_.StorageTier -eq $_AzureDisk_row.StorageType) }).MBPS
+            }
+    
             $_AzureDisk_row.DiskType = CalculateDiskTypeSKU -size $_datadisk.DiskSizeGB -tier $_datadisk.managedDisk.storageAccountType
 
             $script:_AzureDisks += $_AzureDisk_row
@@ -1440,7 +1506,12 @@ function AddCheckResultEntry {
     )
 
     # create empty object per line
-    $_Check_row = "" | Select-Object CheckID, Description, AdditionalInfo, Testresult, ExpectedResult, Status, SAPNote, MicrosoftDocs
+    if (-not $RunLocally) {
+        $_Check_row = "" | Select-Object CheckID, Description, AdditionalInfo, Testresult, ExpectedResult, Status, SAPNote, MicrosoftDocs
+    }
+    else {
+        $_Check_row = "" | Select-Object CheckID, Description, AdditionalInfo, Testresult, ExpectedResult, Status, SAPNote, MicrosoftDocs, Success, VmRole
+    }
 
     # add infos
     $_Check_row.CheckID = $CheckID
@@ -1449,14 +1520,22 @@ function AddCheckResultEntry {
     $_Check_row.Testresult = $TestResult
     $_Check_row.ExpectedResult = $ExptectedResult
     
-    #$_Check_row.Status = $Status
+    if ($RunLocally) {
+        $_Check_row.VmRole = $VMRole
+    }
     
     # taking input from JSON and adding INFO, ERROR or WARNING
     if ($Status -eq "ERROR") {
         $_Check_row.Status = $ErrorCategory
+        if ($RunLocally) {
+            $_Check_row.Success = $false
+        }
     }
     else {
         $_Check_row.Status = $Status
+        if ($RunLocally) {
+            $_Check_row.Success = $true
+        }
     }
     
     # if SAPNote is defined it will add the HTML code for the link
@@ -1760,7 +1839,12 @@ function RunQualityCheck {
                 
                 if ((-not $RunLocally) -or ($RunLocally -and ($_check.RunInLocalMode))) {
 
-                    $_Check_row = "" | Select-Object CheckID, Description, AdditionalInfo, Testresult, ExpectedResult, Status, SAPNote, MicrosoftDocs
+                    if (-not $RunLocally) {
+                        $_Check_row = "" | Select-Object CheckID, Description, AdditionalInfo, Testresult, ExpectedResult, Status, SAPNote, MicrosoftDocs
+                    }
+                    else {
+                        $_Check_row = "" | Select-Object CheckID, Description, AdditionalInfo, Testresult, ExpectedResult, Status, SAPNote, MicrosoftDocs, Success, VmRole
+                    }
 
                     $_result = RunCommand -p $_check
 
@@ -1771,6 +1855,10 @@ function RunQualityCheck {
                     $_Check_row.AdditionalInfo = $_check.AdditionalInfo
                     $_Check_row.Testresult = $_result
                     $_Check_row.ExpectedResult = $_check.ExpectedResult
+
+                    if ($RunLocally) {
+                        $_Check_row.VmRole = $VMRole
+                    }
 
                     if ($_check.SAPNote -ne "") {
                         if (-not $RunLocally) {
@@ -1783,10 +1871,16 @@ function RunQualityCheck {
                     
                     if ($_result -eq $_check.ExpectedResult) {
                         $_Check_row.Status = "OK"
+                        if ($RunLocally) {
+                            $_Check_row.Success = $true
+                        }
                     }
                     else {
                         # $_Check_row.Status = "ERROR"
                         $_Check_row.Status = $_check.ErrorCategory
+                        if ($RunLocally) {
+                            $_Check_row.Success = $false
+                        }
                     }
                     
                     if (($_check.ShowAlternativeRequirement) -ne "" -or ($_check.ShowAlternativeResult -ne ""))
@@ -2038,6 +2132,38 @@ function CheckForNewerVersion {
 
 }
 
+function LoadGUI {
+
+    [void] [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing")
+    [void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
+
+    $_QualityCheckGUI = New-Object System.Windows.Forms.Form
+
+    $_QualityCheckGUI.StartPosition = "CenterScreen"
+    $_QualityCheckGUI.Size = New-Object System.Drawing.Size(800,500)
+
+    $_QualityCheckGUI_DB = New-Object System.Windows.Forms.Combobox
+    # Die nächsten beiden Zeilen legen die Position und die Größe des Buttons fest
+    $_QualityCheckGUI_DB.Location = New-Object System.Drawing.Size(300,80)
+    $_QualityCheckGUI_DB.Size = New-Object System.Drawing.Size(200,20)
+    $_QualityCheckGUI_DB.Height = 70
+    $_QualityCheckGUI_DB.Items.Add("HANA")
+    $_QualityCheckGUI_DB.Items.Add("MSSQL")
+    $_QualityCheckGUI_DB.Items.Add("Db2")
+    $_QualityCheckGUI_DB.Items.Add("Oracle")
+    $_QualityCheckGUI.Controls.Add($_QualityCheckGUI_DB)
+    $_QualityCheckGUI.Topmost = $True
+    $_QualityCheckGUI.Add_SelectedIndexChanged({ })
+    
+
+
+    [void] $_QualityCheckGUI.ShowDialog()
+
+
+    exit
+
+}
+
 #########
 # Main module
 #########
@@ -2053,6 +2179,17 @@ else {
     Write-Host "Versions of script and json file don't match"
     exit
 }
+
+if ($GUI) {
+    if ($IsWindows) {
+        LoadGUI
+    }
+    else {
+        Write-Host "Sorry, GUI is only supported on Windows Systems"
+        exit
+    }
+}
+
 
 # parameter check and modification if required
 
@@ -2094,6 +2231,27 @@ if (-not $RunLocally) {
 
 # Load HTML Header
 LoadHTMLHeader
+
+# Collect PowerShell Parameters
+#$_PowerShellParameters = CollectPowerShellParameters
+
+$_ParameterValues = @{}
+foreach ($_parameter in $MyInvocation.MyCommand.Parameters.GetEnumerator()) {
+    try {
+        $_key = $_parameter.Key
+        if($null -ne ($_value = Get-Variable -Name $_key -ValueOnly -ErrorAction Ignore)) {
+            if($value -ne ($null -as $_parameter.Value.ParameterType)) {
+                $_ParameterValues[$_key] = $_value
+            }
+        }
+        if($PSBoundParameters.ContainsKey($_key)) {
+            $_ParameterValues[$_key] = $PSBoundParameters[$_key]
+        }
+    } finally {}
+}
+
+$_ParameterContent = $_ParameterValues | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""Parameters"">Parameters</h2>" 
+
 
 # Collect Script Parameters
 $_CollectScriptParameter = CollectScriptParameters
@@ -2137,15 +2295,18 @@ $_CollectFooter = CollectFooter
 
 if (-not $RunLocally) {
 
-    $_HTMLReport = ConvertTo-Html -Body "$_Content $_CollectScriptParameter $_CollectVMInfo $_RunQualityCheck $_CollectFileSystems $_CollectVMStorage $_CollectLVMGroups $_CollectLVMVolumes $_CollectANFVolumes $_CollectNetworkInterfaces $_CollectLoadBalancer $_CollectVMInfoAdditional $_CollectFooter" -Head $script:_HTMLHeader -Title "Quality Check for SAP Worloads on Azure" -PostContent "<p id='CreationDate'>Creation Date: $(Get-Date)</p><p id='CreationDate'>Script Version: $scriptversion</p>"
+    $_HTMLReport = ConvertTo-Html -Body "$_Content $_CollectScriptParameter $_CollectVMInfo $_RunQualityCheck $_CollectFileSystems $_CollectVMStorage $_CollectLVMGroups $_CollectLVMVolumes $_CollectANFVolumes $_CollectNetworkInterfaces $_CollectLoadBalancer $_CollectVMInfoAdditional $_CollectFooter $_ParameterContent" -Head $script:_HTMLHeader -Title "Quality Check for SAP Worloads on Azure" -PostContent "<p id='CreationDate'>Creation Date: $(Get-Date)</p><p id='CreationDate'>Script Version: $scriptversion</p>"
     $_HTMLReportFileName = $AzVMName + "-" + $(Get-Date -Format "yyyyMMdd-HHmm") + ".html"
     $_HTMLReport | Out-File .\$_HTMLReportFileName
 }
 else {
     # script running locally, convert result to JSON
-    $_jsonoutput = "" | Select-Object Checks, InformationCollection
+    $_jsonoutput = "" | Select-Object Checks, Parameters, InformationCollection, Disks, Filesystems
 
     $_jsonoutput.Checks = $script:_Checks
+    $_jsonoutput.Parameters = $_ParameterValues
+    $_jsonoutput.Disks = $script:_AzureDisks
+    $_jsonoutput.Filesystems = $script:_filesystems
 
     $_jsonoutput = $_jsonoutput | ConvertTo-Json
 
