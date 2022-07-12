@@ -574,7 +574,6 @@ function ConnectVM {
                     exit
                 }
 
-
                 # connect to VM
                 $script:_sshsession = New-SSHSession -ComputerName $VMHostname -Credential $_credentials -Port $VMConnectionPort -KeyFile $SSHKey -AcceptKey -ConnectionTimeout 5 -ErrorAction SilentlyContinue
                 
@@ -636,6 +635,11 @@ function ConnectVM {
                 # create credentials object
                 $_nopasswd = New-Object System.Security.SecureString
                 $script:_credentials = New-Object System.Management.Automation.PSCredential ($VMUsername, $_nopasswd);
+
+                if (-not(Test-Path -Path $SSHKey -PathType Leaf)) {
+                    WriteRunLog -category "ERROR" -message "Can't find SSH Key file, please check path"
+                    exit
+                }
 
                 # connect to VM
                 $script:_sshsession = New-SSHSession -ComputerName $VMHostname -Credential $_credentials -Port $VMConnectionPort -KeyFile $SSHKey -AcceptKey -ConnectionTimeout 5 -ErrorAction SilentlyContinue
