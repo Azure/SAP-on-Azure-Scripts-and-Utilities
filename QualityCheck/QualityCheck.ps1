@@ -2185,6 +2185,7 @@ function LoadGUI {
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:QualityCheck"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
         Title="SAP on Azure - Quality Check" Height="600" Width="900">
     <Grid Margin="0,0,-6.667,-29.333">
         <Grid.ColumnDefinitions>
@@ -2269,129 +2270,145 @@ function LoadGUI {
 </Window>
 "@ -replace 'mc:Ignorable="d"','' -replace "x:N",'N' -replace '^<Win.*', '<Window' #-replace wird benötigt, wenn XAML aus Visual Studio kopiert wird.
 
-#XAML laden
-[void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
-try{
-   $_Form=[Windows.Markup.XamlReader]::Load( (New-Object System.Xml.XmlNodeReader $_XAML) )
-} catch {
-   Write-Host "Windows.Markup.XamlReader konnte nicht geladen werden. Mögliche Ursache: ungültige Syntax oder fehlendes .net"
-}
-
-$_database = $_Form.FindName("Database")
-$_database.add_SelectionChanged(
-    {
-        param($sender,$args)
-        $selected = $sender.SelectedItem.Content 
-        if ($selected -eq "HANA") {
-            $_Form.FindName("LabelHANAScenario").Visibility = "Visible"
-            $_Form.FindName("HANAScenario").Visibility = "Visible"
-        }
-        else {
-            $_Form.FindName("LabelHANAScenario").Visibility = "Hidden"
-            $_Form.FindName("HANAScenario").Visibility = "Hidden"
-        }
-        #if ($_database.SelectionBoxItem.Equals("HANA")) {
-        #    $_Form.FindName("LabelHANAScenario").Visibility = "Visible"
-        #}
-        #else {
-        #    $_Form.FindName("LabelHANAScenario").Visibility = "Hidden"
-        #}
+    #XAML laden
+    [void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
+    try{
+    $_Form=[Windows.Markup.XamlReader]::Load( (New-Object System.Xml.XmlNodeReader $_XAML) )
+    } catch {
+    Write-Host "Windows.Markup.XamlReader konnte nicht geladen werden. Mögliche Ursache: ungültige Syntax oder fehlendes .net"
     }
-)
 
-$_highavailability = $_Form.FindName("HighAvailability")
-$_highavailability.Add_Click(
+
+    # check if connected to Azure
+    $_SubscriptionInfo = Get-AzSubscription
+
+    # if $_SubscritpionInfo then it got subscriptions
+    if ($_SubscriptionInfo)
     {
-        param($sender,$args)
-        $selected = $sender.isChecked
-        if ($selected -eq $true) {
-            $_Form.FindName("LabelHighAvailabilityAgent").Visibility = "Visible"
-            $_Form.FindName("HighAvailabilityAgent").Visibility = "Visible"
-        }
-        else {
-            $_Form.FindName("LabelHighAvailabilityAgent").Visibility = "Hidden"
-            $_Form.FindName("HighAvailabilityAgent").Visibility = "Hidden"
-        }
+        # connected
     }
-)
-
-$_ButtonExit = $_Form.FindName("ButtonExit")
-$_ButtonExit.Add_Click(
-    {
-        $_Form.Close()
+    else {
+        WriteRunLog -category "ERROR" -message "Please connect to Azure using the Connect-AzAccount command, if you are connected use the Select-AzSubscription command to set the correct context"
         exit
     }
-)
 
-$_GUI_ResourceGroups = $_Form.FindName("ResourceGroup")
-
-# add resource groups
-$_ResourceGroups = Get-AzResourceGroup
-foreach ($_resourcegroup in $_ResourceGroups) {
-    $_GUI_ResourceGroups.Items.Add($_resourcegroup.ResourceGroupName)
-}
-
-$_GUI_VMs = $_Form.FindName("VM")
-
-$_GUI_ResourceGroups.add_SelectionChanged(
-    {
-        # add VMs
-        $_GUI_VMs.Items.Clear()
-
-        $_VMs = Get-AzVM -ResourceGroupName $_GUI_ResourceGroups.Items[$_GUI_ResourceGroups.SelectedIndex]
-        foreach ($_VM in $_VMs) {
-            $_GUI_VMs.Items.Add($_VM.Name)
+    $_database = $_Form.FindName("Database")
+    $_database.add_SelectionChanged(
+        {
+            param($sender,$args)
+            $selected = $sender.SelectedItem.Content 
+            if ($selected -eq "HANA") {
+                $_Form.FindName("LabelHANAScenario").Visibility = "Visible"
+                $_Form.FindName("HANAScenario").Visibility = "Visible"
+            }
+            else {
+                $_Form.FindName("LabelHANAScenario").Visibility = "Hidden"
+                $_Form.FindName("HANAScenario").Visibility = "Hidden"
+            }
+            #if ($_database.SelectionBoxItem.Equals("HANA")) {
+            #    $_Form.FindName("LabelHANAScenario").Visibility = "Visible"
+            #}
+            #else {
+            #    $_Form.FindName("LabelHANAScenario").Visibility = "Hidden"
+            #}
         }
-    }
-)
+    )
 
-$_GUI_IPaddress = $_Form.FindName("hostname")
-
-$_GUI_VMs.add_SelectionChanged(
-    {
-        # get IP of first nic
-        $_VM = Get-AzVM -ResourceGroupName $_GUI_ResourceGroups.Items[$_GUI_ResourceGroups.SelectedIndex] -Name $_GUI_VMs.Items[$_GUI_VMs.SelectedIndex]
-        #$_NetworkInterface = Get-AzNetworkInterfaceIpConfig -NetworkInterface $_VM.NetworkProfile.NetworkInterfaces
-        $_GUI_IPaddress.Text = (Get-AzNetworkInterface -resourceid  $_VM.NetworkProfile.NetworkInterfaces.Id).IpConfigurations.PrivateIpAddress
-    }
-)
-
-# add Run button
-$_ButtonRun = $_Form.FindName("ButtonRun")
-$_ButtonRun.Add_Click(
-    {
-        # when "RUN" button is pressed
-        $_gui_password_value = $_Form.FindName("Password").Password
-        $script:VMUsername = $_Form.FindName("Username").Text
-        $script:VMPassword = ConvertTo-SecureString -String $_gui_password_value -AsPlainText -Force
-        $script:VMHostname = $_Form.FindName("hostname").Text
-        $script:VMDatabase = $_Form.FindName("Database").Items[$_Form.FindName("Database").SelectedIndex].Content
-        $script:VMOperatingSystem = $_Form.FindName("OperatingSystem").Items[$_Form.FindName("OperatingSystem").SelectedIndex].Content
-        $script:Hardwaretype = $_Form.FindName("HardwareType").Items[$_Form.FindName("HardwareType").SelectedIndex].Content
-        $script:AzVMResourceGroup = $_Form.FindName("ResourceGroup").Items[$_Form.FindName("ResourceGroup").SelectedIndex]
-        $script:AzVMName = $_Form.FindName("VM").Items[$_Form.FindName("VM").SelectedIndex]
-        $script:DBDataDir = $_Form.FindName("DBDataDir").Text
-        $script:DBLogDir = $_Form.FindName("DBLogDir").Text
-        $script:DBSharedDir = $_Form.FindName("DBSharedDir").Text
-        $script:HANADeployment = $_Form.FindName("HANAScenario").Items[$_Form.FindName("HANAScenario").SelectedIndex].Content
-        $script:VMRole = $_Form.FindName("Role").Items[$_Form.FindName("Role").SelectedIndex].Content
-        $script:VMConnectionPort = $_Form.FindName("SSHPort").Text
-        if ($_Form.FindName("HighAvailability").isChecked) {
-            $script:HighAvailability = $true
-            $script:HighAvailabilityAgent = $_Form.FindName("HighAvailabilityAgent").Items[$_Form.FindName("HighAvailabilityAgent").SelectedIndex].Content
+    $_highavailability = $_Form.FindName("HighAvailability")
+    $_highavailability.Add_Click(
+        {
+            param($sender,$args)
+            $selected = $sender.isChecked
+            if ($selected -eq $true) {
+                $_Form.FindName("LabelHighAvailabilityAgent").Visibility = "Visible"
+                $_Form.FindName("HighAvailabilityAgent").Visibility = "Visible"
+            }
+            else {
+                $_Form.FindName("LabelHighAvailabilityAgent").Visibility = "Hidden"
+                $_Form.FindName("HighAvailabilityAgent").Visibility = "Hidden"
+            }
         }
-        else {
-            $script:HighAvailability = $false
+    )
+
+    $_ButtonExit = $_Form.FindName("ButtonExit")
+    $_ButtonExit.Add_Click(
+        {
+            $_Form.Close()
+            exit
         }
-        $script:GUILogonMethod = $_Form.FindName("LogonMethod").Items[$_Form.FindName("LogonMethod").SelectedIndex].Content
+    )
 
-        $_Form.Close()
+    $_GUI_ResourceGroups = $_Form.FindName("ResourceGroup")
+
+    # add resource groups
+    $_ResourceGroups = Get-AzResourceGroup
+    foreach ($_resourcegroup in $_ResourceGroups) {
+        [void]$_GUI_ResourceGroups.Items.Add($_resourcegroup.ResourceGroupName)
     }
-)
 
+    $_GUI_VMs = $_Form.FindName("VM")
 
-#Fenster anzeigen:
-$_Form.ShowDialog()
+    $_GUI_ResourceGroups.add_SelectionChanged(
+        {
+            # add VMs
+            $_GUI_VMs.Items.Clear()
+
+            $_VMs = Get-AzVM -ResourceGroupName $_GUI_ResourceGroups.Items[$_GUI_ResourceGroups.SelectedIndex]
+            foreach ($_VM in $_VMs) {
+                $_GUI_VMs.Items.Add($_VM.Name)
+            }
+        }
+    )
+
+    $_GUI_IPaddress = $_Form.FindName("hostname")
+
+    $_GUI_VMs.add_SelectionChanged(
+        {
+            # get IP of first nic
+            $_VM = Get-AzVM -ResourceGroupName $_GUI_ResourceGroups.Items[$_GUI_ResourceGroups.SelectedIndex] -Name $_GUI_VMs.Items[$_GUI_VMs.SelectedIndex]
+            #$_NetworkInterface = Get-AzNetworkInterfaceIpConfig -NetworkInterface $_VM.NetworkProfile.NetworkInterfaces
+            $_GUI_IPaddress.Text = (Get-AzNetworkInterface -resourceid  $_VM.NetworkProfile.NetworkInterfaces.Id).IpConfigurations.PrivateIpAddress
+        }
+    )
+
+    # add Run button
+    $_ButtonRun = $_Form.FindName("ButtonRun")
+    $_ButtonRun.Add_Click(
+        {
+            # when "RUN" button is pressed
+            $_gui_password_value = $_Form.FindName("Password").Password
+            $script:VMUsername = $_Form.FindName("Username").Text
+            $script:VMPassword = ConvertTo-SecureString -String $_gui_password_value -AsPlainText -Force
+            $script:VMHostname = $_Form.FindName("hostname").Text
+            $script:VMDatabase = $_Form.FindName("Database").Items[$_Form.FindName("Database").SelectedIndex].Content
+            $script:VMOperatingSystem = $_Form.FindName("OperatingSystem").Items[$_Form.FindName("OperatingSystem").SelectedIndex].Content
+            $script:Hardwaretype = $_Form.FindName("HardwareType").Items[$_Form.FindName("HardwareType").SelectedIndex].Content
+            $script:AzVMResourceGroup = $_Form.FindName("ResourceGroup").Items[$_Form.FindName("ResourceGroup").SelectedIndex]
+            $script:AzVMName = $_Form.FindName("VM").Items[$_Form.FindName("VM").SelectedIndex]
+            $script:DBDataDir = $_Form.FindName("DBDataDir").Text
+            $script:DBLogDir = $_Form.FindName("DBLogDir").Text
+            $script:DBSharedDir = $_Form.FindName("DBSharedDir").Text
+            $script:HANADeployment = $_Form.FindName("HANAScenario").Items[$_Form.FindName("HANAScenario").SelectedIndex].Content
+            $script:VMRole = $_Form.FindName("Role").Items[$_Form.FindName("Role").SelectedIndex].Content
+            $script:VMConnectionPort = $_Form.FindName("SSHPort").Text
+            if ($_Form.FindName("HighAvailability").isChecked) {
+                $script:HighAvailability = $true
+                $script:HighAvailabilityAgent = $_Form.FindName("HighAvailabilityAgent").Items[$_Form.FindName("HighAvailabilityAgent").SelectedIndex].Content
+            }
+            else {
+                $script:HighAvailability = $false
+            }
+            $script:GUILogonMethod = $_Form.FindName("LogonMethod").Items[$_Form.FindName("LogonMethod").SelectedIndex].Content
+
+            $_Form.Close()
+        }
+    )
+
+    $_Form.Add_Closing({param($sender,$e)
+        $script:_CloseButtonPressed = $true
+    })
+    #show dialog
+    [void]$_Form.ShowDialog()
 
 }
 
@@ -2416,6 +2433,9 @@ else {
 if ($GUI) {
     if ($IsWindows) {
         LoadGUI
+        if ($script:_CloseButtonPressed) {
+            exit
+        }
     }
     else {
         WriteRunLog -category "ERROR" -message "Sorry, GUI is only supported on Windows Systems"

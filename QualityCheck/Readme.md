@@ -119,6 +119,12 @@ A jumpbox could be a special VM to access your SAP system or your local machine,
 
 ### Sample Commands
 
+#### Use the GUI
+
+```powershell
+.\QualityCheck.ps1 -GUI
+```
+
 #### Logon with Username and Password
 
 ```powershell
