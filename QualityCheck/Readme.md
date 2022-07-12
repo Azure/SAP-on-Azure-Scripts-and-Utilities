@@ -119,8 +119,28 @@ A jumpbox could be a special VM to access your SAP system or your local machine,
 
 ### Sample Commands
 
+#### Logon with Username and Password
+
 ```powershell
 .\QualityCheck.ps1 -LogonWithUserPassword -VMOperatingSystem Windows,SUSE,RedHat,OracleLinux -VMDatabase HANA,Oracle,MSSQL,Db2,ASE -VMRole DB,ASCS,APP -AzVMResourceGroup resourcegroupname -AzVMName AzureVMName -VMHostname hostname or ip address -VMUsername username [-HighAvailability $true or $false] [-VMConnectionPort 22>] [-DBDataDir /hana/data] [-DBLogDir /hana/log] [-DBSharedDir /hana/shared] [-ANFResourceGroup resourcegroup-for-anf] [-ANFAccountName anf-account-name] [-Hardwaretype VM] [-HANADeployment OLTP,OLAP,OLTP-ScaleOut,OLAP-ScaleOut] [-HighAvailabilityAgent SBD,FencingAgent]
+```
+
+#### Login with SSH Keys
+
+```powershell
+.\QualityCheck.ps1 -LogonWithUserPasswordSSHKey -VMOperatingSystem Windows,SUSE,RedHat,OracleLinux -VMDatabase HANA,Oracle,MSSQL,Db2,ASE -VMRole DB,ASCS,APP -AzVMResourceGroup resourcegroupname -AzVMName AzureVMName -VMHostname hostname or ip address -VMUsername username [-HighAvailability $true or $false] [-VMConnectionPort 22>] [-DBDataDir /hana/data] [-DBLogDir /hana/log] [-DBSharedDir /hana/shared] [-ANFResourceGroup resourcegroup-for-anf] [-ANFAccountName anf-account-name] [-Hardwaretype VM] [-HANADeployment OLTP,OLAP,OLTP-ScaleOut,OLAP-ScaleOut] [-HighAvailabilityAgent SBD,FencingAgent] -SSHKey Path-To-SSH-Key-File
+```
+
+#### Login with SSH Keys and Passphrase
+
+```powershell
+.\QualityCheck.ps1 -LogonWithUserPasswordSSHKey -VMOperatingSystem Windows,SUSE,RedHat,OracleLinux -VMDatabase HANA,Oracle,MSSQL,Db2,ASE -VMRole DB,ASCS,APP -AzVMResourceGroup resourcegroupname -AzVMName AzureVMName -VMHostname hostname or ip address -VMUsername username [-HighAvailability $true or $false] [-VMConnectionPort 22>] [-DBDataDir /hana/data] [-DBLogDir /hana/log] [-DBSharedDir /hana/shared] [-ANFResourceGroup resourcegroup-for-anf] [-ANFAccountName anf-account-name] [-Hardwaretype VM] [-HANADeployment OLTP,OLAP,OLTP-ScaleOut,OLAP-ScaleOut] [-HighAvailabilityAgent SBD,FencingAgent] -SSHKey Path-To-SSH-Key-File
+```
+
+If you receive SSH key error, please generate the key using this command:
+
+```bash
+ssh-keygen -m PEM -t rsa -b 4096
 ```
 
 * For Security warning message type "R" to run the script

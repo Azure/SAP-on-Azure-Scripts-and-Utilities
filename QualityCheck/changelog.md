@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 2022071201
+
+* fixing SSH Key logon issues
+
 ## Version 2022070702
 
 * adding runtime log to HTML file

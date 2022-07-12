@@ -247,7 +247,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2022070702
+$scriptversion = 2022071201
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -566,7 +566,14 @@ function ConnectVM {
                 $script:_ClearTextPassword = ConvertFrom-SecureString -SecureString $VMPassword -AsPlainText
 
                 # create credentials object
-                $script:_credentials = New-Object System.Management.Automation.PSCredential ($VMUsername);
+                $_nopasswd = New-Object System.Security.SecureString
+                $script:_credentials = New-Object System.Management.Automation.PSCredential ($VMUsername, $_nopasswd);
+
+                if (-not(Test-Path -Path $SSHKey -PathType Leaf)) {
+                    WriteRunLog -category "ERROR" -message "Can't find SSH Key file, please check path"
+                    exit
+                }
+
 
                 # connect to VM
                 $script:_sshsession = New-SSHSession -ComputerName $VMHostname -Credential $_credentials -Port $VMConnectionPort -KeyFile $SSHKey -AcceptKey -ConnectionTimeout 5 -ErrorAction SilentlyContinue
@@ -581,16 +588,23 @@ function ConnectVM {
                 # create credentials object
                 $script:_credentials = New-Object System.Management.Automation.PSCredential ($VMUsername, $SSHKeyPassphrase);
 
-                # connect to VM
-                $script:_sshsession = New-SSHSession -ComputerName $VMHostname -Credential $_credentials -Port $VMConnectionPort -KeyFile $SSHKey -AcceptKey -ConnectionTimeout 5 -ErrorAction SilentlyContinue
-
+                try {
+                    # connect to VM
+                    $script:_sshsession = New-SSHSession -ComputerName $VMHostname -Credential $_credentials -Port $VMConnectionPort -KeyFile $SSHKey -AcceptKey -ConnectionTimeout 5 -ErrorAction SilentlyContinue
+                }
+                catch {
+                    WriteRunLog -category "ERROR" -message "Authentication failed, please check your credentials and keys."
+                    WriteRunLog -category "ERROR" -message "Only old keys are supported by SSH.NET library using passphrases."
+                    WriteRunLog -category "ERROR" -message "Use this command to generate a supported key: ssh-keygen -m PEM -t rsa -b 4096"
+                    exit
+                }
 
             }
             "UserPasswordAzureKeyvault" {
 
                 # create a pasword hash that will be used to connect when using sudo commands
                 $script:_ClearTextPassword = Get-AzKeyVaultSecret -VaultName $KeyVaultName -Name $KeyVaultEntry -AsPlainText
-                $VMPassword = ConvertTo-SecureString -String $script:_ClearTextPassword
+                $VMPassword = ConvertTo-SecureString -String $script:_ClearTextPassword -AsPlainText -Force
 
                 # create credentials object
                 $script:_credentials = New-Object System.Management.Automation.PSCredential ($VMUsername, $VMPassword);
@@ -602,12 +616,13 @@ function ConnectVM {
             "UserPasswordAzureKeyvaultSSHKey" {
 
                 # create a pasword hash that will be used to connect when using sudo commands
-                $script:_ClearTextPassword = ConvertFrom-SecureString -SecureString $VMPassword -AsPlainText
+                $script:_ClearTextPassword = ConvertFrom-SecureString -SecureString $VMPassword -AsPlainText 
 
-                $_keystring = Get-AzKeyVaultKey -VaultName $KeyVaultName -Name $KeyVaultEntry -AsPlainText
+                $_keystring = Get-AzKeyVaultKey -VaultName $KeyVaultName -Name $KeyVaultEntry -AsPlainText 
 
                 # create credentials object
-                $script:_credentials = New-Object System.Management.Automation.PSCredential ($VMUsername);
+                $_nopasswd = New-Object System.Security.SecureString
+                $script:_credentials = New-Object System.Management.Automation.PSCredential ($VMUsername, $_nopasswd);
 
                 # connect to VM
                 $script:_sshsession = New-SSHSession -ComputerName $VMHostname -Credential $_credentials -Port $VMConnectionPort -KeyString $_keystring -AcceptKey -ConnectionTimeout 5 -ErrorAction SilentlyContinue
@@ -619,7 +634,8 @@ function ConnectVM {
                 $script:_ClearTextPassword = ""
 
                 # create credentials object
-                $script:_credentials = New-Object System.Management.Automation.PSCredential ($VMUsername);
+                $_nopasswd = New-Object System.Security.SecureString
+                $script:_credentials = New-Object System.Management.Automation.PSCredential ($VMUsername, $_nopasswd);
 
                 # connect to VM
                 $script:_sshsession = New-SSHSession -ComputerName $VMHostname -Credential $_credentials -Port $VMConnectionPort -KeyFile $SSHKey -AcceptKey -ConnectionTimeout 5 -ErrorAction SilentlyContinue
@@ -631,7 +647,8 @@ function ConnectVM {
                 $_keystring = Get-AzKeyVaultKey -VaultName $KeyVaultName -Name $KeyVaultEntry -AsPlainText
 
                 # create credentials object
-                $script:_credentials = New-Object System.Management.Automation.PSCredential ($VMUsername);
+                $_nopasswd = New-Object System.Security.SecureString
+                $script:_credentials = New-Object System.Management.Automation.PSCredential ($VMUsername, $_nopasswd);
 
                 # connect to VM
                 $script:_sshsession = New-SSHSession -ComputerName $VMHostname -Credential $_credentials -Port $VMConnectionPort -KeyString $_keystring -AcceptKey -ConnectionTimeout 5 -ErrorAction SilentlyContinue
