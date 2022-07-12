@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 2022071202
+
+* adding first version of GUI option with user/password authentication
+* adding description for accelerated networking VMs with only one NIC allowed for accelerated networking
+
 ## Version 2022071201
 
 * fixing SSH Key logon issues

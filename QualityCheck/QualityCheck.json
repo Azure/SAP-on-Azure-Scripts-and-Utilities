@@ -1,5 +1,5 @@
 {
-    "Version": 2022071201,
+    "Version": 2022071202,
     "PowerShellPrerequisits": [
         {
             "ModuleName": "Posh-SSH",
@@ -4027,11 +4027,12 @@
             "ShowAlternativeResult": "",
             "RootRequired": true,
             "ShowInReport": true,
-            "AdditionalInfo": "checking if Accelerated Networking is enabled on all interfaces",
+            "AdditionalInfo": "enable Accelerated Networking on all interfaces, for VMs with 2 CPUs only one NIC can have Accelerated Networking",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20220712", "ChangeLog": "added link and updated description"}
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-deployment-checklist",
             "SAPNote": "1928533"
         },
         {

@@ -247,7 +247,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2022071201
+$scriptversion = 2022071202
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -545,19 +545,23 @@ function ConnectVM {
     }
     else {
         
-           
+        if ($script:LogonWithUserPassword -or ($script:GUILogonMethod -eq "UserPassword")) {
+
+            # create a pasword hash that will be used to connect when using sudo commands
+            $script:_ClearTextPassword = ConvertFrom-SecureString -SecureString $VMPassword -AsPlainText
+
+            # create credentials object
+            $script:_credentials = New-Object System.Management.Automation.PSCredential ($VMUsername, $VMPassword);
+
+            # connect to VM
+            $script:_sshsession = New-SSHSession -ComputerName $VMHostname -Credential $_credentials -Port $VMConnectionPort -AcceptKey -ConnectionTimeout 5 -ErrorAction SilentlyContinue
+            
+        }
+        
+
         switch ($PsCmdlet.ParameterSetName) {
 
             "UserPassword" {
-
-                # create a pasword hash that will be used to connect when using sudo commands
-                $script:_ClearTextPassword = ConvertFrom-SecureString -SecureString $VMPassword -AsPlainText
-
-                # create credentials object
-                $script:_credentials = New-Object System.Management.Automation.PSCredential ($VMUsername, $VMPassword);
-
-                # connect to VM
-                $script:_sshsession = New-SSHSession -ComputerName $VMHostname -Credential $_credentials -Port $VMConnectionPort -AcceptKey -ConnectionTimeout 5 -ErrorAction SilentlyContinue
 
             }
             "UserPasswordSSHKey" {
@@ -2172,33 +2176,222 @@ function CheckForNewerVersion {
 
 function LoadGUI {
 
-    [void] [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing")
-    [void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
+    # define XAML code for form
+[xml]$_XAML = @"
+<Window x:Class="QualityCheck.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:QualityCheck"
+        mc:Ignorable="d"
+        Title="SAP on Azure - Quality Check" Height="600" Width="900">
+    <Grid Margin="0,0,-6.667,-29.333">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="582*"/>
+            <ColumnDefinition Width="325*"/>
+        </Grid.ColumnDefinitions>
+        <Button x:Name="ButtonRun" Content="Run" HorizontalAlignment="Left" Margin="233,540,0,0" VerticalAlignment="Top" Width="75" Grid.Column="1" Height="20"/>
+        <ComboBox x:Name="Database" HorizontalAlignment="Left" Margin="188,40,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
+            <ComboBoxItem Content="HANA"/>
+            <ComboBoxItem Content="MSSQL"/>
+            <ComboBoxItem Content="Db2"/>
+            <ComboBoxItem Content="ORACLE"/>
+        </ComboBox>
+        <Label x:Name="LabelDatabase" Content="Database" HorizontalAlignment="Left" Margin="66,36,0,0" VerticalAlignment="Top" Height="26" Width="59"/>
+        <ComboBox x:Name="OperatingSystem" HorizontalAlignment="Left" Margin="188,75,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
+            <ComboBoxItem Content="SUSE"/>
+            <ComboBoxItem Content="RedHat"/>
+            <ComboBoxItem Content="Windows"/>
+            <ComboBoxItem Content="OracleLinux"/>
+        </ComboBox>
+        <Label x:Name="LabelOperatingSystem" Content="Operating System" HorizontalAlignment="Left" Margin="66,71,0,0" VerticalAlignment="Top" Height="26" Width="104"/>
+        <CheckBox x:Name="HighAvailability" Content="HighAvailability" HorizontalAlignment="Left" Margin="191,289,0,0" VerticalAlignment="Top" IsChecked="True" Height="15" Width="102"/>
+        <ComboBox x:Name="HANAScenario" HorizontalAlignment="Left" Margin="64,138,0,0" VerticalAlignment="Top" Width="120" SelectedIndex="0" Grid.Column="1" Height="22">
+            <ComboBoxItem Content="OLTP"/>
+            <ComboBoxItem Content="OLAP"/>
+            <ComboBoxItem Content="OLTP-ScaleOut"/>
+            <ComboBoxItem Content="OLAP-ScaleOut"/>
+        </ComboBox>
+        <Label x:Name="LabelHANAScenario" Content="HANA Scenario" HorizontalAlignment="Left" Margin="506,134,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="26" Width="91"/>
+        <ComboBox x:Name="Role" HorizontalAlignment="Left" Margin="188,109,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
+            <ComboBoxItem Content="DB"/>
+            <ComboBoxItem Content="ASCS"/>
+            <ComboBoxItem Content="APP"/>
+        </ComboBox>
+        <Label x:Name="LabelRole" Content="Role" HorizontalAlignment="Left" Margin="66,105,0,0" VerticalAlignment="Top" Height="26" Width="33"/>
+        <ComboBox x:Name="ResourceGroup" HorizontalAlignment="Left" Margin="188,180,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
+        </ComboBox>
+        <Label x:Name="LabelResourceGroup" Content="Resource Group" HorizontalAlignment="Left" Margin="66,176,0,0" VerticalAlignment="Top" Height="26" Width="95"/>
+        <ComboBox x:Name="VM" HorizontalAlignment="Left" Margin="188,211,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22"/>
+        <Label x:Name="LabelVM" Content="VM" HorizontalAlignment="Left" Margin="66,207,0,0" VerticalAlignment="Top" Height="26" Width="28"/>
+        <TextBox x:Name="SSHPort" HorizontalAlignment="Center" Height="22" Margin="0,478,0,0" TextWrapping="Wrap" Text="22" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+        <Label x:Name="LabelSSHPort" Content="SSH Port" HorizontalAlignment="Left" Margin="506,476,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Width="125" Height="26"/>
+        <TextBox x:Name="Username" HorizontalAlignment="Left" Height="23" Margin="191,435,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <Label x:Name="LabelUsername" Content="Username" HorizontalAlignment="Left" Margin="66,432,0,0" VerticalAlignment="Top" Height="26" Width="63"/>
+        <Label x:Name="LabelPassword" Content="Password" HorizontalAlignment="Left" Margin="66,463,0,0" VerticalAlignment="Top" Height="26" Width="60"/>
+        <PasswordBox x:Name="Password" HorizontalAlignment="Left" Margin="191,466,0,0" VerticalAlignment="Top" Width="145" Height="23"/>
+        <TextBox x:Name="DBDataDir" HorizontalAlignment="Left" Height="23" Margin="64,40,0,0" TextWrapping="Wrap" Text="/hana/data" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+        <Label x:Name="LabelDBDataDir" Content="DB Data Directory" HorizontalAlignment="Left" Margin="506,37,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="26" Width="105"/>
+        <TextBox x:Name="DBLogDir" HorizontalAlignment="Left" Height="23" Margin="64,74,0,0" TextWrapping="Wrap" Text="/hana/log" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+        <Label x:Name="LabelDBLogDir" Content="DB Log Directory" HorizontalAlignment="Left" Margin="506,71,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="26" Width="100"/>
+        <ComboBox x:Name="HardwareType" HorizontalAlignment="Left" Margin="188,140,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
+            <ComboBoxItem Content="VM"/>
+            <ComboBoxItem Content="HLI"/>
+        </ComboBox>
+        <Label x:Name="LabelHardwareType" Content="Hardware Type" HorizontalAlignment="Left" Margin="66,136,0,0" VerticalAlignment="Top" Height="26" Width="89"/>
+        <ComboBox x:Name="HighAvailabilityAgent" HorizontalAlignment="Left" Margin="191,311,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
+            <ComboBoxItem Content="SBD"/>
+            <ComboBoxItem Content="FencingAgent"/>
+            <ComboBoxItem Content="WindowsCluster"/>
+        </ComboBox>
+        <Label x:Name="LabelHighAvailabilityAgent" Content="HA Agent" HorizontalAlignment="Left" Margin="66,307,0,0" VerticalAlignment="Top" Height="26" Width="61"/>
+        <TextBox x:Name="DBSharedDir" HorizontalAlignment="Left" Height="23" Margin="64,106,0,0" TextWrapping="Wrap" Text="/hana/shared" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+        <Label x:Name="LabelDBSharedDir" Content="DB Shared Directory" HorizontalAlignment="Left" Margin="506,103,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="26" Width="117"/>
+        <TextBox x:Name="hostname" HorizontalAlignment="Left" Height="23" Margin="188,241,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="249"/>
+        <Label x:Name="LabelHostname" Content="Hostname/IP" HorizontalAlignment="Left" Margin="66,238,0,0" VerticalAlignment="Top" Height="26" Width="79"/>
 
-    $_QualityCheckGUI = New-Object System.Windows.Forms.Form
 
-    $_QualityCheckGUI.StartPosition = "CenterScreen"
-    $_QualityCheckGUI.Size = New-Object System.Drawing.Size(800,500)
+        <TextBlock HorizontalAlignment="Left" Margin="23,539,0,0" TextWrapping="Wrap" Text="If you want to find out more about Quality Check " VerticalAlignment="Top" Width="477" Height="16">
+            <Hyperlink NavigateUri="https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities/tree/main/QualityCheck">
+                <Hyperlink.Inlines>
+                    <Run Text="click here"/>
+                </Hyperlink.Inlines>
+            </Hyperlink>
+        </TextBlock>
+        <Button x:Name="ButtonExit" Content="Exit" HorizontalAlignment="Left" Margin="144,540,0,0" VerticalAlignment="Top" Width="75" Grid.Column="1" Height="20"/>
+        <ComboBox x:Name="LogonMethod" HorizontalAlignment="Left" Margin="191,397,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
+            <ComboBoxItem Content="UserPassword"/>
+        </ComboBox>
+        <Label x:Name="LabelHighAvailabilityAgent_Copy" Content="Logon Method" HorizontalAlignment="Left" Margin="66,395,0,0" VerticalAlignment="Top" Height="26" Width="89"/>
 
-    $_QualityCheckGUI_DB = New-Object System.Windows.Forms.Combobox
-    # Die nächsten beiden Zeilen legen die Position und die Größe des Buttons fest
-    $_QualityCheckGUI_DB.Location = New-Object System.Drawing.Size(300,80)
-    $_QualityCheckGUI_DB.Size = New-Object System.Drawing.Size(200,20)
-    $_QualityCheckGUI_DB.Height = 70
-    $_QualityCheckGUI_DB.Items.Add("HANA")
-    $_QualityCheckGUI_DB.Items.Add("MSSQL")
-    $_QualityCheckGUI_DB.Items.Add("Db2")
-    $_QualityCheckGUI_DB.Items.Add("Oracle")
-    $_QualityCheckGUI.Controls.Add($_QualityCheckGUI_DB)
-    $_QualityCheckGUI.Topmost = $True
-    $_QualityCheckGUI.Add_SelectedIndexChanged({ })
-    
+    </Grid>
+</Window>
+"@ -replace 'mc:Ignorable="d"','' -replace "x:N",'N' -replace '^<Win.*', '<Window' #-replace wird benötigt, wenn XAML aus Visual Studio kopiert wird.
+
+#XAML laden
+[void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
+try{
+   $_Form=[Windows.Markup.XamlReader]::Load( (New-Object System.Xml.XmlNodeReader $_XAML) )
+} catch {
+   Write-Host "Windows.Markup.XamlReader konnte nicht geladen werden. Mögliche Ursache: ungültige Syntax oder fehlendes .net"
+}
+
+$_database = $_Form.FindName("Database")
+$_database.add_SelectionChanged(
+    {
+        param($sender,$args)
+        $selected = $sender.SelectedItem.Content 
+        if ($selected -eq "HANA") {
+            $_Form.FindName("LabelHANAScenario").Visibility = "Visible"
+            $_Form.FindName("HANAScenario").Visibility = "Visible"
+        }
+        else {
+            $_Form.FindName("LabelHANAScenario").Visibility = "Hidden"
+            $_Form.FindName("HANAScenario").Visibility = "Hidden"
+        }
+        #if ($_database.SelectionBoxItem.Equals("HANA")) {
+        #    $_Form.FindName("LabelHANAScenario").Visibility = "Visible"
+        #}
+        #else {
+        #    $_Form.FindName("LabelHANAScenario").Visibility = "Hidden"
+        #}
+    }
+)
+
+$_highavailability = $_Form.FindName("HighAvailability")
+$_highavailability.Add_Click(
+    {
+        param($sender,$args)
+        $selected = $sender.isChecked
+        if ($selected -eq $true) {
+            $_Form.FindName("LabelHighAvailabilityAgent").Visibility = "Visible"
+            $_Form.FindName("HighAvailabilityAgent").Visibility = "Visible"
+        }
+        else {
+            $_Form.FindName("LabelHighAvailabilityAgent").Visibility = "Hidden"
+            $_Form.FindName("HighAvailabilityAgent").Visibility = "Hidden"
+        }
+    }
+)
+
+$_ButtonExit = $_Form.FindName("ButtonExit")
+$_ButtonExit.Add_Click(
+    {
+        $_Form.Close()
+        exit
+    }
+)
+
+$_GUI_ResourceGroups = $_Form.FindName("ResourceGroup")
+
+# add resource groups
+$_ResourceGroups = Get-AzResourceGroup
+foreach ($_resourcegroup in $_ResourceGroups) {
+    $_GUI_ResourceGroups.Items.Add($_resourcegroup.ResourceGroupName)
+}
+
+$_GUI_VMs = $_Form.FindName("VM")
+
+$_GUI_ResourceGroups.add_SelectionChanged(
+    {
+        # add VMs
+        $_GUI_VMs.Items.Clear()
+
+        $_VMs = Get-AzVM -ResourceGroupName $_GUI_ResourceGroups.Items[$_GUI_ResourceGroups.SelectedIndex]
+        foreach ($_VM in $_VMs) {
+            $_GUI_VMs.Items.Add($_VM.Name)
+        }
+    }
+)
+
+$_GUI_IPaddress = $_Form.FindName("hostname")
+
+$_GUI_VMs.add_SelectionChanged(
+    {
+        # get IP of first nic
+        $_VM = Get-AzVM -ResourceGroupName $_GUI_ResourceGroups.Items[$_GUI_ResourceGroups.SelectedIndex] -Name $_GUI_VMs.Items[$_GUI_VMs.SelectedIndex]
+        #$_NetworkInterface = Get-AzNetworkInterfaceIpConfig -NetworkInterface $_VM.NetworkProfile.NetworkInterfaces
+        $_GUI_IPaddress.Text = (Get-AzNetworkInterface -resourceid  $_VM.NetworkProfile.NetworkInterfaces.Id).IpConfigurations.PrivateIpAddress
+    }
+)
+
+# add Run button
+$_ButtonRun = $_Form.FindName("ButtonRun")
+$_ButtonRun.Add_Click(
+    {
+        # when "RUN" button is pressed
+        $_gui_password_value = $_Form.FindName("Password").Password
+        $script:VMUsername = $_Form.FindName("Username").Text
+        $script:VMPassword = ConvertTo-SecureString -String $_gui_password_value -AsPlainText -Force
+        $script:VMHostname = $_Form.FindName("hostname").Text
+        $script:VMDatabase = $_Form.FindName("Database").Items[$_Form.FindName("Database").SelectedIndex].Content
+        $script:VMOperatingSystem = $_Form.FindName("OperatingSystem").Items[$_Form.FindName("OperatingSystem").SelectedIndex].Content
+        $script:Hardwaretype = $_Form.FindName("HardwareType").Items[$_Form.FindName("HardwareType").SelectedIndex].Content
+        $script:AzVMResourceGroup = $_Form.FindName("ResourceGroup").Items[$_Form.FindName("ResourceGroup").SelectedIndex]
+        $script:AzVMName = $_Form.FindName("VM").Items[$_Form.FindName("VM").SelectedIndex]
+        $script:DBDataDir = $_Form.FindName("DBDataDir").Text
+        $script:DBLogDir = $_Form.FindName("DBLogDir").Text
+        $script:DBSharedDir = $_Form.FindName("DBSharedDir").Text
+        $script:HANADeployment = $_Form.FindName("HANAScenario").Items[$_Form.FindName("HANAScenario").SelectedIndex].Content
+        $script:VMRole = $_Form.FindName("Role").Items[$_Form.FindName("Role").SelectedIndex].Content
+        $script:VMConnectionPort = $_Form.FindName("SSHPort").Text
+        if ($_Form.FindName("HighAvailability").isChecked) {
+            $script:HighAvailability = $true
+            $script:HighAvailabilityAgent = $_Form.FindName("HighAvailabilityAgent").Items[$_Form.FindName("HighAvailabilityAgent").SelectedIndex].Content
+        }
+        else {
+            $script:HighAvailability = $false
+        }
+        $script:GUILogonMethod = $_Form.FindName("LogonMethod").Items[$_Form.FindName("LogonMethod").SelectedIndex].Content
+
+        $_Form.Close()
+    }
+)
 
 
-    [void] $_QualityCheckGUI.ShowDialog()
-
-
-    exit
+#Fenster anzeigen:
+$_Form.ShowDialog()
 
 }
 
@@ -2255,11 +2448,11 @@ if (-not $RunLocally) {
     # Check for newer version of QualityCheck
     CheckForNewerVersion
     
-    # Check TCP connectivity
-    CheckTCPConnectivity
-
     # Check Azure connectivity
     CheckAzureConnectivity
+    
+    # Check TCP connectivity
+    CheckTCPConnectivity
 
     # Connect to VM
     $_SessionID = ConnectVM
@@ -2365,6 +2558,10 @@ else {
 
 if (-not $RunLocally) {
     Remove-SSHSession -SessionId $_SessionID | Out-Null
+}
+
+if ($GUI) {
+    &(".\" + $_HTMLReportFileName)
 }
 
 if (-not $RunLocally) {
