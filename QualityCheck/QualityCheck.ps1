@@ -22,6 +22,9 @@ param (
         # GUI
         [Parameter(Mandatory=$true, ParameterSetName='GUI')]
         [switch]$GUI,
+        # Run multiple QC at once
+        [Parameter(Mandatory=$true, ParameterSetName='MultiRun')]
+        [switch]$MultiRun,
         # only run on VM guest OS
         [Parameter(Mandatory=$true, ParameterSetName='runlocally')]
         [switch]$RunLocally,
@@ -241,13 +244,15 @@ param (
         [Parameter(ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
         [Parameter(ParameterSetName='UserAsRootSSHKey')]
         [Parameter(ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
-        [string][ValidateSet("SBD","FencingAgent","WCF",IgnoreCase = $false)]$HighAvailabilityAgent="SBD"
-    
+        [string][ValidateSet("SBD","FencingAgent","WCF",IgnoreCase = $false)]$HighAvailabilityAgent="SBD",
+        # Run multiple QC at once
+        [Parameter(Mandatory=$true, ParameterSetName='MultiRun')]
+        [string]$ImportFile
 )
 
 
 # defining script version
-$scriptversion = 2022071301
+$scriptversion = 2022071302
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -524,11 +529,12 @@ function CheckTCPConnectivity {
             $_testresult = New-Object System.Net.Sockets.TcpClient($VMHostname, $VMConnectionPort)
             if ($_testresult.Connected) {
                 # connected
+                $script:_CheckTCPConnectivityResult = $true
             }
         }
         catch {
             WriteRunLog -category "ERROR" -message "Error connecting to $AzVMName using $VMHostname, please check network connection and firewall rules"
-            exit
+            $script:_CheckTCPConnectivityResult = $false
         }
 
     }
@@ -575,7 +581,7 @@ function ConnectVM {
 
                 if (-not(Test-Path -Path $SSHKey -PathType Leaf)) {
                     WriteRunLog -category "ERROR" -message "Can't find SSH Key file, please check path"
-                    exit
+                    $script:_ConnectVMResult = $false
                 }
 
                 # connect to VM
@@ -599,7 +605,7 @@ function ConnectVM {
                     WriteRunLog -category "ERROR" -message "Authentication failed, please check your credentials and keys."
                     WriteRunLog -category "ERROR" -message "Only old keys are supported by SSH.NET library using passphrases."
                     WriteRunLog -category "ERROR" -message "Use this command to generate a supported key: ssh-keygen -m PEM -t rsa -b 4096"
-                    exit
+                    $script:_ConnectVMResult = $false
                 }
 
             }
@@ -642,7 +648,7 @@ function ConnectVM {
 
                 if (-not(Test-Path -Path $SSHKey -PathType Leaf)) {
                     WriteRunLog -category "ERROR" -message "Can't find SSH Key file, please check path"
-                    exit
+                    $script:_ConnectVMResult = $false
                 }
 
                 # connect to VM
@@ -671,12 +677,13 @@ function ConnectVM {
         # check if connection is successful (user/password/sshkeys correct)
         if ($script:_sshsession.Connected -eq $true) {
             # return SSH session ID for later use
+            $script:_ConnectVMResult = $true
             return $script:_sshsession.SessionId
         }
         else {
             # not able to connect
             WriteRunLog -category "ERROR" -message "SSH - Please check your credentials, unable to logon"
-            exit 
+            $script:_ConnectVMResult = $false
         }
     }
 }
@@ -992,14 +999,16 @@ function CheckAzureConnectivity {
             $script:_SubscriptionID = $_ContextInfo.Subscription
             $script:_SubscriptionName = $_ContextInfo.Name
             $script:_VMName = $_VMinfo.Name
+            $script:_CheckAzureConnectivity = $true
         }
         else {
             WriteRunLog -category "ERROR" -message "Unable to find resource group or VM, please check if you are connected to the correct subscription or if you had a typo"
-            exit
+            $script:_CheckAzureConnectivity = $false
         }
     }
     else {
         WriteRunLog -category "ERROR" -message "Please connect to Azure using the Connect-AzAccount command, if you are connected use the Select-AzSubscription command to set the correct context"
+        $script:_CheckAzureConnectivity = $false
         exit
     }
 
@@ -1880,7 +1889,8 @@ function RunQualityCheck {
 
     if (($VMDatabase -eq "HANA") -and ($script:_StorageType.Length -lt 1)) {
         WriteRunLog -category "ERROR" -message  "please check your parameters, HANA directories not found"
-        exit
+        $script:_RunqualityCheckResult = $false
+        return $false
     }
 
 
@@ -2162,10 +2172,13 @@ function CheckSudoPermission {
         if ($_rootrights.Contains("root")) {
             # everything ok
             WriteRunLog -category "INFO" -message "User can sudo"
+            $script:_CheckSudo = $true
+            return $true
         }
         else {
             WriteRunLog -category "ERROR" -message "User not able to sudo, please check sudoers file"
-            exit
+            $script:_CheckSudo = $false
+            return $false
         }
     }
 
@@ -2317,6 +2330,7 @@ function LoadGUI {
     $_database = $_Form.FindName("Database")
     $_database.add_SelectionChanged(
         {
+            param($sender,$args)
             $selected = $sender.SelectedItem.Content 
             if ($selected -eq "HANA") {
                 $_Form.FindName("LabelHANAScenario").Visibility = "Visible"
@@ -2338,6 +2352,7 @@ function LoadGUI {
     $_highavailability = $_Form.FindName("HighAvailability")
     $_highavailability.Add_Click(
         {
+            param($sender,$args)
             $selected = $sender.isChecked
             if ($selected -eq $true) {
                 $_Form.FindName("LabelHighAvailabilityAgent").Visibility = "Visible"
@@ -2424,9 +2439,11 @@ function LoadGUI {
         }
     )
 
-    $_Form.Add_Closing({
-        $script:_CloseButtonPressed = $true
-    })
+    #$_Form.Add_Closing({param($sender,$e)
+    #    $script:_CloseButtonPressed = $true
+    #})
+    
+    
     #show dialog
     [void]$_Form.ShowDialog()
 
@@ -2450,6 +2467,8 @@ else {
     exit
 }
 
+$script:_CloseButtonPressed = $false
+
 if ($GUI) {
     if ($IsWindows) {
         LoadGUI
@@ -2463,143 +2482,232 @@ if ($GUI) {
     }
 }
 
+# read file in case of multiple runs
+if ($MultiRun) {
+    if (Test-Path -Path $ImportFile -PathType Leaf) {
+        WriteRunLog -category "INFO" -message "Reading file for Quality Check runs"
+        # read config file
+        $_MultiRunData = Get-Content -Raw -Path $ImportFile | ConvertFrom-Csv -Delimiter ";"
+        WriteRunLog -category "INFO" -message ("Read " + $_MultiRunData.Count + " entries in file")
 
-# parameter check and modification if required
+        $script:VMPassword = read-host "Enter Password: " -asSecureString
 
-if ($VMOperatingSystem -in @("SUSE","RedHat","OracleLinux"))
-{
-    #check if filesystem parameters end with /
-    if ($DBDataDir.EndsWith("/")) {
-        $DBDataDir = $DBDataDir.Substring(0,$DBDataDir.Length-1)
-    }
-    if ($DBLogDir.EndsWith("/")) {
-        $DBLogDir = $DBLogDir.Substring(0,$DBLogDir.Length-1)
-    }
-    if ($DBSharedDir.EndsWith("/")) {
-        $DBSharedDir = $DBSharedDir.Substring(0,$DBSharedDir.Length-1)
     }
 }
 
-if (-not $RunLocally) {
-
-    # Check for required PowerShell modules
-    CheckRequiredModules
-
-    # Check for newer version of QualityCheck
-    CheckForNewerVersion
-    
-    # Check Azure connectivity
-    CheckAzureConnectivity
-    
-    # Check TCP connectivity
-    CheckTCPConnectivity
-
-    # Connect to VM
-    $_SessionID = ConnectVM
-
-    # Check if user is able to sudo
-    CheckSudoPermission
-
+if (-not $MultiRun) {
+    # single run
+    # generate dummy structure
+    $_MultiRunData = @()
+    $_MultiRunData_Row = "" | Select-Object Data1
+    $_MultiRunData_Row.Data1 = "onlysinglerun"
+    $_MultiRunData += $_MultiRunData_Row
 }
 
-# Load HTML Header
-LoadHTMLHeader
+foreach ($_qcrun in $_MultiRunData) {
 
-# Collect PowerShell Parameters
-$_ParameterValues = @{}
-$_ParametersToIgnore = @("Verbose", "Debug", "ErrorAction", "WarningAction", "InformationAction", "ErrorVariable", "WarningVariable", "InformationVariable", "OutVariable", "OutBuffer", "PipelineVariable")
-foreach ($_parameter in $MyInvocation.MyCommand.Parameters.GetEnumerator()) {
-    try {
-        $_key = $_parameter.Key
-        if($null -ne ($_value = Get-Variable -Name $_key -ValueOnly -ErrorAction Ignore)) {
-            if($value -ne ($null -as $_parameter.Value.ParameterType)) {
-                $_ParameterValues[$_key] = $_value
+    if ($MultiRun) {
+        # copy values to variables
+
+        $script:_runlog = @()
+
+        $script:VMUsername = $_qcrun.VMUsername
+        $script:VMOperatingSystem = $_qcrun.VMOperatingSystem
+        $script:VMDatabase = $_qcrun.VMDatabase
+        $script:VMRole = $_qcrun.VMRole
+        $script:VMHostname = $_qcrun.VMHostname
+        $script:AzVMResourceGroup = $_qcrun.AzVMResourceGroup
+        $script:AzVMName = $_qcrun.AzVMName
+
+        if ($_qcrun.DBDataDir) {
+            $script:DBDataDir = $_qcrun.DBDataDir
+        }
+        if ($_qcrun.DBLogDir) {
+            $script:DBLogDir = $_qcrun.DBLogDir
+        }
+        if ($_qcrun.DBSharedDir) {
+            $script:DBSharedDir = $_qcrun.DBSharedDir
+        }
+        if ($_qcrun.HANADeployment) {
+            $script:HANADeployment = $_qcrun.HANADeployment
+        }
+        if ($_qcrun.ANFResourceGroup) {
+            $script:ANFResourceGroup = $_qcrun.ANFResourceGroup
+        }
+        if ($_qcrun.ANFAccountName) {
+            $script:ANFAccountName = $_qcrun.ANFAccountName
+        }
+        if ($_qcrun.HighAvailability -eq "TRUE") {
+            $script:HighAvailability = $true
+        }
+        else {
+            $script:HighAvailability = $false
+        }
+        if ($_qcrun.HighAvailabilityAgent) {
+            $script:HighAvailabilityAgent = $_qcrun.HighAvailabilityAgent
+        }
+
+        switch($_qcrun.LogonMethod) {
+            "UserPassword" {
+                $script:GUILogonMethod = "UserPassword"
             }
         }
-        if($PSBoundParameters.ContainsKey($_key)) {
-            $_ParameterValues[$_key] = $PSBoundParameters[$_key]
+
+    }
+    else {
+        # nothing to do, variables already populated
+    }
+
+
+    # parameter check and modification if required
+
+    if ($VMOperatingSystem -in @("SUSE","RedHat","OracleLinux"))
+    {
+        #check if filesystem parameters end with /
+        if ($DBDataDir.EndsWith("/")) {
+            $DBDataDir = $DBDataDir.Substring(0,$DBDataDir.Length-1)
         }
-        if (-not ($_ParametersToIgnore -contains $_key) ) {
-            WriteRunLog -category "INFO" -message "Parameter $_key : $_value"
+        if ($DBLogDir.EndsWith("/")) {
+            $DBLogDir = $DBLogDir.Substring(0,$DBLogDir.Length-1)
         }
-    } finally {}
+        if ($DBSharedDir.EndsWith("/")) {
+            $DBSharedDir = $DBSharedDir.Substring(0,$DBSharedDir.Length-1)
+        }
+    }
+
+    if (-not $RunLocally) {
+
+        # Check for required PowerShell modules
+        CheckRequiredModules
+
+        # Check for newer version of QualityCheck
+        CheckForNewerVersion
+        
+        # Check Azure connectivity
+        CheckAzureConnectivity
+        
+        # Check TCP connectivity
+        CheckTCPConnectivity
+
+        # Connect to VM
+        $_SessionID = ConnectVM
+
+        # Check if user is able to sudo
+        if ($script:_ConnectVMResult) {
+            CheckSudoPermission
+        }
+        else {
+            $script:_CheckSudo = $false
+        }
+
+    }
+
+    if ((-not $RunLocally) -and $script:_CheckTCPConnectivityResult -and $script:_ConnectVMResult -and $script:_CheckAzureConnectivity -and $script:_CheckSudo) {
+
+            # Load HTML Header
+        LoadHTMLHeader
+
+        # Collect PowerShell Parameters
+        $_ParameterValues = @{}
+        $_ParametersToIgnore = @("Verbose", "Debug", "ErrorAction", "WarningAction", "InformationAction", "ErrorVariable", "WarningVariable", "InformationVariable", "OutVariable", "OutBuffer", "PipelineVariable")
+        foreach ($_parameter in $MyInvocation.MyCommand.Parameters.GetEnumerator()) {
+            try {
+                $_key = $_parameter.Key
+                if($null -ne ($_value = Get-Variable -Name $_key -ValueOnly -ErrorAction Ignore)) {
+                    if($value -ne ($null -as $_parameter.Value.ParameterType)) {
+                        $_ParameterValues[$_key] = $_value
+                    }
+                }
+                if($PSBoundParameters.ContainsKey($_key)) {
+                    $_ParameterValues[$_key] = $PSBoundParameters[$_key]
+                }
+                if (-not ($_ParametersToIgnore -contains $_key) ) {
+                    WriteRunLog -category "INFO" -message "Parameter $_key : $_value"
+                }
+            } finally {}
+        }
+
+        # Collect Script Parameters
+        $_CollectScriptParameter = CollectScriptParameters
+
+        # Collect VM info
+        $_CollectVMInfo = CollectVMInformation
+
+        # Get Azure Disks assigned to VMs
+        $_CollectVMStorage = CollectVMStorage
+
+        # Get Volume Groups - CollectVMStorage needs to run first to define variables
+        $_CollectLVMGroups = CollectLVMGroups
+
+        # Get Logical Volumes - CollectVMStorage needs to run first to define variables
+        $_CollectLVMVolumes = CollectLVMVolummes
+
+        if (-not $RunLocally) {
+            # Get ANF Volume Info
+            $_CollectANFVolumes = CollectANFVolumes
+        }
+
+        # Get Filesystems
+        $_CollectFileSystems = CollectFileSystems
+
+        if (-not $RunLocally) {
+            # Get Network Interfaces
+            $_CollectNetworkInterfaces = CollectNetworkInterfaces
+
+            # Get Load Balancer - CollectNetworkInterfaces needs to run first to define variables
+            $_CollectLoadBalancer = CollectLoadBalancer
+        }
+
+        # run Quality Check
+        $_RunQualityCheck = RunQualityCheck
+
+        # Collect VM info
+        $_CollectVMInfoAdditional = CollectVMInformationAdditional
+
+        # Collect footer for support cases
+        $_CollectFooter = CollectFooter
+
+
+        if (-not $RunLocally) {
+
+            WriteRunLog -category "INFO" -message ("Creating HTML File ")
+            $_RunLogContent = $script:_runlog | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""RunLog"">RunLog</h2>"
+
+            $_HTMLReport = ConvertTo-Html -Body "$_Content $_CollectScriptParameter $_CollectVMInfo $_RunQualityCheck $_CollectFileSystems $_CollectVMStorage $_CollectLVMGroups $_CollectLVMVolumes $_CollectANFVolumes $_CollectNetworkInterfaces $_CollectLoadBalancer $_CollectVMInfoAdditional $_CollectFooter $_RunLogContent" -Head $script:_HTMLHeader -Title "Quality Check for SAP Worloads on Azure" -PostContent "<p id='CreationDate'>Creation Date: $(Get-Date)</p><p id='CreationDate'>Script Version: $scriptversion</p>"
+            $_HTMLReportFileName = $AzVMName + "-" + $(Get-Date -Format "yyyyMMdd-HHmm") + ".html"
+            $_HTMLReport | Out-File .\$_HTMLReportFileName
+        }
+        else {
+            # script running locally, convert result to JSON
+            $_jsonoutput = "" | Select-Object Checks, Parameters, InformationCollection, Disks, Filesystems, RunLog
+
+            WriteRunLog -category "INFO" -message ("Preparing JSON Output")
+            WriteRunLog -category "INFO" -message ("End " + (Get-Date))
+
+            $_jsonoutput.Checks = $script:_Checks
+            $_jsonoutput.Parameters = $_ParameterValues
+            $_jsonoutput.Disks = $script:_AzureDisks
+            $_jsonoutput.Filesystems = $script:_filesystems
+            $_jsonoutput.RunLog = $script:_runlog
+
+            $_jsonoutput = $_jsonoutput | ConvertTo-Json
+
+            Write-Host $_jsonoutput
+            
+
+            
+        }
+    }
+    else {
+        WriteRunLog -category "ERROR" -message ("Unable to check " + $_qcrun.AzVMName)
+    }
+
+    if ((-not $RunLocally) -and $script:_ConnectVMResult) {
+        Remove-SSHSession -SessionId $_SessionID | Out-Null
+    }
 }
 
-# Collect Script Parameters
-$_CollectScriptParameter = CollectScriptParameters
-
-# Collect VM info
-$_CollectVMInfo = CollectVMInformation
-
-# Get Azure Disks assigned to VMs
-$_CollectVMStorage = CollectVMStorage
-
-# Get Volume Groups - CollectVMStorage needs to run first to define variables
-$_CollectLVMGroups = CollectLVMGroups
-
-# Get Logical Volumes - CollectVMStorage needs to run first to define variables
-$_CollectLVMVolumes = CollectLVMVolummes
-
-if (-not $RunLocally) {
-    # Get ANF Volume Info
-    $_CollectANFVolumes = CollectANFVolumes
-}
-
-# Get Filesystems
-$_CollectFileSystems = CollectFileSystems
-
-if (-not $RunLocally) {
-    # Get Network Interfaces
-    $_CollectNetworkInterfaces = CollectNetworkInterfaces
-
-    # Get Load Balancer - CollectNetworkInterfaces needs to run first to define variables
-    $_CollectLoadBalancer = CollectLoadBalancer
-}
-
-# run Quality Check
-$_RunQualityCheck = RunQualityCheck
-
-# Collect VM info
-$_CollectVMInfoAdditional = CollectVMInformationAdditional
-
-# Collect footer for support cases
-$_CollectFooter = CollectFooter
-
-
-if (-not $RunLocally) {
-
-    WriteRunLog -category "INFO" -message ("Creating HTML File ")
-    $_RunLogContent = $script:_runlog | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""RunLog"">RunLog</h2>"
-
-    $_HTMLReport = ConvertTo-Html -Body "$_Content $_CollectScriptParameter $_CollectVMInfo $_RunQualityCheck $_CollectFileSystems $_CollectVMStorage $_CollectLVMGroups $_CollectLVMVolumes $_CollectANFVolumes $_CollectNetworkInterfaces $_CollectLoadBalancer $_CollectVMInfoAdditional $_CollectFooter $_RunLogContent" -Head $script:_HTMLHeader -Title "Quality Check for SAP Worloads on Azure" -PostContent "<p id='CreationDate'>Creation Date: $(Get-Date)</p><p id='CreationDate'>Script Version: $scriptversion</p>"
-    $_HTMLReportFileName = $AzVMName + "-" + $(Get-Date -Format "yyyyMMdd-HHmm") + ".html"
-    $_HTMLReport | Out-File .\$_HTMLReportFileName
-}
-else {
-    # script running locally, convert result to JSON
-    $_jsonoutput = "" | Select-Object Checks, Parameters, InformationCollection, Disks, Filesystems, RunLog
-
-    WriteRunLog -category "INFO" -message ("Preparing JSON Output")
-    WriteRunLog -category "INFO" -message ("End " + (Get-Date))
-
-    $_jsonoutput.Checks = $script:_Checks
-    $_jsonoutput.Parameters = $_ParameterValues
-    $_jsonoutput.Disks = $script:_AzureDisks
-    $_jsonoutput.Filesystems = $script:_filesystems
-    $_jsonoutput.RunLog = $script:_runlog
-
-    $_jsonoutput = $_jsonoutput | ConvertTo-Json
-
-    Write-Host $_jsonoutput
-    
-
-    
-}
-
-if (-not $RunLocally) {
-    Remove-SSHSession -SessionId $_SessionID | Out-Null
-}
-
+# load report in browser for GUI runs
 if ($GUI) {
     &(".\" + $_HTMLReportFileName)
 }

@@ -125,6 +125,20 @@ A jumpbox could be a special VM to access your SAP system or your local machine,
 .\QualityCheck.ps1 -GUI
 ```
 
+#### User Quality Check MultiRun
+
+You can run check multiple systems at the same time by providing a csv file (separated with semicolon) using the Excel template.
+
+As of now only User/Password authentication is supported and it needs to be the same password for all VMs that you want to check at one time.
+
+After exporting it to a csv file you can start Quality Check using
+
+```powershell
+.\QualityCheck.ps1  -MultiRun -ImportFile filename.csv
+```
+
+If a check fails it will continue with the next entry.
+
 #### Logon with Username and Password
 
 ```powershell

@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 2022071302
+
+* adding support to run multiple quality checks in one run, only supported with user/password authentication as of now
+
 ## Version 2022071301
 
 * adding check for supported storage configuration on HANA Data and HANA Log
