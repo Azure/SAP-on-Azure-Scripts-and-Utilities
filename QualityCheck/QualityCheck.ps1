@@ -247,7 +247,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2022071202
+$scriptversion = 2022071301
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -1714,6 +1714,17 @@ function RunQualityCheck {
                     # setting storage type for later checks
                     $script:_StorageType += $_AzureDisk_hana.StorageType
 
+                    # check if storage type is supported
+                    if ($_jsonconfig.SupportedVMs.$_VMType.$VMRole.HANAStorageTypeData -contains $_AzureDisk_hana.StorageType) {
+                        # storage type is supported for HANA
+                        AddCheckResultEntry -CheckID "HDB-FS-0015" -Description "SAP HANA Data: storage type supported" -AdditionalInfo ("Storage Type " + $_AzureDisk_hana.StorageType) -TestResult "Supported" -ExptectedResult "Supported" -Status "OK" -MicrosoftDocs $_saphanastorageurl
+
+                    }
+                    else {
+                        # Wrong Disk Type
+                        AddCheckResultEntry -CheckID "HDB-FS-0015" -Description "SAP HANA Data: storage type supported" -AdditionalInfo ("Storage Type " + $_AzureDisk_hana.StorageType) -TestResult "Unsupported" -ExptectedResult "Supported" -Status "ERROR" -MicrosoftDocs $_saphanastorageurl
+                    }
+
                 }
             }
         }
@@ -1826,6 +1837,17 @@ function RunQualityCheck {
                 
                 # setting storage type for later checks
                 $script:_StorageType += $_AzureDisk_hana.StorageType
+
+                # check if storage type is supported
+                if ($_jsonconfig.SupportedVMs.$_VMType.$VMRole.HANAStorageTypeLog -contains $_AzureDisk_hana.StorageType) {
+                    # storage type is supported for HANA
+                    AddCheckResultEntry -CheckID "HDB-FS-0016" -Description "SAP HANA Log: storage type supported" -AdditionalInfo ("Storage Type " + $_AzureDisk_hana.StorageType) -TestResult "Supported" -ExptectedResult "Supported" -Status "OK" -MicrosoftDocs $_saphanastorageurl
+
+                }
+                else {
+                    # Wrong Disk Type
+                    AddCheckResultEntry -CheckID "HDB-FS-0016" -Description "SAP HANA Log: storage type supported" -AdditionalInfo ("Storage Type " + $_AzureDisk_hana.StorageType) -TestResult "Unsupported" -ExptectedResult "Supported" -Status "ERROR" -MicrosoftDocs $_saphanastorageurl
+                }
 
             }
         }
@@ -2295,7 +2317,6 @@ function LoadGUI {
     $_database = $_Form.FindName("Database")
     $_database.add_SelectionChanged(
         {
-            param($sender,$args)
             $selected = $sender.SelectedItem.Content 
             if ($selected -eq "HANA") {
                 $_Form.FindName("LabelHANAScenario").Visibility = "Visible"
@@ -2317,7 +2338,6 @@ function LoadGUI {
     $_highavailability = $_Form.FindName("HighAvailability")
     $_highavailability.Add_Click(
         {
-            param($sender,$args)
             $selected = $sender.isChecked
             if ($selected -eq $true) {
                 $_Form.FindName("LabelHighAvailabilityAgent").Visibility = "Visible"
@@ -2404,7 +2424,7 @@ function LoadGUI {
         }
     )
 
-    $_Form.Add_Closing({param($sender,$e)
+    $_Form.Add_Closing({
         $script:_CloseButtonPressed = $true
     })
     #show dialog

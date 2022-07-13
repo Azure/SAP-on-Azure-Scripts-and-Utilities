@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 2022071301
+
+* adding check for supported storage configuration on HANA Data and HANA Log
+
 ## Version 2022071202
 
 * adding first version of GUI option with user/password authentication
