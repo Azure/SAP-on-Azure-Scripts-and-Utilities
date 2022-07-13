@@ -2457,6 +2457,9 @@ $script:_runlog = @()
 
 WriteRunLog -category "INFO" -message ("Start " + (Get-Date))
 
+WriteRunLog -category "INFO" -message "Quality Check for SAP on Azure systems is provided under MIT license"
+WriteRunLog -category "INFO" -message "see https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities/blob/main/LICENSE for details"
+
 # load json configuration
 $_jsonconfig = Get-Content -Raw -Path $ConfigFileName -ErrorAction Stop | ConvertFrom-Json
 if ($scriptversion -eq $_jsonconfig.Version) {
