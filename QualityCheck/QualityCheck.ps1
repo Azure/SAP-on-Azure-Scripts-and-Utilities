@@ -42,15 +42,19 @@ param (
         [switch]$LogonAsRootSSHKey,
         [Parameter(Mandatory=$true, ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
         [switch]$LogonAsRootAzureKeyvaultSSHKey,
+        [Parameter(Mandatory=$true, ParameterSetName='UserSSHKey')]
+        [switch]$LogonWithUserSSHKey,
+
         # VM Operating System
         [Parameter(Mandatory=$true, ParameterSetName='runlocally')]
         [Parameter(Mandatory=$true, ParameterSetName='UserPassword')]
-        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordSSHKey')]
         [Parameter(Mandatory=$true, ParameterSetName='UserPasswordSSHKeyPassphrase')]
         [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvault')]
         [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserSSHKey')]
         [Parameter(Mandatory=$true, ParameterSetName='UserAsRootSSHKey')]
         [Parameter(Mandatory=$true, ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserPasswordSSHKey')]
         [ValidateSet("Windows", "SUSE", "RedHat", "OracleLinux",IgnoreCase = $false)]
         [string]$VMOperatingSystem,
         # Database running SAP
@@ -62,6 +66,7 @@ param (
         [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
         [Parameter(Mandatory=$true, ParameterSetName='UserAsRootSSHKey')]
         [Parameter(Mandatory=$true, ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserSSHKey')]
         [ValidateSet("HANA","Oracle","MSSQL","Db2","ASE",IgnoreCase = $false)]
         [string]$VMDatabase,
         # Which component to check
@@ -73,6 +78,7 @@ param (
         [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
         [Parameter(Mandatory=$true, ParameterSetName='UserAsRootSSHKey')]
         [Parameter(Mandatory=$true, ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserSSHKey')]
         [ValidateSet("DB", "ASCS", "APP",IgnoreCase = $false)]
         [string]$VMRole,
         # VM Resource Group Name
@@ -83,6 +89,7 @@ param (
         [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
         [Parameter(Mandatory=$true, ParameterSetName='UserAsRootSSHKey')]
         [Parameter(Mandatory=$true, ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserSSHKey')]
         [string]$AzVMResourceGroup,
         # Azure VM Name
         [Parameter(Mandatory=$true, ParameterSetName='UserPassword')]
@@ -92,6 +99,7 @@ param (
         [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
         [Parameter(Mandatory=$true, ParameterSetName='UserAsRootSSHKey')]
         [Parameter(Mandatory=$true, ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserSSHKey')]
         [string]$AzVMName,
         # VM Hostname or IP address (used to connect)
         [Parameter(Mandatory=$true, ParameterSetName='UserPassword')]
@@ -101,6 +109,7 @@ param (
         [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
         [Parameter(Mandatory=$true, ParameterSetName='UserAsRootSSHKey')]
         [Parameter(Mandatory=$true, ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserSSHKey')]
         [string]$VMHostname,
         # VM Username
         [Parameter(Mandatory=$true, ParameterSetName='UserPassword')]
@@ -110,6 +119,7 @@ param (
         [Parameter(Mandatory=$true, ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
         [Parameter(Mandatory=$true, ParameterSetName='UserAsRootSSHKey')]
         [Parameter(Mandatory=$true, ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserSSHKey')]
         [string]$VMUsername,
         # VM Password
         [Parameter(Mandatory=$true, ParameterSetName='UserPassword')]
@@ -124,6 +134,7 @@ param (
         [Parameter(ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
         [Parameter(ParameterSetName='UserAsRootSSHKey')]
         [Parameter(ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [Parameter(ParameterSetName='UserSSHKey')]
         [string]$VMConnectionPort="22",
         # Run HA checks
         [Parameter(ParameterSetName='runlocally')]
@@ -134,6 +145,7 @@ param (
         [Parameter(ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
         [Parameter(ParameterSetName='UserAsRootSSHKey')]
         [Parameter(ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [Parameter(ParameterSetName='UserSSHKey')]
         [boolean]$HighAvailability=$false,
         # ConfigFile that contains the checks to be executed
         [Parameter(ParameterSetName='runlocally')]
@@ -144,6 +156,7 @@ param (
         [Parameter(ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
         [Parameter(ParameterSetName='UserAsRootSSHKey')]
         [Parameter(ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [Parameter(ParameterSetName='UserSSHKey')]
         [string]$ConfigFileName="QualityCheck.json",
         # HANA Data Directories
         [Parameter(ParameterSetName='runlocally')]
@@ -154,6 +167,7 @@ param (
         [Parameter(ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
         [Parameter(ParameterSetName='UserAsRootSSHKey')]
         [Parameter(ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [Parameter(ParameterSetName='UserSSHKey')]
         [string[]]$DBDataDir="/hana/data",
         # HANA Log Directories
         [Parameter(ParameterSetName='runlocally')]
@@ -164,6 +178,7 @@ param (
         [Parameter(ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
         [Parameter(ParameterSetName='UserAsRootSSHKey')]
         [Parameter(ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [Parameter(ParameterSetName='UserSSHKey')]
         [string[]]$DBLogDir="/hana/log",
         # HANA Shared Directory
         [Parameter(ParameterSetName='runlocally')]
@@ -174,11 +189,13 @@ param (
         [Parameter(ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
         [Parameter(ParameterSetName='UserAsRootSSHKey')]
         [Parameter(ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [Parameter(ParameterSetName='UserSSHKey')]
         [string]$DBSharedDir="/hana/shared",
         # SSH Keys
         [Parameter(Mandatory=$true, ParameterSetName='UserPasswordSSHKey')]
         [Parameter(Mandatory=$true, ParameterSetName='UserPasswordSSHKeyPassphrase')]
         [Parameter(Mandatory=$true, ParameterSetName='UserAsRootSSHKey')]
+        [Parameter(Mandatory=$true, ParameterSetName='UserSSHKey')]
         [string]$SSHKey,
         # SSH Key Passphrase
         [Parameter(Mandatory=$true, ParameterSetName='UserPasswordSSHKeyPassphrase')]
@@ -206,6 +223,7 @@ param (
         [Parameter(ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
         [Parameter(ParameterSetName='UserAsRootSSHKey')]
         [Parameter(ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [Parameter(ParameterSetName='UserSSHKey')]
         [string]$ANFResourceGroup,
         # ANF Account Name
         [Parameter(ParameterSetName='UserPassword')]
@@ -215,6 +233,7 @@ param (
         [Parameter(ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
         [Parameter(ParameterSetName='UserAsRootSSHKey')]
         [Parameter(ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [Parameter(ParameterSetName='UserSSHKey')]
         [string]$ANFAccountName,
         # Hardwaretype (VM or HLI)
         [Parameter(ParameterSetName='UserPassword')]
@@ -224,6 +243,7 @@ param (
         [Parameter(ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
         [Parameter(ParameterSetName='UserAsRootSSHKey')]
         [Parameter(ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [Parameter(ParameterSetName='UserSSHKey')]
         [string]$Hardwaretype="VM",
         # HANA Deployment Model
         [Parameter(ParameterSetName='runlocally')]
@@ -234,6 +254,7 @@ param (
         [Parameter(ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
         [Parameter(ParameterSetName='UserAsRootSSHKey')]
         [Parameter(ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [Parameter(ParameterSetName='UserSSHKey')]
         [string][ValidateSet("OLTP","OLAP","OLTP-ScaleOut","OLAP-ScaleOut",IgnoreCase = $false)]$HANADeployment="OLTP",
         # High Availability Agent
         [Parameter(ParameterSetName='runlocally')]
@@ -244,6 +265,7 @@ param (
         [Parameter(ParameterSetName='UserPasswordAzureKeyvaultSSHKey')]
         [Parameter(ParameterSetName='UserAsRootSSHKey')]
         [Parameter(ParameterSetName='UserAsRootAzureKeyvaultSSHKey')]
+        [Parameter(ParameterSetName='UserSSHKey')]
         [string][ValidateSet("SBD","FencingAgent","WCF",IgnoreCase = $false)]$HighAvailabilityAgent="SBD",
         # Run multiple QC at once
         [Parameter(Mandatory=$true, ParameterSetName='MultiRun')]
@@ -252,7 +274,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2022071302
+$scriptversion = 2022072001
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -551,7 +573,7 @@ function ConnectVM {
     }
     else {
         
-        if ($script:LogonWithUserPassword -or ($script:GUILogonMethod -eq "UserPassword")) {
+        if ($script:LogonWithUserPassword -or (($script:GUILogonMethod -eq "UserPassword") -and $GUI )) {
 
             # create a pasword hash that will be used to connect when using sudo commands
             $script:_ClearTextPassword = ConvertFrom-SecureString -SecureString $VMPassword -AsPlainText
@@ -574,6 +596,22 @@ function ConnectVM {
 
                 # create a pasword hash that will be used to connect when using sudo commands
                 $script:_ClearTextPassword = ConvertFrom-SecureString -SecureString $VMPassword -AsPlainText
+
+                # create credentials object
+                $_nopasswd = New-Object System.Security.SecureString
+                $script:_credentials = New-Object System.Management.Automation.PSCredential ($VMUsername, $_nopasswd);
+
+                if (-not(Test-Path -Path $SSHKey -PathType Leaf)) {
+                    WriteRunLog -category "ERROR" -message "Can't find SSH Key file, please check path"
+                    $script:_ConnectVMResult = $false
+                }
+
+                # connect to VM
+                $script:_sshsession = New-SSHSession -ComputerName $VMHostname -Credential $_credentials -Port $VMConnectionPort -KeyFile $SSHKey -AcceptKey -ConnectionTimeout 5 -ErrorAction SilentlyContinue
+                
+
+            }
+            "UserSSHKey" {
 
                 # create credentials object
                 $_nopasswd = New-Object System.Security.SecureString
@@ -901,13 +939,31 @@ function RunCommand {
                 # Linux
 
                 # root permissions required?
-                if (($p.RootRequired) -and ($VMUsername -ne "root")) {
+                if (($p.RootRequired) -and ($VMUsername -ne "root") -and (-not $LogonWithUserSSHKey)) {
                     # add sudo to the command
                     $_command = "echo '$_ClearTextPassword' | sudo -E -S " + $p.ProcessingCommand
                 }
                 else {
-                    # command will be used without sudo
-                    $_command = $p.ProcessingCommand
+                    if ($LogonWithUserSSHKey) {
+                        if ($p.RootRequired) {
+                            $_command = "sudo -E -S " + $p.ProcessingCommand
+                        }
+                        else {
+                            $_command = $p.ProcessingCommand    
+                        }
+                    }
+                    else {
+                        # command will be used without sudo
+                        $_command = $p.ProcessingCommand
+                    }
+                }
+
+                if ($LogonWithUserSSHKey) {
+                    if ($_command.Contains("echo '$_ClearTextPassword' | ")) {
+                        Write-Host $_command
+                        $_command -replace "echo '$_ClearTextPassword' | ", ""
+                        Write-Host $_command
+                    }
                 }
 
                 # run the command
@@ -2166,6 +2222,7 @@ function CheckSudoPermission {
     # Check is user is able to sudo
     
     if ($VMUsername -ne "root") {
+        
         $_command = PrepareCommand -Command "id" -CommandType "OS" -RootRequired $true
         $_rootrights = RunCommand -p $_command
 
@@ -2173,12 +2230,10 @@ function CheckSudoPermission {
             # everything ok
             WriteRunLog -category "INFO" -message "User can sudo"
             $script:_CheckSudo = $true
-            return $true
         }
         else {
             WriteRunLog -category "ERROR" -message "User not able to sudo, please check sudoers file"
             $script:_CheckSudo = $false
-            return $false
         }
     }
 
@@ -2460,6 +2515,10 @@ WriteRunLog -category "INFO" -message ("Start " + (Get-Date))
 WriteRunLog -category "INFO" -message "Quality Check for SAP on Azure systems is provided under MIT license"
 WriteRunLog -category "INFO" -message "see https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities/blob/main/LICENSE for details"
 
+if ($LogonWithUserSSHKey -or $LogonAsRootSSHKey) {
+    $script:VMPassword = ""
+}
+
 # load json configuration
 $_jsonconfig = Get-Content -Raw -Path $ConfigFileName -ErrorAction Stop | ConvertFrom-Json
 if ($scriptversion -eq $_jsonconfig.Version) {
@@ -2553,6 +2612,9 @@ foreach ($_qcrun in $_MultiRunData) {
         switch($_qcrun.LogonMethod) {
             "UserPassword" {
                 $script:GUILogonMethod = "UserPassword"
+            }
+            Default {
+                $script:GUILogonMethod = "NoMatch"
             }
         }
 

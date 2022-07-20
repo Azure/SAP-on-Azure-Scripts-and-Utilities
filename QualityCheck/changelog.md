@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 2022072001
+
+* adding Logon option -UserSSHKey for users that don't require a password, just the SSH key
+
 ## Version 2022071302
 
 * adding support to run multiple quality checks in one run, only supported with user/password authentication as of now
