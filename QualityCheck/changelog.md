@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 2022072101
+
+* fixing issue where links to Microsoft documentation are missing
+* fixing issue with LoginWithUserSSHKey, specifying a dummy password
+
 ## Version 2022072001
 
 * adding Logon option -UserSSHKey for users that don't require a password, just the SSH key

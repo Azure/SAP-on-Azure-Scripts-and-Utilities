@@ -1,5 +1,5 @@
 {
-    "Version": 2022072001,
+    "Version": 2022072101,
     "PowerShellPrerequisits": [
         {
             "ModuleName": "Posh-SSH",

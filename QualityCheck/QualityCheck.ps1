@@ -274,7 +274,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2022072001
+$scriptversion = 2022072101
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -934,6 +934,7 @@ function RunCommand {
         
             if ($VMOperatingSystem -eq "Windows") {
                 # Windows
+                Invoke-Expression $p.ProcessingCommand
             }
             else {
                 # Linux
@@ -1995,6 +1996,16 @@ function RunQualityCheck {
                             $_Check_row.SAPNote = $_check.SAPNote
                         }
                     }
+
+                    if ($_check.MicrosoftDocs -ne "") {
+                        if (-not $RunLocally) {
+                            $_Check_row.MicrosoftDocs = "::MSFTDOCS1::" + $_check.MicrosoftDocs + "::MSFTDOCS2::" + "Link" + "::MSFTDOCS3::"
+                        }
+                        else {
+                            $_Check_row.MicrosoftDocs = $_check.MicrosoftDocs
+                        }
+                
+                    }
                     
                     if ($_result -eq $_check.ExpectedResult) {
                         $_Check_row.Status = "OK"
@@ -2516,7 +2527,7 @@ WriteRunLog -category "INFO" -message "Quality Check for SAP on Azure systems is
 WriteRunLog -category "INFO" -message "see https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities/blob/main/LICENSE for details"
 
 if ($LogonWithUserSSHKey -or $LogonAsRootSSHKey) {
-    $script:VMPassword = ""
+    $script:VMPassword = ConvertTo-SecureString -String "dummypw" -AsPlainText -Force
 }
 
 # load json configuration
@@ -2735,7 +2746,7 @@ foreach ($_qcrun in $_MultiRunData) {
 
         if (-not $RunLocally) {
 
-            WriteRunLog -category "INFO" -message ("Creating HTML File ")
+            WriteRunLog -category "INFO" -message ("Creating HTML File: " + $_HTMLReportFileName)
             $_RunLogContent = $script:_runlog | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""RunLog"">RunLog</h2>"
 
             $_HTMLReport = ConvertTo-Html -Body "$_Content $_CollectScriptParameter $_CollectVMInfo $_RunQualityCheck $_CollectFileSystems $_CollectVMStorage $_CollectLVMGroups $_CollectLVMVolumes $_CollectANFVolumes $_CollectNetworkInterfaces $_CollectLoadBalancer $_CollectVMInfoAdditional $_CollectFooter $_RunLogContent" -Head $script:_HTMLHeader -Title "Quality Check for SAP Worloads on Azure" -PostContent "<p id='CreationDate'>Creation Date: $(Get-Date)</p><p id='CreationDate'>Script Version: $scriptversion</p>"
