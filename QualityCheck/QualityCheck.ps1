@@ -1704,6 +1704,8 @@ function RunQualityCheck {
 
         if ($SID) {
 
+            WriteRunLog -message "Searching for directories for SID $SID" -category "INFO"
+
             # get directory for /hana/shared by checking /usr/sap/SID/HDB00 directory
             $_command = PrepareCommand -Command "findmnt -T /usr/sap/$SID/HDB?? | tail -n +2" -CommandType "OS" -RootRequired $true
             $script:_persistance_hanashared = RunCommand -p $_command
