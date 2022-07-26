@@ -1705,10 +1705,15 @@ function RunQualityCheck {
         if ($SID) {
 
             # get directory for /hana/shared by checking /usr/sap/SID/HDB00 directory
-            $_command = PrepareCommand -Command "findmnt -T /usr/sap/???/HDB?? | tail -n +2" -CommandType "OS" -RootRequired $true
+            $_command = PrepareCommand -Command "findmnt -T /usr/sap/$SID/HDB?? | tail -n +2" -CommandType "OS" -RootRequired $true
             $script:_persistance_hanashared = RunCommand -p $_command
-            $script:_persistance_hanashared = ConvertFrom-String_findmnt -p $script:_persistance_hanashared
-            $_hanashared_filesystems = $script:_persistance_hanashared.target
+            try {
+                $script:_persistance_hanashared = ConvertFrom-String_findmnt -p $script:_persistance_hanashared
+                $_hanashared_filesystems = $script:_persistance_hanashared.target
+            }
+            catch {
+                WriteRunLog -message "couldn't find directory for SID $SID" -category "WARNING"
+            }
 
             # check config from global.ini
             $_command = PrepareCommand -Command "cat /usr/sap/$SID/SYS/global/hdb/custom/config/global.ini | grep basepath_datavolumes" -CommandType "OS" -RootRequired $true
