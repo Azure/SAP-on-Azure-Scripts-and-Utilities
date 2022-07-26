@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 2022072601
+
+* adding SID parameter
+* based on SID the script will autodetect which file systems are used by HANA database
+
 ## Version 2022072101
 
 * fixing issue where links to Microsoft documentation are missing
