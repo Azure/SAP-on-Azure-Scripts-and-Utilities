@@ -1730,11 +1730,13 @@ function RunQualityCheck {
             $script:_persistance_logvolumes = ($script:_persistance_logvolumes.Split("=")[1]) -Replace " "
 
             # get all files for /hana/data
-            $_command = PrepareCommand -Command "find $script:_persistance_datavolumes" -CommandType "OS" -RootRequired $true
+            $_commandstring = "find $_persistance_datavolumes -type f"
+            $_command = PrepareCommand -Command $($_commandstring) -CommandType "OS" -RootRequired $true
             $script:_persistance_datavolumes_files = RunCommand -p $_command
 
             # get all files for /hana/log
-            $_command = PrepareCommand -Command "find $script:_persistance_logvolumes" -CommandType "OS" -RootRequired $true
+            $_commandstring = "find $_persistance_logvolumes -type f"
+            $_command = PrepareCommand -Command $($_commandstring) -CommandType "OS" -RootRequired $true
             $script:_persistance_logvolumes_files = RunCommand -p $_command
 
             # loop through all files and get the file systems they are using
@@ -1772,7 +1774,6 @@ function RunQualityCheck {
             $script:DBDataDir = $_datavolumes_filesystems
             $script:DBLogDir = $_logvolumes_filesystems
             $script:DBSharedDir = $_hanashared_filesystems
-
 
         }
 
