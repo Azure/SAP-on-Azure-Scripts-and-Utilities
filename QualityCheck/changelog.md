@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 2022072701
+
+* adding automatic detection for fencing machanism based on configured SBD_DEVICE, if no device configured then it is Fencing Agent
+
 ## Version 2022072601
 
 * adding SID parameter

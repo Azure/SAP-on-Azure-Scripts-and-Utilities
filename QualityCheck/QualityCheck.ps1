@@ -285,7 +285,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2022072601
+$scriptversion = 2022072701
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -2718,6 +2718,7 @@ foreach ($_qcrun in $_MultiRunData) {
     }
     else {
         # nothing to do, variables already populated
+
     }
 
 
@@ -2764,104 +2765,122 @@ foreach ($_qcrun in $_MultiRunData) {
 
     }
 
-    if ((-not $RunLocally) -and $script:_CheckTCPConnectivityResult -and $script:_ConnectVMResult -and $script:_CheckAzureConnectivity -and $script:_CheckSudo) {
+    if ($HighAvailability) {
 
-            # Load HTML Header
-        LoadHTMLHeader
+        # setting Fencing Agent for RH independant of customer settings as only RH is allowed
+        if ($VMOperatingSystem -eq "RedHat") {
+            WriteRunLog "OS is set to RedHat, HighAvailability set to FencingAgent"
+            $HighAvailabilityAgent = "FencingAgent"
+        }
 
-        # Collect PowerShell Parameters
-        $_ParameterValues = @{}
-        $_ParametersToIgnore = @("Verbose", "Debug", "ErrorAction", "WarningAction", "InformationAction", "ErrorVariable", "WarningVariable", "InformationVariable", "OutVariable", "OutBuffer", "PipelineVariable")
-        foreach ($_parameter in $MyInvocation.MyCommand.Parameters.GetEnumerator()) {
-            try {
-                $_key = $_parameter.Key
-                if($null -ne ($_value = Get-Variable -Name $_key -ValueOnly -ErrorAction Ignore)) {
-                    if($value -ne ($null -as $_parameter.Value.ParameterType)) {
-                        $_ParameterValues[$_key] = $_value
-                    }
+        if ($VMOperatingSystem -eq "SUSE") {
+
+            $_sbdcommand = PrepareCommand -Command "cat /etc/sysconfig/sbd | grep ^SBD_DEVICE | wc -l" -CommandType "OS" -RootRequired $true
+            $_sbdconfig = RunCommand -p $_sbdcommand
+
+            if ($_sbdconfig -eq "0") {
+                # SBD Device config not found
+                $HighAvailabilityAgent = "FencingAgent"
+            }
+            else {
+                $HighAvailabilityAgent = "SBD"
+            }
+        }
+
+    }
+
+    # Load HTML Header
+    LoadHTMLHeader
+
+    # Collect PowerShell Parameters
+    $_ParameterValues = @{}
+    $_ParametersToIgnore = @("Verbose", "Debug", "ErrorAction", "WarningAction", "InformationAction", "ErrorVariable", "WarningVariable", "InformationVariable", "OutVariable", "OutBuffer", "PipelineVariable")
+    foreach ($_parameter in $MyInvocation.MyCommand.Parameters.GetEnumerator()) {
+        try {
+            $_key = $_parameter.Key
+            if($null -ne ($_value = Get-Variable -Name $_key -ValueOnly -ErrorAction Ignore)) {
+                if($value -ne ($null -as $_parameter.Value.ParameterType)) {
+                    $_ParameterValues[$_key] = $_value
                 }
-                if($PSBoundParameters.ContainsKey($_key)) {
-                    $_ParameterValues[$_key] = $PSBoundParameters[$_key]
-                }
-                if (-not ($_ParametersToIgnore -contains $_key) ) {
-                    WriteRunLog -category "INFO" -message "Parameter $_key : $_value"
-                }
-            } finally {}
-        }
+            }
+            if($PSBoundParameters.ContainsKey($_key)) {
+                $_ParameterValues[$_key] = $PSBoundParameters[$_key]
+            }
+            if (-not ($_ParametersToIgnore -contains $_key) ) {
+                WriteRunLog -category "INFO" -message "Parameter $_key : $_value"
+            }
+        } finally {}
+    }
 
-        # Collect Script Parameters
-        $_CollectScriptParameter = CollectScriptParameters
+    # Collect Script Parameters
+    $_CollectScriptParameter = CollectScriptParameters
 
-        # Collect VM info
-        $_CollectVMInfo = CollectVMInformation
+    # Collect VM info
+    $_CollectVMInfo = CollectVMInformation
 
-        # Get Azure Disks assigned to VMs
-        $_CollectVMStorage = CollectVMStorage
+    # Get Azure Disks assigned to VMs
+    $_CollectVMStorage = CollectVMStorage
 
-        # Get Volume Groups - CollectVMStorage needs to run first to define variables
-        $_CollectLVMGroups = CollectLVMGroups
+    # Get Volume Groups - CollectVMStorage needs to run first to define variables
+    $_CollectLVMGroups = CollectLVMGroups
 
-        # Get Logical Volumes - CollectVMStorage needs to run first to define variables
-        $_CollectLVMVolumes = CollectLVMVolummes
+    # Get Logical Volumes - CollectVMStorage needs to run first to define variables
+    $_CollectLVMVolumes = CollectLVMVolummes
 
-        if (-not $RunLocally) {
-            # Get ANF Volume Info
-            $_CollectANFVolumes = CollectANFVolumes
-        }
+    if (-not $RunLocally) {
+        # Get ANF Volume Info
+        $_CollectANFVolumes = CollectANFVolumes
+    }
 
-        # Get Filesystems
-        $_CollectFileSystems = CollectFileSystems
+    # Get Filesystems
+    $_CollectFileSystems = CollectFileSystems
 
-        if (-not $RunLocally) {
-            # Get Network Interfaces
-            $_CollectNetworkInterfaces = CollectNetworkInterfaces
+    if (-not $RunLocally) {
+        # Get Network Interfaces
+        $_CollectNetworkInterfaces = CollectNetworkInterfaces
 
-            # Get Load Balancer - CollectNetworkInterfaces needs to run first to define variables
-            $_CollectLoadBalancer = CollectLoadBalancer
-        }
+        # Get Load Balancer - CollectNetworkInterfaces needs to run first to define variables
+        $_CollectLoadBalancer = CollectLoadBalancer
+    }
 
-        # run Quality Check
-        $_RunQualityCheck = RunQualityCheck
+    # run Quality Check
+    $_RunQualityCheck = RunQualityCheck
 
-        # Collect VM info
-        $_CollectVMInfoAdditional = CollectVMInformationAdditional
+    # Collect VM info
+    $_CollectVMInfoAdditional = CollectVMInformationAdditional
 
-        # Collect footer for support cases
-        $_CollectFooter = CollectFooter
+    # Collect footer for support cases
+    $_CollectFooter = CollectFooter
 
 
-        if (-not $RunLocally) {
+    if (-not $RunLocally) {
 
-            WriteRunLog -category "INFO" -message ("Creating HTML File: " + $_HTMLReportFileName)
-            $_RunLogContent = $script:_runlog | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""RunLog"">RunLog</h2>"
+        WriteRunLog -category "INFO" -message ("Creating HTML File: " + $_HTMLReportFileName)
+        $_RunLogContent = $script:_runlog | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""RunLog"">RunLog</h2>"
 
-            $_HTMLReport = ConvertTo-Html -Body "$_Content $_CollectScriptParameter $_CollectVMInfo $_RunQualityCheck $_CollectFileSystems $_CollectVMStorage $_CollectLVMGroups $_CollectLVMVolumes $_CollectANFVolumes $_CollectNetworkInterfaces $_CollectLoadBalancer $_CollectVMInfoAdditional $_CollectFooter $_RunLogContent" -Head $script:_HTMLHeader -Title "Quality Check for SAP Worloads on Azure" -PostContent "<p id='CreationDate'>Creation Date: $(Get-Date)</p><p id='CreationDate'>Script Version: $scriptversion</p>"
-            $_HTMLReportFileName = $AzVMName + "-" + $(Get-Date -Format "yyyyMMdd-HHmm") + ".html"
-            $_HTMLReport | Out-File .\$_HTMLReportFileName
-        }
-        else {
-            # script running locally, convert result to JSON
-            $_jsonoutput = "" | Select-Object Checks, Parameters, InformationCollection, Disks, Filesystems, RunLog
-
-            WriteRunLog -category "INFO" -message ("Preparing JSON Output")
-            WriteRunLog -category "INFO" -message ("End " + (Get-Date))
-
-            $_jsonoutput.Checks = $script:_Checks
-            $_jsonoutput.Parameters = $_ParameterValues
-            $_jsonoutput.Disks = $script:_AzureDisks
-            $_jsonoutput.Filesystems = $script:_filesystems
-            $_jsonoutput.RunLog = $script:_runlog
-
-            $_jsonoutput = $_jsonoutput | ConvertTo-Json
-
-            Write-Host $_jsonoutput
-            
-
-            
-        }
+        $_HTMLReport = ConvertTo-Html -Body "$_Content $_CollectScriptParameter $_CollectVMInfo $_RunQualityCheck $_CollectFileSystems $_CollectVMStorage $_CollectLVMGroups $_CollectLVMVolumes $_CollectANFVolumes $_CollectNetworkInterfaces $_CollectLoadBalancer $_CollectVMInfoAdditional $_CollectFooter $_RunLogContent" -Head $script:_HTMLHeader -Title "Quality Check for SAP Worloads on Azure" -PostContent "<p id='CreationDate'>Creation Date: $(Get-Date)</p><p id='CreationDate'>Script Version: $scriptversion</p>"
+        $_HTMLReportFileName = $AzVMName + "-" + $(Get-Date -Format "yyyyMMdd-HHmm") + ".html"
+        $_HTMLReport | Out-File .\$_HTMLReportFileName
     }
     else {
-        WriteRunLog -category "ERROR" -message ("Unable to check " + $_qcrun.AzVMName)
+        # script running locally, convert result to JSON
+        $_jsonoutput = "" | Select-Object Checks, Parameters, InformationCollection, Disks, Filesystems, RunLog
+
+        WriteRunLog -category "INFO" -message ("Preparing JSON Output")
+        WriteRunLog -category "INFO" -message ("End " + (Get-Date))
+
+        $_jsonoutput.Checks = $script:_Checks
+        $_jsonoutput.Parameters = $_ParameterValues
+        $_jsonoutput.Disks = $script:_AzureDisks
+        $_jsonoutput.Filesystems = $script:_filesystems
+        $_jsonoutput.RunLog = $script:_runlog
+
+        $_jsonoutput = $_jsonoutput | ConvertTo-Json
+
+        Write-Host $_jsonoutput
+        
+
+        
     }
 
     if ((-not $RunLocally) -and $script:_ConnectVMResult) {
