@@ -124,7 +124,7 @@ You'll call the cmdlet like this:
 Move-AzVMToAzureZoneAndOrProximityPlacementGroup -VMResourceGroupName GOR-M-SERIES -VirtualMachineName dbms-node-2 -AzureZone 2 -PPGResourceGroupName gor-ppg-group -ProximityPlacementGroupName PPGZone2 -AzureInternalLoadBalancerResourceGroupName gor-lb-group -AzureInternalLoadBalancerName dbms-ilb
 ```
 
-> [!NOTE]
+> **NOTE**
 > PowerShell cmdlet `Move-AzVMToAzureZoneAndOrProximityPlacementGroup` can also be used to move VM from one zone to another zone.
 >
 
