@@ -125,6 +125,7 @@ Move-AzVMToAzureZoneAndOrProximityPlacementGroup -VMResourceGroupName GOR-M-SERI
 ```
 
 > **NOTE**
+>
 > PowerShell cmdlet `Move-AzVMToAzureZoneAndOrProximityPlacementGroup` can also be used to move VM from one zone to another zone.
 >
 
