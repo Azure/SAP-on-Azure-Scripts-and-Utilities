@@ -88,7 +88,7 @@ Find-Module SAPAZurePowerShellModules
 
 | Version | Name | Repository  | Description |
 | --- | --- | --- |---| 
-| 0.1.20 | SAPAzurePowerShellModules | PSGallery |SAP on Azure PowerShell Modules used for automation. |
+| 0.1.29 | SAPAzurePowerShellModules | PSGallery |SAP on Azure PowerShell Modules used for automation. |
 
 
 You can install this module by running this PowerShell command:
