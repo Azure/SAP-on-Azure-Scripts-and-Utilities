@@ -1709,98 +1709,109 @@ function RunQualityCheck {
             WriteRunLog -message "Searching for directories for SID $SID" -category "INFO"
 
             # get directory for /hana/shared by checking /usr/sap/SID/HDB00 directory
-            $_command = PrepareCommand -Command "findmnt -T /usr/sap/$SID/HDB?? | tail -n +2" -CommandType "OS" -RootRequired $true
-            $script:_persistance_hanashared = RunCommand -p $_command
-            try {
-                $script:_persistance_hanashared = ConvertFrom-String_findmnt -p $script:_persistance_hanashared
-                $_hanashared_filesystems = $script:_persistance_hanashared.target
-            }
-            catch {
-                WriteRunLog -message "couldn't find directory for SID $SID" -category "WARNING"
-            }
+            $_command = PrepareCommand -Command "if [ -d /usr/sap/$SID/HDB?? ]; then echo 0; else echo 1; fi"
+            $_hanashared_exists = RunCommand -p $_command
 
-            WriteRunLog -message "checking for HANA global.ini" -category "INFO"
-            $_command = PrepareCommand -Command "if test -f /usr/sap/$SID/SYS/global/hdb/custom/config/global.ini; then echo 0; else echo 1; fi" -CommandType "OS" -RootRequired $true
-            $_globalini_exists = RunCommand -p $_command
-            
-            if ($_globalini_exists -eq "0") {
-
-                WriteRunLog -message "found HANA global.ini" -category "INFO"
-
+            if ($_hanashared_exists -eq "0") {
+                $_command = PrepareCommand -Command "findmnt -T /usr/sap/$SID/HDB?? | tail -n +2" -CommandType "OS" -RootRequired $true
+                $script:_persistance_hanashared = RunCommand -p $_command
                 try {
-                    # global.ini file exists, getting data
-
-                    # check config from global.ini
-                    $_command = PrepareCommand -Command "cat /usr/sap/$SID/SYS/global/hdb/custom/config/global.ini | grep basepath_datavolumes" -CommandType "OS" -RootRequired $true
-                    $script:_persistance_datavolumes = RunCommand -p $_command
-
-                    # check config from global.ini
-                    $_command = PrepareCommand -Command "cat /usr/sap/$SID/SYS/global/hdb/custom/config/global.ini | grep basepath_logvolumes" -CommandType "OS" -RootRequired $true
-                    $script:_persistance_logvolumes = RunCommand -p $_command
-            
-                    # convert output from global.ini and split it, everything in [1] is the path
-                    $script:_persistance_datavolumes = ($script:_persistance_datavolumes.Split("=")[1]) -Replace " "
-                    $script:_persistance_logvolumes = ($script:_persistance_logvolumes.Split("=")[1]) -Replace " "
+                    $script:_persistance_hanashared = ConvertFrom-String_findmnt -p $script:_persistance_hanashared
+                    $_hanashared_filesystems = $script:_persistance_hanashared.target
                 }
                 catch {
-                    # set default paths
-                    $script:_persistance_datavolumes = "/hana/data/" + $SID
-                    $script:_persistance_logvolumes = "/hana/log" + $SID
+                    WriteRunLog -message "couldn't find directory for SID $SID" -category "WARNING"
                 }
 
+                WriteRunLog -message "checking for HANA global.ini" -category "INFO"
+                $_command = PrepareCommand -Command "if test -f /usr/sap/$SID/SYS/global/hdb/custom/config/global.ini; then echo 0; else echo 1; fi" -CommandType "OS" -RootRequired $true
+                $_globalini_exists = RunCommand -p $_command
+                
+                if ($_globalini_exists -eq "0") {
+
+                    WriteRunLog -message "found HANA global.ini" -category "INFO"
+
+                    try {
+                        # global.ini file exists, getting data
+
+                        # check config from global.ini
+                        $_command = PrepareCommand -Command "cat /usr/sap/$SID/SYS/global/hdb/custom/config/global.ini | grep basepath_datavolumes" -CommandType "OS" -RootRequired $true
+                        $script:_persistance_datavolumes = RunCommand -p $_command
+
+                        # check config from global.ini
+                        $_command = PrepareCommand -Command "cat /usr/sap/$SID/SYS/global/hdb/custom/config/global.ini | grep basepath_logvolumes" -CommandType "OS" -RootRequired $true
+                        $script:_persistance_logvolumes = RunCommand -p $_command
+                
+                        # convert output from global.ini and split it, everything in [1] is the path
+                        $script:_persistance_datavolumes = ($script:_persistance_datavolumes.Split("=")[1]) -Replace " "
+                        $script:_persistance_logvolumes = ($script:_persistance_logvolumes.Split("=")[1]) -Replace " "
+                    }
+                    catch {
+                        # set default paths
+                        $script:_persistance_datavolumes = "/hana/data/" + $SID
+                        $script:_persistance_logvolumes = "/hana/log/" + $SID
+                        $script:_persistance_hanashared = "/hana/shared/" + $SID
+                    }
+
+                }
+                else {
+                    # set default paths
+                    WriteRunLog -message "HANA global.ini not found, fallback paths" -category "INFO"
+                    $script:_persistance_datavolumes = "/hana/data"
+                    $script:_persistance_logvolumes = "/hana/log"
+                    $script:_persistance_hanashared = "/hana/shared"
+                }
+
+                # get all files for /hana/data
+                $_commandstring = "find $_persistance_datavolumes -type f"
+                $_command = PrepareCommand -Command $($_commandstring) -CommandType "OS" -RootRequired $true
+                $script:_persistance_datavolumes_files = RunCommand -p $_command
+
+                # get all files for /hana/log
+                $_commandstring = "find $_persistance_logvolumes -type f"
+                $_command = PrepareCommand -Command $($_commandstring) -CommandType "OS" -RootRequired $true
+                $script:_persistance_logvolumes_files = RunCommand -p $_command
+
+                # loop through all files and get the file systems they are using
+                $_datavolumes_filesystems = @()
+                foreach ($_datavolumes_file in $script:_persistance_datavolumes_files) {
+                    $_command = PrepareCommand -Command "findmnt -T $_datavolumes_file | tail -n +2" -CommandType "OS" -RootRequired $true
+                    $_findmnt_temp = RunCommand -p $_command
+                    $_findmnt_temp = ConvertFrom-String_findmnt -p $_findmnt_temp
+                    $_datavolumes_filesystems += $_findmnt_temp.target
+                }
+
+                # loop through all files and get the file systems they are using
+                $_logvolumes_filesystems = @()
+                foreach ($_logvolumes_file in $script:_persistance_logvolumes_files) {
+                    $_command = PrepareCommand -Command "findmnt -T $_logvolumes_file | tail -n +2" -CommandType "OS" -RootRequired $true
+                    $_findmnt_temp = RunCommand -p $_command
+                    $_findmnt_temp = ConvertFrom-String_findmnt -p $_findmnt_temp
+                    $_logvolumes_filesystems += $_findmnt_temp.target
+                }
+
+                # create a list of all file systems used (unique values)
+                $_datavolumes_filesystems = $_datavolumes_filesystems | Select-Object -Unique
+                $_logvolumes_filesystems = $_logvolumes_filesystems | Select-Object -Unique
+                
+                # add log entries
+                WriteRunLog -message ("Found shared filesystem for SID " + $SID)
+                WriteRunLog -message "$_hanashared_filesystems" -category "INFO"
+                WriteRunLog -message ("Found data filesystems for SID " + $SID) -category "INFO"
+                WriteRunLog -message "$_datavolumes_filesystems" -category "INFO"
+                WriteRunLog -message ("Found log filesystems for SID " + $SID) -category "INFO"
+                WriteRunLog -message "$_logvolumes_filesystems" -category "INFO"
+                WriteRunLog -message "Setting new values for DBDataDir and DBLogDir" -category "INFO"
+            
+                # setting new script variables
+                $script:DBDataDir = $_datavolumes_filesystems
+                $script:DBLogDir = $_logvolumes_filesystems
+                $script:DBSharedDir = $_hanashared_filesystems
             }
             else {
-                # set default paths
-                WriteRunLog -message "HANA global.ini not found, fallback paths" -category "INFO"
-                $script:_persistance_datavolumes = "/hana/data/" + $SID
-                $script:_persistance_logvolumes = "/hana/log" + $SID
+                WriteRunLog -message "Can't find /usr/sap/$SID" -category "WARNING"
+                WriteRunLog -message "Continuing with default directories" -category "WARNING"
             }
-
-            # get all files for /hana/data
-            $_commandstring = "find $_persistance_datavolumes -type f"
-            $_command = PrepareCommand -Command $($_commandstring) -CommandType "OS" -RootRequired $true
-            $script:_persistance_datavolumes_files = RunCommand -p $_command
-
-            # get all files for /hana/log
-            $_commandstring = "find $_persistance_logvolumes -type f"
-            $_command = PrepareCommand -Command $($_commandstring) -CommandType "OS" -RootRequired $true
-            $script:_persistance_logvolumes_files = RunCommand -p $_command
-
-            # loop through all files and get the file systems they are using
-            $_datavolumes_filesystems = @()
-            foreach ($_datavolumes_file in $script:_persistance_datavolumes_files) {
-                $_command = PrepareCommand -Command "findmnt -T $_datavolumes_file | tail -n +2" -CommandType "OS" -RootRequired $true
-                $_findmnt_temp = RunCommand -p $_command
-                $_findmnt_temp = ConvertFrom-String_findmnt -p $_findmnt_temp
-                $_datavolumes_filesystems += $_findmnt_temp.target
-            }
-
-            # loop through all files and get the file systems they are using
-            $_logvolumes_filesystems = @()
-            foreach ($_logvolumes_file in $script:_persistance_logvolumes_files) {
-                $_command = PrepareCommand -Command "findmnt -T $_logvolumes_file | tail -n +2" -CommandType "OS" -RootRequired $true
-                $_findmnt_temp = RunCommand -p $_command
-                $_findmnt_temp = ConvertFrom-String_findmnt -p $_findmnt_temp
-                $_logvolumes_filesystems += $_findmnt_temp.target
-            }
-
-            # create a list of all file systems used (unique values)
-            $_datavolumes_filesystems = $_datavolumes_filesystems | Select-Object -Unique
-            $_logvolumes_filesystems = $_logvolumes_filesystems | Select-Object -Unique
-            
-            # add log entries
-            WriteRunLog -message ("Found shared filesystem for SID " + $SID)
-            WriteRunLog -message "$_hanashared_filesystems" -category "INFO"
-            WriteRunLog -message ("Found data filesystems for SID " + $SID) -category "INFO"
-            WriteRunLog -message "$_datavolumes_filesystems" -category "INFO"
-            WriteRunLog -message ("Found log filesystems for SID " + $SID) -category "INFO"
-            WriteRunLog -message "$_logvolumes_filesystems" -category "INFO"
-            WriteRunLog -message "Setting new values for DBDataDir and DBLogDir" -category "INFO"
-            
-            # setting new script variables
-            $script:DBDataDir = $_datavolumes_filesystems
-            $script:DBLogDir = $_logvolumes_filesystems
-            $script:DBSharedDir = $_hanashared_filesystems
 
         }
 
@@ -1811,7 +1822,7 @@ function RunQualityCheck {
         $_saphanastorageurl = "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-vm-operations-storage"
 
         ## getting file system for /hana/data
-        $_filesystem_hana = ($Script:_filesystems | Where-Object {$_.Target -in $DBDataDir})
+        $_filesystem_hana = ($script:_filesystems | Where-Object {$_.Target -in $DBDataDir})
         if ($_filesystem_hana.Source.StartsWith("/dev/sd")) {
             $_filesystem_hana_type = "direct"
         }
