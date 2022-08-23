@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 2022082301
+
+* adding support for M420ixs_v2 and M832ixs_v2 (limited GA)
+* adding support for Da(d)s_v5 and Ea(d)s_v5
+* fix: script not stopping when not able to logon to VM
+* fix: checking if global.ini exists (option -SID) and adding fallback path
+* fix: /hana/data not checking for LVM or /dev/sd device like with /hana/log
+
 ## Version 2022072701
 
 * adding automatic detection for fencing machanism based on configured SBD_DEVICE, if no device configured then it is Fencing Agent

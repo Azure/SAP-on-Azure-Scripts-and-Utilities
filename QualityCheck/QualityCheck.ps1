@@ -285,7 +285,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2022072701
+$scriptversion = 2022082301
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -568,6 +568,7 @@ function CheckTCPConnectivity {
         catch {
             WriteRunLog -category "ERROR" -message "Error connecting to $AzVMName using $VMHostname, please check network connection and firewall rules"
             $script:_CheckTCPConnectivityResult = $false
+            exit
         }
 
     }
@@ -733,6 +734,7 @@ function ConnectVM {
             # not able to connect
             WriteRunLog -category "ERROR" -message "SSH - Please check your credentials, unable to logon"
             $script:_ConnectVMResult = $false
+            exit
         }
     }
 }
@@ -1717,17 +1719,42 @@ function RunQualityCheck {
                 WriteRunLog -message "couldn't find directory for SID $SID" -category "WARNING"
             }
 
-            # check config from global.ini
-            $_command = PrepareCommand -Command "cat /usr/sap/$SID/SYS/global/hdb/custom/config/global.ini | grep basepath_datavolumes" -CommandType "OS" -RootRequired $true
-            $script:_persistance_datavolumes = RunCommand -p $_command
+            WriteRunLog -message "checking for HANA global.ini" -category "INFO"
+            $_command = PrepareCommand -Command "if test -f /usr/sap/$SID/SYS/global/hdb/custom/config/global.ini; then echo 0; else echo 1; fi" -CommandType "OS" -RootRequired $true
+            $_globalini_exists = RunCommand -p $_command
+            
+            if ($_globalini_exists -eq "0") {
 
-            # check config from global.ini
-            $_command = PrepareCommand -Command "cat /usr/sap/$SID/SYS/global/hdb/custom/config/global.ini | grep basepath_logvolumes" -CommandType "OS" -RootRequired $true
-            $script:_persistance_logvolumes = RunCommand -p $_command
-    
-            # convert output from global.ini and split it, everything in [1] is the path
-            $script:_persistance_datavolumes = ($script:_persistance_datavolumes.Split("=")[1]) -Replace " "
-            $script:_persistance_logvolumes = ($script:_persistance_logvolumes.Split("=")[1]) -Replace " "
+                WriteRunLog -message "found HANA global.ini" -category "INFO"
+
+                try {
+                    # global.ini file exists, getting data
+
+                    # check config from global.ini
+                    $_command = PrepareCommand -Command "cat /usr/sap/$SID/SYS/global/hdb/custom/config/global.ini | grep basepath_datavolumes" -CommandType "OS" -RootRequired $true
+                    $script:_persistance_datavolumes = RunCommand -p $_command
+
+                    # check config from global.ini
+                    $_command = PrepareCommand -Command "cat /usr/sap/$SID/SYS/global/hdb/custom/config/global.ini | grep basepath_logvolumes" -CommandType "OS" -RootRequired $true
+                    $script:_persistance_logvolumes = RunCommand -p $_command
+            
+                    # convert output from global.ini and split it, everything in [1] is the path
+                    $script:_persistance_datavolumes = ($script:_persistance_datavolumes.Split("=")[1]) -Replace " "
+                    $script:_persistance_logvolumes = ($script:_persistance_logvolumes.Split("=")[1]) -Replace " "
+                }
+                catch {
+                    # set default paths
+                    $script:_persistance_datavolumes = "/hana/data/" + $SID
+                    $script:_persistance_logvolumes = "/hana/log" + $SID
+                }
+
+            }
+            else {
+                # set default paths
+                WriteRunLog -message "HANA global.ini not found, fallback paths" -category "INFO"
+                $script:_persistance_datavolumes = "/hana/data/" + $SID
+                $script:_persistance_logvolumes = "/hana/log" + $SID
+            }
 
             # get all files for /hana/data
             $_commandstring = "find $_persistance_datavolumes -type f"
@@ -1808,8 +1835,14 @@ function RunQualityCheck {
 
         if ($_filesystem_hana.fstype -eq 'xfs') {
 
-            ## getting disks for /hana/data
-            $_AzureDisks_hana = ($_AzureDisks | Where-Object {$_.VolumeGroup -in $_filesystem_hana.vg})
+            # getting disks for /hana/data
+            if ($_filesystem_hana_type -eq "lvm") {
+                $_AzureDisks_hana = ($_AzureDisks | Where-Object {$_.VolumeGroup -in $_filesystem_hana.vg})
+            }
+            else {
+                $_AzureDisks_for_hanadata_filesystems = $script:_filesystems | Where-Object {$_.target -in $DBDataDir}
+                $_AzureDisks_hana = ($_AzureDisks | Where-Object { $_.DeviceName -in $_AzureDisks_for_hanadata_filesystems.Source})
+            }
 
             $_FirstDisk = $_AzureDisks_hana[0]
 
