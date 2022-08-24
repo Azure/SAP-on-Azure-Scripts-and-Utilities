@@ -78,7 +78,8 @@ The stopping of the SAP system or SAP application server will be done using an [
 
 ![](Pictures/media/image3.png)  
 
-> [!NOTE]
+> **NOTE**
+>
 > You can specify in the user interface the SAP soft shutdown time. Default value is 300 sec.  
 >![](Pictures/media/image4.png)
 
@@ -130,7 +131,8 @@ The non-prod SAP systems, like dev test, demo, training etc., typically do not r
 Productive SAP system run typical 24 / 7 and you never completely shut them down.  Still, there is a huge potential in saving on SAP application layer. SAP application layers takes a biggest amount of SAPS portion in total SAP system SAPS. 
 
 
-> [!NOTE]
+> **NOTE**
+>
 > **SAP Application Performance Standard** (**SAPS**) is a hardware-independent unit of measurement that describes the performance of a system configuration in the SAP environment. It is derived from the Sales and Distribution (SD) benchmark, where 100 SAPS is defined as 2,000 fully business processed order line items per hour. **SAPS is an SAP measure of compute process power**. 
 
 In an on-premises environment, SAP system is oversized so that it can stand the required peaks. But the reality is, those peaks are rear (maybe few days in 3 month). Most of the time such systems are underutilized. We’ve seen prod SAp systems that have 5 – 10 % of total CPU utilization most of the time. 
@@ -268,7 +270,8 @@ Repeat the same procdure to update modules:
 
 Import **SAPAzurePowerShellModules** PowerShell module that will be used by SAP Runbooks.
 
-> [!NOTE]
+> **NOTE**
+>
 > PowerShell module **SAPAzurePowerShellModules** is stored in PowerShell Gallery and is easy to import into Azure automation account.
 
 Go to ***Module*** -\> ***Browse Gallery***
