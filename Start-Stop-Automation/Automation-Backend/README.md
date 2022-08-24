@@ -254,7 +254,7 @@ Select **Az.Account** module and click **Select**
 
 Chose PowerShell runtime version **5.1** and clisk **Import**.
 
-![](Pictures/media/image88.png)
+![](Pictures/media/Image88.png)
 
 ## Import Az.Compute, Az.Automation, Az.Resources
 
@@ -275,16 +275,16 @@ Go to ***Module*** -\> ***Browse Gallery***
 
 Search for ***SAPAzurePowerShellModules*** module.
 
-![](Pictures/media/image89.png)
+![](Pictures/media/Image89.png)
 
 Select ***SAPAzurePowerShellModules*** module and click **Select**
 
-![](Pictures/media/image90.png)
+![](Pictures/media/Image90.png)
 
 Chose PowerShell **Runtime version** - **5.1**, and click **Import**
 
 
-![](Pictures/media/image91.png)
+![](Pictures/media/Image91.png)
 
 
 # Import SAP Runbook
@@ -348,20 +348,17 @@ For **Source** choose: **PowerShell Gallery**
 
 In the search field type: **Start-SAPSystem** and press Enter.
 
-![Graphical user interface, text, application Description automatically
-generated](Pictures/media/image92.png)
+![](Pictures/media/Image92.png)
 
 Click on **Start-SAPSystem** Runbook and click on **Select**.
 
-![Graphical user interface, text, application Description automatically
-generated](Pictures/media/image93.png)
+![](Pictures/media/Image93.png)
 
 Enter the **Name** , e.g. in this example **Start-SAPSystem**, and PowerShell **Runtime version** of **5.1**, and click **Import**.
 
 Click **Publish** :
 
-![Graphical user interface, text, application, email Description
-automatically generated](Pictures/media/image95.png)
+![](Pictures/media/Image95.png)
 
 Now **Start-SAPSystem** runbook is now published and ready to be used.
 
