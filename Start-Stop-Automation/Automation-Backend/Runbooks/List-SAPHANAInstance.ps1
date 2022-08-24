@@ -35,15 +35,37 @@
 
 Param(
     
-[Parameter(Mandatory=$True, HelpMessage="SAP HANA <SID>. 3 characters , starts with letter.")] 
-[ValidateLength(3,3)]
-[string] $SAPHANASID
+    [Parameter(Mandatory=$True, HelpMessage="SAP HANA <SID>. 3 characters , starts with letter.")] 
+    [ValidateLength(3,3)]
+    [string] $SAPHANASID,
 
+    [Parameter(Mandatory=$false, HelpMessage="Subscription ID. If null, the current subscription of automation account is used instead.")] 
+    [ValidateLength(36,36)]
+    [string] $SubscriptionId
 )
 
-# Connect to Azure
-$connection = Get-AutomationConnection -Name AzureRunAsConnection
-Add-AzAccount  -ServicePrincipal -Tenant $connection.TenantID -ApplicationId $connection.ApplicationID -CertificateThumbprint $connection.CertificateThumbprint 
+# Deprecated due to using System Managed Identity
+#$connection = Get-AutomationConnection -Name AzureRunAsConnection
+#Add-AzAccount  -ServicePrincipal -Tenant $connection.TenantID -ApplicationId $connection.ApplicationID -CertificateThumbprint $connection.CertificateThumbprint 
+
+# Connect to Azure with Automation Account system-assigned managed identity
+# Ensure that you do not inherit an AZ Context in your runbook
+Disable-AzContextAutosave -Scope Process | out-null
+
+# Connect using Managed Service Identity
+try {
+	$AzureContext = (Connect-AzAccount -Identity -WarningAction Ignore).context
+}
+catch{
+	Write-Output "There is no system-assigned user identity. Aborting."; 
+	Write-Error  $_.Exception.Message
+	exit
+}
+
+if ($SubscriptionId){
+	$SubscriptionId = $SubscriptionId.trim()
+	Select-AzSubscription -SubscriptionId $SubscriptionId -ErrorVariable -notPresent  -ErrorAction SilentlyContinue -Tenant $AzureContext.Tenant
+}
 
 $SAPHANASID  = $SAPHANASID.Trim()
 

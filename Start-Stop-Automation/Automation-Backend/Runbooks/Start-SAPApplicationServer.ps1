@@ -50,7 +50,11 @@ Param(
     [bool] $ConvertDisksToPremium =  $False,
 
     [Parameter(Mandatory=$False)] 
-    [bool] $PrintExecutionCommand = $False
+    [bool] $PrintExecutionCommand = $False,
+
+    [Parameter(Mandatory=$false, HelpMessage="Subscription ID. If null, the current subscription of automation account is used instead.")] 
+    [ValidateLength(36,36)]
+    [string] $SubscriptionId
 )
 
 $ResourceGroupName  = $ResourceGroupName.Trim()
