@@ -256,7 +256,6 @@ Chose PowerShell runtime version **5.1** and clisk **Import**.
 
 ![](Pictures/media/image88.png)
 
-
 ## Import Az.Compute, Az.Automation, Az.Resources
 
 Repeat the same procdure to update modules:
