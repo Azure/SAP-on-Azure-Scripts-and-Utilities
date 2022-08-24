@@ -246,11 +246,11 @@ Go to ***Module*** -\> ***Browse Gallery***
 
 Search for **Az.Account** module.
 
-![](Pictures/media/image86.png)
+![](Pictures/media/Image86.png)
 
 Select **Az.Account** module and click **Select**
 
-![](Pictures/media/image87.png)
+![](Pictures/media/Image87.png)
 
 Chose PowerShell runtime version **5.1** and clisk **Import**.
 
