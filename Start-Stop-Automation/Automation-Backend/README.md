@@ -189,17 +189,47 @@ Click **Create**.
 
 Specify parameters:
 
-![](Pictures/media/image9.png)
+![](Pictures/media/Image80.png)
 
-Azure Automation Account is created.
+Choose **System asigned** managed identity:
 
-![](Pictures/media/image10.png)
+![](Pictures/media/Image81.png)
 
-## Import Az.Modules
+Specify **Connectivity configuration** :
+
+![](Pictures/media/Image82.png)
+
+Create account:
+
+
+![](Pictures/media/Image83.png)
+
+
+## Configure System Managed Identity
+
+Go to **Identity** tab. **System asigned** is **On**
+
+![](Pictures/media/Image84.png)
+
+Select on the left **\<Subscription Name\>**, and click on **Role assigments**  -> **Add role assigment** and specify:
+
+- Scope: **Subscription**
+- Subscription: **\<Subscription Name\>**
+- Role: **Owner**
+
+![](Pictures/media/Image85.png)
+
+
+> **NOTE**
+>
+> For more information system managed identiy check [Using a on system-assigned managed identity for an Azure Automation account](https://docs.microsoft.com/en-us/azure/automation/enable-managed-identity-for-automation#assign-role-to-a-system-assigned-managed-identity).  
+
+
+## Update Az.Modules
 
 SAP start / stop PowerShell (PS) runbooks use new Az PS module, which must be [imported](https://docs.microsoft.com/en-us/azure/automation/az-modules#import-the-az-modules) .
 
-Import Az modules:
+Update Az modules:
 
   - **Az.Account**
 
@@ -209,90 +239,31 @@ Import Az modules:
 
   - **Az.Resources**
 
-## Az.Account
+
+## Update Az.Account
 
 Go to ***Module*** -\> ***Browse Gallery***
 
 Search for **Az.Account** module.
 
-![](Pictures/media/image11.png)
+![](Pictures/media/image86.png)
 
-Select **Az.Account** module and click **Import:**
+Select **Az.Account** module and click **Select**
 
-![](Pictures/media/image12.png)
+![](Pictures/media/image87.png)
 
-Import is in progress..
+Chose PowerShell runtime version **5.1** and clisk **Import**.
 
-![](Pictures/media/image13.png)
-
-Import is finished:
-
-![](Pictures/media/image14.png)
-
-## Import Az.Compute
-
-Go to ***Module*** -\> ***Browse Gallery***
-
-Search for **Az.Compute**
-
-![](Pictures/media/image15.png)
-
-Select **Az.Compute** module and click **Import:**
-
-Import in progress…
-
-![](Pictures/media/image16.png)
-
-Import is finished.
-
-![](Pictures/media/image17.png)
-
-## Import Az.Automation
-
-Go to ***Module*** -\> ***Browse Gallery***
-
-Search for **Az.Automation** module.
-
-![](Pictures/media/image18.png)
-
-Select **Az.Automation** module and click **Import:  
-**
-
-![](Pictures/media/image19.png)
-
-Import is in progress…
-
-![](Pictures/media/image20.png)
-
-Import is finished.
-
-![](Pictures/media/image21.png)
+![](Pictures/media/image88.png)
 
 
-## Az.Resources
+## Import Az.Compute, Az.Automation, Az.Resources
 
-Go to ***Module*** -\> ***Browse Gallery***
+Repeat the same procdure to update modules:
 
-Search for **Az.Resources** module.
-
-![](Pictures/media/image22.png)
-
-Select **Az.Resources** module and click **Import:**
-
-![](Pictures/media/image23.png)
-
-Import is in progress…
-
-![](Pictures/media/image24.png)
-
-Import is finished.
-
-![](Pictures/media/image25.png)
-
-ALL new modules are imported.
-
-![A screenshot of a cell phone Description automatically
-generated](Pictures/media/image26.png)
+ - Az.Compute
+ - Az.Automation
+ - Az.Resources
 
 ## Import SAP PowerShell Module
 
@@ -305,21 +276,17 @@ Go to ***Module*** -\> ***Browse Gallery***
 
 Search for ***SAPAzurePowerShellModules*** module.
 
-![](Pictures/media/image27.png)
+![](Pictures/media/image89.png)
 
-Select ***SAPAzurePowerShellModules*** module and click **Import** and **OK:**
+Select ***SAPAzurePowerShellModules*** module and click **Select**
 
-![](Pictures/media/image28.png)
+![](Pictures/media/image90.png)
 
-![](Pictures/media/image29.png)
+Chose PowerShell **Runtime version** - **5.1**, and click **Import**
 
-Import is in progress…
 
-![](Pictures/media/image30.png)
+![](Pictures/media/image91.png)
 
-Import is finished.
-
-![](Pictures/media/image31.png)
 
 # Import SAP Runbook
 
@@ -371,62 +338,36 @@ Import these runbooks:
 
   - Tag-SAPStandaloneSQLServer
 
-  -
-> [!NOTE] 
+  
+> **NOTE**
+>
 > All SAP runbooks are stored in PowerShell Gallery and are easy to import into Azure automation account.
 
-Go to **Runbooks** **Gallery**
+Go to **Runbooks** -> **Browse Gallery**
 
 For **Source** choose: **PowerShell Gallery**
-
-![Graphical user interface, text, application Description automatically
-generated](Pictures/media/image35.png)
 
 In the search field type: **Start-SAPSystem** and press Enter.
 
 ![Graphical user interface, text, application Description automatically
-generated](Pictures/media/image36.png)
+generated](Pictures/media/image92.png)
 
-Click on **Start-SAPSystem** Runbook and click on **Import**.
+Click on **Start-SAPSystem** Runbook and click on **Select**.
 
-![Graphical user interface, text, application, email Description
-automatically generated](Pictures/media/image37.png)
+![Graphical user interface, text, application Description automatically
+generated](Pictures/media/image93.png)
 
-Click **OK**.
+Enter the **Name** , e.g. in this example **Start-SAPSystem**, and PowerShell **Runtime version** of **5.1**, and click **Import**.
 
-![](Pictures/media/image38.png)
-
-Import succeeded:
+Click **Publish** :
 
 ![Graphical user interface, text, application, email Description
-automatically generated](Pictures/media/image39.png)
-
-Go to **Runbooks** and click on **Start-SAPSystem** runbook.
-
-![Graphical user interface, text, application, email Description
-automatically generated](Pictures/media/image40.png)
-
-Click on **Edit**.
-
-![Graphical user interface, application Description automatically
-generated](Pictures/media/image41.png)
-
-Click **Publish** **and confirm** .
-
-![Graphical user interface, text, application, email Description
-automatically generated](Pictures/media/image42.png)
-
-And confirm it.
-
-![](Pictures/media/image43.png)
+automatically generated](Pictures/media/image95.png)
 
 Now **Start-SAPSystem** runbook is now published and ready to be used.
 
 Import in the same way for all other runbooks.
 
-All runbooks are imported.
-
-![](Pictures/media/image50.png)
 
 # Tagging Approach
 
