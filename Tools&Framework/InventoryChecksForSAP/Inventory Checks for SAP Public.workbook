@@ -112,7 +112,7 @@
             "multiSelect": true,
             "quote": "'",
             "delimiter": ",",
-            "query": "resources\r\n| where type =~ 'Microsoft.Workloads/sapVirtualInstances'\r\n| distinct name\r\n| order by name asc\r\n| extend Rank = row_number()\r\n| project value = name, label = name, selected = Rank <= 200",
+            "query": "resources\r\n| where type =~ 'Microsoft.Workloads/sapVirtualInstances'\r\n| distinct id, name\r\n| order by name asc\r\n| extend Rank = row_number()\r\n| project value = name, label = name, selected = Rank <= 200",
             "crossComponentResources": [
               "{Subscriptions}"
             ],
@@ -128,7 +128,10 @@
             },
             "defaultValue": "value::1",
             "queryType": 1,
-            "resourceType": "microsoft.resourcegraph/resources"
+            "resourceType": "microsoft.resourcegraph/resources",
+            "value": [
+              "MB2"
+            ]
           },
           {
             "id": "44e23a9f-fc1e-482f-993a-42bda9dd7ab1",
@@ -138,7 +141,7 @@
             "multiSelect": true,
             "quote": "'",
             "delimiter": ",",
-            "query": "resources\r\n| where type =~ 'Microsoft.Workloads/sapVirtualInstances/centralInstances' or type =~ 'Microsoft.Workloads/sapVirtualInstances/databaseInstances' or type=~ 'Microsoft.Workloads/sapVirtualInstances/applicationInstances'\r\n| extend SID = tostring(split(id,\"/\",8)[0])\r\n| where SID in ({system_SID}) or '*' in ({system_SID})\r\n| where isnotnull(properties.hostname )\r\n| extend vmname=properties.hostname\r\n| project name, vmname\r\n//| order by vmname asc\r\n//| extend Rank = row_number()\r\n| project value = vmname, label = vmname, selected = 1",
+            "query": "resources\r\n| where type =~ 'Microsoft.Workloads/sapVirtualInstances/centralInstances' or type =~ 'Microsoft.Workloads/sapVirtualInstances/databaseInstances'\r\n| extend visId = split(split(id, '/centralInstances')[0], '/databaseInstances')[0] // getting the VIS id out of child resource\r\n| extend SID = tostring(split(visId,\"/\",8)[0])\r\n//| extend visList = split('{system_SID:id}', ', ') // split the selected vis list in array to search\r\n//| where set_has_element(visList, tostring(visId)) == 1 //check if the running vis exists in selected vis id.\r\n| mv-expand properties.vmDetails\r\n| extend vmID = tostring(properties_vmDetails.virtualMachineId)\r\n| where strlen(vmID) > 0\r\n| extend vmRole = split(type, \"/\")[2]\r\n//| extend vmRole = \"qwertyuiop\"\r\n//| project visVMId = strcat(tolower(vmID), \", \", SID, \", \", vmRole)\r\n| project visVMId = strcat(tolower(vmID)), SID, vmRole\r\n| union(\r\nresources\r\n        | where type =~ 'Microsoft.Workloads/sapVirtualInstances/applicationInstances'\r\n        | extend visId = split(id, '/applicationInstances')[0]\r\n //       | extend visList = split('{system_SID:id}', ', ') \r\n        | extend SID = tostring(split(visId,\"/\",8)[0])\r\n        // split the selected vis list in array to search\r\n//        | where set_has_element(visList, tostring(visId)) == 1\r\n        | extend vmID = tostring(properties.virtualMachineId)\r\n        | where strlen(vmID) > 0\r\n        | extend vmRole = split(type, \"/\")[2]\r\n        //| extend vmRole = \"qwertyuiop\"\r\n    //    | project visVMId = strcat(tolower(vmID), \", \",SID , \", \", vmRole)\r\n    | project visVMId = strcat(tolower(vmID)), SID, vmRole\r\n        )\r\n| extend VIS_VMs = tostring(split(visVMId,\"/\",8)[0])\r\n| where SID in ({system_SID}) or '*' in ({system_SID})\r\n//| project VIS_VMs\r\n| distinct VIS_VMs\r\n| order by VIS_VMs asc\r\n| extend Rank = row_number()\r\n| project value = VIS_VMs, label = VIS_VMs, selected = Rank <= 200\r\n\r\n",
             "crossComponentResources": [
               "{Subscriptions}"
             ],
@@ -151,7 +154,7 @@
             "resourceType": "microsoft.resourcegraph/resources"
           }
         ],
-        "style": "pills",
+        "style": "above",
         "queryType": 1,
         "resourceType": "microsoft.resourcegraph/resources"
       },
