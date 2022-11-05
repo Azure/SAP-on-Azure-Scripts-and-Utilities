@@ -130,7 +130,7 @@
             "queryType": 1,
             "resourceType": "microsoft.resourcegraph/resources",
             "value": [
-              "MB2"
+              "value::all"
             ]
           },
           {
@@ -11207,6 +11207,8 @@
         "query": "advisorresources\r\n| where type =~ 'microsoft.advisor/recommendations' \r\n| where properties.lastUpdated >=ago(1d)\r\n| extend visId = split(split(split(id, '/centralInstances')[0], '/applicationInstances')[0], '/databaseInstances')[0]\r\n| extend SID= tostring(split(['id'], \"/\",8)[0])\r\n| extend resourceId = tostring(properties.resourceMetadata.resourceId)\r\n| extend impactedField = properties.impactedField\r\n| extend resourceTypeName = \"Database\"\r\n| extend impact = properties.impact\r\n| extend resourceTypeName = iff(impactedField has \"centralInstances\", \"Central service instance\", resourceTypeName)\r\n| extend resourceTypeName = iff(impactedField has \"applicationInstances\", \"App server instance\", resourceTypeName)\r\n| where SID in ({system_SID}) or '*' in ({system_SID})\r\n//| project resourceId, resourceTypeName, visId, impact, properties.shortDescription.solution, properties.category, properties.lastUpdated, SID\r\n| summarize count() by tostring(properties.category)",
         "size": 2,
         "title": "Well-Architected for SAP Summary",
+        "noDataMessage": "No WAF related observations found for the selected SAP system",
+        "exportToExcelOptions": "all",
         "queryType": 1,
         "resourceType": "microsoft.resourcegraph/resources",
         "crossComponentResources": [
@@ -11435,6 +11437,7 @@
         "size": 2,
         "title": "SAP Instance Overview",
         "noDataMessage": "No VIS configuration",
+        "showExportToExcel": true,
         "queryType": 1,
         "resourceType": "microsoft.resourcegraph/resources",
         "crossComponentResources": [
@@ -11458,6 +11461,7 @@
             }
           ],
           "rowLimit": 1000,
+          "filter": true,
           "labelSettings": [
             {
               "columnId": "id",
@@ -11517,6 +11521,7 @@
         "size": 0,
         "title": "SAP SID Overview",
         "noDataMessage": "VIS SAP Configuration not found",
+        "showExportToExcel": true,
         "queryType": 1,
         "resourceType": "microsoft.resourcegraph/resources",
         "crossComponentResources": [
@@ -11532,6 +11537,7 @@
               }
             }
           ],
+          "filter": true,
           "labelSettings": [
             {
               "columnId": "id",
@@ -11629,6 +11635,7 @@
         "size": 2,
         "title": "VM Compute List",
         "noDataMessage": "No VM found for the selection",
+        "showExportToExcel": true,
         "queryType": 1,
         "resourceType": "microsoft.resourcegraph/resources",
         "crossComponentResources": [
@@ -11649,6 +11656,7 @@
             }
           ],
           "rowLimit": 10000,
+          "filter": true,
           "labelSettings": [
             {
               "columnId": "id",
@@ -11689,9 +11697,10 @@
       "content": {
         "version": "KqlItem/1.0",
         "query": "resources \r\n| where type =~ 'microsoft.compute/virtualmachines'\r\n| where name in ({VIS_VMs}) or '*' in ({VIS_VMs})\r\n| mv-expand datadisks = properties.storageProfile.dataDisks\r\n| project id, vmName = name, \r\n vmSize= tostring(properties.hardwareProfile.vmSize), os_type = tostring(properties.storageProfile.osDisk.osType),\r\n datadisk_lun = toint(datadisks.lun),  datadisk_name = tostring(datadisks.name), datadisksize = tostring(datadisks.diskSizeGB), \r\n datadisk_cache = tostring(datadisks.caching), datadisk_wa = tostring(datadisks.writeAcceleratorEnabled)\r\n//| summarize by vmName,  location, powerstate, avZone, avSet, ppg, vmSize, osname, vmgen, datadisklun, datadiskname, datadisksize, datadiskcache, datadiskwa\r\n| join kind = leftouter  ( \r\nresources\r\n| where type == \"microsoft.compute/disks\"\r\n| parse managedBy with * \"/virtualMachines/\" vmName\r\n| parse id with * \"/disks/\" datadisk_name \r\n| project id1=id, sku.name, disk_tier = tostring(properties.tier), disk_size_GB = tostring(properties.diskSizeGB), \r\n diskbandwidthMBps = tostring(properties.diskMBpsReadWrite), disk_iops = tostring(properties.diskIOPSReadWrite),  datadisk_name, vmName, managedBy, location, resourceGroup\r\n)\r\non vmName, datadisk_name\r\n| project-away datadisk_name, datadisk_name1, vmName1,  managedBy\r\n| sort by vmName asc , datadisk_lun asc\r\n//| distinct datadisk_name",
-        "size": 0,
-        "title": "Managed Data Dis Overview",
+        "size": 2,
+        "title": "Managed Data Disk Overview",
         "noDataMessage": "No Managed Data Disk found",
+        "showExportToExcel": true,
         "queryType": 1,
         "resourceType": "microsoft.resourcegraph/resources",
         "crossComponentResources": [
@@ -11719,6 +11728,7 @@
             }
           ],
           "rowLimit": 1000,
+          "filter": true,
           "labelSettings": [
             {
               "columnId": "id",
@@ -11810,6 +11820,7 @@
         "size": 0,
         "title": "VM Extensions",
         "noDataMessage": "No VM Extension found",
+        "showExportToExcel": true,
         "queryType": 1,
         "resourceType": "microsoft.resourcegraph/resources",
         "crossComponentResources": [
@@ -11844,6 +11855,7 @@
             }
           ],
           "rowLimit": 1000,
+          "filter": true,
           "labelSettings": [
             {
               "columnId": "id",
@@ -11942,16 +11954,46 @@
       "content": {
         "version": "KqlItem/1.0",
         "query": "Resources \r\n| where type =~ 'microsoft.compute/virtualmachines' \r\n| where name in ({VIS_VMs}) or '*' in ({VIS_VMs})\r\n| extend nics=array_length(properties.networkProfile.networkInterfaces) \r\n| mv-expand nic=properties.networkProfile.networkInterfaces \r\n//| where nics == 1 or nic.properties.primary =~ 'true' or isempty(nic) \r\n| project id, vmName = name, az = tostring(zones), vmSize = tostring(properties.hardwareProfile.vmSize), AvSet= tostring(split(properties.availabilitySet.id,\"/\",8)[0]), ppg = tostring(split(properties.proximityPlacementGroup.id,\"/\",8)[0]),  nicId = tostring(nic.id) \r\n| join kind=leftouter ( \r\n  Resources \r\n  | where type =~ 'microsoft.network/networkinterfaces' \r\n  | extend ipConfigsCount=array_length(properties.ipConfigurations) \r\n  | mv-expand ipconfig=properties.ipConfigurations \r\n  //| where ipconfig.properties.primary =~ 'true' \r\n  | project nicId = id, ipaddress = tostring(ipconfig.properties.privateIPAddress), AcceleratedNetworkingOn = tostring(properties.enableAcceleratedNetworking)) on nicId \r\n| summarize by id, nicId, vmName,vmSize,AcceleratedNetworkingOn,ipaddress, AvSet, ppg,  az   ",
-        "size": 0,
+        "size": 2,
         "title": "Accelerated Networking",
         "noDataMessage": "No data found",
+        "showExportToExcel": true,
         "queryType": 1,
         "resourceType": "microsoft.resourcegraph/resources",
         "crossComponentResources": [
           "{Subscriptions}"
         ],
         "gridSettings": {
-          "rowLimit": 1000
+          "formatters": [
+            {
+              "columnMatch": "vmName",
+              "formatter": 5
+            }
+          ],
+          "rowLimit": 1000,
+          "filter": true,
+          "labelSettings": [
+            {
+              "columnId": "id",
+              "label": "VM Name"
+            },
+            {
+              "columnId": "nicId",
+              "label": "NIC"
+            },
+            {
+              "columnId": "vmSize",
+              "label": "VM SKU"
+            },
+            {
+              "columnId": "ipaddress",
+              "label": "IP Address"
+            },
+            {
+              "columnId": "az",
+              "label": "AvZone"
+            }
+          ]
         }
       },
       "conditionalVisibilities": [
@@ -11978,14 +12020,46 @@
       "content": {
         "version": "KqlItem/1.0",
         "query": "Resources\r\n| where type in~ ('microsoft.compute/virtualmachines','microsoft.classiccompute/virtualmachines') \r\n| where name in ({VIS_VMs}) or '*' in ({VIS_VMs})\r\n| extend resourceId=tolower(id) \r\n| join kind = leftouter ( RecoveryServicesResources\r\n| where type == \"microsoft.recoveryservices/vaults/backupfabrics/protectioncontainers/protecteditems\"\r\n| where properties.backupManagementType == \"AzureIaasVM\"\r\n| project resourceId = tolower(tostring(properties.sourceResourceId)), backupItemid = id, isBackedUp = isnotempty(id) ) on resourceId \r\n| extend isProtected = isnotempty(backupItemid)\r\n| where (isProtected == (0))\r\n| project id,name,resourceGroup,location,tags",
-        "size": 0,
+        "size": 2,
         "title": "VMs with no Azure Backup",
         "noDataMessage": "No VM found without Azure Backup",
+        "showExportToExcel": true,
         "queryType": 1,
         "resourceType": "microsoft.resourcegraph/resources",
         "crossComponentResources": [
           "{Subscriptions}"
-        ]
+        ],
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "name",
+              "formatter": 5
+            },
+            {
+              "columnMatch": "tags",
+              "formatter": 0,
+              "formatOptions": {
+                "customColumnWidthSetting": "100ch"
+              }
+            }
+          ],
+          "rowLimit": 10000,
+          "filter": true,
+          "labelSettings": [
+            {
+              "columnId": "id",
+              "label": "VM Name"
+            },
+            {
+              "columnId": "resourceGroup",
+              "label": "Resource Group"
+            },
+            {
+              "columnId": "location",
+              "label": "Azure Region"
+            }
+          ]
+        }
       },
       "conditionalVisibilities": [
         {
@@ -12013,6 +12087,8 @@
         "query": "advisorresources\r\n| where type =~ 'microsoft.advisor/recommendations' \r\n| where properties.lastUpdated >=ago(1d)\r\n| extend visId = split(split(split(id, '/centralInstances')[0], '/applicationInstances')[0], '/databaseInstances')[0]\r\n| extend SID= tostring(split(['id'], \"/\",8)[0])\r\n| extend resourceId = tostring(properties.resourceMetadata.resourceId)\r\n| extend impactedField = properties.impactedField\r\n| extend resourceTypeName = \"Database\"\r\n| extend impact = properties.impact\r\n| extend resourceTypeName = iff(impactedField has \"centralInstances\", \"Central service instance\", resourceTypeName)\r\n| extend resourceTypeName = iff(impactedField has \"applicationInstances\", \"App server instance\", resourceTypeName)\r\n| where SID in ({system_SID}) or '*' in ({system_SID})\r\n| project resourceId, resourceTypeName, visId, impact, properties.shortDescription.solution, properties.category, properties.lastUpdated, SID",
         "size": 0,
         "title": "OS Configuration Checks",
+        "noDataMessage": "No OS configuration observations found for the selected SAP system",
+        "showExportToExcel": true,
         "queryType": 1,
         "resourceType": "microsoft.resourcegraph/resources",
         "crossComponentResources": [
@@ -12051,6 +12127,7 @@
             }
           ],
           "rowLimit": 1000,
+          "filter": true,
           "labelSettings": [
             {
               "columnId": "resourceId",
