@@ -2428,7 +2428,7 @@ function LoadGUI {
             <ComboBoxItem Content="HANA"/>
             <ComboBoxItem Content="MSSQL"/>
             <ComboBoxItem Content="Db2"/>
-            <ComboBoxItem Content="ORACLE"/>
+            <ComboBoxItem Content="Oracle"/>
         </ComboBox>
         <Label x:Name="LabelDatabase" Content="Database" HorizontalAlignment="Left" Margin="66,36,0,0" VerticalAlignment="Top" Height="26" Width="59"/>
         <ComboBox x:Name="OperatingSystem" HorizontalAlignment="Left" Margin="188,75,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
