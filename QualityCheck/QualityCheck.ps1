@@ -2306,7 +2306,8 @@ function CollectANFVolumes {
                 $_ANFVolume_row.ProtocolTypes = [string]$_ANFVolume.ProtocolTypes
                 $_ANFVolume_row.ThroughputMibps = [int]$_ANFVolume.ThroughputMibps
                 $_ANFVolume_row.QoSType = $_ANFPool.QosType
-                $_ANFVolume_row.NFSAddress = $_ANFVolume.MountTargets[0].IpAddress + ":/" + $_ANFVolume_row.Name
+                # $_ANFVolume_row.NFSAddress = $_ANFVolume.MountTargets[0].IpAddress + ":/" + $_ANFVolume_row.Name
+		$_ANFVolume_row.NFSAddress = $_ANFVolume.MountTargets[0].IpAddress + ":/" + $_ANFVolume.CreationToken
 
                 $Script:_ANFVolumes += $_ANFVolume_row
 
