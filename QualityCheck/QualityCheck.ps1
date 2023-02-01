@@ -2238,7 +2238,8 @@ function CollectFileSystems {
 
             if (($_filesystem_row.FSType -eq "nfs") -or ($_filesystem_row.FSType -eq "nfs4")) {
                 # NFS ANF volumes need throughput values from ANF infos
-                $_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_.NFSAddress -eq $_filesystem_row.Source}).THROUGHPUTMIBPS
+                # $_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_.NFSAddress -eq $_filesystem_row.Source}).THROUGHPUTMIBPS
+		$_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_filesystem_row.Source.StartsWith($_.NFSAddress) }).THROUGHPUTMIBPS
             }
             else {
                 if ($_filesystem.Filesystem.StartsWith("/dev/sd")) {
