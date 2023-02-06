@@ -2093,8 +2093,10 @@ function RunQualityCheck {
           $_check.Hardwaretype.Contains($Hardwaretype)) {
 
             # check if check applies to HA or not and if HA check for HA-Agent
-            if (($_check.HighAvailability.Contains($false)) -or (($_check.HighAvailability.Contains($HighAvailability)) -and ($_check.HighAvailabilityAgent.Contains($HighAvailabilityAgent)))) {
-                
+            # if (($_check.HighAvailability.Contains($false)) -or (($_check.HighAvailability.Contains($HighAvailability)) -and ($_check.HighAvailabilityAgent.Contains($HighAvailabilityAgent)))) {
+            if  (($HighAvailability -eq $false) -and ($_check.HighAvailability.Contains($HighAvailability)) -or `
+                (($HighAvailability -eq $true) -and ($_check.HighAvailability.Contains($HighAvailability)) -and ($_check.HighAvailabilityAgent.Contains($HighAvailabilityAgent)))) {
+
                 if ((-not $RunLocally) -or ($RunLocally -and ($_check.RunInLocalMode))) {
 
                     if (-not $RunLocally) {
