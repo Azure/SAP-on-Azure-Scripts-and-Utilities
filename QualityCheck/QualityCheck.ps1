@@ -1521,7 +1521,7 @@ function CollectLoadBalancer {
     else {
         # no load balancer found
         $_loadbalancer_row = "" | Select-Object "Description"
-        $_loadbalancer_row.Description = "No load balancer assigned to network interfaeces"
+        $_loadbalancer_row.Description = "No load balancer assigned to network interfaces"
         
         $_LoadBalancerOutput = $_loadbalancer_row | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""LoadBalancers"">Collect Load Balancer</h2>"
     }
