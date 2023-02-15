@@ -585,7 +585,7 @@ function ConnectVM {
     }
     else {
         
-        if ($script:LogonWithUserPassword -or (($script:GUILogonMethod -eq "UserPassword") -and $GUI )) {
+        if ($script:LogonWithUserPassword -or (($script:GUILogonMethod -eq "UserPassword") -and $GUI ) -or ($Script:MultiRun) ) {
 
             # create a pasword hash that will be used to connect when using sudo commands
             $script:_ClearTextPassword = ConvertFrom-SecureString -SecureString $VMPassword -AsPlainText
