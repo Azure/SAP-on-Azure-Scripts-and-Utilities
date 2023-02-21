@@ -373,7 +373,7 @@ $script:_HTMLHeader = @"
 "@
 
 
-    $script:_Content  = "<h1>SAP on Azure Quality Check</h1><h2>Use the links to jump to the sections:</h2>"
+    $script:_Content  = "<h1>SAP on Azure Quality Check</h1><h2>Execution date: $(Get-Date)</h2><br><h2>Use the links to jump to the sections:</h2>"
 
 }
 
