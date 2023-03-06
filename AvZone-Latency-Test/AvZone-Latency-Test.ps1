@@ -45,6 +45,11 @@
                 - adding logon check
     2022041101  - using IP address instead of hostname to avoid issues in existing VNETs
                 - creating storage account for diagnostic information
+    2023030601  - changing how existing sessions are deleted
+                - switching to CentOS 8.5
+                - adding TCP port check
+                - fixing issue with "breaking change" warnings
+                - changing how the physical hostname is retrieved from .kvp_pool_3 file
 
 #>
 <#
@@ -78,7 +83,7 @@ param(
     #OS Type
     [string]$OSOffer = "CentOS", 
     #OS Verion
-    [string]$OSSku = "8_4", 
+    [string]$OSSku = "8_5", 
     #Latest OS image
     [string]$OSVersion = "latest", 
     #OS username
@@ -94,7 +99,7 @@ param(
     #Azure Network Security Group (NSG) name
     [string]$NSGName = "azping-nsg", 
     #Azure VNET name, if using existing VNET
-    [string]$NetworkName = "azping-mgmt-vnet", 
+    [string]$NetworkName = "azping-mgmt-vnet",
     #Azure Subnet name, if using exising
     [string]$SubnetName = "default", 
     #Resource Group Name of existing VNET
@@ -125,7 +130,10 @@ Function Get-RandomAlphanumericString {
 	}	
 }
 
-    Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
+    $breakingchangewarning = Get-AzConfig -DisplayBreakingChangeWarning
+    if ($breakingchangewarning.Value -eq $true) {
+        Update-AzConfig -DisplayBreakingChangeWarning $false
+    }
 
     if ($testtool -eq "niping") {
         if (!$nipingpath) {
@@ -233,10 +241,15 @@ Function Get-RandomAlphanumericString {
         Start-Sleep -Seconds 240
     }
 
-    # creating SSH sessions to VMs
 
+    # removing all open ssh sessions
     Get-SSHTrustedHost | Remove-SSHTrustedHost
+    $sshsessions = Get-SSHSession
+    foreach ($sshsession in $sshsessions) {
+        Remove-SSHSession -SessionId $sshsession.SessionId
+    }
 
+    # creating SSH sessions to VMs
     $ipaddresses = @{}
 
     Write-Host -ForegroundColor Green "Creating SSH sessions"
@@ -260,10 +273,24 @@ Function Get-RandomAlphanumericString {
             $ipaddress = $networkinterfaceconfig.PrivateIpAddress
             $ipaddresses[$ComputerName] += $networkinterfaceconfig.PrivateIpAddress
         }
-        $sshsession = New-SSHSession -ComputerName $ipaddress -Credential $Credential -AcceptKey -Force
-        if ($sshsession.connected -ne $true)
-        {
-            Write-Host "Unable to connect to IP address $ipaddress"
+        try {
+            # checking TCP connectivity
+            $_testresult = New-Object System.Net.Sockets.TcpClient($ipaddress, 22)
+            if ($_testresult.Connected) {
+                # connected
+                Write-Host -ForegroundColor Green "TCP connection available to VM $ComputerName with IP address $ipaddress"
+                $sshsession = New-SSHSession -ComputerName $ipaddress -Credential $Credential -AcceptKey -Force
+                if ($sshsession.connected -ne $true)
+                {
+                    Write-Host "Unable to connect to IP address $ipaddress"
+                    exit
+                }
+            }
+            else {
+                Write-Host -ForegroundColor Red "unable to connect to SSH port for VM $ipaddress. Please check if you can connect to the VM from your host using e.g. putty"
+            }
+        }
+        catch {
             exit
         }
     }
@@ -274,8 +301,9 @@ Function Get-RandomAlphanumericString {
     Write-Host -ForegroundColor Green "Getting Hosts for virtual machines"
     For ($zone=1; $zone -le $zones; $zone++) {
 
-        $output = Invoke-SSHCommand -Command "cat /var/lib/hyperv/.kvp_pool_3 | sed 's/[^a-zA-Z0-9]//g' | grep -o -P '(?<=HostName).*(?=HostingSystemEditionId)'" -SessionId $sshsessions[$zone-1].SessionId
-        Write-Host ("VM$zone : " + $output.Output)
+        #$output = Invoke-SSHCommand -Command "/bin/cat /var/lib/hyperv/.kvp_pool_3 | tr -d '\\000' | grep -o -P '(?<=HostName).*(?=CLOUD_INIT)'" -SessionId $sshsessions[$zone-1].SessionId
+        $output = Invoke-SSHCommand -Command "strings /var/lib/hyperv/.kvp_pool_3 | sed -n '2 p'" -SessionId $sshsessions[$zone-1].SessionId
+        Write-Host ("VM$zone : " + $output.Output) 
 
     }
 
@@ -417,7 +445,12 @@ Function Get-RandomAlphanumericString {
 
     # Removing SSH sessions
     Write-Host -ForegroundColor Green "Removing SSH Sessions"
-    Get-SSHSession | Remove-SSHSession -ErrorAction SilentlyContinue | Out-Null
+    #Get-SSHSession | Remove-SSHSession -ErrorAction SilentlyContinue | Out-Null
+    $sshsessions = Get-SSHSession
+    foreach ($sshsession in $sshsessions) {
+        Remove-SSHSession -SessionId $sshsession.SessionId
+    }
+    
     
     #destroy resource group
     if ($DestroyAfterTest) {
@@ -427,4 +460,8 @@ Function Get-RandomAlphanumericString {
     else
     {
         Write-Host -ForegroundColor Green "Resource group will NOT be deleted"
+    }
+
+    if ($breakingchangewarning.Value -eq $true) {
+        Update-AzConfig -DisplayBreakingChangeWarning $true
     }
