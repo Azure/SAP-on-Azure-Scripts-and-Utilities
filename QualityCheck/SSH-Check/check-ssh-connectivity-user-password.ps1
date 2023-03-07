@@ -1,10 +1,17 @@
 <#
+
 .SYNOPSIS
     SAP on Azure Quality Check - SSH check
+
 .DESCRIPTION
     Script is used to check if SSH connectivity is working and which errors occur
+
 .LINK
     https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities
+
+.EXAMPLE
+    PS> .\check-ssh-connectivity-user-password.ps1 -IPorHostname 10.10.10.10 -SSHPort 22
+
 #>
 <#
 Copyright (c) Microsoft Corporation.
