@@ -2292,9 +2292,11 @@ function CollectANFVolumes {
 
             # the poolname is inside the string (ANFAccountName/ANFPoolName)
             # remove the ANF Accodunt name
-            $_ANFPoolName = $_ANFpool.Name -replace $_ANFAccount.Name,''
+            #$_ANFPoolName = $_ANFpool.Name -replace $_ANFAccount.Name,''
             # remove the '/' from the string
-            $_ANFPoolName = $_ANFPoolName -replace '/',''
+            #$_ANFPoolName = $_ANFPoolName -replace '/',''
+            $_ANFpool_split = $_ANFpool.Split("/")
+            $_ANFPoolName = $_ANFpool_split[1]
             
             $_ANFVolumesInPool = Get-AzNetAppFilesVolume -ResourceGroupName $ANFResourceGroup -AccountName $ANFAccountName -PoolName $_ANFPoolName
 
