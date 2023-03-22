@@ -285,7 +285,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2022082301
+$scriptversion = 2023032201
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -2240,8 +2240,16 @@ function CollectFileSystems {
 
             if (($_filesystem_row.FSType -eq "nfs") -or ($_filesystem_row.FSType -eq "nfs4")) {
                 # NFS ANF volumes need throughput values from ANF infos
-                # $_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_.NFSAddress -eq $_filesystem_row.Source}).THROUGHPUTMIBPS
-		$_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_filesystem_row.Source.StartsWith($_.NFSAddress) }).THROUGHPUTMIBPS
+                $_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_filesystem_row.Source.Equals($_.NFSAddress) }).THROUGHPUTMIBPS
+                if ((($script:_ANFVolumes | Where-Object { $_filesystem_row.Source.Equals($_.NFSAddress) }).THROUGHPUTMIBPS).count -eq 0) {
+                    # backup path for ANF volumes to have DNS names covered
+                    # this path will just compared the volume export name
+                    $_NFSmounttemp = ($_filesystem_row.Source.Split(":"))[1]
+                    $_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_NFSmounttemp.Equals(($_.NFSAddress.Split(":"))[1]) }).THROUGHPUTMIBPS
+                    if ([string]::IsNullOrEmpty($_filesystem_row.MaxMBPS)) {
+                        $_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_NFSmounttemp.StartsWith(($_.NFSAddress.Split(":"))[1]) }).THROUGHPUTMIBPS
+                    }
+                }
             }
             else {
                 if ($_filesystem.Filesystem.StartsWith("/dev/sd")) {
@@ -2283,9 +2291,24 @@ function CollectANFVolumes {
 
         # get ANF Account
         $_ANFAccount = Get-AzNetAppFilesAccount -ResourceGroupName $ANFResourceGroup -Name $ANFAccountName
-
+        if ($_ANFAccount.Count -gt 0) {
+            WriteRunLog -category "INFO" -message "ANF Account $ANFAccountName found"
+        }
+        else {
+            WriteRunLog -category "ERROR" -message "ANF Account $ANFAccountName not found"
+            exit
+        }
+        
         # get all ANF Pools in ANF Account
         $_ANFPools = Get-AzNetAppFilesPool -ResourceGroupName $ANFResourceGroup -AccountName $_ANFAccount.Name
+        if ($_ANFPools.Count -gt 0) {
+            $_poolcount = $_ANFPools.Count
+            WriteRunLog -category "INFO" -message "ANF Pools found: $_poolcount"
+        }
+        else {
+            WriteRunLog -category "ERROR" -message "No ANF Pools not found"
+            exit
+        }
 
         # loop through pools
         foreach ($_ANFpool in $_ANFPools) {
@@ -2312,7 +2335,7 @@ function CollectANFVolumes {
                 $_ANFVolume_row.ThroughputMibps = [int]$_ANFVolume.ThroughputMibps
                 $_ANFVolume_row.QoSType = $_ANFPool.QosType
                 # $_ANFVolume_row.NFSAddress = $_ANFVolume.MountTargets[0].IpAddress + ":/" + $_ANFVolume_row.Name
-		$_ANFVolume_row.NFSAddress = $_ANFVolume.MountTargets[0].IpAddress + ":/" + $_ANFVolume.CreationToken
+		        $_ANFVolume_row.NFSAddress = $_ANFVolume.MountTargets[0].IpAddress + ":/" + $_ANFVolume.CreationToken
 
                 $Script:_ANFVolumes += $_ANFVolume_row
 

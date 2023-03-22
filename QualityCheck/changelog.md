@@ -1,5 +1,16 @@
 # Changelog
 
+## Version 2023032201
+
+* fixing an issue with ANF volumes when mounted using DNS names instead of IP addresses
+* changing the way how ANF volume names are detected
+* moving from ANF volume name to ANF creation token which is the export path, volume name and export path can be different
+* adding execution date and time to the beginning of the report
+* fixing an issue where MultiRun wouldn't run
+* fixing a typo in load balancer
+* fixing an issue where checks were executed even if they are not desired for this system (HA/non-HA issue)
+* fixing a typo for Oracle in GUI (Oracle/ORACLE)
+
 ## Version 2022082301
 
 * adding support for M420ixs_v2 and M832ixs_v2 (limited GA)
