@@ -1,5 +1,5 @@
 {
-    "Version": 2023032201,
+    "Version": 2023032301,
     "PowerShellPrerequisits": [
         {
             "ModuleName": "Posh-SSH",
@@ -5094,7 +5094,34 @@
             ],
             "MicrosoftDocs": "",
             "SAPNote": ""
+        },
+        {
+            "CheckID": "HDB-OS-SLES-0006",
+            "Description": "Mellanox Driver can cause Kernel panic on SLES 15 SP2",
+            "OS": ["SUSE"],
+            "OSVersion": ["15.2","15.4"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS"],
+            "Role": ["DB","APP","ASCS"],
+            "DB": ["HANA","Db2"],
+            "RunInLocalMode": true,
+            "ErrorCategory": "WARNING",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"],
+            "CommandType": "PowerShell",
+            "ProcessingCommand": "if ((CheckForKernelVersion -version $Script:_Kernelversion -startversion '5.3.18-150200.24.139.1' -endversion '5.14.21-150400.24.38.1') -eq $true) {0} else {1}",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "1",
+            "ShowAlternativeRequirement": "'Kernel version higher than 5.14.21-150400.24.38.1'",
+            "ShowAlternativeResult": "$Script:_Kernelversion",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
+            ],
+            "MicrosoftDocs": "https://www.suse.com/support/kb/doc/?id=000021005",
+            "SAPNote": ""
         }
-  
     ]
 }

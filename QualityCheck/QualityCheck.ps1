@@ -285,7 +285,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2023032201
+$scriptversion = 2023032301
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -2403,7 +2403,10 @@ function CheckSudoPermission {
         }
         else {
             WriteRunLog -category "ERROR" -message "User not able to sudo, please check sudoers file"
+            WriteRunLog -category "ERROR" -message "Output of sudo check:"
+            WriteRunLog -category "ERROR" -message "$_rootrights"
             $script:_CheckSudo = $false
+            exit
         }
     }
 

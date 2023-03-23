@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 2023032301
+
+* fixing an issue where the script continues to run when sudo permission check fails
+* adding SUSE Kernel check for SLES 15 SP2 and SP4 causing kernel panic (Mellanox driver issue)
+
 ## Version 2023032201
 
 * fixing an issue with ANF volumes when mounted using DNS names instead of IP addresses
