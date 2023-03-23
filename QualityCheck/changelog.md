@@ -4,6 +4,7 @@
 
 * fixing an issue where the script continues to run when sudo permission check fails
 * adding SUSE Kernel check for SLES 15 SP2 and SP4 causing kernel panic (Mellanox driver issue)
+* adding text searchable for GUI resource group
 
 ## Version 2023032201
 

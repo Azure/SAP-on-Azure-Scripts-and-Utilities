@@ -2484,7 +2484,7 @@ function LoadGUI {
             <ComboBoxItem Content="APP"/>
         </ComboBox>
         <Label x:Name="LabelRole" Content="Role" HorizontalAlignment="Left" Margin="66,105,0,0" VerticalAlignment="Top" Height="26" Width="33"/>
-        <ComboBox x:Name="ResourceGroup" HorizontalAlignment="Left" Margin="188,180,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
+        <ComboBox x:Name="ResourceGroup" HorizontalAlignment="Left" Margin="188,180,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22" IsTextSearchEnabled="True">
         </ComboBox>
         <Label x:Name="LabelResourceGroup" Content="Resource Group" HorizontalAlignment="Left" Margin="66,176,0,0" VerticalAlignment="Top" Height="26" Width="95"/>
         <ComboBox x:Name="VM" HorizontalAlignment="Left" Margin="188,211,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22"/>
