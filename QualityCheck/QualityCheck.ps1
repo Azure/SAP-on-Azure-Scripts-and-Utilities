@@ -2604,10 +2604,11 @@ function LoadGUI {
     $_GUI_ResourceGroups = $_Form.FindName("ResourceGroup")
 
     # add resource groups
-    $_ResourceGroups = Get-AzResourceGroup
-    foreach ($_resourcegroup in $_ResourceGroups) {
-        [void]$_GUI_ResourceGroups.Items.Add($_resourcegroup.ResourceGroupName)
-    }
+    $_ResourceGroups = Get-AzResourceGroup | Select-Object ResourceGroupName | Sort-Object
+    $_GUI_ResourceGroups.ItemsSource = $_ResourceGroups.ResourceGroupName | Sort-Object
+    #foreach ($_resourcegroup in $_ResourceGroups) {
+    #    [void]$_GUI_ResourceGroups.Items.Add($_resourcegroup.ResourceGroupName)
+    #}
 
     $_GUI_VMs = $_Form.FindName("VM")
 
