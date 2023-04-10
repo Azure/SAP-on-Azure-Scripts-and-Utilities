@@ -4158,7 +4158,7 @@
             "CommandType": "OS",
             "ProcessingCommand": "/sbin/sysctl net.ipv4.tcp_keepalive_time",
             "PostProcessingCommand": "",
-            "ExpectedResult": "net.ipv4.tcp_keepalive_time = 120",
+            "ExpectedResult": "net.ipv4.tcp_keepalive_time = 300",
             "ShowAlternativeRequirement": "",
             "ShowAlternativeResult": "",
             "RootRequired": true,
