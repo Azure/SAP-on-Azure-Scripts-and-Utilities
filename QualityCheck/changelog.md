@@ -1,5 +1,20 @@
 # Changelog
 
+## Version 2023061301
+
+* adding support for ASE
+* adding support for Premium SSD v2
+* adding Premium SSD v2 check for disk block size
+* adding E20a(d)s_v5 VM type
+* updating API version for metadata service from 2021-11-01 to 2021-12-13
+* updating view of checks, additional infos are now shown at the end of the table, easier to view results on smaller resolutions
+* updating DBDataDir and DBLogDir to always refer to variables on script level
+* fixing a problem where the script continues to run, even if VM is not found in Azure
+* fixing spelling in readme.md
+* fixing a problem with the number of stripes shown in LVM volume information
+* fixing a problem where SSH logon doesn't work after host was reinstalled or has new SSH keys
+* disabling the "breaking change" warning message for the script
+
 ## Version 2023032301
 
 * fixing an issue where the script continues to run when sudo permission check fails

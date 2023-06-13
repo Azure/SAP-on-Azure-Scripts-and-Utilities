@@ -285,7 +285,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2023032301
+$scriptversion = 2023061301
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -584,6 +584,9 @@ function ConnectVM {
 
     }
     else {
+        
+        # removing trusted host to make sure there is no error in case the host ssh keys were changed
+        Get-SSHTrustedHost -HostName $VMHostname | Remove-SSHTrustedHost -ErrorAction SilentlyContinue | Out-Null
         
         if ($script:LogonWithUserPassword -or (($script:GUILogonMethod -eq "UserPassword") -and $GUI ) -or ($Script:MultiRun) ) {
 
@@ -1074,6 +1077,7 @@ function CheckAzureConnectivity {
         else {
             WriteRunLog -category "ERROR" -message "Unable to find resource group or VM, please check if you are connected to the correct subscription or if you had a typo"
             $script:_CheckAzureConnectivity = $false
+            exit
         }
     }
     else {
@@ -1109,7 +1113,8 @@ function PrepareCommand {
 function CalculateDiskTypeSKU {
     param (
         [int]$size,
-        [string]$tier
+        [string]$tier,
+        [int]$iops
     )
 
     # check which storage tier is used
@@ -1118,6 +1123,7 @@ function CalculateDiskTypeSKU {
         UltraSSD_LRS { 'U' }
         Standard_LRS { 'S' }
         StandardSSD_LRS { 'E' }
+        PremiumV2_LRS { 'Pv2' }
         Default {}
     }
 
@@ -1140,7 +1146,12 @@ function CalculateDiskTypeSKU {
         ({$PSItem -ge 32769}) {'90'; break}
     }
     
-    $_disksku = $_performancetype + $_sizetype
+    if ($_performancetype -eq "Pv2") {
+        $_disksku = $_performancetype + "-" + $size + "GB-" + $iops + "IOPS"
+    }
+    else {
+        $_disksku = $_performancetype + $_sizetype
+    }
 
     return $_disksku
 
@@ -1207,7 +1218,7 @@ function CollectVMStorage {
         $script:_lvmconfig = RunCommand -p $_command | ConvertFrom-Json
 
         # get storage using metadata service
-        $_command = PrepareCommand -Command "/usr/bin/curl -s --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/storageProfile?api-version=2021-11-01'"
+        $_command = PrepareCommand -Command "/usr/bin/curl -s --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/storageProfile?api-version=2021-12-13'"
         $script:_azurediskconfig = RunCommand -p $_command | ConvertFrom-Json
 
         # get device for root
@@ -1329,7 +1340,7 @@ function CollectVMStorage {
                 $_AzureDisk_row.MBPS = ($script:_DiskPerformance | Where-Object { ($_.Size -eq $_AzureDisk_row.Size) -and ($_.StorageTier -eq $_AzureDisk_row.StorageType) }).MBPS
             }
     
-            $_AzureDisk_row.DiskType = CalculateDiskTypeSKU -size $_datadisk.DiskSizeGB -tier $_datadisk.managedDisk.storageAccountType
+            $_AzureDisk_row.DiskType = CalculateDiskTypeSKU -size $_datadisk.DiskSizeGB -tier $_datadisk.managedDisk.storageAccountType -iops $_AzureDisk_row.IOPS
 
             $script:_AzureDisks += $_AzureDisk_row
 
@@ -1405,7 +1416,8 @@ function CollectLVMVolummes {
                 $_lvmvolume_row.Layout = $_lvmvolume.lv_layout
                 $_lvmvolume_row.Size = $_lvmvolume.lv_size
                 $_lvmvolume_row.StripeSize = $_lvmgroup.seg[0].stripe_size
-                $_lvmvolume_row.Stripes = ($_lvmgroup.seg.stripes | Measure-Object -Sum).Count
+                # $_lvmvolume_row.Stripes = ($_lvmgroup.seg.stripes | Measure-Object -Sum).Count
+                $_lvmvolume_row.Stripes = $_lvmgroup.seg[0].stripes
 
                 # add line to report
                 $script:_lvmvolumes += $_lvmvolume_row
@@ -1625,10 +1637,10 @@ function AddCheckResultEntry {
 
     # create empty object per line
     if (-not $RunLocally) {
-        $_Check_row = "" | Select-Object CheckID, Description, AdditionalInfo, Testresult, ExpectedResult, Status, SAPNote, MicrosoftDocs
+        $_Check_row = "" | Select-Object CheckID, Description, Testresult, ExpectedResult, Status, SAPNote, MicrosoftDocs, AdditionalInfo
     }
     else {
-        $_Check_row = "" | Select-Object CheckID, Description, AdditionalInfo, Testresult, ExpectedResult, Status, SAPNote, MicrosoftDocs, Success, VmRole
+        $_Check_row = "" | Select-Object CheckID, Description, Testresult, ExpectedResult, Status, SAPNote, MicrosoftDocs, Success, VmRole, AdditionalInfo
     }
 
     # add infos
@@ -1756,7 +1768,7 @@ function RunQualityCheck {
                 }
                 else {
                     # set default paths
-                    WriteRunLog -message "HANA global.ini not found, fallback paths" -category "INFO"
+                    WriteRunLog -message "HANA global.ini not found, fallback paths" -category "WARNING"
                     $script:_persistance_datavolumes = "/hana/data"
                     $script:_persistance_logvolumes = "/hana/log"
                     $script:_persistance_hanashared = "/hana/shared"
@@ -1822,7 +1834,7 @@ function RunQualityCheck {
         $_saphanastorageurl = "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-vm-operations-storage"
 
         ## getting file system for /hana/data
-        $_filesystem_hana = ($script:_filesystems | Where-Object {$_.Target -in $DBDataDir})
+        $_filesystem_hana = ($script:_filesystems | Where-Object {$_.Target -in $script:DBDataDir})
         if ($_filesystem_hana.Source.StartsWith("/dev/sd")) {
             $_filesystem_hana_type = "direct"
         }
@@ -1837,11 +1849,11 @@ function RunQualityCheck {
             AddCheckResultEntry -CheckID "HDB-FS-0001" -Description "SAP HANA Data: File System" -TestResult $_filesystem_hana.fstype -ExptectedResult "xfs, nfs or nfs4" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl -SAPNote "2972496" -ErrorCategory "ERROR"
         }
 
-        if ( (($script:_filesystems | Where-Object {$_.target -in $DBDataDir}).MaxMBPS | Measure-Object -Sum).Sum -ge $_jsonconfig.HANAStorageRequirements.HANADataMBPS) {
-            AddCheckResultEntry -CheckID "HDB-FS-0002" -Description "SAP HANA Data: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBDataDir}).MaxMBPS -ExptectedResult ">= 400 MByte/s" -Status "OK"  -MicrosoftDocs $_saphanastorageurl
+        if ( (($script:_filesystems | Where-Object {$_.target -in $script:DBDataDir}).MaxMBPS | Measure-Object -Sum).Sum -ge $_jsonconfig.HANAStorageRequirements.HANADataMBPS) {
+            AddCheckResultEntry -CheckID "HDB-FS-0002" -Description "SAP HANA Data: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $script:DBDataDir}).MaxMBPS -ExptectedResult ">= 400 MByte/s" -Status "OK"  -MicrosoftDocs $_saphanastorageurl
         }
         else {
-            AddCheckResultEntry -CheckID "HDB-FS-0002" -Description "SAP HANA Data: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBDataDir}).MaxMBPS -ExptectedResult ">= 400 MByte/s" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
+            AddCheckResultEntry -CheckID "HDB-FS-0002" -Description "SAP HANA Data: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $script:DBDataDir}).MaxMBPS -ExptectedResult ">= 400 MByte/s" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
         }
 
         if ($_filesystem_hana.fstype -eq 'xfs') {
@@ -1851,7 +1863,7 @@ function RunQualityCheck {
                 $_AzureDisks_hana = ($_AzureDisks | Where-Object {$_.VolumeGroup -in $_filesystem_hana.vg})
             }
             else {
-                $_AzureDisks_for_hanadata_filesystems = $script:_filesystems | Where-Object {$_.target -in $DBDataDir}
+                $_AzureDisks_for_hanadata_filesystems = $script:_filesystems | Where-Object {$_.target -in $script:DBDataDir}
                 $_AzureDisks_hana = ($_AzureDisks | Where-Object { $_.DeviceName -in $_AzureDisks_for_hanadata_filesystems.Source})
             }
 
@@ -1860,11 +1872,11 @@ function RunQualityCheck {
             # checking if IOPS need to be checked (Ultra Disk)
             if ($_FirstDisk.StorageType -eq "UltraSSD_LRS") {
                 if ( ($_filesystem_hana.fstype | Select-Object -Unique) -in @('xfs')) {
-                    if ( (($script:_filesystems | Where-Object {$_.target -in $DBDataDir}).MaxIOPS | Measure-Object -Sum).Sum -ge $_jsonconfig.HANAStorageRequirements.HANADataIOPS) {
-                        AddCheckResultEntry -CheckID "HDB-FS-0003" -Description "SAP HANA Data: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBDataDir}).MaxIOPS -ExptectedResult ">= 7000 IOPS" -Status "OK"  -MicrosoftDocs $_saphanastorageurl
+                    if ( (($script:_filesystems | Where-Object {$_.target -in $script:DBDataDir}).MaxIOPS | Measure-Object -Sum).Sum -ge $_jsonconfig.HANAStorageRequirements.HANADataIOPS) {
+                        AddCheckResultEntry -CheckID "HDB-FS-0003" -Description "SAP HANA Data: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $script:DBDataDir}).MaxIOPS -ExptectedResult ">= 7000 IOPS" -Status "OK"  -MicrosoftDocs $_saphanastorageurl
                     }
                     else {
-                        AddCheckResultEntry -CheckID "HDB-FS-0003" -Description "SAP HANA Data: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBDataDir}).MaxIOPS -ExptectedResult ">= 7000 IOPS" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
+                        AddCheckResultEntry -CheckID "HDB-FS-0003" -Description "SAP HANA Data: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $script:DBDataDir}).MaxIOPS -ExptectedResult ">= 7000 IOPS" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
                     }
                 }
             }
@@ -1921,6 +1933,23 @@ function RunQualityCheck {
                         AddCheckResultEntry -CheckID "HDB-FS-0015" -Description "SAP HANA Data: storage type supported" -AdditionalInfo ("Storage Type " + $_AzureDisk_hana.StorageType) -TestResult "Unsupported" -ExptectedResult "Supported" -Status "ERROR" -MicrosoftDocs $_saphanastorageurl
                     }
 
+                    # check Premium SSD v2 sector size
+                    if ($_AzureDisk_hana.StorageType -eq "PremiumV2_LRS") {
+                        $_diskdevicename_command = "/sys/block/" + $_AzureDisk_hana.DeviceName.Split("/")[2] + "/queue/logical_block_size"
+                        $_sectorsize_command = PrepareCommand -Command "cat $_diskdevicename_command" -RootRequired $true -CommandType "OS"
+                        $_sectorsize = RunCommand -p $_sectorsize_command
+
+                        if ($_sectorsize -eq "4096") {
+                            # sector size supported
+                            AddCheckResultEntry -CheckID "HDB-FS-0017" -Description "SAP HANA Data: sector size Premium SSD V2" -AdditionalInfo "Sector size of 4096 bytes" -TestResult "4096" -ExptectedResult "4096" -Status "OK" -MicrosoftDocs $_saphanastorageurl
+                        }
+                        else {
+                            # sector size unsupported
+                            AddCheckResultEntry -CheckID "HDB-FS-0017" -Description "SAP HANA Data: sector size Premium SSD V2" -AdditionalInfo "Sector size of 512 bytes" -TestResult "512" -ExptectedResult "4096" -Status "ERROR" -MicrosoftDocs $_saphanastorageurl
+                        }
+
+                    }
+
                 }
             }
         }
@@ -1936,7 +1965,7 @@ function RunQualityCheck {
         }
 
         ## getting file system for /hana/log
-        $_filesystem_hana = ($Script:_filesystems | Where-Object {$_.Target -in $DBLogDir})
+        $_filesystem_hana = ($Script:_filesystems | Where-Object {$_.Target -in $script:DBLogDir})
         if ($_filesystem_hana.Source.StartsWith("/dev/sd")) {
             $_filesystem_hana_type = "direct"
         }
@@ -1951,11 +1980,11 @@ function RunQualityCheck {
             AddCheckResultEntry -CheckID "HDB-FS-0007" -Description "SAP HANA Log: File System" -TestResult $_filesystem_hana.fstype -ExptectedResult "xfs, nfs or nfs4" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
         }
 
-        if ( (($script:_filesystems | Where-Object {$_.target -in $DBLogDir}).MaxMBPS | Measure-Object -Sum).Sum -ge $_jsonconfig.HANAStorageRequirements.HANALogMBPS) {
-            AddCheckResultEntry -CheckID "HDB-FS-0008" -Description "SAP HANA Log: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBLogDir}).MaxMBPS -ExptectedResult ">= 250 MByte/s" -Status "OK"  -MicrosoftDocs $_saphanastorageurl
+        if ( (($script:_filesystems | Where-Object {$_.target -in $script:DBLogDir}).MaxMBPS | Measure-Object -Sum).Sum -ge $_jsonconfig.HANAStorageRequirements.HANALogMBPS) {
+            AddCheckResultEntry -CheckID "HDB-FS-0008" -Description "SAP HANA Log: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $script:DBLogDir}).MaxMBPS -ExptectedResult ">= 250 MByte/s" -Status "OK"  -MicrosoftDocs $_saphanastorageurl
         }
         else {
-            AddCheckResultEntry -CheckID "HDB-FS-0008" -Description "SAP HANA Log: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBLogDir}).MaxMBPS -ExptectedResult ">= 250 MByte/s" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
+            AddCheckResultEntry -CheckID "HDB-FS-0008" -Description "SAP HANA Log: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $script:DBLogDir}).MaxMBPS -ExptectedResult ">= 250 MByte/s" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
         }
 
         if ($_filesystem_hana.fstype -eq 'xfs') {
@@ -1965,7 +1994,7 @@ function RunQualityCheck {
                 $_AzureDisks_hana = ($_AzureDisks | Where-Object {$_.VolumeGroup -in $_filesystem_hana.vg})
             }
             else {
-                $_AzureDisks_for_hanalog_filesystems = $script:_filesystems | Where-Object {$_.target -in $DBLogDir}
+                $_AzureDisks_for_hanalog_filesystems = $script:_filesystems | Where-Object {$_.target -in $script:DBLogDir}
                 $_AzureDisks_hana = ($_AzureDisks | Where-Object { $_.DeviceName -in $_AzureDisks_for_hanalog_filesystems.Source})
             }
             $_FirstDisk = $_AzureDisks_hana[0]
@@ -1974,11 +2003,11 @@ function RunQualityCheck {
             if ($_FirstDisk.StorageType -eq "UltraSSD_LRS") {
 
                 if ($_filesystem_hana.fstype -in @('xfs')) {
-                    if ( (($script:_filesystems | Where-Object {$_.target -in $DBLogDir}).MaxIOPS | Measure-Object -Sum).Sum -ge $_jsonconfig.HANAStorageRequirements.HANALogIOPS) {
-                        AddCheckResultEntry -CheckID "HDB-FS-0009" -Description "SAP HANA Log: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBLogDir}).MaxIOPS -ExptectedResult ">= 2000 IOPS" -Status "OK"  -MicrosoftDocs $_saphanastorageurl
+                    if ( (($script:_filesystems | Where-Object {$_.target -in $script:DBLogDir}).MaxIOPS | Measure-Object -Sum).Sum -ge $_jsonconfig.HANAStorageRequirements.HANALogIOPS) {
+                        AddCheckResultEntry -CheckID "HDB-FS-0009" -Description "SAP HANA Log: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $script:DBLogDir}).MaxIOPS -ExptectedResult ">= 2000 IOPS" -Status "OK"  -MicrosoftDocs $_saphanastorageurl
                     }
                     else {
-                        AddCheckResultEntry -CheckID "HDB-FS-0009" -Description "SAP HANA Log: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $DBLogDir}).MaxIOPS -ExptectedResult ">= 2000 IOPS" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
+                        AddCheckResultEntry -CheckID "HDB-FS-0009" -Description "SAP HANA Log: Disk Performance" -TestResult ($script:_filesystems | Where-Object {$_.target -eq $script:DBLogDir}).MaxIOPS -ExptectedResult ">= 2000 IOPS" -Status "ERROR"  -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
                     }
                 }
 
@@ -2045,6 +2074,24 @@ function RunQualityCheck {
                     AddCheckResultEntry -CheckID "HDB-FS-0016" -Description "SAP HANA Log: storage type supported" -AdditionalInfo ("Storage Type " + $_AzureDisk_hana.StorageType) -TestResult "Unsupported" -ExptectedResult "Supported" -Status "ERROR" -MicrosoftDocs $_saphanastorageurl
                 }
 
+                # check Premium SSD v2 sector size
+                if ($_AzureDisk_hana.StorageType -eq "PremiumV2_LRS") {
+                    $_diskdevicename_command = "/sys/block/" + $_AzureDisk_hana.DeviceName.Split("/")[2] + "/queue/logical_block_size"
+                    $_sectorsize_command = PrepareCommand -Command "cat $_diskdevicename_command" -RootRequired $true -CommandType "OS"
+                    $_sectorsize = RunCommand -p $_sectorsize_command
+
+                    if ($_sectorsize -eq "4096") {
+                        # sector size supported
+                        AddCheckResultEntry -CheckID "HDB-FS-0018" -Description "SAP HANA Data: sector size Premium SSD V2" -AdditionalInfo "Sector size of 4096 bytes" -TestResult "4096" -ExptectedResult "4096" -Status "OK" -MicrosoftDocs $_saphanastorageurl
+                    }
+                    else {
+                        # sector size unsupported
+                        AddCheckResultEntry -CheckID "HDB-FS-0018" -Description "SAP HANA Data: sector size Premium SSD V2" -AdditionalInfo "Sector size of 512 bytes" -TestResult "512" -ExptectedResult "4096" -Status "ERROR" -MicrosoftDocs $_saphanastorageurl
+                    }
+
+                }
+                
+
             }
         }
         elseif (($_filesystem_hana.fstype -eq 'nfs') -or ($_filesystem_hana.fstype -eq 'nfs4')) {
@@ -2060,7 +2107,7 @@ function RunQualityCheck {
 
 
         # check /hana/shared directory
-        $_filesystem_hana = $_filesystems | Where-Object {$_.target -eq $DBSharedDir}
+        $_filesystem_hana = $_filesystems | Where-Object {$_.target -eq $script:DBSharedDir}
 
         if ($_filesystem_hana.fstype -in @('xfs','nfs','nfs4')) {
             AddCheckResultEntry -CheckID "HDB-FS-0014" -Description "SAP HANA Shared: File System" -TestResult $_filesystem_hana.fstype -ExptectedResult "xfs, nfs or nfs4" -Status "OK"  -MicrosoftDocs $_saphanastorageurl
@@ -2461,6 +2508,7 @@ function LoadGUI {
             <ComboBoxItem Content="MSSQL"/>
             <ComboBoxItem Content="Db2"/>
             <ComboBoxItem Content="Oracle"/>
+            <ComboBoxItem Content="ASE"/>
         </ComboBox>
         <Label x:Name="LabelDatabase" Content="Database" HorizontalAlignment="Left" Margin="66,36,0,0" VerticalAlignment="Top" Height="26" Width="59"/>
         <ComboBox x:Name="OperatingSystem" HorizontalAlignment="Left" Margin="188,75,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
@@ -2684,6 +2732,11 @@ function LoadGUI {
 
 $script:_runlog = @()
 
+$_breakingchangewarning = Get-AzConfig -DisplayBreakingChangeWarning
+if ($_breakingchangewarning.Value -eq $true) {
+    Update-AzConfig -DisplayBreakingChangeWarning $false
+}
+
 WriteRunLog -category "INFO" -message ("Start " + (Get-Date))
 
 WriteRunLog -category "INFO" -message "Quality Check for SAP on Azure systems is provided under MIT license"
@@ -2804,14 +2857,14 @@ foreach ($_qcrun in $_MultiRunData) {
     if ($VMOperatingSystem -in @("SUSE","RedHat","OracleLinux"))
     {
         #check if filesystem parameters end with /
-        if ($DBDataDir.EndsWith("/")) {
-            $DBDataDir = $DBDataDir.Substring(0,$DBDataDir.Length-1)
+        if ($script:DBDataDir.EndsWith("/")) {
+            $script:DBDataDir = $script:DBDataDir.Substring(0,$script:DBDataDir.Length-1)
         }
-        if ($DBLogDir.EndsWith("/")) {
-            $DBLogDir = $DBLogDir.Substring(0,$DBLogDir.Length-1)
+        if ($script:DBLogDir.EndsWith("/")) {
+            $script:DBLogDir = $script:DBLogDir.Substring(0,$script:DBLogDir.Length-1)
         }
-        if ($DBSharedDir.EndsWith("/")) {
-            $DBSharedDir = $DBSharedDir.Substring(0,$DBSharedDir.Length-1)
+        if ($script:DBSharedDir.EndsWith("/")) {
+            $script:DBSharedDir = $script:DBSharedDir.Substring(0,$script:DBSharedDir.Length-1)
         }
     }
 
@@ -2973,5 +3026,10 @@ if ($GUI) {
 if (-not $RunLocally) {
     WriteRunLog -category "INFO" -message ("End " + (Get-Date))
 }
+
+if ($_breakingchangewarning.Value -eq $true) {
+    Update-AzConfig -DisplayBreakingChangeWarning $true
+}
+
 
 exit

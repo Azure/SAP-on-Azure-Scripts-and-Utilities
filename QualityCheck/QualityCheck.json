@@ -1,5 +1,5 @@
 {
-    "Version": 2023032301,
+    "Version": 2023061301,
     "PowerShellPrerequisits": [
         {
             "ModuleName": "Posh-SSH",
@@ -51,10 +51,10 @@
                 "SupportedDB": []
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D12": {
@@ -62,10 +62,10 @@
                 "SupportedDB": []
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D13": {
@@ -73,10 +73,10 @@
                 "SupportedDB": []
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D14": {
@@ -84,833 +84,833 @@
                 "SupportedDB": []
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_DS11": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_DS12": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_DS13": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_DS14": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_DS11_v2": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_DS12_v2": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_DS13_v2": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_DS14_v2": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_DS15_v2": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D2s_v3": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D4s_v3": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D8s_v3": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D16s_v3": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D32s_v3": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D48s_v3": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D64s_v3": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E2s_v3": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E4s_v3": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E8s_v3": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E16s_v3": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E20s_v3": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E32s_v3": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E48s_v3": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E64is_v3": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E64s_v3": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": ["OLTP", "OLAP"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D2as_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D4as_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D8as_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D16as_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D32as_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D48as_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D64as_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D96as_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E2as_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E4as_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E8as_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E16as_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E20as_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E32as_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E48as_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE", "ASE"]
             },
             "APP": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E64as_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E96as_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D2ds_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D4ds_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D8ds_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D16ds_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D32ds_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D48ds_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D64ds_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E2ds_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E4ds_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E8ds_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E16ds_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E20ds_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLAP": "Standard Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E32ds_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLAP": "Standard Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E48ds_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLAP": "Standard Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E64ds_v4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLAP": "Standard Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_GS1": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_GS2": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_GS3": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_GS4": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_GS5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M8ms": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M16ms": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M32ts": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLAP": "Standard Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M32ls": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLAP": "Standard Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M64ls": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLAP": "Standard Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M64s": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLAP": "Standard Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M64ms": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLAP": "Standard Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M128s": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLAP": "Standard Sizing",
@@ -918,68 +918,68 @@
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M128ms": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLAP": "Workload Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M208s_v2": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLAP": "Standard Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M208ms_v2": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLAP": "Workload Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M416s_v2": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLAP": "Standard Sizing",
@@ -988,17 +988,17 @@
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M416ms_v2": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLTP-ScaleOut": "Standard Sizing",
@@ -1006,68 +1006,68 @@
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M32ms_v2": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLAP": "Standard Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M64s_v2": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLAP": "Standard Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M64ms_v2": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLAP": "Standard Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M128s_v2": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLAP": "Standard Sizing",
@@ -1075,34 +1075,34 @@
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M128ms_v2": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLAP": "Standard Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M192is_v2": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLAP": "Standard Sizing",
@@ -1110,17 +1110,17 @@
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M192ims_v2": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLAP": "Standard Sizing",
@@ -1128,68 +1128,68 @@
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M32dms_v2": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLAP": "Standard Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M64ds_v2": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLAP": "Standard Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M64dms_v2": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLAP": "Standard Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M128ds_v2": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLAP": "Standard Sizing",
@@ -1197,34 +1197,34 @@
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M128dms_v2": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLAP": "Standard Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M192ids_v2": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLAP": "Standard Sizing",
@@ -1232,17 +1232,17 @@
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M192idms_v2": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLAP": "Workload Sizing",
@@ -1250,186 +1250,186 @@
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D2s_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D4s_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D8s_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D16s_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D32s_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D48s_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D64s_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D96s_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D2ds_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D4ds_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D8ds_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D16ds_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D32ds_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D48ds_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D64ds_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D96ds_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE", "ASE"]
             }
         },
         "Standard_E2s_v5": {
@@ -1437,254 +1437,254 @@
                 "SupportedDB": ["MSSQL", "Oracle", "Db2"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E4s_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E8s_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E16s_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E20s_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E32s_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E48s_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E64s_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E96s_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E2ds_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E4ds_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E8ds_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E16ds_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E20ds_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E32ds_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E48ds_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E64ds_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E96ds_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing"
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M420ixs_v2": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLTP-ScaleOut": "Standard Sizing",
@@ -1692,17 +1692,17 @@
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_M832ixs_v2": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF"],
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLTP-ScaleOut": "Standard Sizing",
@@ -1710,362 +1710,384 @@
                 }
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E2as_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E2ads_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E4as_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E4ads_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E8as_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E8ads_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E16as_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E16ads_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            }
+        },
+        "Standard_E20as_v5": {
+            "DB": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+            },
+            "APP": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            },
+            "ASCS": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            }
+        },
+        "Standard_E20ads_v5": {
+            "DB": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+            },
+            "APP": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            },
+            "ASCS": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E32as_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E32ads_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E48as_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E48ads_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E64as_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E64ads_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E96as_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_E96ads_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D2as_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D2ads_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D4as_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D4ads_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D8as_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D8ads_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D16as_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D16ads_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D32as_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D32ads_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D48as_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D48ads_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D64as_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D64ads_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D96as_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
         "Standard_D96ads_v5": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
             },
             "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             },
             "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         }
     },
@@ -2084,7 +2106,7 @@
             "OS": ["Windows","SUSE","RedHat","OracleLinux"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
             "Role": ["DB","ASCS","APP"],
             "RunInLocalMode": true,
             "CommandType": "OS",
@@ -2100,7 +2122,7 @@
             "OS": ["SUSE","RedHat","OracleLinux"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
             "Role": ["DB","ASCS","APP"],
             "RunInLocalMode": true,
             "CommandType": "OS",
@@ -2116,7 +2138,7 @@
             "OS": ["SUSE","RedHat","OracleLinux"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
             "Role": ["DB","ASCS","APP"],
             "RunInLocalMode": true,
             "CommandType": "OS",
@@ -2132,7 +2154,7 @@
             "OS": ["SUSE","RedHat","OracleLinux","Windows"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
             "Role": ["DB","ASCS","APP"],
             "RunInLocalMode": true,
             "CommandType": "OS",
@@ -2148,7 +2170,7 @@
             "OS": ["SUSE","RedHat","OracleLinux"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
             "Role": ["DB","ASCS","APP"],
             "RunInLocalMode": true,
             "CommandType": "OS",
@@ -2159,12 +2181,12 @@
             "HighAvailability": [false,true]
         },
         {
-            "CheckID": "IC-0005",
+            "CheckID": "IC-0006",
             "Description": "Availability Set",
             "OS": ["SUSE","RedHat","OracleLinux"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
             "Role": ["DB","ASCS","APP"],
             "RunInLocalMode": false,
             "CommandType": "PowerShell",
@@ -2175,12 +2197,12 @@
             "HighAvailability": [false,true]
         },
         {
-            "CheckID": "IC-0005",
+            "CheckID": "IC-0007",
             "Description": "Linux Release File",
             "OS": ["SUSE","RedHat","OracleLinux"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
             "Role": ["DB","ASCS","APP"],
             "RunInLocalMode": true,
             "CommandType": "OS",
@@ -2191,12 +2213,12 @@
             "HighAvailability": [false,true]
         },      
         {
-            "CheckID": "IC-0005",
+            "CheckID": "IC-0008",
             "Description": "Linux Major and Minor Relase",
             "OS": ["SUSE","RedHat","OracleLinux"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
             "Role": ["DB","ASCS","APP"],
             "RunInLocalMode": true,
             "CommandType": "OS",
@@ -2207,12 +2229,12 @@
             "HighAvailability": [false,true]
         },      
         {
-            "CheckID": "IC-0007",
+            "CheckID": "IC-0009",
             "Description": "Proximity Placement Group (PPG)",
             "OS": ["Windows","SUSE","RedHat","OracleLinux"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
             "Role": ["DB","ASCS","APP"],
             "RunInLocalMode": false,
             "CommandType": "PowerShell",
@@ -2223,12 +2245,12 @@
             "HighAvailability": [false,true]
         },
         {
-            "CheckID": "IC-0008",
+            "CheckID": "IC-0010",
             "Description": "Proximity Placement Group (PPG) - VMs associated",
             "OS": ["Windows","SUSE","RedHat","OracleLinux"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
             "Role": ["DB","ASCS","APP"],
             "RunInLocalMode": false,
             "CommandType": "PowerShell",
@@ -2239,10 +2261,10 @@
             "HighAvailability": [false,true]
         },
         {
-            "CheckID": "IC-0009",
+            "CheckID": "IC-0011",
             "Description": "VM Generation",
             "OS": ["Windows","SUSE","RedHat","OracleLinux"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
             "Role": ["DB","ASCS","APP"],
@@ -2263,7 +2285,7 @@
             "OS": ["SUSE","RedHat","OracleLinux"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
             "CommandType": "OS",
             "Role": ["DB","ASCS","APP"],
             "RunInLocalMode": true,
@@ -2280,7 +2302,7 @@
             "OS": ["SUSE","RedHat","OracleLinux"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
             "Role": ["DB","ASCS","APP"],
             "RunInLocalMode": true,
             "CommandType": "OS",
@@ -2297,7 +2319,7 @@
             "OS": ["SUSE","RedHat","OracleLinux"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
             "Role": ["DB","ASCS","APP"],
             "RunInLocalMode": true,
             "CommandType": "OS",
@@ -2314,7 +2336,7 @@
             "OS": ["SUSE","RedHat","OracleLinux"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
             "Role": ["DB","ASCS","APP"],
             "RunInLocalMode": true,
             "CommandType": "OS",
@@ -2331,7 +2353,7 @@
             "OS": ["SUSE","RedHat","OracleLinux"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
             "Role": ["DB","ASCS","APP"],
             "RunInLocalMode": true,
             "CommandType": "OS",
@@ -2348,7 +2370,7 @@
             "OS": ["SUSE","RedHat","OracleLinux"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
             "Role": ["DB","ASCS","APP"],
             "RunInLocalMode": true,
             "CommandType": "OS",
@@ -2365,7 +2387,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
-            "DB": ["HANA", "MSSQL", "Db2"],
+            "DB": ["HANA", "MSSQL", "Db2", "ASE"],
             "Role": ["DB","ASCS"],
             "RunInLocalMode": true,
             "CommandType": "OS",
@@ -2382,7 +2404,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
-            "DB": ["HANA", "MSSQL", "Db2"],
+            "DB": ["HANA", "MSSQL", "Db2", "ASE"],
             "Role": ["DB","ASCS"],
             "RunInLocalMode": true,
             "CommandType": "OS",
@@ -2399,7 +2421,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
-            "DB": ["HANA", "MSSQL", "Db2"],
+            "DB": ["HANA", "MSSQL", "Db2", "ASE"],
             "Role": ["DB","ASCS"],
             "RunInLocalMode": true,
             "CommandType": "OS",
@@ -2416,7 +2438,7 @@
             "OS": ["RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
-            "DB": ["HANA", "MSSQL", "Db2"],
+            "DB": ["HANA", "MSSQL", "Db2", "ASE"],
             "Role": ["DB","ASCS"],
             "RunInLocalMode": true,
             "CommandType": "OS",
@@ -2433,7 +2455,7 @@
             "OS": ["RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
-            "DB": ["HANA", "MSSQL", "Db2"],
+            "DB": ["HANA", "MSSQL", "Db2", "ASE"],
             "Role": ["DB","ASCS"],
             "RunInLocalMode": true,
             "CommandType": "OS",
@@ -2450,7 +2472,7 @@
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
-            "DB": ["HANA", "MSSQL", "Db2"],
+            "DB": ["HANA", "MSSQL", "Db2", "ASE"],
             "Role": ["DB","ASCS","APP"],
             "RunInLocalMode": true,
             "CommandType": "OS",
@@ -2467,11 +2489,11 @@
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
-            "DB": ["HANA", "MSSQL", "Db2"],
+            "DB": ["HANA", "MSSQL", "Db2", "ASE"],
             "Role": ["DB","ASCS","APP"],
             "RunInLocalMode": true,
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/bin/curl -s --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/storageProfile?api-version=2021-11-01'",
+            "ProcessingCommand": "/usr/bin/curl -s --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/storageProfile?api-version=2021-12-13'",
             "PostProcessingCommand": "",
             "RootRequired": true,
             "ShowInReport": true,
@@ -2484,7 +2506,7 @@
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
-            "DB": ["HANA", "MSSQL", "Db2"],
+            "DB": ["HANA", "MSSQL", "Db2", "ASE"],
             "Role": ["DB","ASCS","APP"],
             "RunInLocalMode": false,
             "CommandType": "PowerShell",
@@ -2501,7 +2523,7 @@
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
-            "DB": ["HANA", "MSSQL", "Db2"],
+            "DB": ["HANA", "MSSQL", "Db2", "ASE"],
             "Role": ["DB","ASCS","APP"],
             "RunInLocalMode": true,
             "CommandType": "OS",
@@ -2522,7 +2544,7 @@
             "HardwareType": ["VM"],
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["ASCS"],
-            "DB": ["HANA", "Db2", "Oracle"],
+            "DB": ["HANA", "Db2", "Oracle", "ASE"],
             "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
@@ -2552,7 +2574,7 @@
             "HardwareType": ["VM"],
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB"],
-            "DB": ["HANA", "Db2"],
+            "DB": ["HANA", "Db2", "ASE"],
             "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [true],
@@ -2580,7 +2602,7 @@
             "HardwareType": ["VM", "HLI"],
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB","ASCS","APP"],
-            "DB": ["HANA","Db2","MSSQL","Oracle"],
+            "DB": ["HANA","Db2","MSSQL","Oracle", "ASE"],
             "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false, true],
@@ -2636,7 +2658,7 @@
             "HardwareType": ["VM", "HLI"],
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["DB","ASCS","APP"],
-            "DB": ["HANA","MSSQL","Oracle","Db2"],
+            "DB": ["HANA","MSSQL","Oracle","Db2", "ASE"],
             "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false, true],
@@ -2922,7 +2944,7 @@
             "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false],
-            "HighAvailabilityAgent": [],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"],
             "CommandType": "OS",
             "ProcessingCommand": "/sbin/sysctl net.ipv4.tcp_timestamps -n",
             "PostProcessingCommand": "",
@@ -4165,10 +4187,11 @@
             "ShowInReport": true,
             "AdditionalInfo": "optimize for faster reconnect after ASCS failover",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20230404", "ChangeLog": "update based on SAP note 1410736"}
             ],
             "MicrosoftDocs": "",
-            "SAPNote": ""
+            "SAPNote": "1410736"
         }, 
         {
             "CheckID": "APP-OS-0002",
@@ -4224,7 +4247,7 @@
                 { "Date": "initial", "ChangeLog": "" }
             ],
             "MicrosoftDocs": "",
-            "SAPNote": ""
+            "SAPNote": "1410736"
         },             
         {
             "CheckID": "APP-OS-0004",
@@ -4252,7 +4275,7 @@
                 { "Date": "initial", "ChangeLog": "" }
             ],
             "MicrosoftDocs": "",
-            "SAPNote": ""
+            "SAPNote": "1410736"
         },
         {
             "CheckID": "APP-OS-0005",
@@ -4341,12 +4364,12 @@
         {
             "CheckID": "OS-0001",
             "Description": "fstrim disabled",
-            "OS": ["SUSE","RedHat","OracleLinux"],
+            "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["DB","ASCS","APP"],
-            "DB": ["HANA","MSSQL","Oracle","Db2"],
+            "Role": ["DB"],
+            "DB": ["HANA"],
             "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
             "HighAvailability": [false,true],
@@ -4361,7 +4384,8 @@
             "ShowInReport": true,
             "AdditionalInfo": "Disable fstrim",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20230404", "ChangeLog": "update based on SUSE note"}
             ],
             "MicrosoftDocs": "https://www.suse.com/support/kb/doc/?id=000019447",
             "SAPNote": ""
