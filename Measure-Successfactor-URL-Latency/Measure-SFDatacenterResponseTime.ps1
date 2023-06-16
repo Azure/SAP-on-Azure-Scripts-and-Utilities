@@ -1,3 +1,8 @@
+<#
+Copyright (c) Microsoft Corporation.
+Licensed under the MIT license.
+#>
+
 Function Measure-SFDatacenterResponseTime {
   [CmdletBinding()]
   param (
