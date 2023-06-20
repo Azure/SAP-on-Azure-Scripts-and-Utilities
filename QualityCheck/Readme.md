@@ -3,7 +3,9 @@
 QualityCheck is an open-source tool to validate SAP on Azure installations. It connects to Azure Resource Manager and the operating system and validates the system configurations against Microsoft's best practise.
 Running it regulary will always keep your system up to date.
 
-QualityCheck supports SUSE, RedHat and Oracle Linux as well as HANA, Db2 and Oracle Database.
+QualityCheck supports SUSE, RedHat and Oracle Linux as well as HANA, Db2, ASE and Oracle Database configurations.
+
+You can execute QualityCheck for database, ASCS and app servers.
 
 We are continouasly improving the tool and will add e.g. support for Windows and MSSQL in the near future.
 
