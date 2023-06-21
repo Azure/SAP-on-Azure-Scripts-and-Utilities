@@ -1,0 +1,32 @@
+# /etc/fstab: static file system information.
+#
+# Zeilen, die mit dem Zeichen "#" beginnen, sind Kommentare.
+#
+# <file system>                            <mount point>   <type>       <options>                           <dump>  <pass>
+/dev/sda1                                  /media/sda1     ntfs         defaults,nls=utf8,umask=007,gid=46  0       0
+/dev/sda2                                  /media/sda2     ntfs         defaults,nls=utf8,umask=007,gid=46  0       0
+# /dev/sda6
+UUID=03b77228-ed4c-4218-910e-11b9f77c4b46  /               ext4     defaults                              0       1
+# /dev/sda7
+UUID=8883dbc8-80f8-49b8-8c5f-13a32baefe98  none            swap         sw                                  0       0
+/dev/hda                                   /media/cdrom0   udf,iso9660  user,noauto                         0       0
+/dev/cdrom        /media/cdrom0   udf,iso9660 user,noauto     0       0
+/dev/           /media/floppy0  auto    rw,user,noauto  0       0
+
+# externe tragbare ntfs-Festplatte zum Datenaustausch; nicht per UUID eingebunden
+/dev/sdb1	/media/ntfs-usbdisk     ntfs  rw,user,noauto,uid=0,gid=46,umask=007,nls=utf8		0	0
+
+/dev/sdaa	/media/xyt     ntfs  rw,user,noauto,uid=0,gid=46,umask=007,nls=utf8		0	0
+
+/dev/disk/azure/scsi1/lun0  /testfs ext4 defaults 0 0
+
+# selbst eingetragen:
+/dev/sda5	/media/daten    	vfat         rw,auto,user,umask=0000              0       0
+
+# Speicher für QEMU auf max 400 MB RAM festlegen
+none		/dev/shm        	tmpfs        defaults,size=400M
+
+# Das Filesystem eines anderen Rechners über fuse/ssh zum Einbinden vorbereiten (später genügt "mount /lokaler/mountpoint"
+sshfs#username@rechnername:/Pfad/auf_Fremndrechner /lokaler/mountpoint fuse uid=1000,gid=100,umask=0,allow_other,defaults,noauto 0 0
+
+# Am Ende der fstab muss immer noch eine Leerzeile kommen, sonst erhält man die Fehlermeldung: no final newline at the end of /etc/fstab
