@@ -14,7 +14,7 @@
 
 
 ########################################################################
-# function check_NVME_initrd
+# START function check_NVME_initrd
 #
 # function checks if NVMe driver is already part of initrd
 # if NVMe driver is not part of initrd the operating system is not able
@@ -22,7 +22,8 @@
 #
 # TODO add more distributions like
 # - Oracle Linux
-# - ???
+# - Almalinux
+#
 ########################################################################
 check_NVMe_initrd () {
 
@@ -72,10 +73,13 @@ check_NVMe_initrd () {
 
 }
 ########################################################################
+# END function check_NVME_initrd
+########################################################################
 
 
 ########################################################################
-# function check_fstab
+#
+# START function check_fstab
 #
 # function checks if fstab is ready to switch to NVMe VMs
 # in fstab /dev/sd* or /dev/disk/azure/* is not allowed because NVMe
@@ -95,6 +99,8 @@ check_fstab () {
     sed -n 's|^/dev/\(sd[a-z]*[0-9]*\).*|\1|p' </etc/fstab >/tmp/device_names   # Stores all /dev/sd* entries from fstab into a temporary file
     while read LINE; do
             # For each line in /tmp/device_names
+
+            # get the UUID for the device
             UUID=`ls -l /dev/disk/by-uuid | grep "$LINE" | sed -n 's/^.* \([^ ]*\) -> .*$/\1/p'` # Sets the UUID name for that device
             if [ ! -z "$UUID" ]
             then
@@ -106,10 +112,11 @@ check_fstab () {
     sed -n 's|^/dev/disk/azure/scsi1/\(lun[0-9]*\).*|\1|p' </etc/fstab >/tmp/device_names   # Stores all /dev/disk/azure/scsi1/lun* entries from fstab into a temporary file
     while read LINE; do
             # For each line in /tmp/device_names
-            # first get the real device from azure device
 
+            # first get the real device from azure device
             REALDEVICE=`realpath /dev/disk/azure/scsi1/${LINE} | sed 's+/dev/++g'`
 
+            # get the UUID for the device
             UUID=`ls -l /dev/disk/by-uuid | grep "$REALDEVICE" | sed -n 's/^.* \([^ ]*\) -> .*$/\1/p'` # Sets the UUID name for that device
             if [ ! -z "$UUID" ]
             then
@@ -121,28 +128,38 @@ check_fstab () {
 
     if [ -s /tmp/device_names ]; then
 
-        echo -e "\n\nERROR  Your fstab file contains device names. Mount the partitions using UUID's before changing an instance type to NVMe.\n"                                                         
+        echo -e "------------------------------------------------"
+        echo -e "ERROR  Your fstab file contains device names. Mount the partitions using UUID's before changing an instance type to NVMe."
+        echo -e "------------------------------------------------"
 
         printf "Enter y to replace device names with UUID in /etc/fstab file to make it compatible for NVMe block device names.\nEnter n to keep the file as-is with no modification (y/n) "
         read RESPONSE;
         case "$RESPONSE" in
-            [yY]|[yY][eE][sS])                                              # If answer is yes, keep the changes to /etc/fstab
-                    echo "Writing changes to /etc/fstab..."
-                    echo -e "\n\n***********************"
+            [yY]|[yY][eE][sS])                                              
+                    # If answer is yes, keep the changes to /etc/fstab
+                    echo -e "Writing changes to /etc/fstab..."
+                    echo -e "------------------------------------------------"
                     cp /etc/fstab.modified.$time_stamp /etc/fstab
-                    echo -e "***********************"
-                    echo -e "\nOriginal fstab file is stored as /etc/fstab.backup.$time_stamp"
+                    echo -e "------------------------------------------------"
+                    echo -e "Original fstab file is stored as /etc/fstab.backup.$time_stamp"
+                    echo -e "------------------------------------------------"
                     rm /etc/fstab.modified.$time_stamp
                     ;;
-            [nN]|[nN][oO]|"")                                               # If answer is no, or if the user just pressed Enter
-                    echo -e "Aborting: Not saving changes...\nPrinting correct fstab file below:\n\n"                  # don't save the new fstab file
-                    cat /etc/fstab.modified.$time_stamp
+            [nN]|[nN][oO]|"")                                               
+                    # If answer is no, or if the user just pressed Enter
+                    # don't save the new fstab file
+                    echo -e "------------------------------------------------"
+                    echo -e "Aborting: Not saving changes..."
                     rm /etc/fstab.backup.$time_stamp
                     rm /etc/fstab.modified.$time_stamp
+                    echo -e "------------------------------------------------"
                     ;;
-            *)                                                              # If answer is anything else, exit and don't save changes
-                    echo "Invalid Response"                                 # to fstab
-                    echo "Exiting"
+            *)                                                              
+                    # If answer is anything else, exit and don't save changes
+                    # to fstab
+                    echo -e "------------------------------------------------"
+                    echo -e "Invalid Response"                                 
+                    echo -e "Exiting"
                     rm /etc/fstab.backup.$time_stamp
                     rm /etc/fstab.modified.$time_stamp
                     exit 1
@@ -155,22 +172,37 @@ check_fstab () {
     else 
         rm /etc/fstab.backup.$time_stamp
         rm /etc/fstab.modified.$time_stamp
-        echo -e "\n\nOK     fstab file looks fine and does not contain any device names. "
+        echo -e "------------------------------------------------"
+        echo -e "OK     fstab file doesn't contain device names"
+        echo -e "------------------------------------------------"
     fi
 
 }
-
+########################################################################
+#
+# END function check_fstab
+#
 ########################################################################
 
 
-# Main code starts from here
+########################################################################
+#
+# main function
+#
+########################################################################
 
 PATH=/bin:/sbin:/usr/bin:/usr/sbin
 
+echo -e "------------------------------------------------"
+echo -e "START of script"
+echo -e "------------------------------------------------"
+
+
 if [ `id -u` -ne 0 ]; then                                              # Checks to see if script is run as root
+        echo -e ""
         echo -e "------------------------------------------------"
-        echo -e "\nThis script must be run as root" >&2                 # If it isn't, exit with error
-        echo -e "\n------------------------------------------------"
+        echo -e "ERROR  This script must be run as root" >&2                 # If it isn't, exit with error
+        echo -e "------------------------------------------------"
         exit 1
 fi
 
@@ -182,19 +214,37 @@ if [ $? -ne 0 ]
     if [ $? -ne 0 ]
         then
         # NVMe Module is not installed. 
-        echo -e "------------------------------------------------\nERROR  NVMe Module is not available on your instance. \n\t- Please install NVMe module before changing your instance type to NVMe. Look at the following link for further guidance:"
+        echo -e "------------------------------------------------"
+        echo -e "ERROR  NVMe Module is not available on your instance."
+        echo -e "\t- Please install NVMe module before changing your instance type to NVMe. Look at the following link for further guidance:"
         echo -e "\t> https://learn.microsoft.com/en-us/azure/virtual-machines/enable-nvme-interface"
+        echo -e "------------------------------------------------"
 
     else
-        echo -e "------------------------------------------------\n"
+        echo -e "------------------------------------------------"
         echo -e "OK     NVMe Module is installed and available on your instance"
-        check_NVMe_initrd                # Calling function to check if NVMe module is loaded in initramfs. 
+        echo -e "------------------------------------------------"
+
+        # Calling function to check if NVMe module is loaded in initramfs
+        check_NVMe_initrd
+
     fi
 else
     # NVMe modules is built into the kernel
-    echo -e "------------------------------------------------\n"
-    echo -e "OK     NVMe Module is installed and available on your instance"
+    echo -e ""
+    echo -e "------------------------------------------------"
+    echo -e "OK     NVMe Module is installed and available on your VM"
+    echo -e "------------------------------------------------"
 fi
 
 check_fstab
-echo -e "\n------------------------------------------------"
+
+echo -e "------------------------------------------------"
+echo -e "END of script"
+echo -e "------------------------------------------------"
+
+########################################################################
+#
+# end of main function
+#
+########################################################################
