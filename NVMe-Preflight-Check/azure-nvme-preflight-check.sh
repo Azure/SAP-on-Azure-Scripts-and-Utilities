@@ -10,8 +10,13 @@
 #   The script checks if the requirements to switch to NVMe enabled
 #   virtual machines are met
 #
+#   This includes
+#       - NVMe part of initramfs
+#       - fstab file doesn't contain
+#           - /dev/sd* devices or
+#           - /dev/disk/azure/scsi1/lun* devices
+#
 ########################################################################
-
 
 ########################################################################
 # START function check_NVME_initrd
@@ -66,8 +71,9 @@ check_NVMe_initrd () {
         fi
 
     else 
-        echo -e "\n\nUnsupported OS for this script."
-        echo -e "\n\n------------------------------------------------"
+        echo -e "------------------------------------------------"
+        echo -e "ERROR  Unsupported OS for this script."
+        echo -e "------------------------------------------------"
         exit 1
     fi
 
@@ -96,7 +102,9 @@ check_fstab () {
     cp /etc/fstab /etc/fstab.modified.$time_stamp
 
     # running replacement for /dev/sd* devices
-    sed -n 's|^/dev/\(sd[a-z]*[0-9]*\).*|\1|p' </etc/fstab >/tmp/device_names   # Stores all /dev/sd* entries from fstab into a temporary file
+    
+    # Stores all /dev/sd* entries from fstab into a temporary file
+    sed -n 's|^/dev/\(sd[a-z]*[0-9]*\).*|\1|p' </etc/fstab >/tmp/device_names   
     while read LINE; do
             # For each line in /tmp/device_names
 
@@ -109,7 +117,10 @@ check_fstab () {
     done </tmp/device_names
 
     # running replacement for /dev/disk/azure/scsi1/lun* devices
-    sed -n 's|^/dev/disk/azure/scsi1/\(lun[0-9]*\).*|\1|p' </etc/fstab >/tmp/device_names   # Stores all /dev/disk/azure/scsi1/lun* entries from fstab into a temporary file
+    
+    # Stores all /dev/disk/azure/scsi1/lun* entries from fstab into a temporary file
+    sed -n 's|^/dev/disk/azure/scsi1/\(lun[0-9]*\).*|\1|p' </etc/fstab >/tmp/device_names   
+
     while read LINE; do
             # For each line in /tmp/device_names
 
@@ -117,10 +128,11 @@ check_fstab () {
             REALDEVICE=`realpath /dev/disk/azure/scsi1/${LINE} | sed 's+/dev/++g'`
 
             # get the UUID for the device
-            UUID=`ls -l /dev/disk/by-uuid | grep "$REALDEVICE" | sed -n 's/^.* \([^ ]*\) -> .*$/\1/p'` # Sets the UUID name for that device
+            UUID=`ls -l /dev/disk/by-uuid | grep "$REALDEVICE" | sed -n 's/^.* \([^ ]*\) -> .*$/\1/p'` 
             if [ ! -z "$UUID" ]
             then
-                sed -i "s|^/dev/disk/azure/scsi1/${LINE}|UUID=${UUID}|" /etc/fstab.modified.$time_stamp               # Changes the entry in fstab to UUID form
+                # Changes the entry in fstab to UUID form
+                sed -i "s|^/dev/disk/azure/scsi1/${LINE}|UUID=${UUID}|" /etc/fstab.modified.$time_stamp               
             fi
     done </tmp/device_names
 
@@ -175,6 +187,8 @@ check_fstab () {
         echo -e "------------------------------------------------"
         echo -e "OK     fstab file doesn't contain device names"
         echo -e "------------------------------------------------"
+        echo -e ""
+        echo -e "Please crosscheck your /etc/fstab file"
     fi
 
 }
