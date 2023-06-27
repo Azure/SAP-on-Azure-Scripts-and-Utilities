@@ -32,27 +32,36 @@ check_NVMe_initrd () {
         # Distribution is Red hat
         lsinitrd /boot/initramfs-$(uname -r).img|grep nvme > /dev/null 2>&1
         if [ $? -ne 0 ]; then
-        # NVMe module is not loaded in initrd/initramfs
-        echo -e "\n\nERROR  NVMe Module is not loaded in the initramfs image.\n\t- Please run the following command on your instance to recreate initramfs:"
-        echo -e '\t# sudo dracut -f -v'
+            # NVMe module is not loaded in initrd/initramfs
+            echo -e "ERROR  NVMe Module is not loaded in the initramfs image."
+            echo -e "\t- Please run the following command on your instance to recreate initramfs:"
+            echo -e '\t# sudo dracut -f -v'
+        else
+            echo -e "OK     NVMe Module loaded in initramfs image."
         fi
     
     elif [[ "${find_distro}" == "sles" ]] ; then
         # Distribution is SUSE Linux
         lsinitrd /boot/initrd-$(uname -r)|grep nvme > /dev/null 2>&1
         if [ $? -ne 0 ]; then
-        # NVMe module is not loaded in initrd/initramfs
-        echo -e "\n\nERROR  NVMe Module is not loaded in the initramfs image.\n\t- Please run the following command on your instance to recreate initramfs:"
-        echo -e '\t# sudo dracut -f -v'
+            # NVMe module is not loaded in initrd/initramfs
+            echo -e "ERROR  NVMe Module is not loaded in the initramfs image."
+            echo -e "\t- Please run the following command on your instance to recreate initramfs:"
+            echo -e '\t# sudo dracut -f -v'
+        else
+            echo -e "OK     NVMe Module loaded in initramfs image."
         fi
         
     elif [ -f /etc/debian_version ] ; then
         # Distribution is debian based means Debian/Ubuntu
         lsinitramfs /boot/initrd.img-$(uname -r)|grep nvme > /dev/null 2>&1
         if [ $? -ne 0 ]; then
-        # NVMe module is not loaded in initrd/initramfs
-        echo -e "\n\nERROR  NVMe Module is not loaded in the initramfs image.\n\t- Please run the following command on your instance to recreate initramfs:"
-        echo -e '\t# sudo update-initramfs -c -k all'
+            # NVMe module is not loaded in initrd/initramfs
+            echo -e "ERROR  NVMe Module is not loaded in the initramfs image."
+            echo -e "\t- Please run the following command on your instance to recreate initramfs:"
+            echo -e '\t# sudo update-initramfs -c -k all'
+        else
+            echo -e "OK     NVMe Module loaded in initramfs image."
         fi
 
     else 
@@ -97,7 +106,11 @@ check_fstab () {
     sed -n 's|^/dev/disk/azure/scsi1/\(lun[0-9]*\).*|\1|p' </etc/fstab >/tmp/device_names   # Stores all /dev/disk/azure/scsi1/lun* entries from fstab into a temporary file
     while read LINE; do
             # For each line in /tmp/device_names
-            UUID=`ls -l /dev/disk/by-uuid | grep "$LINE" | sed -n 's/^.* \([^ ]*\) -> .*$/\1/p'` # Sets the UUID name for that device
+            # first get the real device from azure device
+
+            REALDEVICE=`realpath /dev/disk/azure/scsi1/${LINE} | sed 's+/dev/++g'`
+
+            UUID=`ls -l /dev/disk/by-uuid | grep "$REALDEVICE" | sed -n 's/^.* \([^ ]*\) -> .*$/\1/p'` # Sets the UUID name for that device
             if [ ! -z "$UUID" ]
             then
                 sed -i "s|^/dev/disk/azure/scsi1/${LINE}|UUID=${UUID}|" /etc/fstab.modified.$time_stamp               # Changes the entry in fstab to UUID form
@@ -108,9 +121,9 @@ check_fstab () {
 
     if [ -s /tmp/device_names ]; then
 
-        echo -e "\n\nERROR  Your fstab file contains device names. Mount the partitions using UUID's before changing an instance type to NVMe."                                                         # Outputs the new fstab file
+        echo -e "\n\nERROR  Your fstab file contains device names. Mount the partitions using UUID's before changing an instance type to NVMe.\n"                                                         
 
-        printf "\nEnter y to replace device names with UUID in /etc/fstab file to make it compatible for NVMe block device names.\nEnter n to keep the file as-is with no modification (y/n) "
+        printf "Enter y to replace device names with UUID in /etc/fstab file to make it compatible for NVMe block device names.\nEnter n to keep the file as-is with no modification (y/n) "
         read RESPONSE;
         case "$RESPONSE" in
             [yY]|[yY][eE][sS])                                              # If answer is yes, keep the changes to /etc/fstab
