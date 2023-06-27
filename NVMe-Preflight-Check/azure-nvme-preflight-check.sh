@@ -7,6 +7,11 @@
 #
 #   azure-nvme-preflight-check.sh
 #
+#   Script available on https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities/tree/main/NVMe-Preflight-Check
+#
+#   For issues please create a GitHub issue using
+#   https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities/issues/new
+#
 #   The script checks if the requirements to switch to NVMe enabled
 #   virtual machines are met
 #
@@ -199,18 +204,18 @@ check_fstab () {
 ########################################################################
 
 
+
+
 ########################################################################
 #
 # main function
 #
 ########################################################################
-
 PATH=/bin:/sbin:/usr/bin:/usr/sbin
 
 echo -e "------------------------------------------------"
 echo -e "START of script"
 echo -e "------------------------------------------------"
-
 
 if [ `id -u` -ne 0 ]; then                                              # Checks to see if script is run as root
         echo -e ""
