@@ -31,7 +31,9 @@ param (
     # New VM Size
     [Parameter(Mandatory=$true)][string]$vm_size_change_to,
     # Start VM after update
-    [bool]$start_vm_after_update = $true
+    [bool]$start_vm_after_update = $true,
+    # Write Log File
+    [bool]$write_logfile = $false
 )
 
 # RunLog function for more detailed data during execution
@@ -58,6 +60,21 @@ function WriteRunLog {
     }
 }
 
+
+################################################################################################
+#
+# script start
+#
+################################################################################################
+
+
+# create variable for log
+$script:_runlog = @()
+
+$breakingchangewarning = Get-AzConfig -DisplayBreakingChangeWarning
+if ($breakingchangewarning.Value -eq $true) {
+    Update-AzConfig -DisplayBreakingChangeWarning $false
+}
 
 # check if connected to Azure
 $_SubscriptionInfo = Get-AzSubscription -SubscriptionId $subscription_id
@@ -136,51 +153,78 @@ $body_scsi = @'
 }
 '@
 
+WriteRunLog -category "INFO" -message "Getting VM info"
+$_vm = Get-AzVM -ResourceGroupName $resource_group_name -Name $vm_name
 $_vminfo = Get-AzVM -ResourceGroupName $resource_group_name -Name $vm_name -Status
 
-if ($_vminfo.Statuses[1].Code -eq "PowerState/deallocated") {
-    # VM is already stopped
-    WriteRunLog -category "INFO" -message "VM is stopped and deallocated"
+WriteRunLog -category "INFO" -message "Checking for TrustedLaunch"
+if ($_vm.SecurityProfile.SecurityType -eq "TrustedLaunch") {
+    WriteRunLog -category "ERROR" -message "The VM is configured with Trusted Launch, NVMe doesn't support trusted launch."
 }
-else {
-    #Stop and deallocate the VM
-    WriteRunLog -category "INFO" -message "Stopping VM"
-    Stop-AzVM -ResourceGroupName $resource_group_name -Name $vm_name -Force
+else 
+{
+    WriteRunLog -category "INFO" -message "Checking if VM is stopped and deallocated"
+    if ($_vminfo.Statuses[1].Code -eq "PowerState/deallocated") {
+        # VM is already stopped
+        WriteRunLog -category "INFO" -message "VM is stopped and deallocated"
+    }
+    else {
+        #Stop and deallocate the VM
+        WriteRunLog -category "INFO" -message "Stopping VM"
+        Stop-AzVM -ResourceGroupName $resource_group_name -Name $vm_name -Force
+    }
+
+    if ($disk_controller_change_to -eq "NVMe") {
+        #Add NVMe supported capabilities to the OS disk
+        WriteRunLog -category "INFO" -message "Setting OS Disk to SCSI/NVMe"
+        $Update_Supported_Capabilities = (Invoke-WebRequest -uri $uri -Method PATCH -body $body_nvmescsi -Headers $auth_header | ConvertFrom-Json)
+    }
+    else {
+        #Add NVMe supported capabilities to the OS disk
+        WriteRunLog -category "INFO" -message "Setting OS Disk to SCSI"
+        $Update_Supported_Capabilities = (Invoke-WebRequest -uri $uri -Method PATCH -body $body_scsi -Headers $auth_header | ConvertFrom-Json)
+    }
+
+    # Get VM configuration
+    WriteRunLog -category "INFO" -message "Getting VM config to prepare new config"
+    $vm = Get-AzVM -ResourceGroupName $resource_group_name -Name $vm_name
+
+    # Set new VM size
+    WriteRunLog -category "INFO" -message "Setting new VM size"
+    $vm.HardwareProfile.VmSize = $vm_size_change_to
+
+    # Set new Controller type for VM
+    WriteRunLog -category "INFO" -message "Setting disk controller for VM"
+    $vm.StorageProfile.DiskControllerType = $disk_controller_change_to
+
+    # Update the VM
+    WriteRunLog -category "INFO" -message "Updating the VM configuration"
+    Update-AzVM -ResourceGroupName $resource_group_name -VM $vm
+
+    if ($start_vm_after_update) {
+        # Start the VM
+        WriteRunLog -category "INFO" -message "Starting VM"
+        Start-AzVM -ResourceGroupName $resource_group_name -Name $vm_name
+    }
+    else {
+        # Do not start VM
+        WriteRunLog -category "INFO" -message "Not starting VM"
+    }
 }
 
-if ($disk_controller_change_to -eq "NVMe") {
-    #Add NVMe supported capabilities to the OS disk
-    WriteRunLog -category "INFO" -message "Setting OS Disk to SCSI/NVMe"
-    $Update_Supported_Capabilities = (Invoke-WebRequest -uri $uri -Method PATCH -body $body_nvmescsi -Headers $auth_header | ConvertFrom-Json)
-}
-else {
-    #Add NVMe supported capabilities to the OS disk
-    WriteRunLog -category "INFO" -message "Setting OS Disk to SCSI"
-    $Update_Supported_Capabilities = (Invoke-WebRequest -uri $uri -Method PATCH -body $body_scsi -Headers $auth_header | ConvertFrom-Json)
+if ($write_logfile)
+{
+    WriteRunLog -category "INFO" -message "Writing logfile"
+    $_filename = ".\" + $vm_name + "_" + (Get-Date -Format "yyyyMMdd-HHmm") + ".txt"
+    $script:_runlog | Out-File -FilePath $_filename -Append
 }
 
-# Get VM configuration
-WriteRunLog -category "INFO" -message "Getting VM config to prepare new config"
-$vm = Get-AzVM -ResourceGroupName $resource_group_name -Name $vm_name
-
-# Set new VM size
-WriteRunLog -category "INFO" -message "Setting new VM size"
-$vm.HardwareProfile.VmSize = $vm_size_change_to
-
-# Set new Controller type for VM
-WriteRunLog -category "INFO" -message "Setting disk controller for VM"
-$vm.StorageProfile.DiskControllerType = $disk_controller_change_to
-
-# Update the VM
-WriteRunLog -category "INFO" -message "Updating the VM configuration"
-Update-AzVM -ResourceGroupName $resource_group_name -VM $vm
-
-if ($start_vm_after_update) {
-    # Start the VM
-    WriteRunLog -category "INFO" -message "Starting VM"
-    Start-AzVM -ResourceGroupName $resource_group_name -Name $vm_name
+if ($breakingchangewarning.Value -eq $true) {
+    Update-AzConfig -DisplayBreakingChangeWarning $true
 }
-else {
-    # Do not start VM
-    WriteRunLog -category "INFO" -message "Not starting VM"
-}
+
+################################################################################################
+#
+# script end
+#
+################################################################################################
