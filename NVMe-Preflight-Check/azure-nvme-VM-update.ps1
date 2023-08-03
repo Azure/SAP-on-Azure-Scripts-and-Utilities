@@ -153,16 +153,51 @@ $body_scsi = @'
 }
 '@
 
+$_continue = 0
+
 WriteRunLog -category "INFO" -message "Getting VM info"
 $_vm = Get-AzVM -ResourceGroupName $resource_group_name -Name $vm_name
 $_vminfo = Get-AzVM -ResourceGroupName $resource_group_name -Name $vm_name -Status
 
+# checking VM capabilities
+WriteRunLog -category "INFO" -message ("Getting all VM SKUs available in Region " + $_vm.Location)
+WriteRunLog -category "INFO" -message ("This will take about a minute ...")
+$_VMSKUs = Get-AzComputeResourceSku | Where-Object { $_.Locations -contains $_vm.Location -and $_.ResourceType.Contains("virtualMachines") }
+$_VMSKU = $_VMSKUs | Where-Object { $_.Name -eq $vm_size_change_to }
+if ($_VMSKU) {
+    WriteRunLog -category "INFO" -message "Found VM SKU - Checking for Capabilities"
+    $_supported_controller = ($_VMSKU.Capabilities | Where-Object { $_.Name -eq "DiskControllerTypes" }).Value
+
+    if ($disk_controller_change_to -eq "NVMe") {
+        # NVMe destination
+        if ($_supported_controller.Contains("NVMe") ) {
+            WriteRunLog -category "INFO" -message "VM supports NVMe"
+            $_continue += 1
+        }
+        else {
+            WriteRunLog -category "ERROR" -message "VM doesn't support NVMe"
+            $_continue -= 100
+        }
+    }
+    else {
+        # SCSI destination
+        $_continue += 1 # all VMs support SCSI
+    }  
+}
+else {
+    WriteRunLog -category "ERROR" -message ("VM SKU doesn't exist, please check your input: " + $vm_size_change_to )
+    $_continue -= 100
+}
+
 WriteRunLog -category "INFO" -message "Checking for TrustedLaunch"
 if ($_vm.SecurityProfile.SecurityType -eq "TrustedLaunch") {
     WriteRunLog -category "ERROR" -message "The VM is configured with Trusted Launch, NVMe doesn't support trusted launch."
+    $_continue -= 100
 }
-else 
-{
+
+# checking if the $_continue variable is positive or negative
+# for any case where it is negative a pre-requisit hasn't been met
+if ($_continue -gt 0) {
     WriteRunLog -category "INFO" -message "Checking if VM is stopped and deallocated"
     if ($_vminfo.Statuses[1].Code -eq "PowerState/deallocated") {
         # VM is already stopped
@@ -210,6 +245,9 @@ else
         # Do not start VM
         WriteRunLog -category "INFO" -message "Not starting VM"
     }
+}
+else {
+    WriteRunLog -category "ERROR" -message "Pre-requisits check failed"
 }
 
 if ($write_logfile)
