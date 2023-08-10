@@ -1,0 +1,3 @@
+LogonMethod;VMOperatingSystem;VMDatabase;VMRole;AzVMResourceGroup;AzVMName;VMHostname;VMUsername;VMConnectionPort;HighAvailability;HighAvailabilityAgent;DBDataDir;DBLogDir;DBSharedDir;ANFResourceGroup;ANFAccountName;HANADeployment
+UserPassword;RedHat;HANA;DB;conf07-ha-agent;hana11;10.0.0.21;pl;;TRUE;FencingAgent;;;;;;
+UserPassword;RedHat;HANA;DB;conf07-ha-agent;hana12;10.0.0.22;pl;;TRUE;FencingAgent;;;;;;

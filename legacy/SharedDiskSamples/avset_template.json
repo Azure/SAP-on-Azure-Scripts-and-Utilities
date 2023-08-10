@@ -1,0 +1,654 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "metadata": {
+                "description": "Azure region in which to provision resources"
+            },
+            "defaultValue": "[resourceGroup().location]"
+        },
+        "namePrefix": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 10,
+            "metadata": {
+                "description": "Naming prefix for each new resource created. 3-char min, 10-char max, lowercase alphanumeric"
+            }
+        },
+        "existingDomainName": {
+            "type": "string",
+            "metadata": {
+                "description": "DNS domain name for existing Active Directory domain"
+            }
+        },
+        "existingAdminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Administrator of the existing Active Directory Domain"
+            }
+        },
+        "existingAdminPassword": {
+            "type": "securestring",
+            "minLength": 12,
+            "metadata": {
+                "description": "Password for the Administrator account of the existing Active Directory Domain"
+            }
+        },
+        "vmSize": {
+            "type": "string",
+            "metadata": {
+                "description": "Size of the cluster node VMs to be created"
+            },
+            "defaultValue": "Standard_D4s_v3"
+        },
+        "vmImageSku": {
+            "type": "string",
+            "allowedValues": [
+                "2019-Datacenter",
+                "2016-Datacenter"
+            ],
+            "metadata": {
+                "description": "Version of Windows Server to be used for provisioning VMs"
+            },
+            "defaultValue": "2019-Datacenter"
+        },
+        "existingSubnetResourceID": {
+            "type": "string",
+            "metadata": {
+                "description": "Resource ID for existing Virtual Network subnet to which VM NICs should be attached"
+            }
+        },
+        "enableAcceleratedNetworking": {
+            "type": "bool",
+            "metadata": {
+                "description": "Enable (true) or Disable (false) Accelerated Networking - if enabling, confirm that you are selecting appropriate VM Size and Region"
+            },
+            "defaultValue": true
+        },
+        "ilbIPAddress": {
+            "type": "string",
+            "metadata": {
+                "description": "Static private IP Address to be assigned to internal load balancer for clustered workload"
+            }
+        },
+        "ilbProbePort": {
+            "type": "int",
+            "metadata": {
+                "description": "TCP port used for ILB health probe"
+            },
+            "defaultValue": 49100
+        },
+        "enableOutboundSNAT": {
+            "type": "bool",
+            "metadata": {
+                "description": "Enable support for outbound SNAT with Azure Load Balancer"
+            },
+            "defaultValue": true
+        },
+        "dataDiskSizeGB": {
+            "type": "int",
+            "minValue": 256,
+            "maxValue": 32767,
+            "metadata": {
+                "description": "Size of shared data disk for cluster in GB (Min=256, Max=32767)"
+            },
+            "defaultValue": 1023
+        },
+        "dataDiskDriveLetter": {
+            "type": "string",
+            "allowedValues": [
+                "F",
+                "G",
+                "H",
+                "I",
+                "J",
+                "K",
+                "L",
+                "M",
+                "N",
+                "O",
+                "P",
+                "Q",
+                "R",
+                "S",
+                "T",
+                "U",
+                "V",
+                "W",
+                "X",
+                "Y",
+                "Z"
+            ],
+            "metadata": {
+                "description": "Drive Letter to assign to Shared Data Volume"
+            },
+            "defaultValue": "F"
+        },
+        "dataDiskType": {
+            "type": "string",
+            "defaultValue": "Premium_ZRS",
+            "allowedValues": [
+                "Standard_LRS",
+                "Premium_LRS",
+                "StandardSSD_LRS",
+                "StandardSSD_ZRS",
+                "Premium_ZRS"
+            ]
+        },
+
+        "witnessType": {
+            "type": "string",
+            "allowedValues": [
+                "Cloud",
+                "Disk"
+            ],
+            "metadata": {
+                "description": "Type of cluster quorum witness (Disk or Cloud)"
+            },
+            "defaultValue": "Cloud"
+        },
+        "_artifactsLocation": {
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/main/SharedDiskSamples"
+        },
+        "_artifactsLocationSasToken": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Auto-generated token to access _artifactsLocation"
+            },
+            "defaultValue": ""
+        }
+    },
+    "variables": {
+        "computeApiVersion": "2020-12-01",
+        "ppgName": "[concat(parameters('namePrefix'),'-ppg')]",
+
+        "asName": "[concat(parameters('namePrefix'),'-as')]",
+        "asPlatformFaultDomainCount": 2,
+        "asPlatformUpdateDomainCount": 5,
+        "asSkuName": "Aligned",
+        "dataDiskName": "[concat(parameters('namePrefix'),'-datadisk0')]",
+        "witnessDiskName": "[concat(parameters('namePrefix'),'-witnessdisk0')]",
+        "witnessDiskSizeGB": 256,
+        "dataDisks": [
+            {
+                "lun": 0,
+                "name": "[variables('dataDiskName')]",
+                "createOption": "attach",
+                "managedDisk": {
+                    "id": "[resourceId('Microsoft.Compute/disks/', variables('dataDiskName'))]"
+                }
+            },
+            {
+                "lun": 1,
+                "name": "[variables('witnessDiskName')]",
+                "createOption": "attach",
+                "managedDisk": {
+                    "id": "[resourceId('Microsoft.Compute/disks/', variables('witnessDiskName'))]"
+                }
+            }
+        ],
+        "diskArray": "[take(variables('dataDisks'),if(equals(parameters('witnessType'),'Cloud'),1,2))]",
+        "witnessStorageName": "[toLower(concat(parameters('namePrefix'),'w',uniqueString(resourceGroup().name)))]",
+        "witnessStorageType": "Premium_ZRS",
+        "apiVersionStorage": "2019-06-01",
+        "clusterIpNeed": "[if(not(startsWith(parameters('vmImageSku'),'2019')),2,1)]",
+        "ilbName": "[concat(parameters('namePrefix'),'-ilb')]",
+        "ilbFeIpConfigs": [
+            {
+                "name": "feIpConfig0",
+                "properties": {
+                    "privateIPAllocationMethod": "Static",
+                    "privateIPAddress": "[parameters('ilbIPAddress')]",
+                    "subnet": {
+                        "id": "[parameters('existingSubnetResourceID')]"
+                    }
+                }
+            },
+            {
+                "name": "feIpConfig1",
+                "properties": {
+                    "privateIPAllocationMethod": "Dynamic",
+                    "subnet": {
+                        "id": "[parameters('existingSubnetResourceID')]"
+                    }
+                }
+            }
+        ],
+        "ilbFeIpConfigArray": "[take(variables('ilbFeIpConfigs'),variables('clusterIpNeed'))]",
+        "ilbListenPorts": [
+            {
+                "feIpConfigId": "[concat(resourceId('Microsoft.Network/loadBalancers',variables('ilbName')),'/frontendIPConfigurations/feIpConfig0')]",
+                "protocol": "All",
+                "frontend": 0,
+                "backend": 0,
+                "probeId": "[concat(resourceId('Microsoft.Network/loadBalancers',variables('ilbName')),'/probes/probe0')]"
+            },
+            {
+                "feIpConfigId": "[concat(resourceId('Microsoft.Network/loadBalancers',variables('ilbName')),'/frontendIPConfigurations/feIpConfig1')]",
+                "protocol": "All",
+                "frontend": 0,
+                "backend": 0,
+                "probeId": "[concat(resourceId('Microsoft.Network/loadBalancers',variables('ilbName')),'/probes/probe1')]"
+            }
+        ],
+        "ilbListenPortArray": "[take(variables('ilbListenPorts'),variables('clusterIpNeed'))]",
+        "ilbProbePorts": [
+            {
+                "name": "probe0",
+                "properties": {
+                    "protocol": "Tcp",
+                    "port": "[parameters('ilbProbePort')]",
+                    "intervalInSeconds": 5,
+                    "numberOfProbes": 2
+                }
+            },
+            {
+                "name": "probe1",
+                "properties": {
+                    "protocol": "Tcp",
+                    "port": "[add(parameters('ilbProbePort'),1)]",
+                    "intervalInSeconds": 5,
+                    "numberOfProbes": 2
+                }
+            }
+        ],
+        "ilbProbePortArray": "[take(variables('ilbProbePorts'),variables('clusterIpNeed'))]",
+        "snatPipName": "[concat(parameters('namePrefix'),'-snatpip')]",
+        "snatLbName": "[concat(parameters('namePrefix'),'-snatlb')]",
+        "nicLbAddressPools": [
+            {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers',variables('ilbName')),'/backendAddressPools/bePool0')]"
+            },
+            {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers',variables('snatLbName')),'/backendAddressPools/bePool0')]"
+            }
+        ],
+        "nicLbAddressPoolArray": "[if(parameters('enableOutboundSNAT'),variables('nicLbAddressPools'),take(variables('nicLbAddressPools'),1))]",
+        "vmCount": 2,
+        "vmLoopMode": "serial",
+        "vmImagePublisher": "MicrosoftWindowsServer",
+        "vmImageOffer": "WindowsServer",
+        "vmImageVersion": "latest",
+        "clusterPrepURL": "[concat(parameters('_artifactsLocation'),'/dsc/PrepareClusterNode.ps1.zip')]",
+        "clusterPrepScript": "PrepareClusterNode.ps1",
+        "clusterPrepFunction": "PrepareClusterNode",
+        "clusterConfigURL": "[concat(parameters('_artifactsLocation'),'/dsc/ConfigureCluster.ps1.zip')]",
+        "clusterConfigScript": "ConfigureCluster.ps1",
+        "clusterConfigFunction": "ConfigureCluster",
+        "clusterName": "[toUpper(concat(parameters('namePrefix'),'c'))]",
+    },
+    "resources": [
+        {
+            "name": "[variables('ppgName')]",
+            "type": "Microsoft.Compute/proximityPlacementGroups",
+            "location": "[parameters('location')]",
+            "apiVersion": "2019-03-01"
+        },
+        {
+            "name": "[variables('asName')]",
+            "type": "Microsoft.Compute/availabilitySets",
+            "location": "[parameters('location')]",
+            "apiVersion": "2019-07-01",
+            "dependsOn": [
+                "[variables('ppgName')]"
+            ],
+            "properties": {
+                "platformFaultDomainCount": "[variables('asPlatformFaultDomainCount')]",
+                "platformUpdateDomainCount": "[variables('asplatformUpdateDomainCount')]",
+                "proximityPlacementGroup": {
+                    "id": "[resourceId('Microsoft.Compute/proximityPlacementGroups', variables('ppgName'))]"
+                }
+            },
+            "sku": {
+                "name": "[variables('asSkuName')]"
+            }
+        },
+        {
+            "name": "[variables('dataDiskName')]",
+            "type": "Microsoft.Compute/disks",
+            "location": "[parameters('location')]",
+            "apiVersion": "2020-12-01",
+            "sku": {
+                "name": "[parameters('dataDiskType')]"
+            },
+            "properties": {
+                "creationData": {
+                    "createOption": "Empty"
+                },
+                "diskSizeGB": "[parameters('dataDiskSizeGB')]",
+                "maxShares": "[variables('vmCount')]"
+            }
+        },
+        {
+            "name": "[variables('witnessDiskName')]",
+            "type": "Microsoft.Compute/disks",
+            "location": "[parameters('location')]",
+            "apiVersion": "2020-12-01",
+            "condition": "[equals(parameters('witnessType'),'Disk')]",
+            "sku": {
+                "name": "[variables('witnessStorageType')]"
+            },
+            "properties": {
+                "creationData": {
+                    "createOption": "Empty"
+                },
+                "diskSizeGB": "[variables('witnessDiskSizeGB')]",
+                "maxShares": "[variables('vmCount')]"
+            }
+        },
+        {
+            "name": "[variables('witnessStorageName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "location": "[parameters('location')]",
+            "apiVersion": "2019-06-01",
+            "condition": "[equals(parameters('witnessType'),'Cloud')]",
+            "sku": {
+                "name": "[variables('witnessStorageType')]"
+            },
+            "kind": "Storage"
+        },
+        {
+            "name": "[variables('ilbName')]",
+            "type": "Microsoft.Network/loadBalancers",
+            "location": "[parameters('location')]",
+            "apiVersion": "2019-11-01",
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "frontendIPConfigurations": "[variables('ilbFeIpConfigArray')]",
+                "backendAddressPools": [
+                    {
+                        "name": "bePool0"
+                    }
+                ],
+                "copy": [
+                    {
+                        "name": "loadBalancingRules",
+                        "count": "[length(variables('ilbListenPortArray'))]",
+                        "input": {
+                            "name": "[concat('rule',copyIndex('loadBalancingRules'))]",
+                            "properties": {
+                                "frontendIPConfiguration": {
+                                    "id": "[variables('ilbListenPorts')[copyIndex('loadBalancingRules')].feIpConfigId]"
+                                },
+                                "backendAddressPool": {
+                                    "id": "[concat(resourceId('Microsoft.Network/loadBalancers',variables('ilbName')),'/backendAddressPools/bePool0')]"
+                                },
+                                "probe": {
+                                    "id": "[variables('ilbListenPorts')[copyIndex('loadBalancingRules')].probeId]"
+                                },
+                                "protocol": "[variables('ilbListenPorts')[copyIndex('loadBalancingRules')].protocol]",
+                                "frontendPort": "[variables('ilbListenPorts')[copyIndex('loadBalancingRules')].frontend]",
+                                "backendPort": "[variables('ilbListenPorts')[copyIndex('loadBalancingRules')].backend]",
+                                "idleTimeoutInMinutes": 30,
+                                "enableFloatingIP": true
+                            }
+                        }
+                    }
+                ],
+                "probes": "[variables('ilbProbePortArray')]"
+            }
+        },
+        {
+            "name": "[variables('snatPipName')]",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "location": "[parameters('location')]",
+            "apiVersion": "2019-11-01",
+            "sku": {
+                "name": "Standard"
+            },
+            "condition": "[parameters('enableOutboundSNAT')]",
+            "properties": {
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Static",
+                "idleTimeoutInMinutes": 4
+            }
+        },
+        {
+            "name": "[variables('snatLbName')]",
+            "type": "Microsoft.Network/loadBalancers",
+            "location": "[parameters('location')]",
+            "apiVersion": "2019-11-01",
+            "dependsOn": [
+                "[variables('snatPipName')]"
+            ],
+            "condition": "[parameters('enableOutboundSNAT')]",
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "frontendIPConfigurations": [
+                    {
+                        "name": "feIpConfig0",
+                        "properties": {
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('snatPipName'))]"
+                            }
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "bePool0"
+                    }
+                ],
+                "loadBalancingRules": [
+                ],
+                "probes": [
+                ],
+                "inboundNatRules": [
+                ],
+                "outboundRules": [
+                    {
+                        "name": "rule0",
+                        "properties": {
+                            "allocatedOutboundPorts": 0,
+                            "protocol": "All",
+                            "enableTcpReset": true,
+                            "idleTimeoutInMinutes": 4,
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('snatLbName')), '/backendAddressPools/bePool0')]"
+                            },
+                            "frontendIPConfigurations": [
+                                {
+                                    "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('snatLbName')), '/frontendIPConfigurations/feIpConfig0')]"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[concat(parameters('namePrefix'), copyindex(), '-nic')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "location": "[parameters('location')]",
+            "apiVersion": "2019-11-01",
+            "copy": {
+                "name": "nicLoop",
+                "count": "[variables('vmCount')]"
+            },
+            "dependsOn": [
+                "[variables('ilbName')]",
+                "[variables('snatLbName')]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig0",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[parameters('existingSubnetResourceID')]"
+                            },
+                            "loadBalancerBackendAddressPools": "[variables('nicLbAddressPoolArray')]"
+                        }
+                    }
+                ],
+                "enableAcceleratedNetworking": "[parameters('enableAcceleratedNetworking')]"
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "[variables('computeApiVersion')]",
+            "name": "[concat(parameters('namePrefix'), 'vm', copyindex())]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('namePrefix'), copyindex(), '-nic'))]",
+                "[resourceId('Microsoft.Compute/availabilitySets', variables('asName'))]",
+                "[resourceId('Microsoft.Compute/disks', variables('dataDiskName'))]",
+                "[resourceId('Microsoft.Compute/disks', variables('witnessDiskName'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('vmSize')]"
+                },
+                "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('asName'))]"
+                },
+                "osProfile": {
+                    "computerName": "[toUpper(concat(parameters('namePrefix'), 'vm', copyindex()))]",
+                    "adminUsername": "[parameters('existingAdminUsername')]",
+                    "adminPassword": "[parameters('existingAdminPassword')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('vmImagePublisher')]",
+                        "offer": "[variables('vmImageOffer')]",
+                        "sku": "[parameters('vmImageSKU')]",
+                        "version": "[variables('vmImageVersion')]"
+                    },
+                    "osDisk": {
+                        "name": "[concat(parameters('namePrefix'), copyindex(), '-osdisk')]",
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage"
+                    },
+                    "dataDisks": "[variables('diskArray')]"
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('namePrefix'), copyindex(), '-nic'))]"
+                        }
+                    ]
+                }
+            },
+            "copy": {
+                "name": "vmLoop",
+                "mode": "[variables('vmLoopMode')]",
+                "count": "[variables('vmCount')]"
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('namePrefix'), 'vm', copyindex(1),'/PrepareClusterNode')]",
+            "apiVersion": "[variables('computeApiVersion')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "vmLoop"
+            ],
+            "copy": {
+                "name": "vmExtensionLoop",
+                "count": "[sub(variables('vmCount'),1)]"
+            },
+            "properties": {
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.80",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "wmfVersion": "latest",
+                    "configuration": {
+                        "url": "[variables('clusterPrepURL')]",
+                        "script": "[variables('clusterPrepScript')]",
+                        "function": "[variables('clusterPrepFunction')]"
+                    },
+                    "configurationArguments": {
+                        "domainName": "[parameters('existingDomainName')]",
+                        "listenerProbePort1": "[variables('ilbProbePorts')[0].properties.port]",
+                        "listenerProbePort2": "[variables('ilbProbePorts')[1].properties.port]"
+                    }
+                },
+                "protectedSettings": {
+                    "configurationUrlSasToken": "[parameters('_artifactsLocationSasToken')]",
+                    "configurationArguments": {
+                        "adminCreds": {
+                            "userName": "[parameters('existingAdminUsername')]",
+                            "password": "[parameters('existingAdminPassword')]"
+                        }
+                    }
+
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('namePrefix'), 'vm', '0/ConfigureCluster')]",
+            "apiVersion": "[variables('computeApiVersion')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "vmExtensionLoop",
+                "[variables('witnessStorageName')]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.80",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "wmfVersion": "latest",
+                    "configuration": {
+                        "url": "[variables('clusterConfigURL')]",
+                        "script": "[variables('clusterConfigScript')]",
+                        "function": "[variables('clusterConfigFunction')]"
+                    },
+                    "configurationArguments": {
+                        "domainName": "[parameters('existingDomainName')]",
+                        "clusterName": "[variables('clusterName')]",
+                        "namePrefix": "[toUpper(parameters('namePrefix'))]",
+                        "vmCount": "[variables('vmCount')]",
+                        "dataDiskSizeGB": "[parameters('dataDiskSizeGB')]",
+                        "dataDiskDriveLetter": "[parameters('dataDiskDriveLetter')]",
+                        "witnessType": "[parameters('witnessType')]",
+                        "witnessStorageName": "[if(equals(parameters('witnessType'),'Cloud'),variables('witnessStorageName'),'')]",
+                        "listenerIPAddress1": "[reference(variables('ilbName')).frontendIPConfigurations[0].properties.privateIPAddress]",
+                        "listenerIPAddress2": "[if(equals(variables('clusterIpNeed'),2),reference(variables('ilbName')).frontendIPConfigurations[1].properties.privateIPAddress,'0.0.0.0')]",
+                        "listenerProbePort1": "[variables('ilbProbePorts')[0].properties.port]",
+                        "listenerProbePort2": "[variables('ilbProbePorts')[1].properties.port]"
+                    }
+                },
+                "protectedSettings": {
+                    "configurationArguments": {
+                        "adminCreds": {
+                            "userName": "[parameters('existingAdminUsername')]",
+                            "password": "[parameters('existingAdminPassword')]"
+                        },
+                        "witnessStorageKey": {
+                            "userName": "PLACEHOLDER-DO-NOT-USE",
+                            "password": "[if(equals(parameters('witnessType'),'Cloud'),listKeys(resourceId('Microsoft.Storage/storageAccounts',variables('witnessStorageName')),variables('apiVersionStorage')).keys[0].value,'PLACEHOLDER-DO-NOT-USE')]"
+                        }
+                    },
+                    "configurationUrlSasToken": "[parameters('_artifactsLocationSasToken')]"
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "clusterName": {
+            "type": "string",
+            "value": "[concat(variables('clusterName'),'.',parameters('existingDomainName'))]"
+        },
+        "clusterMgmtIp": {
+            "type": "string",
+            "value": "[if(equals(variables('clusterIpNeed'),2),reference(variables('ilbName')).frontendIPConfigurations[1].properties.privateIPAddress,'0.0.0.0')]"
+        },
+        "sapClusterIp": {
+            "type": "string",
+            "value": "[reference(variables('ilbName')).frontendIPConfigurations[0].properties.privateIPAddress]"
+        }
+    }
+}

@@ -37,147 +37,208 @@
 
 Param(
     
-[Parameter(Mandatory=$True, HelpMessage="SAP System <SID>. 3 characters , starts with letter.")] 
-[ValidateLength(3,3)]
-[string] $SAPSID,
+    [Parameter(Mandatory=$True, HelpMessage="SAP System <SID>. 3 characters , starts with letter.")] 
+    [ValidateLength(3,3)]
+    [string] $SAPSID,
 
-[Parameter(Mandatory=$False)] 
-[int] $SoftShutdownTimeInSeconds = "300",
+    [Parameter(Mandatory=$False)] 
+    [int] $SoftShutdownTimeInSeconds = "300",
 
-[Parameter(Mandatory=$False)] 
-[bool] $ConvertDisksToStandard =  $False,
+    [Parameter(Mandatory=$False)] 
+    [bool] $ConvertDisksToStandard =  $False,
 
-[Parameter(Mandatory=$False)] 
-[bool] $PrintExecutionCommand = $False
+    [Parameter(Mandatory=$False)] 
+    [bool] $PrintExecutionCommand = $False,
 
+    [Parameter(Mandatory=$false, HelpMessage="Subscription ID. If null, the current subscription of automation account is used instead.")] 
+    [ValidateLength(36,36)]
+    [string] $SubscriptionId,
+    
+    [Parameter(Mandatory=$False, HelpMessage="Identifier of user calling the runbook")] 
+    [string] $User = "",
+    
+    [Parameter(Mandatory=$False, HelpMessage="URL of hook, e.g. logicApp with SAS token")] 
+    [string] $PostProcessingHook = ""
 )
+try {
+	# Deprecated due to using System Managed Identity
+	#$connection = Get-AutomationConnection -Name AzureRunAsConnection
+	#Add-AzAccount  -ServicePrincipal -Tenant $connection.TenantID -ApplicationId $connection.ApplicationID -CertificateThumbprint $connection.CertificateThumbprint 
 
-# Connect to Azure
-$connection = Get-AutomationConnection -Name AzureRunAsConnection
-Add-AzAccount  -ServicePrincipal -Tenant $connection.TenantID -ApplicationId $connection.ApplicationID -CertificateThumbprint $connection.CertificateThumbprint 
+	# Connect to Azure with Automation Account system-assigned managed identity
+	# Ensure that you do not inherit an AZ Context in your runbook
+	Disable-AzContextAutosave -Scope Process | out-null
 
-# get start time
-$StartTime = Get-Date
+	# Connect using Managed Service Identity
+	try {
+		$AzureContext = (Connect-AzAccount -Identity -WarningAction Ignore).context
+	}
+	catch{
+		Write-Output "There is no system-assigned user identity. Aborting."; 
+		Write-Error  $_.Exception.Message
+		exit
+	}
 
-$SAPSID = $SAPSID.Trim()
+	if ($SubscriptionId){
+		$SubscriptionId = $SubscriptionId.trim()
+		Select-AzSubscription -SubscriptionId $SubscriptionId -ErrorVariable -notPresent  -ErrorAction SilentlyContinue -Tenant $AzureContext.Tenant
+	}
 
-# Connect to Azure
-$connection = Get-AutomationConnection -Name AzureRunAsConnection
-Add-AzAccount  -ServicePrincipal -Tenant $connection.TenantID -ApplicationId $connection.ApplicationID -CertificateThumbprint $connection.CertificateThumbprint 
+	# get start time
+	$StartTime = Get-Date
 
-# get start time
-$StartTime = Get-Date
+	$SAPSID = $SAPSID.Trim()
 
-$SAPSID  = $SAPSID.Trim()
+	# Connect to Azure
+	$connection = Get-AutomationConnection -Name AzureRunAsConnection
+	Add-AzAccount  -ServicePrincipal -Tenant $connection.TenantID -ApplicationId $connection.ApplicationID -CertificateThumbprint $connection.CertificateThumbprint 
 
-#Test if Tag 'SAPSystemSID' with value $SAPSID exist. If not exit
-Test-AzSAPSIDTagExist -SAPSID $SAPSID
+	# get start time
+	$StartTime = Get-Date
 
-# Get SAP Appplication VMs
-$SAPSIDApplicationVMs  = Get-AzSAPApplicationInstances -SAPSID $SAPSID
+	$SAPSID  = $SAPSID.Trim()
 
-Write-Output ""
+	#Test if Tag 'SAPSystemSID' with value $SAPSID exist. If not exit
+	Test-AzSAPSIDTagExist -SAPSID $SAPSID
 
-# List SAP Application layer VM
-Write-Output ""
-Write-WithTime "SAP Application layer VMs:"
-Show-AzSAPSIDVMApplicationInstances -SAPVMs $SAPSIDApplicationVMs
+	# Get SAP Appplication VMs
+	$SAPSIDApplicationVMs  = Get-AzSAPApplicationInstances -SAPSID $SAPSID
 
-# Get DBMS VMs
-$SAPSIDDBMSVMs  = Get-AzSAPDBMSInstances -SAPSID $SAPSID
+	Write-Output ""
 
-# List SAP DBMS layer VM(s)
-Write-Output ""
-Write-WithTime "SAP DBMS layer VM(s):"
-Show-AzSAPSIDVMDBMSInstances -SAPVMs $SAPSIDDBMSVMs
+	# List SAP Application layer VM
+	Write-Output ""
+	Write-WithTime "SAP Application layer VMs:"
+	Show-AzSAPSIDVMApplicationInstances -SAPVMs $SAPSIDApplicationVMs
 
-###################
-# Stop SAP
-###################
+	# Get DBMS VMs
+	$SAPSIDDBMSVMs  = Get-AzSAPDBMSInstances -SAPSID $SAPSID
 
-# Get SAP System Status
-Write-Output ""
-Get-AzSAPSystemStatus -SAPSIDApplicationVMs $SAPSIDApplicationVMs -PrintExecutionCommand $PrintExecutionCommand 
+	# List SAP DBMS layer VM(s)
+	Write-Output ""
+	Write-WithTime "SAP DBMS layer VM(s):"
+	Show-AzSAPSIDVMDBMSInstances -SAPVMs $SAPSIDDBMSVMs
 
-# Stop SAP system
-Write-Output ""
-Stop-AzSAPSystem  -SAPSIDApplicationVMs $SAPSIDApplicationVMs -SoftShutdownTimeInSeconds $SoftShutdownTimeInSeconds -PrintExecutionCommand $PrintExecutionCommand  
+	###################
+	# Stop SAP
+	###################
 
-# Get SAP System Status
-Write-Output ""
-Get-AzSAPSystemStatus -SAPSIDApplicationVMs $SAPSIDApplicationVMs -PrintExecutionCommand $PrintExecutionCommand 
+	# Get SAP System Status
+	Write-Output ""
+	Get-AzSAPSystemStatus -SAPSIDApplicationVMs $SAPSIDApplicationVMs -PrintExecutionCommand $PrintExecutionCommand 
 
-###################
-# Stop DBMS
-###################
+	# Stop SAP system
+	Write-Output ""
+	Stop-AzSAPSystem  -SAPSIDApplicationVMs $SAPSIDApplicationVMs -SoftShutdownTimeInSeconds $SoftShutdownTimeInSeconds -PrintExecutionCommand $PrintExecutionCommand  
 
-# get DBMS Status
-Write-Output ""
-Get-AzDBMSStatus -SAPSIDDBMSVMs $SAPSIDDBMSVMs -PrintExecutionCommand $PrintExecutionCommand
+	# Get SAP System Status
+	Write-Output ""
+	Get-AzSAPSystemStatus -SAPSIDApplicationVMs $SAPSIDApplicationVMs -PrintExecutionCommand $PrintExecutionCommand 
 
-# Stop DBMS
-Write-Output ""
-Stop-AzDBMS -SAPSIDDBMSVMs $SAPSIDDBMSVMs -PrintExecutionCommand $PrintExecutionCommand
+	###################
+	# Stop DBMS
+	###################
 
-# get DBMS Status
-Write-Output ""
-Get-AzDBMSStatus -SAPSIDDBMSVMs $SAPSIDDBMSVMs -PrintExecutionCommand $PrintExecutionCommand
+	# get DBMS Status
+	Write-Output ""
+	Get-AzDBMSStatus -SAPSIDDBMSVMs $SAPSIDDBMSVMs -PrintExecutionCommand $PrintExecutionCommand
 
-###################
-# Stop VMs
-###################
+	# Stop DBMS
+	Write-Output ""
+	Stop-AzDBMS -SAPSIDDBMSVMs $SAPSIDDBMSVMs -PrintExecutionCommand $PrintExecutionCommand
 
-Write-WithTime "Stopping VMs ...."
+	# get DBMS Status
+	Write-Output ""
+	Get-AzDBMSStatus -SAPSIDDBMSVMs $SAPSIDDBMSVMs -PrintExecutionCommand $PrintExecutionCommand
 
-# Stop ABAP Application Servers (Dialog Instances) VMs
-Write-Output ""
-Stop-AzVMTagAndCheckVMStatus -SAPVMs $SAPSIDApplicationVMs -SAPInstanceType "SAP_D"
+	###################
+	# Stop VMs
+	###################
 
-# Stop Java Application Servers VMs
-Write-Output ""
-Stop-AzVMTagAndCheckVMStatus -SAPVMs $SAPSIDApplicationVMs -SAPInstanceType "SAP_J"
+	Write-WithTime "Stopping VMs ...."
 
-# Stop ABAP ASCS Instance VMs
-Write-Output ""
-Stop-AzVMTagAndCheckVMStatus -SAPVMs $SAPSIDApplicationVMs -SAPInstanceType "SAP_ASCS"
+	# Stop ABAP Application Servers (Dialog Instances) VMs
+	Write-Output ""
+	Stop-AzVMTagAndCheckVMStatus -SAPVMs $SAPSIDApplicationVMs -SAPInstanceType "SAP_D"
 
-# Stop ABAP DVEBMGS Instance VM
-Stop-AzVMTagAndCheckVMStatus -SAPVMs $SAPSIDApplicationVMs -SAPInstanceType "SAP_DVEBMGS"
+	# Stop Java Application Servers VMs
+	Write-Output ""
+	Stop-AzVMTagAndCheckVMStatus -SAPVMs $SAPSIDApplicationVMs -SAPInstanceType "SAP_J"
 
-# Stop Java SCS Instance VMs
-Write-Output ""
-Stop-AzVMTagAndCheckVMStatus -SAPVMs $SAPSIDApplicationVMs -SAPInstanceType "SAP_SCS"
+	# Stop ABAP ASCS Instance VMs
+	Write-Output ""
+	Stop-AzVMTagAndCheckVMStatus -SAPVMs $SAPSIDApplicationVMs -SAPInstanceType "SAP_ASCS"
 
-# Stop DBMS VMs
-Write-Output ""
-Stop-AzVMTagAndCheckVMStatus -SAPVMs $SAPSIDDBMSVMs -SAPInstanceType "SAP_DBMS"
+	# Stop ABAP DVEBMGS Instance VM
+	Stop-AzVMTagAndCheckVMStatus -SAPVMs $SAPSIDApplicationVMs -SAPInstanceType "SAP_DVEBMGS"
 
-####################################
-# Convert the disks to Standard_LRS
-####################################
+	# Stop Java SCS Instance VMs
+	Write-Output ""
+	Stop-AzVMTagAndCheckVMStatus -SAPVMs $SAPSIDApplicationVMs -SAPInstanceType "SAP_SCS"
 
-if($ConvertDisksToStandard){
-    Convert-AzALLSAPSystemVMsCollectionManagedDisksToStandard -SAPSIDApplicationVMs $SAPSIDApplicationVMs -SAPSIDDBMSVMs $SAPSIDDBMSVMs
+	# Stop DBMS VMs
+	Write-Output ""
+	Stop-AzVMTagAndCheckVMStatus -SAPVMs $SAPSIDDBMSVMs -SAPInstanceType "SAP_DBMS"
+
+	####################################
+	# Convert the disks to Standard_LRS
+	####################################
+
+	if($ConvertDisksToStandard){
+	    Convert-AzALLSAPSystemVMsCollectionManagedDisksToStandard -SAPSIDApplicationVMs $SAPSIDApplicationVMs -SAPSIDDBMSVMs $SAPSIDDBMSVMs
+	}
+
+	# Get end time
+	$EndTime = Get-Date
+	$ElapsedTime = $EndTime - $StartTime
+
+	Write-Output ""
+	Write-Output "Job succesfully finished."
+	Write-Output ""
+
+	Write-Output "SUMMARY:"
+	If($ConvertDisksToStandard){
+	    Write-Output "  - All disks set to 'Standard_LRS' type."
+	}else{
+	    Write-Output "  - All disks types are NOT changed."
+	}
+	Write-Output "  - Virtual machine(s) stopped."
+	Write-Output "  - DBMS stopped."
+	Write-Output "  - SAP system '$SAPSID' stopped."
+	Write-Output ""
+
+
+	Write-Output "[INFO] Total time : $($ElapsedTime.Days) days, $($ElapsedTime.Hours) hours,  $($ElapsedTime.Minutes) minutes, $($ElapsedTime.Seconds) seconds, $($ElapsedTime.Seconds) milliseconds."
+	
+	###################
+    	# POST-PROCESSING
+    	###################
+    
+    	If($PostProcessingHook){
+       	     $body = @{
+		    sid = $SAPSID
+		    totalRuntime = "$($ElapsedTime.Hours)h$($ElapsedTime.Minutes)m$($ElapsedTime.Seconds)s"
+		    status = "successfully"
+		    user = $User
+		    msg = "stopped"
+	    }
+	    Invoke-RestMethod -Method 'Post' -Uri $PostProcessingHook -Body ($body|ConvertTo-Json) -ContentType "application/json"
+    	}
+	Else{
+	    Write-Output "No webhook defined."
+    	}
 }
-
-# Get end time
-$EndTime = Get-Date
-$ElapsedTime = $EndTime - $StartTime
-
-Write-Output ""
-Write-Output "Job succesfully finished."
-Write-Output ""
-
-Write-Output "SUMMARY:"
-If($ConvertDisksToStandard){
-    Write-Output "  - All disks set to 'Standard_LRS' type."
-}else{
-    Write-Output "  - All disks types are NOT changed."
+catch {
+    If($PostProcessingHook){
+        $body = @{
+                sid = $SAPSID
+                totalRuntime = "$($ElapsedTime.Hours)h$($ElapsedTime.Minutes)m$($ElapsedTime.Seconds)s"
+                status = "Stop SAP failed"
+                user = $User
+                msg = $_.ErrorDetails
+            }
+        Invoke-RestMethod -Method 'Post' -Uri $PostProcessingHook -Body ($body|ConvertTo-Json) -ContentType "application/json"
+    }Else{
+        Write-Output "No webhook defined."
+    }
 }
-Write-Output "  - Virtual machine(s) stopped."
-Write-Output "  - DBMS stopped."
-Write-Output "  - SAP system '$SAPSID' stopped."
-Write-Output ""
-
-
-Write-Output "[INFO] Total time : $($ElapsedTime.Days) days, $($ElapsedTime.Hours) hours,  $($ElapsedTime.Minutes) minutes, $($ElapsedTime.Seconds) seconds, $($ElapsedTime.Seconds) milliseconds."

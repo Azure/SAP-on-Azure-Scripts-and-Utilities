@@ -4,16 +4,18 @@ The goal of this solution is to facilitate a controlled shutdown/startup
 of SAP on Azure systems, which is a common request from customers who
 want to save costs by shutting down environments that are not in use.
 
-This is ready, flexible, end-to-end solution (including PaaS Azure automation runtime environment, scripts, and runbooks, tagging process etc.) that enables you automatically.
-- Start / Stop of your SAP systems DBMS, and VMs:
-- SAP application servers
-- If you use managed disks (Premium and Standard), you can decide to convert them to Standard during the stop procedure, and to Premium during the start procedure.
+This is ready, flexible, end-to-end solution (including PaaS Azure automation runtime environment, scripts, and runbooks, tagging process etc.) that enables you automatically **Start / Stop** of your
 
-In this way, **cost saving** is achieved both on the **compute** as well as on the **storage** side! 
+- SAP systems DBMS, and VMs,
+- SAP application servers,
+- if you use managed disks (Premium and Standard), you can decide to convert them to Standard during the stop procedure, and to Premium during the start procedure and
+- Notifying users via Microsoft Teams and Outlook (orchestrated via LogicApps for instance), or any webhook enabled app using the post-processing feature of the parent [runbooks](Runbooks/Start-SAPSystem.ps1).
+
+This way, **cost saving** is achieved both on the **compute** as well as on the **storage** side! 
 
 SAP systems stop and SAP application servers stop is specially cared for in a graceful way, allowing SAP users and batch jobs to finish. In this way you can minimize SAP system or SAP application server’s downtime impact. Similar is done on DBMS side. 
 
-To further enhance user experience, you can consume this functionality using a **SAP Azure Power App**. For more information you can check a great blog - Hey, SAP Systems! My PowerApp says Snooze! But only if you’re done yet.
+To further enhance user experience, you can consume this functionality using a **SAP Azure Power App**. For more information you can check a great blog - [Hey, SAP Systems! My PowerApp says Snooze! But only if you’re done yet](https://blogs.sap.com/2021/02/10/hey-sap-systems-my-powerapp-says-snooze-but-only-if-youre-ready-yet/).
 
 This solution is product of joint work of **SAP on Azure CAT Team (Cloud Advisory Team)** and **SAP on Azure FastTrack Team**.
 
@@ -78,7 +80,8 @@ The stopping of the SAP system or SAP application server will be done using an [
 
 ![](Pictures/media/image3.png)  
 
-> [!NOTE]
+> **NOTE**
+>
 > You can specify in the user interface the SAP soft shutdown time. Default value is 300 sec.  
 >![](Pictures/media/image4.png)
 
@@ -130,7 +133,8 @@ The non-prod SAP systems, like dev test, demo, training etc., typically do not r
 Productive SAP system run typical 24 / 7 and you never completely shut them down.  Still, there is a huge potential in saving on SAP application layer. SAP application layers takes a biggest amount of SAPS portion in total SAP system SAPS. 
 
 
-> [!NOTE]
+> **NOTE**
+>
 > **SAP Application Performance Standard** (**SAPS**) is a hardware-independent unit of measurement that describes the performance of a system configuration in the SAP environment. It is derived from the Sales and Distribution (SD) benchmark, where 100 SAPS is defined as 2,000 fully business processed order line items per hour. **SAPS is an SAP measure of compute process power**. 
 
 In an on-premises environment, SAP system is oversized so that it can stand the required peaks. But the reality is, those peaks are rear (maybe few days in 3 month). Most of the time such systems are underutilized. We’ve seen prod SAp systems that have 5 – 10 % of total CPU utilization most of the time. 
@@ -189,17 +193,47 @@ Click **Create**.
 
 Specify parameters:
 
-![](Pictures/media/image9.png)
+![](Pictures/media/Image80.png)
 
-Azure Automation Account is created.
+Choose **System asigned** managed identity:
 
-![](Pictures/media/image10.png)
+![](Pictures/media/Image81.png)
 
-## Import Az.Modules
+Specify **Connectivity configuration** :
+
+![](Pictures/media/Image82.png)
+
+Create account:
+
+
+![](Pictures/media/Image83.png)
+
+
+## Configure System Managed Identity
+
+Go to **Identity** tab. **System asigned** is **On**
+
+![](Pictures/media/Image84.png)
+
+Select on the left **\<Subscription Name\>**, and click on **Role assigments**  -> **Add role assigment** and specify:
+
+- Scope: **Subscription**
+- Subscription: **\<Subscription Name\>**
+- Role: **Owner**
+
+![](Pictures/media/Image85.png)
+
+
+> **NOTE**
+>
+> For more information system managed identiy check [Using a on system-assigned managed identity for an Azure Automation account](https://docs.microsoft.com/en-us/azure/automation/enable-managed-identity-for-automation#assign-role-to-a-system-assigned-managed-identity).  
+
+
+## Update Az.Modules
 
 SAP start / stop PowerShell (PS) runbooks use new Az PS module, which must be [imported](https://docs.microsoft.com/en-us/azure/automation/az-modules#import-the-az-modules) .
 
-Import Az modules:
+Update Az modules:
 
   - **Az.Account**
 
@@ -209,117 +243,54 @@ Import Az modules:
 
   - **Az.Resources**
 
-## Az.Account
+
+## Update Az.Account
 
 Go to ***Module*** -\> ***Browse Gallery***
 
 Search for **Az.Account** module.
 
-![](Pictures/media/image11.png)
+![](Pictures/media/Image86.png)
 
-Select **Az.Account** module and click **Import:**
+Select **Az.Account** module and click **Select**
 
-![](Pictures/media/image12.png)
+![](Pictures/media/Image87.png)
 
-Import is in progress..
+Chose PowerShell runtime version **5.1** and clisk **Import**.
 
-![](Pictures/media/image13.png)
+![](Pictures/media/Image88.png)
 
-Import is finished:
+## Import Az.Compute, Az.Automation, Az.Resources
 
-![](Pictures/media/image14.png)
+Repeat the same procdure to update modules:
 
-## Import Az.Compute
-
-Go to ***Module*** -\> ***Browse Gallery***
-
-Search for **Az.Compute**
-
-![](Pictures/media/image15.png)
-
-Select **Az.Compute** module and click **Import:**
-
-Import in progress…
-
-![](Pictures/media/image16.png)
-
-Import is finished.
-
-![](Pictures/media/image17.png)
-
-## Import Az.Automation
-
-Go to ***Module*** -\> ***Browse Gallery***
-
-Search for **Az.Automation** module.
-
-![](Pictures/media/image18.png)
-
-Select **Az.Automation** module and click **Import:  
-**
-
-![](Pictures/media/image19.png)
-
-Import is in progress…
-
-![](Pictures/media/image20.png)
-
-Import is finished.
-
-![](Pictures/media/image21.png)
-
-
-## Az.Resources
-
-Go to ***Module*** -\> ***Browse Gallery***
-
-Search for **Az.Resources** module.
-
-![](Pictures/media/image22.png)
-
-Select **Az.Resources** module and click **Import:**
-
-![](Pictures/media/image23.png)
-
-Import is in progress…
-
-![](Pictures/media/image24.png)
-
-Import is finished.
-
-![](Pictures/media/image25.png)
-
-ALL new modules are imported.
-
-![A screenshot of a cell phone Description automatically
-generated](Pictures/media/image26.png)
+ - Az.Compute
+ - Az.Automation
+ - Az.Resources
 
 ## Import SAP PowerShell Module
 
 Import **SAPAzurePowerShellModules** PowerShell module that will be used by SAP Runbooks.
 
-> [!NOTE]
+> **NOTE**
+>
 > PowerShell module **SAPAzurePowerShellModules** is stored in PowerShell Gallery and is easy to import into Azure automation account.
 
 Go to ***Module*** -\> ***Browse Gallery***
 
 Search for ***SAPAzurePowerShellModules*** module.
 
-![](Pictures/media/image27.png)
+![](Pictures/media/Image89.png)
 
-Select ***SAPAzurePowerShellModules*** module and click **Import** and **OK:**
+Select ***SAPAzurePowerShellModules*** module and click **Select**
 
-![](Pictures/media/image28.png)
+![](Pictures/media/Image90.png)
 
-![](Pictures/media/image29.png)
+Chose PowerShell **Runtime version** - **5.1**, and click **Import**
 
-Import is in progress…
 
-![](Pictures/media/image30.png)
+![](Pictures/media/Image91.png)
 
-Import is finished.
-
-![](Pictures/media/image31.png)
 
 # Import SAP Runbook
 
@@ -371,62 +342,33 @@ Import these runbooks:
 
   - Tag-SAPStandaloneSQLServer
 
-  -
-> [!NOTE] 
+  
+> **NOTE**
+>
 > All SAP runbooks are stored in PowerShell Gallery and are easy to import into Azure automation account.
 
-Go to **Runbooks** **Gallery**
+Go to **Runbooks** -> **Browse Gallery**
 
 For **Source** choose: **PowerShell Gallery**
 
-![Graphical user interface, text, application Description automatically
-generated](Pictures/media/image35.png)
-
 In the search field type: **Start-SAPSystem** and press Enter.
 
-![Graphical user interface, text, application Description automatically
-generated](Pictures/media/image36.png)
+![](Pictures/media/Image92.png)
 
-Click on **Start-SAPSystem** Runbook and click on **Import**.
+Click on **Start-SAPSystem** Runbook and click on **Select**.
 
-![Graphical user interface, text, application, email Description
-automatically generated](Pictures/media/image37.png)
+![](Pictures/media/Image93.png)
 
-Click **OK**.
+Enter the **Name** , e.g. in this example **Start-SAPSystem**, and PowerShell **Runtime version** of **5.1**, and click **Import**.
 
-![](Pictures/media/image38.png)
+Click **Publish** :
 
-Import succeeded:
-
-![Graphical user interface, text, application, email Description
-automatically generated](Pictures/media/image39.png)
-
-Go to **Runbooks** and click on **Start-SAPSystem** runbook.
-
-![Graphical user interface, text, application, email Description
-automatically generated](Pictures/media/image40.png)
-
-Click on **Edit**.
-
-![Graphical user interface, application Description automatically
-generated](Pictures/media/image41.png)
-
-Click **Publish** **and confirm** .
-
-![Graphical user interface, text, application, email Description
-automatically generated](Pictures/media/image42.png)
-
-And confirm it.
-
-![](Pictures/media/image43.png)
+![](Pictures/media/Image95.png)
 
 Now **Start-SAPSystem** runbook is now published and ready to be used.
 
 Import in the same way for all other runbooks.
 
-All runbooks are imported.
-
-![](Pictures/media/image50.png)
 
 # Tagging Approach
 
