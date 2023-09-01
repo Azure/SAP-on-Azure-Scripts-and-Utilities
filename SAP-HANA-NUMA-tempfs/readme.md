@@ -19,7 +19,6 @@ It automatically updates the global.ini file for the system as well.
     OPTION:
      --help           show help
      --version        show version
-     --check          
      --init           create/apply/update Hana tmpfs mountpoints based on numa at boot. Output goes to messages
      --apply          create/apply/update Hana tmpfs mountpoints based on numa
      --show           check if solution can be applied
