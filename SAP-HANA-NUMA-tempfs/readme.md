@@ -6,10 +6,29 @@ The script is used to automatically change the temporary file systems, e.g. duri
 
 It automatically updates the global.ini file for the system as well.
 
-To specifcy the required paramters please look at /etc/sysconfig/set_hana_tmpfs.config parameter file, which by default contains these options:
 
-## Path:        System/Mount/Hana/NUMA distances
-## Description: Hana tmpfs set based on numa
+## Files in RPM
+
+* /etc/sysconfig/set_hana_tmpfs.config
+* /usr/lib/systemd/system/set_hana_tmpfs.service
+* /usr/sbin/set_hana_tmpfs
+
+## Command file parameters
+
+```
+    OPTION:
+     --help           show help
+     --version        show version
+     --check          
+     --init           create/apply/update Hana tmpfs mountpoints based on numa at boot. Output goes to messages
+     --apply          create/apply/update Hana tmpfs mountpoints based on numa
+     --show           check if solution can be applied
+    
+```
+
+## Config File Sample
+
+To specifcy the required paramters please look at /etc/sysconfig/set_hana_tmpfs.config parameter file, which by default contains these options:
 
 ```
 #Config values
