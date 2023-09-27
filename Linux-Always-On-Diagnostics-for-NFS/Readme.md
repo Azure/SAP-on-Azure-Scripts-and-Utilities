@@ -2,9 +2,9 @@
 
 The Linux Always-on-Diagnostics for SLES is constantly collecting log data and network captures to diagnose errors with NFS shares.
 
-## /opt/sap-aod-aod.cfg
+## /opt/sap-aod/aod.cfg
 
-The configuration file is available in /opt/sap-aod-aod.cfg and customers can update the configuration according to their requirements.
+The configuration file is available in /opt/sap-aod/aod.cfg and customers can update the configuration according to their requirements.
 
 Default values for the configuration files are:
 
