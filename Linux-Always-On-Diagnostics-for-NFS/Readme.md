@@ -1,5 +1,7 @@
 # Linux Always-on-Diagnostics for SLES
 
+**IMPORTANT: this is a pre-release**
+
 The Linux Always-on-Diagnostics for SLES is constantly collecting log data and network captures to diagnose errors with NFS shares.
 
 ## /opt/sap-aod/aod.cfg
