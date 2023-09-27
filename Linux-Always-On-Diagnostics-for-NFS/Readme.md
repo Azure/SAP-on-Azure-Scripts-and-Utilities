@@ -29,3 +29,17 @@ AOD_NW_PROBE_TIMEOUT_SEC=3
 AOD_NW_PROBE_SLEEP_SEC=60
 AOD_NW_CAPTURE_ENABLE=0
 ```
+
+## Enable automatic collection
+
+To enable the automatic collection use the systemctl command:
+
+```
+sudo systemctl enable aod
+```
+
+You can check the status using:
+
+```
+sudo systemctl status aod
+```
