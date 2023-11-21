@@ -1,5 +1,5 @@
 {
-    "Version": 2023061301,
+    "Version": 2023113002,
     "PowerShellPrerequisits": [
         {
             "ModuleName": "Posh-SSH",
@@ -2103,7 +2103,7 @@
         {
             "CheckID": "IC-0001",
             "Description": "Hostname",
-            "OS": ["Windows","SUSE","RedHat","OracleLinux"],
+            "OS": ["SUSE","RedHat","OracleLinux"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
             "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
@@ -2111,6 +2111,22 @@
             "RunInLocalMode": true,
             "CommandType": "OS",
             "ProcessingCommand": "/bin/hostname",
+            "PostProcessingCommand": "",
+            "RootRequired": false,
+            "ShowInReport": true,
+            "HighAvailability": [false,true]
+        },
+        {
+            "CheckID": "IC-0001-01",
+            "Description": "Hostname",
+            "OS": ["Windows"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM", "HLI"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
+            "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": true,
+            "CommandType": "OS",
+            "ProcessingCommand": "hostname",
             "PostProcessingCommand": "",
             "RootRequired": false,
             "ShowInReport": true,
@@ -2271,6 +2287,70 @@
             "RunInLocalMode": false,
             "CommandType": "PowerShell",
             "ProcessingCommand": "$VMGeneration = (Get-AzDisk -Name (Get-AzVM -ResourceGroupName $AzVMResourceGroup -Name $AzVMName).StorageProfile.OsDisk.Name).HyperVGeneration; if ($VMGeneration -eq 'V1') { Set-Variable -Name VMGeneration -Scope Script -Value 'Gen1'; 'Gen1' } else { Set-Variable -Name VMGeneration -Scope Script -Value 'Gen2'; 'Gen2' }",
+            "PostProcessingCommand": "",
+            "RootRequired": false,
+            "ShowInReport": true,
+            "HighAvailability": [false,true]
+        },
+        {
+            "CheckID": "IC-0012",
+            "Description": "Number of extensions installed on VM",
+            "OS": ["Windows","SUSE","RedHat","OracleLinux"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM", "HLI"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
+            "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": false,
+            "CommandType": "PowerShell",
+            "ProcessingCommand": "$VmExtension = (Get-AzVMExtension -ResourceGroupName $AzVMResourceGroup -VMName $AzVMName); if (!$VmExtension) { 'No extensions installed' } else { $VmExtension.Count }",
+            "PostProcessingCommand": "",
+            "RootRequired": false,
+            "ShowInReport": true,
+            "HighAvailability": [false,true]
+        },
+        {
+            "CheckID": "IC-0013",
+            "Description": "Secondary IP enabled on VM",
+            "OS": ["Windows","SUSE","RedHat","OracleLinux"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM", "HLI"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
+            "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": false,
+            "CommandType": "PowerShell",
+            "ProcessingCommand": "$VmNIC = (Get-AzVM -ResourceGroupName  $AzVMResourceGroup -VMName $AzVMName | Select-Object -ExpandProperty 'NetworkProfile'); $NICObject = Get-AzNetworkInterface -ResourceGroupName $AzVMResourceGroup -Name ($VmNIC.NetworkInterfaces.Id.Split('/')[-1]); if ($NICObject.IpConfigurations.Count -gt 1) { 'Yes' } else { 'No' }",
+            "PostProcessingCommand": "",
+            "RootRequired": false,
+            "ShowInReport": true,
+            "HighAvailability": [false,true]
+        },
+        {
+            "CheckID": "IC-0014",
+            "Description": "VM Security Type",
+            "OS": ["Windows","SUSE","RedHat","OracleLinux"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM", "HLI"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
+            "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": false,
+            "CommandType": "PowerShell",
+            "ProcessingCommand": "$SecurityType = (Get-AzVM -ResourceGroupName $AzVMResourceGroup -VMName $AzVMName | Select-Object -ExpandProperty 'SecurityProfile'); if (!$SecurityType) {'Standard'} else {$SecurityType | Select SecurityType}",
+            "PostProcessingCommand": "",
+            "RootRequired": false,
+            "ShowInReport": true,
+            "HighAvailability": [false,true]
+        },
+        {
+            "CheckID": "IC-0015",
+            "Description": "VMSS Flex ID",
+            "OS": ["Windows","SUSE","RedHat","OracleLinux"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM", "HLI"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
+            "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": false,
+            "CommandType": "PowerShell",
+            "ProcessingCommand": "$Vmss = (Get-AzVM -ResourceGroupName $AzVMResourceGroup -Name $AzVMName| $VmssId = $Vmss.VirtualMachineScaleSet.Id; if (!$VmssId) {'NA'} else {$VmssId}",
             "PostProcessingCommand": "",
             "RootRequired": false,
             "ShowInReport": true,
@@ -2679,6 +2759,34 @@
             "SAPNote": "1928533"
         },
         {
+            "CheckID": "VM-0005",
+            "Description": "Is Microsoft Defender installed on the VM.",
+            "OS": ["Windows"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "Role": ["DB","ASCS","APP"],
+            "DB": ["HANA","Db2","MSSQL","Oracle", "ASE"],
+            "RunInLocalMode": true,
+            "ErrorCategory": "ERROR",
+            "HighAvailability": [false, true],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"],
+            "CommandType": "PowerShell",
+            "ProcessingCommand": "if ((Get-MpComputerStatus).AntivirusEnabled -eq $true) {'True'} else {'False'}",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "True",
+            "ShowAlternativeRequirement": "",
+            "ShowAlternativeResult": "",
+            "RootRequired": false,
+            "ShowInReport": true,
+            "AdditionalInfo": "Checking for Microsoft Defender on the VM",
+            "VersionHistory": [
+                { "Date": "20231130", "ChangeLog": "" }
+            ],
+            "MicrosoftDocs": "",
+            "SAPNote": ""
+        },
+        {
             "CheckID": "HDB-ANF-0001",
             "Description": "sysctl net.core.rmem_max",
             "OS": ["SUSE","RedHat"],
@@ -3054,7 +3162,7 @@
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
-            "ErrorCategory": "WARN",
+            "ErrorCategory": "WARNING",
             "HighAvailability": [false, true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
             "CommandType": "OS",
@@ -3450,7 +3558,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/sbin/crm corosync get totem.consensus",
+            "ProcessingCommand": "if [ -z $(/usr/sbin/crm corosync get totem.consensus) ]; then \"1.2 * $(/usr/sbin/crm corosync get totem.token)\" | bc ; else /usr/sbin/crm corosync get totem.consensus; fi",
             "PostProcessingCommand": "",
             "ExpectedResult": "36000",
             "ShowAlternativeRequirement": "",
@@ -3459,7 +3567,8 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for consensus: 36000",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231120", "ChangeLog": "If consensus value is not present, we take the value of 1.2 times the token value." }
             ],
             "MicrosoftDocs": "",
             "SAPNote": ""
@@ -3618,7 +3727,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/sbin/crm configure show | grep 'concurrent-fencing=true' | wc -l",
+            "ProcessingCommand": "crm_attribute --name=concurrent-fencing -q",
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
             "ShowAlternativeRequirement": "'concurrent-fencing=true'",
@@ -3627,7 +3736,8 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for concurrent-fencing=true",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231120", "ChangeLog": "Directly accessing the CRM attribute" }
             ],
             "MicrosoftDocs": "",
             "SAPNote": ""
@@ -4020,6 +4130,33 @@
             "AdditionalInfo": "Checking for HA Ports",
             "VersionHistory": [
                 { "Date": "initial", "ChangeLog": "" }
+            ],
+            "MicrosoftDocs": "",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "HA-LB-0004",
+            "Description": "Load Balancer Probe Interval",
+            "OS": ["SUSE","RedHat", "Windows"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "Role": ["ASCS", "APP", "DB"],
+            "DB": ["HANA","MSSQL","Oracle","Db2"],
+            "RunInLocalMode": true,
+            "ErrorCategory": "WARNING",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"],
+            "CommandType": "PowerShell",
+            "ProcessingCommand": "$_result = 0; foreach ($_loadbalancer in $Script:_LoadBalancers) { $LBProbes = (Get-AzLoadBalancer -ResourceGroupName $AzVMResourceGroup -Name $_loadbalancer.Name | Get-AzLoadBalancerProbeConfig) ; foreach ($_probe in $LBProbes) { if ($_probe.IntervalInSeconds -gt 5) {_$result += 1}; }; }; $_result",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "0",
+            "ShowAlternativeResult": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "Checking for probe interval",
+            "VersionHistory": [
+                { "Date": "20231130", "ChangeLog": "" }
             ],
             "MicrosoftDocs": "",
             "SAPNote": ""
