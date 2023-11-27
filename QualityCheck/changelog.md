@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 2023112101
+
+* add support in all checks for Premium SSD v2
+* add support for new M416s_8_v2 instance
+* add support for new Mv3 instances
+* fix a typo in the description of cluster checks (mix of 60 and 120 seconds, only description incorrect)
+* add additional checks for kernel issues related to accelerated networking
+
 ## Version 2023061301
 
 * adding support for ASE
