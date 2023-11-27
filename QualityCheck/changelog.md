@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 2023112102
+
+* with Az.NetAppFiles 0.13 the field for throughput was changed, taking the max value of the old and the new field in module
+
 ## Version 2023112101
 
 * add support in all checks for Premium SSD v2

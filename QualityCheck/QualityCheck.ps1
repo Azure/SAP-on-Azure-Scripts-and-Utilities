@@ -285,7 +285,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2023112101
+$scriptversion = 2023112102
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -2379,7 +2379,8 @@ function CollectANFVolumes {
                 $_ANFVolume_row.Pool = $_ANFPoolName
                 $_ANFVolume_row.ServiceLevel = $_ANFVolume.ServiceLevel
                 $_ANFVolume_row.ProtocolTypes = [string]$_ANFVolume.ProtocolTypes
-                $_ANFVolume_row.ThroughputMibps = [int]$_ANFVolume.ThroughputMibps
+                # $_ANFVolume_row.ThroughputMibps = [int]$_ANFVolume.ThroughputMibps
+                $_ANFVolume_row.ThroughputMibps = (([int]$_ANFVolume.ThroughputMibps, [int]$_ANFVolume.ActualThroughputMibps) | Measure-Object -Maximum).Maximum
                 $_ANFVolume_row.QoSType = $_ANFPool.QosType
                 # $_ANFVolume_row.NFSAddress = $_ANFVolume.MountTargets[0].IpAddress + ":/" + $_ANFVolume_row.Name
 		        $_ANFVolume_row.NFSAddress = $_ANFVolume.MountTargets[0].IpAddress + ":/" + $_ANFVolume.CreationToken
