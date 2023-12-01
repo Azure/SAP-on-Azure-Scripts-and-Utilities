@@ -285,7 +285,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2023112102
+$scriptversion = 2023113001
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -2208,7 +2208,7 @@ function RunQualityCheck {
                         else {
                             $_Check_row.Testresult = ""
                         }
-                        if ($_check.ShowAlternativeRequirement -ne "") {
+                        if (![string]::IsNullOrEmpty($_check.ShowAlternativeRequirement)) {
                             $_Check_row.ExpectedResult = Invoke-Expression $_check.ShowAlternativeRequirement
                         }
                         else {
@@ -2292,9 +2292,11 @@ function CollectFileSystems {
                     # backup path for ANF volumes to have DNS names covered
                     # this path will just compared the volume export name
                     $_NFSmounttemp = ($_filesystem_row.Source.Split(":"))[1]
-                    $_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_NFSmounttemp.Equals(($_.NFSAddress.Split(":"))[1]) }).THROUGHPUTMIBPS
-                    if ([string]::IsNullOrEmpty($_filesystem_row.MaxMBPS)) {
-                        $_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_NFSmounttemp.StartsWith(($_.NFSAddress.Split(":"))[1]) }).THROUGHPUTMIBPS
+                    if (![string]::IsNullOrEmpty($_.NFSAddress)) {
+                        $_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_NFSmounttemp.Equals(($_.NFSAddress.Split(":"))[1]) }).THROUGHPUTMIBPS
+                        if ([string]::IsNullOrEmpty($_filesystem_row.MaxMBPS)) {
+                            $_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_NFSmounttemp.StartsWith(($_.NFSAddress.Split(":"))[1]) }).THROUGHPUTMIBPS
+                        }
                     }
                 }
             }
@@ -2383,7 +2385,9 @@ function CollectANFVolumes {
                 $_ANFVolume_row.ThroughputMibps = (([int]$_ANFVolume.ThroughputMibps, [int]$_ANFVolume.ActualThroughputMibps) | Measure-Object -Maximum).Maximum
                 $_ANFVolume_row.QoSType = $_ANFPool.QosType
                 # $_ANFVolume_row.NFSAddress = $_ANFVolume.MountTargets[0].IpAddress + ":/" + $_ANFVolume_row.Name
-		        $_ANFVolume_row.NFSAddress = $_ANFVolume.MountTargets[0].IpAddress + ":/" + $_ANFVolume.CreationToken
+                if ($_ANFVolume.MountTargets.Count -gt 0){
+                    $_ANFVolume_row.NFSAddress = $_ANFVolume.MountTargets[0].IpAddress + ":/" + $_ANFVolume.CreationToken
+                }
 
                 $Script:_ANFVolumes += $_ANFVolume_row
 
@@ -2497,14 +2501,14 @@ function LoadGUI {
         xmlns:local="clr-namespace:QualityCheck"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Title="SAP on Azure - Quality Check" Height="600" Width="900">
-    <Grid Margin="0,0,-6.667,-29.333">
+        Title="SAP on Azure - Quality Check" Height="800" Width="900">
+        <Grid Margin="0,0,-13,-70">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="582*"/>
             <ColumnDefinition Width="325*"/>
         </Grid.ColumnDefinitions>
-        <Button x:Name="ButtonRun" Content="Run" HorizontalAlignment="Left" Margin="233,540,0,0" VerticalAlignment="Top" Width="75" Grid.Column="1" Height="20"/>
-        <ComboBox x:Name="Database" HorizontalAlignment="Left" Margin="188,40,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
+        <Button x:Name="ButtonRun" Content="Run" HorizontalAlignment="Left" Margin="109,582,0,0" VerticalAlignment="Top" Width="75" Grid.Column="1" Height="20"/>
+        <ComboBox x:Name="Database" HorizontalAlignment="Left" Margin="190,40,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
             <ComboBoxItem Content="HANA"/>
             <ComboBoxItem Content="MSSQL"/>
             <ComboBoxItem Content="Db2"/>
@@ -2512,14 +2516,14 @@ function LoadGUI {
             <ComboBoxItem Content="ASE"/>
         </ComboBox>
         <Label x:Name="LabelDatabase" Content="Database" HorizontalAlignment="Left" Margin="66,36,0,0" VerticalAlignment="Top" Height="26" Width="59"/>
-        <ComboBox x:Name="OperatingSystem" HorizontalAlignment="Left" Margin="188,75,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
+        <ComboBox x:Name="OperatingSystem" HorizontalAlignment="Left" Margin="190,75,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
             <ComboBoxItem Content="SUSE"/>
             <ComboBoxItem Content="RedHat"/>
             <ComboBoxItem Content="Windows"/>
             <ComboBoxItem Content="OracleLinux"/>
         </ComboBox>
         <Label x:Name="LabelOperatingSystem" Content="Operating System" HorizontalAlignment="Left" Margin="66,71,0,0" VerticalAlignment="Top" Height="26" Width="104"/>
-        <CheckBox x:Name="HighAvailability" Content="HighAvailability" HorizontalAlignment="Left" Margin="191,289,0,0" VerticalAlignment="Top" IsChecked="True" Height="15" Width="102"/>
+        <CheckBox x:Name="HighAvailability" Content="HighAvailability" HorizontalAlignment="Left" Margin="190,281,0,0" VerticalAlignment="Top" IsChecked="True" Height="15" Width="102"/>
         <ComboBox x:Name="HANAScenario" HorizontalAlignment="Left" Margin="64,138,0,0" VerticalAlignment="Top" Width="120" SelectedIndex="0" Grid.Column="1" Height="22">
             <ComboBoxItem Content="OLTP"/>
             <ComboBoxItem Content="OLAP"/>
@@ -2527,33 +2531,33 @@ function LoadGUI {
             <ComboBoxItem Content="OLAP-ScaleOut"/>
         </ComboBox>
         <Label x:Name="LabelHANAScenario" Content="HANA Scenario" HorizontalAlignment="Left" Margin="506,134,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="26" Width="91"/>
-        <ComboBox x:Name="Role" HorizontalAlignment="Left" Margin="188,109,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
+        <ComboBox x:Name="Role" HorizontalAlignment="Left" Margin="190,109,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
             <ComboBoxItem Content="DB"/>
             <ComboBoxItem Content="ASCS"/>
             <ComboBoxItem Content="APP"/>
         </ComboBox>
         <Label x:Name="LabelRole" Content="Role" HorizontalAlignment="Left" Margin="66,105,0,0" VerticalAlignment="Top" Height="26" Width="33"/>
-        <ComboBox x:Name="ResourceGroup" HorizontalAlignment="Left" Margin="188,180,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22" IsTextSearchEnabled="True">
+        <ComboBox x:Name="ResourceGroup" HorizontalAlignment="Left" Margin="190,180,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22" IsTextSearchEnabled="True">
         </ComboBox>
         <Label x:Name="LabelResourceGroup" Content="Resource Group" HorizontalAlignment="Left" Margin="66,176,0,0" VerticalAlignment="Top" Height="26" Width="95"/>
-        <ComboBox x:Name="VM" HorizontalAlignment="Left" Margin="188,211,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22"/>
+        <ComboBox x:Name="VM" HorizontalAlignment="Left" Margin="190,211,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22"/>
         <Label x:Name="LabelVM" Content="VM" HorizontalAlignment="Left" Margin="66,207,0,0" VerticalAlignment="Top" Height="26" Width="28"/>
-        <TextBox x:Name="SSHPort" HorizontalAlignment="Center" Height="22" Margin="0,478,0,0" TextWrapping="Wrap" Text="22" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+        <TextBox x:Name="SSHPort" HorizontalAlignment="Left" Height="22" Margin="64,478,0,0" TextWrapping="Wrap" Text="22" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
         <Label x:Name="LabelSSHPort" Content="SSH Port" HorizontalAlignment="Left" Margin="506,476,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Width="125" Height="26"/>
-        <TextBox x:Name="Username" HorizontalAlignment="Left" Height="23" Margin="191,435,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
-        <Label x:Name="LabelUsername" Content="Username" HorizontalAlignment="Left" Margin="66,432,0,0" VerticalAlignment="Top" Height="26" Width="63"/>
-        <Label x:Name="LabelPassword" Content="Password" HorizontalAlignment="Left" Margin="66,463,0,0" VerticalAlignment="Top" Height="26" Width="60"/>
-        <PasswordBox x:Name="Password" HorizontalAlignment="Left" Margin="191,466,0,0" VerticalAlignment="Top" Width="145" Height="23"/>
+        <TextBox x:Name="Username" HorizontalAlignment="Left" Height="23" Margin="190,501,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <Label x:Name="LabelUsername" Content="Username" HorizontalAlignment="Left" Margin="66,498,0,0" VerticalAlignment="Top" Height="26" Width="63"/>
+        <Label x:Name="LabelPassword" Content="Password" HorizontalAlignment="Left" Margin="66,529,0,0" VerticalAlignment="Top" Height="26" Width="60"/>
+        <PasswordBox x:Name="Password" HorizontalAlignment="Left" Margin="190,532,0,0" VerticalAlignment="Top" Width="145" Height="23"/>
         <TextBox x:Name="DBDataDir" HorizontalAlignment="Left" Height="23" Margin="64,40,0,0" TextWrapping="Wrap" Text="/hana/data" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
         <Label x:Name="LabelDBDataDir" Content="DB Data Directory" HorizontalAlignment="Left" Margin="506,37,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="26" Width="105"/>
         <TextBox x:Name="DBLogDir" HorizontalAlignment="Left" Height="23" Margin="64,74,0,0" TextWrapping="Wrap" Text="/hana/log" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
         <Label x:Name="LabelDBLogDir" Content="DB Log Directory" HorizontalAlignment="Left" Margin="506,71,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="26" Width="100"/>
-        <ComboBox x:Name="HardwareType" HorizontalAlignment="Left" Margin="188,140,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
+        <ComboBox x:Name="HardwareType" HorizontalAlignment="Left" Margin="190,140,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
             <ComboBoxItem Content="VM"/>
             <ComboBoxItem Content="HLI"/>
         </ComboBox>
         <Label x:Name="LabelHardwareType" Content="Hardware Type" HorizontalAlignment="Left" Margin="66,136,0,0" VerticalAlignment="Top" Height="26" Width="89"/>
-        <ComboBox x:Name="HighAvailabilityAgent" HorizontalAlignment="Left" Margin="191,311,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
+        <ComboBox x:Name="HighAvailabilityAgent" HorizontalAlignment="Left" Margin="190,311,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
             <ComboBoxItem Content="SBD"/>
             <ComboBoxItem Content="FencingAgent"/>
             <ComboBoxItem Content="WindowsCluster"/>
@@ -2561,22 +2565,34 @@ function LoadGUI {
         <Label x:Name="LabelHighAvailabilityAgent" Content="HA Agent" HorizontalAlignment="Left" Margin="66,307,0,0" VerticalAlignment="Top" Height="26" Width="61"/>
         <TextBox x:Name="DBSharedDir" HorizontalAlignment="Left" Height="23" Margin="64,106,0,0" TextWrapping="Wrap" Text="/hana/shared" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
         <Label x:Name="LabelDBSharedDir" Content="DB Shared Directory" HorizontalAlignment="Left" Margin="506,103,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="26" Width="117"/>
-        <TextBox x:Name="hostname" HorizontalAlignment="Left" Height="23" Margin="188,241,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="249"/>
+        <TextBox x:Name="hostname" HorizontalAlignment="Left" Height="23" Margin="190,241,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="249"/>
         <Label x:Name="LabelHostname" Content="Hostname/IP" HorizontalAlignment="Left" Margin="66,238,0,0" VerticalAlignment="Top" Height="26" Width="79"/>
 
 
-        <TextBlock HorizontalAlignment="Left" Margin="23,539,0,0" TextWrapping="Wrap" Text="If you want to find out more about Quality Check " VerticalAlignment="Top" Width="477" Height="16">
+        <TextBlock HorizontalAlignment="Left" Margin="66,582,0,0" TextWrapping="Wrap" Text=" If you want to find out more about SAP Quality Check " VerticalAlignment="Top" Width="477" Height="16">
             <Hyperlink NavigateUri="https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities/tree/main/QualityCheck">
                 <Hyperlink.Inlines>
-                    <Run Text="click here"/>
+                    <Run Text="Click here"/>
                 </Hyperlink.Inlines>
             </Hyperlink>
         </TextBlock>
-        <Button x:Name="ButtonExit" Content="Exit" HorizontalAlignment="Left" Margin="144,540,0,0" VerticalAlignment="Top" Width="75" Grid.Column="1" Height="20"/>
-        <ComboBox x:Name="LogonMethod" HorizontalAlignment="Left" Margin="191,397,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
+        <Button x:Name="ButtonExit" Content="Exit" HorizontalAlignment="Left" Margin="22,582,0,0" VerticalAlignment="Top" Width="75" Height="20" Grid.Column="1"/>
+        <ComboBox x:Name="LogonMethod" HorizontalAlignment="Left" Margin="190,463,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
             <ComboBoxItem Content="UserPassword"/>
         </ComboBox>
-        <Label x:Name="LabelHighAvailabilityAgent_Copy" Content="Logon Method" HorizontalAlignment="Left" Margin="66,395,0,0" VerticalAlignment="Top" Height="26" Width="89"/>
+        <Label x:Name="LabelHighAvailabilityAgent_Copy" Content="Logon Method" HorizontalAlignment="Left" Margin="66,461,0,0" VerticalAlignment="Top" Height="26" Width="89"/>
+        <ComboBox x:Name="DiskType" HorizontalAlignment="Left" Margin="190,349,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
+            <ComboBoxItem Content="ANF"/>
+            <ComboBoxItem Content="Managed Disk"/>
+            <ComboBoxItem Content="xNFS"/>
+            <ComboBoxItem Content="Shared Disk"/>
+            <ComboBoxItem Content="File Share"/>
+        </ComboBox>
+        <Label x:Name="LabelDiskType" Content="Disk Type" HorizontalAlignment="Left" Margin="66,349,0,0" VerticalAlignment="Top" Height="26" Width="61"/>
+        <ComboBox x:Name="ANFResourceGroup" HorizontalAlignment="Left" Margin="190,388,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22" IsTextSearchEnabled="True"/>
+        <Label x:Name="LabelANFResourceGroup" Content="ANF Resource Group" HorizontalAlignment="Left" Margin="66,384,0,0" VerticalAlignment="Top" Height="26" Width="124"/>
+        <ComboBox x:Name="ANFAccountName" HorizontalAlignment="Left" Margin="190,424,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22"/>
+        <Label x:Name="LabelANFAccountName" Content="ANF Account Name" HorizontalAlignment="Left" Margin="66,420,0,0" VerticalAlignment="Top" Height="26" Width="119"/>
 
     </Grid>
 </Window>
@@ -2642,6 +2658,26 @@ function LoadGUI {
         }
     )
 
+    $_disktype = $_Form.FindName("DiskType")
+    $_disktype.add_SelectionChanged(
+        {
+            param($sender,$args)
+            $selected = $sender.SelectedItem.Content
+            if ($selected -eq "ANF") {
+                $_Form.FindName("LabelANFResourceGroup").Visibility = "Visible"
+                $_Form.FindName("LabelANFAccountName").Visibility = "Visible"
+                $_Form.FindName("ANFResourceGroup").Visibility = "Visible"
+                $_Form.FindName("ANFAccountName").Visibility = "Visible"
+            }
+            else {
+                $_Form.FindName("LabelANFResourceGroup").Visibility = "Hidden"
+                $_Form.FindName("LabelANFAccountName").Visibility = "Hidden"
+                $_Form.FindName("ANFResourceGroup").Visibility = "Hidden"
+                $_Form.FindName("ANFAccountName").Visibility = "Hidden"
+            }
+        }
+    )
+
     $_ButtonExit = $_Form.FindName("ButtonExit")
     $_ButtonExit.Add_Click(
         {
@@ -2684,6 +2720,26 @@ function LoadGUI {
         }
     )
 
+    $_GUI_ANFResourceGroups = $_Form.FindName("ANFResourceGroup")
+
+    # add ANF resource group
+    $_ANFResourceGroups = Get-AzResourceGroup | Select-Object ResourceGroupName | Sort-Object
+    $_GUI_ANFResourceGroups.ItemsSource = $_ANFResourceGroups.ResourceGroupName | Sort-Object
+
+    $_GUI_ANFAccountName = $_Form.FindName("ANFAccountName")
+
+    $_GUI_ANFResourceGroups.add_SelectionChanged(
+        {
+            # add ANFs
+            $_GUI_ANFAccountName.Items.Clear()
+
+            $_ANFs = Get-AzNetAppFilesAccount -ResourceGroupName $_GUI_ANFResourceGroups.Items[$_GUI_ANFResourceGroups.SelectedIndex]
+            foreach ($_ANF in $_ANFs) {
+                $_GUI_ANFAccountName.Items.Add($_ANF.Name)
+            }
+        }
+    )
+
     # add Run button
     $_ButtonRun = $_Form.FindName("ButtonRun")
     $_ButtonRun.Add_Click(
@@ -2707,6 +2763,10 @@ function LoadGUI {
             if ($_Form.FindName("HighAvailability").isChecked) {
                 $script:HighAvailability = $true
                 $script:HighAvailabilityAgent = $_Form.FindName("HighAvailabilityAgent").Items[$_Form.FindName("HighAvailabilityAgent").SelectedIndex].Content
+            }
+            if ($_Form.FindName("DiskType").Items[$_Form.FindName("DiskType").SelectedIndex].Content -eq "ANF") {
+                $script:ANFResourceGroup = $_Form.FindName("ANFResourceGroup").Items[$_Form.FindName("ANFResourceGroup").SelectedIndex]
+                $script:ANFAccountName = $_Form.FindName("ANFAccountName").Items[$_Form.FindName("ANFAccountName").SelectedIndex]
             }
             else {
                 $script:HighAvailability = $false

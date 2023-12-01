@@ -1,5 +1,17 @@
 # Changelog
 
+
+## Version 2023113001
+* adding check for number of extensions on VM
+* check to identify whether the secondary IP is enabled on Primary NIC
+* adding check to identify the security type of VM (Standard/Trusted/)
+* identify whether the VM is deployed on VMSS flex
+* adding check to find the probe interval for a load balancer
+* check to know whether microsoft defender is installed on the VM running Windows OS
+* updated the GUI to take the ANF parameters as input
+* updated the logic to get the pacemaker corosync consensus
+* updated the command to get the pacemaker concurrent fencing
+
 ## Version 2023112102
 
 * with Az.NetAppFiles 0.13 the field for throughput was changed, taking the max value of the old and the new field in module
