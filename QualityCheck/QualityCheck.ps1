@@ -285,7 +285,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2023120401
+$scriptversion = 2023120402
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -1274,7 +1274,8 @@ function CollectVMStorage {
         # $_AzureDisk_row.DeviceName = ($script:_diskmapping | Where-Object { ($_.P5 -eq 0) -and ($_.P2 -eq $script:_OSDiskSCSIControllerID) }).P7
         $_AzureDisk_row.DeviceName = $_rootdisk
         try {
-            $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -like ($_AzureDisk_row.DeviceName + "*")}).vg[0].vg_name
+            # $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -like ($_AzureDisk_row.DeviceName + "*")}).vg[0].vg_name
+            $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -eq ($_AzureDisk_row.DeviceName)}).vg[0].vg_name
         }
         catch {
             if (-not $RunLocally) {
