@@ -1,5 +1,7 @@
 # Changelog
 
+# Version 2023120401
+* fixing issue with VMs that have more than 26 disks (/dev/sda to /dev/sdz), and disk names have 4 characters (e.g. /dev/sdaa)
 
 ## Version 2023113001
 * adding check for number of extensions on VM

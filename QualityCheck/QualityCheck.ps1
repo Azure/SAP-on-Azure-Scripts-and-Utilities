@@ -285,7 +285,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2023113001
+$scriptversion = 2023120401
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -1293,7 +1293,8 @@ function CollectVMStorage {
         #$script:_diskmapping = RunCommand -p $_command
         #$script:_diskmapping = ConvertFrom-String_sgmap -p $script:_diskmapping
 
-        $_lsscsi_command = "lsscsi | sed 's/\[//; s/\]//; s/\.//' | sed 's/:/ /g' | grep Virtual | grep -v " + $_rootdisk + " | grep -v " + $_resourcedisk
+
+        $_lsscsi_command = "lsscsi | sed 's/\[//; s/\]//; s/\.//' | sed 's/:/ /g' | grep Virtual | grep -v '" + $_rootdisk + " ' | grep -v '" + $_resourcedisk + " '"
         $_command = PrepareCommand -Command $_lsscsi_command -CommandType OS
         $script:_diskmapping = RunCommand -p $_command
         $script:_diskmapping = ConvertFrom-String_lsscsi -p $script:_diskmapping
