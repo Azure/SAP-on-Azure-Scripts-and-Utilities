@@ -285,7 +285,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2023120402
+$scriptversion = 2024010301
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -2163,7 +2163,19 @@ function RunQualityCheck {
                     $_Check_row.Description = $_check.Description
                     $_Check_row.AdditionalInfo = $_check.AdditionalInfo
                     $_Check_row.Testresult = $_result
-                    $_Check_row.ExpectedResult = $_check.ExpectedResult
+                    # $_Check_row.ExpectedResult = $_check.ExpectedResult
+                    # if multiple expected results are available the join will combine them and add a new line for each entry
+                    if ($_check.ExpectedResult.GetType().Name -eq "PSCustomObject") {    
+                        switch ($_check.ExpectedResult.Type) {
+                            "multi" { $_Check_row.ExpectedResult = $_check.ExpectedResult.Values -join (" or{0}" -f [environment]::NewLine) }
+                            "range" { $_Check_row.ExpectedResult = "from {0} to {1}" -f $_check.ExpectedResult.low, $_check.ExpectedResult.high }
+                            Default { "wrong default value in JSON"}
+                        }
+                    }
+                    else {
+                        $_Check_row.ExpectedResult = $_check.ExpectedResult
+                    }
+                    
 
                     if ($RunLocally) {
                         $_Check_row.VmRole = $VMRole
@@ -2188,20 +2200,63 @@ function RunQualityCheck {
                 
                     }
                     
-                    if ($_result -eq $_check.ExpectedResult) {
-                        $_Check_row.Status = "OK"
-                        if ($RunLocally) {
-                            $_Check_row.Success = $true
+                    # check if the expected result has multiple values or just one
+                    # if ($_check.ExpectedResult.GetType().Name -eq "Object[]") {
+                    if ($_check.ExpectedResult.GetType().Name -eq "PSCustomObject") {    
+                        
+                        switch ($_check.ExpectedResult.type) {
+                            "multi" {
+                                        if ($_check.ExpectedResult.Values -contains $_result) {
+                                            $_Check_row.Status = "OK"
+                                            if ($RunLocally) {
+                                                $_Check_row.Success = $true
+                                            }
+                                        }
+                                        else {
+                                            # $_Check_row.Status = "ERROR"
+                                            $_Check_row.Status = $_check.ErrorCategory
+                                            if ($RunLocally) {
+                                                $_Check_row.Success = $false
+                                            }
+                                        }
+                                    }
+                            "range" {
+                                        if ($_result -ge $_check.ExpectedResult.low -and $_result -le $_check.ExpectedResult.high) {
+                                            $_Check_row.Status = "OK"
+                                            if ($RunLocally) {
+                                                $_Check_row.Success = $true
+                                            }
+                                        }
+                                        else {
+                                            # $_Check_row.Status = "ERROR"
+                                            $_Check_row.Status = $_check.ErrorCategory
+                                            if ($RunLocally) {
+                                                $_Check_row.Success = $false
+                                            }
+                                        }
+                                    }
+                            Default {
+                                        $_Check_row.Status = "JSONERROR"
+                                    }
                         }
+                        
                     }
                     else {
-                        # $_Check_row.Status = "ERROR"
-                        $_Check_row.Status = $_check.ErrorCategory
-                        if ($RunLocally) {
-                            $_Check_row.Success = $false
+                        if ($_result -eq $_check.ExpectedResult) {
+                            $_Check_row.Status = "OK"
+                            if ($RunLocally) {
+                                $_Check_row.Success = $true
+                            }
+                        }
+                        else {
+                            # $_Check_row.Status = "ERROR"
+                            $_Check_row.Status = $_check.ErrorCategory
+                            if ($RunLocally) {
+                                $_Check_row.Success = $false
+                            }
                         }
                     }
-                    
+
                     if (($_check.ShowAlternativeRequirement) -ne "" -or ($_check.ShowAlternativeResult -ne ""))
                     {
                         if ($_check.ShowAlternativeResult -ne "") {
@@ -2233,7 +2288,8 @@ function RunQualityCheck {
     $_ChecksOutput = $_ChecksOutput -replace '<td>ERROR</td>','<td class="StatusError">ERROR</td>'
     $_ChecksOutput = $_ChecksOutput -replace '<td>WARNING</td>','<td class="StatusWarning">WARNING</td>'
     $_ChecksOutput = $_ChecksOutput -replace '<td>INFO</td>','<td class="StatusInfo">INFO</td>'
-    $_ChecksOutput = $_ChecksOutput -replace '::SAPNOTEHTML1::','<a href="https://launchpad.support.sap.com/#/notes/'
+    # $_ChecksOutput = $_ChecksOutput -replace '::SAPNOTEHTML1::','<a href="https://launchpad.support.sap.com/#/notes/'
+    $_ChecksOutput = $_ChecksOutput -replace '::SAPNOTEHTML1::','<a href="https://me.sap.com/notes/'
     $_ChecksOutput = $_ChecksOutput -replace '::SAPNOTEHTML2::','" target="_blank">'
     $_ChecksOutput = $_ChecksOutput -replace '::SAPNOTEHTML3::','</a>'
 

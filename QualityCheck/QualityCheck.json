@@ -1,5 +1,5 @@
 {
-    "Version": 2023120402,
+    "Version": 2024010301,
     "PowerShellPrerequisits": [
         {
             "ModuleName": "Posh-SSH",
@@ -4696,7 +4696,7 @@
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
-            "Role": ["APP"],
+            "Role": ["APP", "DB", "ASCS"], 
             "DB": ["HANA","MSSQL","Oracle","Db2"],
             "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
@@ -4705,7 +4705,7 @@
             "CommandType": "OS",
             "ProcessingCommand": "/sbin/sysctl net.ipv4.tcp_tw_reuse",
             "PostProcessingCommand": "",
-            "ExpectedResult": "net.ipv4.tcp_tw_reuse = 0",
+            "ExpectedResult": { "Type": "multi", "Values": ["net.ipv4.tcp_tw_reuse = 0", "net.ipv4.tcp_tw_reuse = 2"] },
             "ShowAlternativeRequirement": "",
             "ShowAlternativeResult": "",
             "RootRequired": true,
@@ -4713,7 +4713,8 @@
             "AdditionalInfo": "",
             "VersionHistory": [
                 { "Date": "initial", "ChangeLog": "" },
-                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" },
+                { "Date": "20231231", "ChangeLog": "add multiple options as results and add DB and ASCS to Roles"}
             ],
             "MicrosoftDocs": "https://www.suse.com/support/kb/doc/?id=000019722",
             "SAPNote": ""

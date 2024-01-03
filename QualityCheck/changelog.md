@@ -1,5 +1,17 @@
 # Changelog
 
+# Version 2024010301
+* NEW: check for multiple valid result
+    * ```"ExpectedResult": { "Type": "multi", "Values": ["net.ipv4.tcp_tw_reuse = 0", "net.ipv4.tcp_tw_reuse = 2"] } ```
+    * Type is defined as "multi" and Values contains the possible results
+* NEW: check for valid result range
+    * ```"ExpectedResult": { "Type": "range", "low": 2, "high": 5 } ```
+    * Type is defined as "range" and the parameters low and high define the range including the values itself
+* single results have been unchanged
+    * ```"ExpectedResult": "2"```
+* UPDATE: link to SAP notes has been updated to "me.sap.com" instead of "launchpad.support.sap.com"
+
+
 # Version 2023120402
 * fixing issue with VMs that have more than 26 disks (/dev/sda to /dev/sdz), and disk names have 4 characters (e.g. /dev/sdaa) for OS disk / rootvg
 
