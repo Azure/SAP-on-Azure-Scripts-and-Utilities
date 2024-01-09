@@ -2801,6 +2801,42 @@
             "HighAvailability": [false,true]
         },
         {
+            "CheckID": "IC-0016",
+            "Description": "OS Timezone",
+            "OS": ["SUSE","RedHat","OracleLinux"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM", "HLI"],
+            "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": false,
+            "CommandType": "OS",
+            "ProcessingCommand": "timedatectl show --property=Timezone --value",
+            "PostProcessingCommand": "",
+            "RootRequired": false,
+            "ShowInReport": true,
+            "HighAvailability": [false,true],
+            "VersionHistory": [
+                { "Date": "20240109", "ChangeLog": "Initial" } ]
+        },
+        {
+            "CheckID": "IC-0017",
+            "Description": "OS KDUMP Configuration",
+            "OS": ["SUSE","RedHat","OracleLinux"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM", "HLI"],
+            "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": false,
+            "CommandType": "OS",
+            "ProcessingCommand": "systemctl status kdump.service | grep -o 'Active:.*'",
+            "PostProcessingCommand": "",
+            "RootRequired": false,
+            "ShowInReport": true,
+            "HighAvailability": [false,true],
+            "VersionHistory": [
+                { "Date": "20240109", "ChangeLog": "Initial" } ]
+        },
+        {
             "CheckID": "IC-0018",
             "Description": "VMSS Flex ID",
             "OS": ["Windows"],
@@ -2817,6 +2853,24 @@
             "HighAvailability": [false,true],
             "VersionHistory": [
                 { "Date": "20240105", "ChangeLog": "Initial" } ]
+        },
+         {
+            "CheckID": "IC-0018",
+            "Description": "Oracle gclib version",
+            "OS": ["OracleLinux"],
+            "DB": [ "Oracle"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM", "HLI"],
+            "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": false,
+            "CommandType": "OS",
+            "ProcessingCommand": "rpm -q glibc",
+            "PostProcessingCommand": "",
+            "RootRequired": false,
+            "ShowInReport": true,
+            "HighAvailability": [false,true],
+            "VersionHistory": [
+                { "Date": "20240109", "ChangeLog": "Initial" } ]
         }
 
     ],
