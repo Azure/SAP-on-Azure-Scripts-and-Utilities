@@ -1,5 +1,5 @@
 {
-    "Version": 2024010301,
+    "Version": 2024011201,
     "PowerShellPrerequisits": [
         {
             "ModuleName": "Posh-SSH",
@@ -2904,7 +2904,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/certifications",
             "SAPNote": "1928533"
         },
         {
@@ -2933,7 +2933,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/certifications",
             "SAPNote": "1928533"
         },
         {
@@ -2962,7 +2962,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/certifications",
             "SAPNote": "1928533"
         },
         {
@@ -3554,7 +3554,7 @@
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
             "MicrosoftDocs": "",
-            "SAPNote": ""
+            "SAPNote": ["2777782","3108302","2292690"]
         },
         {
             "CheckID": "HDB-HA-SLE-0001",
@@ -3582,7 +3582,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3611,7 +3611,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3628,19 +3628,20 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/sbin/crm configure show | grep 'stonith-enabled=true' | wc -l",
+            "ProcessingCommand": "crm_attribute --type crm_config --name=stonith-enabled -q",
             "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'stonith-enabled=true'",
+            "ExpectedResult": "true",
+            "ShowAlternativeRequirement": "",
             "ShowAlternativeResult": "",
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for stonith-enabled=true",
             "VersionHistory": [
                 { "Date": "initial", "ChangeLog": "" },
-                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" },
+                { "Date": "20240112", "ChangeLog": "moving from /usr/sbin/crm configure show | grep 'stonith-enabled=true' | wc -l to direct command to check output" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3657,19 +3658,20 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD"],
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/sbin/crm configure show | grep 'stonith-timeout=144' | wc -l",
+            "ProcessingCommand": "crm_attribute --type crm_config --name=stonith-timeout -q",
             "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'stonith-timeout=144'",
+            "ExpectedResult": { "Type": "range", "low": 144, "high": 300 },
+            "ShowAlternativeRequirement": "",
             "ShowAlternativeResult": "",
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for stonith-timeout=144",
             "VersionHistory": [
                 { "Date": "initial", "ChangeLog": "" },
-                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" },
+                { "Date": "20240112", "ChangeLog": "moving from '/usr/sbin/crm configure show | grep 'stonith-timeout=144' | wc -l' to a command that can directly check the value, moving to ranges" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3698,7 +3700,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3727,7 +3729,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3756,7 +3758,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3786,7 +3788,7 @@
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" },
                 { "Date": "20231120", "ChangeLog": "If consensus value is not present, we take the value of 1.2 times the token value." }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3815,7 +3817,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3844,7 +3846,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3873,7 +3875,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3902,7 +3904,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3931,7 +3933,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3961,7 +3963,7 @@
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" },
                 { "Date": "20231120", "ChangeLog": "Directly accessing the CRM attribute" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3990,7 +3992,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4007,19 +4009,20 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/sbin/crm configure show | grep 'stonith-timeout=900' | wc -l",
+            "ProcessingCommand": "crm_attribute --type crm_config --name=stonith-timeout -q",
             "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'stonith-timeout=900'",
+            "ExpectedResult": { "Type": "range", "low": 900, "high": 1200 },
+            "ShowAlternativeRequirement": "",
             "ShowAlternativeResult": "",
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for stonith-timeout=900",
             "VersionHistory": [
                 { "Date": "initial", "ChangeLog": "" },
-                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" },
+                { "Date": "20240112", "ChangeLog": "moving from '/usr/sbin/crm configure show | grep 'stonith-timeout=900' | wc -l' to a command that can directly check the value, moving to ranges" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4048,7 +4051,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4077,7 +4080,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4106,7 +4109,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4135,7 +4138,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4164,7 +4167,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4193,7 +4196,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4222,7 +4225,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4251,7 +4254,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4280,7 +4283,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-rhel-pacemaker",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4309,7 +4312,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": ["https://learn.microsoft.com/en-us/azure/sap/workloads/sap-hana-high-availability", "https://learn.microsoft.com/en-us/azure/sap/workloads/sap-hana-high-availability-rhel"],
             "SAPNote": ""
         },
         {
@@ -4338,7 +4341,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": ["https://learn.microsoft.com/en-us/azure/sap/workloads/sap-hana-high-availability", "https://learn.microsoft.com/en-us/azure/sap/workloads/sap-hana-high-availability-rhel"],
             "SAPNote": ""
         },
         {
@@ -4367,7 +4370,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": ["https://learn.microsoft.com/en-us/azure/sap/workloads/sap-hana-high-availability", "https://learn.microsoft.com/en-us/azure/sap/workloads/sap-hana-high-availability-rhel"],
             "SAPNote": ""
         },
         {
@@ -4395,7 +4398,7 @@
             "VersionHistory": [
                 { "Date": "20231130", "ChangeLog": "" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": ["https://learn.microsoft.com/en-us/azure/sap/workloads/sap-hana-high-availability", "https://learn.microsoft.com/en-us/azure/sap/workloads/sap-hana-high-availability-rhel"],
             "SAPNote": ""
         },
         {
@@ -4599,8 +4602,8 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
-            "SAPNote": ""
+            "MicrosoftDocs": "https://www.suse.com/de-de/support/kb/doc/?id=000019293",
+            "SAPNote": "2696099"
         },             
         {
             "CheckID": "APP-OS-0003",
@@ -4851,19 +4854,20 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/sbin/crm configure show | grep 'stonith-enabled=true' | wc -l",
+            "ProcessingCommand": "crm_attribute --type crm_config --name=stonith-enabled -q",
             "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'stonith-enabled=true'",
+            "ExpectedResult": "true",
+            "ShowAlternativeRequirement": "",
             "ShowAlternativeResult": "",
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for stonith-enabled=true",
             "VersionHistory": [
                 { "Date": "initial", "ChangeLog": "" },
-                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" },
+                { "Date": "20240112", "ChangeLog": "moving from /usr/sbin/crm configure show | grep 'stonith-enabled=true' | wc -l to direct command to check output" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4880,19 +4884,20 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD"],
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/sbin/crm configure show | grep 'stonith-timeout=144' | wc -l",
+            "ProcessingCommand": "crm_attribute --type crm_config --name=stonith-timeout -q",
             "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'stonith-timeout=144'",
+            "ExpectedResult": { "Type": "range", "low": 144, "high": 300 },
+            "ShowAlternativeRequirement": "",
             "ShowAlternativeResult": "",
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for stonith-timeout=144",
             "VersionHistory": [
                 { "Date": "initial", "ChangeLog": "" },
-                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" },
+                { "Date": "20240112", "ChangeLog": "moving from '/usr/sbin/crm configure show | grep 'stonith-timeout=144' | wc -l' to a command that can directly check the value, moving to ranges" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4921,7 +4926,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4950,7 +4955,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4979,7 +4984,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -5008,7 +5013,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -5037,7 +5042,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -5066,7 +5071,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -5095,7 +5100,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -5124,7 +5129,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -5153,7 +5158,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -5182,7 +5187,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -5211,7 +5216,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -5240,7 +5245,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -5269,7 +5274,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -5298,7 +5303,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },        
         {
@@ -5327,7 +5332,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
         },
         {
@@ -5356,7 +5361,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
         },
         {
@@ -5385,7 +5390,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
         },
         {
@@ -5414,7 +5419,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
         },
         {
@@ -5443,7 +5448,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-rhel-pacemaker",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
         },
         {
@@ -5472,7 +5477,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": ["https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-nfs-simple-mount", "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-nfs-azure-files"],
             "SAPNote": ""
         },
         {
@@ -5501,7 +5506,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": ["https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-nfs-simple-mount", "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-nfs-azure-files"],
             "SAPNote": ""
         },
         {
@@ -5530,7 +5535,7 @@
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": ["https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-nfs-simple-mount", "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-nfs-azure-files"],
             "SAPNote": ""
         },
         {
