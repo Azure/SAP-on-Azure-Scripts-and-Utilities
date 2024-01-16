@@ -2303,6 +2303,10 @@
         "HANADataStripeSize": "256.00k",
         "HANALOGStripeSize": "64.00k"
     },
+    "DB2StorageRequirements": {
+        "DB2DataStripeSize": "256.00k",
+        "DB2LOGStripeSize": "64.00k"
+    },
     "VMCollectInformation": [
         {
             "CheckID": "IC-0001",
@@ -4572,34 +4576,6 @@
             "SAPNote": ""
         },
         {
-            "CheckID": "HDB-OS-SLES-0007",
-            "Description": "",
-            "OS": ["SUSE"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS"],
-            "Role": ["DB"],
-            "DB": ["HANA","Db2"],
-            "RunInLocalMode": true,
-            "ErrorCategory": "WARNING",
-            "HighAvailability": [true,false],
-            "HighAvailabilityAgent": ["FencingAgent", "SBD"],
-            "CommandType": "OS",
-            "ProcessingCommand": "crm configure show | grep pcmk_delay_max | awk '{print $2}' | cut -d '=' -f 2",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "15s",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "",
-            "VersionHistory": [
-                { "Date": "2024011701", "ChangeLog": "added OS HA checks" }
-            ],
-            "MicrosoftDocs": "",
-            "SAPNote": ""
-        },
-        {
             "CheckID": "APP-OS-0001",
             "Description": "IPv4 keepalive time",
             "OS": ["SUSE","RedHat","OracleLinux"],
@@ -5761,6 +5737,34 @@
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
             "MicrosoftDocs": "https://www.suse.com/support/kb/doc/?id=000021005",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "HDB-OS-SLES-0012",
+            "Description": "Pacemaker stonith pcmk_delay_max",
+            "OS": ["SUSE"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS"],
+            "Role": ["DB"],
+            "DB": ["HANA","Db2"],
+            "RunInLocalMode": true,
+            "ErrorCategory": "WARNING",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["FencingAgent", "SBD"],
+            "CommandType": "OS",
+            "ProcessingCommand": "crm configure show | grep pcmk_delay_max | awk '{print $2}' | cut -d '=' -f 2",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "15s",
+            "ShowAlternativeRequirement": "",
+            "ShowAlternativeResult": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "2024011701", "ChangeLog": "added OS HA checks" }
+            ],
+            "MicrosoftDocs": "",
             "SAPNote": ""
         },
         {

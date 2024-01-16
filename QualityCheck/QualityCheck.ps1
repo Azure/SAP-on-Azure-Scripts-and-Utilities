@@ -2251,10 +2251,10 @@ function RunQualityCheck {
 
             if ($_filesystem_db2.StripeSize -eq $_DB2StripeSize) {
                 # stripe size correct
-                AddCheckResultEntry -CheckID "DB2-RHEL-0002" -Description "IBM DB2 Data: stripe size" -AdditionalInfo ("Disk " + $_FirstDisk.name) -TestResult $_filesystem_db2.StripeSize -ExptectedResult $_DB2StripeSize -Status "OK" -MicrosoftDocs $_db2storagedocsurl
+                AddCheckResultEntry -CheckID "DB2-RHEL-0002" -Description "IBM DB2 Data: stripe size" -TestResult $_filesystem_db2.StripeSize -ExptectedResult $_DB2StripeSize -Status "OK" -MicrosoftDocs $_db2storagedocsurl
             }
             else {
-                AddCheckResultEntry -CheckID "DB2-RHEL-0002" -Description "IBM DB2 Data: stripe size" -AdditionalInfo ("Disk " + $_FirstDisk.name) -TestResult $_filesystem_db2.StripeSize -ExptectedResult $_DB2StripeSize -Status "ERROR" -MicrosoftDocs $_db2storagedocsurl -ErrorCategory "ERROR"
+                AddCheckResultEntry -CheckID "DB2-RHEL-0002" -Description "IBM DB2 Data: stripe size" -TestResult $_filesystem_db2.StripeSize -ExptectedResult $_DB2StripeSize -Status "ERROR" -MicrosoftDocs $_db2storagedocsurl -ErrorCategory "ERROR"
             }
         }
     }
