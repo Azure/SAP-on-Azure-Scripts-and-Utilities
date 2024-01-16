@@ -1,5 +1,9 @@
 # Changelog
 
+# Version 2024011701
+* NEW: DB2 checks for storage stripe size.
+* Log OS command failures. 
+
 # Version 2024010301
 * NEW: check for multiple valid result
     * ```"ExpectedResult": { "Type": "multi", "Values": ["net.ipv4.tcp_tw_reuse = 0", "net.ipv4.tcp_tw_reuse = 2"] } ```
