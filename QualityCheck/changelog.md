@@ -3,6 +3,7 @@
 # Version 2024011701
 * NEW: DB2 checks for storage stripe size.
 * Log OS command failures. 
+* Add Azure Fence Agent Configuration and OS HA checks
 
 # Version 2024010301
 * NEW: check for multiple valid result
