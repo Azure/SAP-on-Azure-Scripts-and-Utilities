@@ -1,5 +1,10 @@
 # Changelog
 
+# Version 2024011701
+* NEW: DB2 checks for storage stripe size.
+* Log OS command failures. 
+* Add Azure Fence Agent Configuration and OS HA checks
+
 # Version 2024011201
 * NEW: parameter AddJSONFile available to send output to HTML + JSON file for automatic analysis of files
 * NEW: possibility to have multiple SAP Notes

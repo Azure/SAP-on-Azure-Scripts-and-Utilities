@@ -287,7 +287,8 @@ param (
 
 
 # defining script version
-$scriptversion = 2024011201
+$scriptversion = 2024011701
+
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -987,6 +988,12 @@ function RunCommand {
 
                 # run the command
                 $_result = Invoke-SSHCommand -Command $_command -SessionId $script:_SessionID
+
+                # if result has errors, log them
+                if ($_result.ERROR -ne "")
+                {
+                    WriteRunLog -category "ERROR" -message ($p.CheckID + " " + $_result.Error)
+                }
                 # just store theoutput of the command in $_result
                 $_result = $_result.Output
             
@@ -2121,6 +2128,139 @@ function RunQualityCheck {
         }
     }
 
+    # STORAGE CHECKS IBM DB2
+    # checking for data disks
+    if (($VMDatabase -eq "Db2") -and ($VMRole -eq "DB")) {
+
+        $_db2storagedocsurl = "https://learn.microsoft.com/en-us/azure/sap/workloads/dbms-guide-ibm"
+
+        if ($script:DBDataDir.Contains("/hana/data")) {
+            #default value is being used for DBDataDir
+            #Rewrite the correct default values for DB2
+
+            if ($SID) {
+                $script:_persistance_db2datavolumes = "/db2/" + $SID + "/sapdata"
+                $script:_persistance_db2logvolumes =  "/db2/" + $SID + "/log_dir"
+
+                # get all files for /db2/SID/sapdata
+                $_commandstring = "find $_persistance_db2datavolumes -type f"
+                $_command = PrepareCommand -Command $($_commandstring) -CommandType "OS" -RootRequired $true
+                $script:_persistance_datavolumes_files = RunCommand -p $_command
+
+                # get all files for /db2/SID/log_dir
+                $_commandstring = "find $_persistance_db2logvolumes -type f"
+                $_command = PrepareCommand -Command $($_commandstring) -CommandType "OS" -RootRequired $true
+                $script:_persistance_logvolumes_files = RunCommand -p $_command
+
+                # loop through all files and get the file systems they are using
+                $_datavolumes_filesystems = @()
+                foreach ($_datavolumes_file in $script:_persistance_datavolumes_files) {
+                    $_command = PrepareCommand -Command "findmnt -T $_datavolumes_file | tail -n +2" -CommandType "OS" -RootRequired $true
+                    $_findmnt_temp = RunCommand -p $_command
+                    $_findmnt_temp = ConvertFrom-String_findmnt -p $_findmnt_temp
+                    $_datavolumes_filesystems += $_findmnt_temp.target
+                }
+
+                # loop through all files and get the file systems they are using
+                $_logvolumes_filesystems = @()
+                foreach ($_logvolumes_file in $script:_persistance_logvolumes_files) {
+                    $_command = PrepareCommand -Command "findmnt -T $_logvolumes_file | tail -n +2" -CommandType "OS" -RootRequired $true
+                    $_findmnt_temp = RunCommand -p $_command
+                    $_findmnt_temp = ConvertFrom-String_findmnt -p $_findmnt_temp
+                    $_logvolumes_filesystems += $_findmnt_temp.target
+                }
+                
+                $script:DBDataDir = $_datavolumes_filesystems
+                $script:DBLogDir = $_logvolumes_filesystems
+            }
+            else {
+                WriteRunLog -message "SID is required parameter for running DB2 checks." -category "ERROR"
+            }
+        }
+
+        ## getting file system for /db2/SID/log_dir
+        $_filesystem_db2 = ($script:_filesystems | Where-Object {$_.Target -in $script:DBLogDir})
+        if ($_filesystem_db2.Source.StartsWith("/dev/sd")) {
+            $_filesystem_db2_type = "direct"
+        }
+        else {
+            $_filesystem_db2_type = "lvm"
+        }
+        
+        if($_filesystem_db2.fstype -eq 'xfs')
+        {
+            if ($_filesystem_db2_type -eq "lvm") {
+                $_AzureDisks_db2 = ($_AzureDisks | Where-Object {$_.VolumeGroup -in $_filesystem_db2.vg})
+            }
+            else {
+                $_AzureDisks_for_db2data_filesystems = $script:_filesystems | Where-Object {$_.target -in $script:DBLogDir}
+                $_AzureDisks_db2 = ($_AzureDisks | Where-Object { $_.DeviceName -in $_AzureDisks_for_db2data_filesystems.Source})
+            }
+        }
+        elseif (($_filesystem_db2.fstype -eq 'nfs') -or ($_filesystem_db2.fstype -eq 'nfs4')) {
+
+            $script:_StorageType += "ANF"
+            
+        }
+        else {
+            ## file system not found
+        }
+
+        # check if stripe size check required (no of disks greater than 1 in VG)
+        if (($_AzureDisks_db2.count -gt 1) -and ($_filesystem_db2_type -eq "lvm")) {
+            $_DB2StripeSize = $_jsonconfig.DB2StorageRequirements.DB2LogStripeSize
+
+            if ($_filesystem_db2.StripeSize -eq $_DB2StripeSize) {
+                # stripe size correct
+                AddCheckResultEntry -CheckID "DB2-RHEL-0001" -Description "IBM DB2 Log: stripe size" -TestResult $_filesystem_db2.StripeSize -ExptectedResult $_DB2StripeSize -Status "OK" -MicrosoftDocs $_db2storagedocsurl
+            }
+            else {
+                # Wrong Disk Type
+                AddCheckResultEntry -CheckID "DB2-RHEL-0001" -Description "IBM DB2 Log: stripe size" -TestResult $_filesystem_db2.StripeSize -ExptectedResult $_DB2StripeSize -Status "ERROR" -MicrosoftDocs $_db2storagedocsurl -ErrorCategory "ERROR"
+            }
+        }
+
+        ## getting file system for /db2/data
+        $_filesystem_db2 = ($script:_filesystems | Where-Object {$_.Target -in $script:DBDataDir})
+        if ($_filesystem_db2.Source.StartsWith("/dev/sd")) {
+            $_filesystem_db2_type = "direct"
+        }
+        else {
+            $_filesystem_db2_type = "lvm"
+        }
+        
+        if($_filesystem_db2.fstype -eq 'xfs')
+        {
+            if ($_filesystem_db2_type -eq "lvm") {
+                $_AzureDisks_db2 = ($_AzureDisks | Where-Object {$_.VolumeGroup -in $_filesystem_db2.vg})
+            }
+            else {
+                $_AzureDisks_for_db2data_filesystems = $script:_filesystems | Where-Object {$_.target -in $script:DBDataDir}
+                $_AzureDisks_db2 = ($_AzureDisks | Where-Object { $_.DeviceName -in $_AzureDisks_for_db2data_filesystems.Source})
+            }
+        }
+        elseif (($_filesystem_db2.fstype -eq 'nfs') -or ($_filesystem_db2.fstype -eq 'nfs4')) {
+
+            $script:_StorageType += "ANF"
+            
+        }
+        else {
+            ## file system not found
+        }
+
+        # check if stripe size check required (no of disks greater than 1 in VG)
+        if (($_AzureDisks_db2.count -gt 1) -and ($_filesystem_db2_type -eq "lvm")) {
+            $_DB2StripeSize = $_jsonconfig.DB2StorageRequirements.DB2DataStripeSize
+
+            if ($_filesystem_db2.StripeSize -eq $_DB2StripeSize) {
+                # stripe size correct
+                AddCheckResultEntry -CheckID "DB2-RHEL-0002" -Description "IBM DB2 Data: stripe size" -TestResult $_filesystem_db2.StripeSize -ExptectedResult $_DB2StripeSize -Status "OK" -MicrosoftDocs $_db2storagedocsurl
+            }
+            else {
+                AddCheckResultEntry -CheckID "DB2-RHEL-0002" -Description "IBM DB2 Data: stripe size" -TestResult $_filesystem_db2.StripeSize -ExptectedResult $_DB2StripeSize -Status "ERROR" -MicrosoftDocs $_db2storagedocsurl -ErrorCategory "ERROR"
+            }
+        }
+    }
 
     # remove duplicates from used storage types
     $script:_StorageType = $script:_StorageType | Select-Object -Unique

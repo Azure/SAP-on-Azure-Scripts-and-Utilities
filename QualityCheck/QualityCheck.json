@@ -1,5 +1,6 @@
 {
-    "Version": 2024011201,
+    "Version": 2024011701,
+
     "PowerShellPrerequisits": [
         {
             "ModuleName": "Posh-SSH",
@@ -2303,6 +2304,10 @@
         "HANADataStripeSize": "256.00k",
         "HANALOGStripeSize": "64.00k"
     },
+    "DB2StorageRequirements": {
+        "DB2DataStripeSize": "256.00k",
+        "DB2LOGStripeSize": "64.00k"
+    },
     "VMCollectInformation": [
         {
             "CheckID": "IC-0001",
@@ -4547,6 +4552,34 @@
             "SAPNote": ""
         },
         {
+            "CheckID": "HDB-OS-SLES-0006",
+            "Description": "Azure Fence Agent Configuration",
+            "OS": ["SUSE", "RedHat"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS"],
+            "Role": ["DB"],
+            "DB": ["HANA","Db2"],
+            "RunInLocalMode": true,
+            "ErrorCategory": "WARNING",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["FencingAgent"],
+            "CommandType": "OS",
+            "ProcessingCommand": "pcs stonith config | grep msi=true | wc -l",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "1",
+            "ShowAlternativeRequirement": "",
+            "ShowAlternativeResult": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "When configuring the Azure Fence Agent, it must be configured with MSI. This is the default setting when using the Azure Portal to configure the agent.",
+            "VersionHistory": [
+                { "Date": "2024011701", "ChangeLog": "added OS HA checks" }
+            ],
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker#using-managed-identity",
+            "SAPNote": ""
+        },
+        {
             "CheckID": "APP-OS-0001",
             "Description": "IPv4 keepalive time",
             "OS": ["SUSE","RedHat","OracleLinux"],
@@ -5710,6 +5743,34 @@
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
             "MicrosoftDocs": "https://www.suse.com/support/kb/doc/?id=000021005",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "HDB-OS-SLES-0012",
+            "Description": "Pacemaker stonith pcmk_delay_max",
+            "OS": ["SUSE"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS"],
+            "Role": ["DB"],
+            "DB": ["HANA","Db2"],
+            "RunInLocalMode": true,
+            "ErrorCategory": "WARNING",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["FencingAgent", "SBD"],
+            "CommandType": "OS",
+            "ProcessingCommand": "crm configure show | grep pcmk_delay_max | awk '{print $2}' | cut -d '=' -f 2",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "15s",
+            "ShowAlternativeRequirement": "",
+            "ShowAlternativeResult": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "2024011701", "ChangeLog": "added OS HA checks" }
+            ],
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker#create-a-fencing-device-on-the-pacemaker-cluster",
             "SAPNote": ""
         },
         {
