@@ -2803,7 +2803,7 @@
         {
             "CheckID": "IC-0016",
             "Description": "OS Timezone",
-            "OS": ["SUSE","RedHat","OracleLinux"],
+            "OS": ["RedHat","OracleLinux"],
             "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
@@ -2811,6 +2811,24 @@
             "RunInLocalMode": false,
             "CommandType": "OS",
             "ProcessingCommand": "timedatectl show --property=Timezone --value",
+            "PostProcessingCommand": "",
+            "RootRequired": false,
+            "ShowInReport": true,
+            "HighAvailability": [false,true],
+            "VersionHistory": [
+                { "Date": "20240109", "ChangeLog": "Initial" } ]
+        },
+        {
+            "CheckID": "IC-0016",
+            "Description": "OS Timezone",
+            "OS": ["SUSE"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM", "HLI"],
+            "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": false,
+            "CommandType": "OS",
+            "ProcessingCommand": "timedatectl show --property=Time zone --value",
             "PostProcessingCommand": "",
             "RootRequired": false,
             "ShowInReport": true,
@@ -2882,7 +2900,7 @@
             "Role": ["DB","ASCS","APP"],
             "RunInLocalMode": false,
             "CommandType": "OS",
-            "ProcessingCommand": "su - $SIDadm -c \'db2pd - -alldbs | awk '{print \\$10  \\$11 \\$12 }''",
+            "ProcessingCommand": "su - $SIDadm -c \\'db2pd - -alldbs | awk '{print \\$10  \\$11 \\$12 }''",
             "PostProcessingCommand": "",
             "RootRequired": false,
             "ShowInReport": true,
@@ -3161,7 +3179,7 @@
             "PostProcessingCommand": "",
             "RootRequired": true,
             "ShowInReport": true,
-            "HighAvailability": [true,false],
+            "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"]
         }        
     ],
