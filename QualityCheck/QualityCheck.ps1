@@ -280,12 +280,15 @@ param (
         [string][ValidateSet("SBD","FencingAgent","WCF",IgnoreCase = $false)]$HighAvailabilityAgent="SBD",
         # Run multiple QC at once
         [Parameter(Mandatory=$true, ParameterSetName='MultiRun')]
-        [string]$ImportFile
+        [string]$ImportFile,
+        # add JSON output in addition to HTML file
+        [switch]$AddJSONFile
 )
 
 
 # defining script version
 $scriptversion = 2024011701
+
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -2320,23 +2323,44 @@ function RunQualityCheck {
                         $_Check_row.VmRole = $VMRole
                     }
 
-                    if ($_check.SAPNote -ne "") {
-                        if (-not $RunLocally) {
-                            $_Check_row.SAPNote = "::SAPNOTEHTML1::" + $_check.SAPNote + "::SAPNOTEHTML2::" + $_check.SAPNote + "::SAPNOTEHTML3::"
+                    # if ($_check.SAPNote -ne "") {
+                    if (![string]::IsNullOrEmpty($_check.SAPNote)) {
+
+                        $_SAPNotes = @()
+
+                        foreach ($_SAPNote in $_check.SAPNote) {
+                            if (-not $RunLocally) {
+                                # $_Check_row.SAPNote = "::SAPNOTEHTML1::" + $_check.SAPNote + "::SAPNOTEHTML2::" + $_check.SAPNote + "::SAPNOTEHTML3::"
+                                $_SAPNotes += "::SAPNOTEHTML1::" + $_SAPNote + "::SAPNOTEHTML2::" + $_SAPNote + "::SAPNOTEHTML3::"
+                            }
+                            else {
+                                # $_Check_row.SAPNote = $_check.SAPNote
+                                $_SAPNotes += $_SAPNote
+                            }
                         }
-                        else {
-                            $_Check_row.SAPNote = $_check.SAPNote
-                        }
+                        
+                        $_Check_row.SAPNote = $_SAPNotes -join ("{0}" -f [environment]::NewLine)
+
                     }
 
-                    if ($_check.MicrosoftDocs -ne "") {
-                        if (-not $RunLocally) {
-                            $_Check_row.MicrosoftDocs = "::MSFTDOCS1::" + $_check.MicrosoftDocs + "::MSFTDOCS2::" + "Link" + "::MSFTDOCS3::"
+                    # if ($_check.MicrosoftDocs -ne "") {
+                    if (![string]::IsNullOrEmpty($_check.MicrosoftDocs)) {
+                        
+                        $_HTMLLinks = @()
+                        
+                        foreach ($_HTMLLink in $_check.MicrosoftDocs) {                      
+                            if (-not $RunLocally) {
+                                # $_Check_row.MicrosoftDocs = "::MSFTDOCS1::" + $_check.MicrosoftDocs + "::MSFTDOCS2::" + "Link" + "::MSFTDOCS3::"
+                                $_HTMLLinks += "::MSFTDOCS1::" + $_HTMLLink + "::MSFTDOCS2::" + "Link" + "::MSFTDOCS3::"
+                            }
+                            else {
+                                # $_HTMLLinks += $_check.MicrosoftDocs
+                                $_HTMLLinks += $_HTMLLink
+                            }
                         }
-                        else {
-                            $_Check_row.MicrosoftDocs = $_check.MicrosoftDocs
-                        }
-                
+
+                        $_Check_row.MicrosoftDocs = $_HTMLLinks -join ("{0}" -f [environment]::NewLine)
+
                     }
                     
                     # check if the expected result has multiple values or just one
@@ -3247,8 +3271,28 @@ foreach ($_qcrun in $_MultiRunData) {
         $_RunLogContent = $script:_runlog | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""RunLog"">RunLog</h2>"
 
         $_HTMLReport = ConvertTo-Html -Body "$_Content $_CollectScriptParameter $_CollectVMInfo $_RunQualityCheck $_CollectFileSystems $_CollectVMStorage $_CollectLVMGroups $_CollectLVMVolumes $_CollectANFVolumes $_CollectNetworkInterfaces $_CollectLoadBalancer $_CollectVMInfoAdditional $_CollectFooter $_RunLogContent" -Head $script:_HTMLHeader -Title "Quality Check for SAP Worloads on Azure" -PostContent "<p id='CreationDate'>Creation Date: $(Get-Date)</p><p id='CreationDate'>Script Version: $scriptversion</p>"
-        $_HTMLReportFileName = $AzVMName + "-" + $(Get-Date -Format "yyyyMMdd-HHmm") + ".html"
+        $_HTMLReportFileDate = $(Get-Date -Format "yyyyMMdd-HHmm")
+        $_HTMLReportFileName = $AzVMName + "-" + $_HTMLReportFileDate + ".html"
         $_HTMLReport | Out-File .\$_HTMLReportFileName
+
+        if ($AddJSONFile) {
+            # adding JSONfile
+            $_jsonoutput = "" | Select-Object Checks, Parameters, InformationCollection, Disks, Filesystems, RunLog
+
+            WriteRunLog -category "INFO" -message ("Preparing JSON Output")
+
+            $_jsonoutput.Checks = $script:_Checks
+            $_jsonoutput.Parameters = $_ParameterValues
+            $_jsonoutput.Disks = $script:_AzureDisks
+            $_jsonoutput.Filesystems = $script:_filesystems
+            $_jsonoutput.RunLog = $script:_runlog
+
+            $_JSONReportFileName = $AzVMName + "-" + $_HTMLReportFileDate + ".json"
+            $_jsonoutput = $_jsonoutput | ConvertTo-Json
+            $_jsonoutput | Out-File .\$_JSONReportFileName
+        }
+
+
     }
     else {
         # script running locally, convert result to JSON

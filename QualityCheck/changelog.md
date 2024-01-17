@@ -5,6 +5,15 @@
 * Log OS command failures. 
 * Add Azure Fence Agent Configuration and OS HA checks
 
+# Version 2024011201
+* NEW: parameter AddJSONFile available to send output to HTML + JSON file for automatic analysis of files
+* NEW: possibility to have multiple SAP Notes
+    * ```"SAPNote": ["123123", "234234"]```
+* NEW: possibility to have multiple Links to documentation
+    * ```"MicrosoftDocs": ["https://azure.microsoft.com", "https://www.microsoft.com"]```
+* UPDATE: starting to move cluster checks to ranges, e.g. stonith-timeout
+* UPDATE: adding a lot of links and SAP notes to the checks
+
 # Version 2024010301
 * NEW: check for multiple valid result
     * ```"ExpectedResult": { "Type": "multi", "Values": ["net.ipv4.tcp_tw_reuse = 0", "net.ipv4.tcp_tw_reuse = 2"] } ```
