@@ -4572,7 +4572,7 @@
             "VersionHistory": [
                 { "Date": "2024011701", "ChangeLog": "added OS HA checks" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker#using-managed-identity",
             "SAPNote": ""
         },
         {
@@ -5764,7 +5764,7 @@
             "VersionHistory": [
                 { "Date": "2024011701", "ChangeLog": "added OS HA checks" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker#create-a-fencing-device-on-the-pacemaker-cluster",
             "SAPNote": ""
         },
         {
