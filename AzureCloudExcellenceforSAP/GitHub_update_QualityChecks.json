@@ -1,5 +1,5 @@
 {
-    "Version": 2024011201,
+    "Version": 2024011701,
     "PowerShellPrerequisits": [
         {
             "ModuleName": "Posh-SSH",
@@ -2450,7 +2450,7 @@
             "Role": ["DB","ASCS","APP"],
             "RunInLocalMode": false,
             "CommandType": "PowerShell",
-            "ProcessingCommand": "(Get-AzVM -ResourceGroupName $AzVMResourceGroup -Name $AzVMName).AvailabilitySetReference.Id",
+            "ProcessingCommand": "$AvSet = (Get-AzVM -ResourceGroupName $AzVMResourceGroup -Name $AzVMName).AvailabilitySetReference.Id; if (!$AvSet) { 'No AvSet defined' } else { (Get-AzVM -ResourceGroupName $AzVMResourceGroup -Name $AzVMName).AvailabilitySetReference.Id }",
             "PostProcessingCommand": "",
             "RootRequired": false,
             "ShowInReport": true,
@@ -3181,7 +3181,24 @@
             "ShowInReport": true,
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"]
-        }        
+        },
+        {
+            "CheckID": "IC-9016",
+            "Description": "HADR Status",
+            "OS": ["SUSE","RedHat"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "DB": ["Db2"],
+            "Role": ["DB"],
+            "RunInLocalMode": true,
+            "CommandType": "OS",
+            "ProcessingCommand": "su - $SIDadm -c 'db2pd - -alldbs -hadr'",
+            "PostProcessingCommand": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "HighAvailability": [true],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"]
+        }     
     ],
     "Checks": [
         {
@@ -4141,7 +4158,7 @@
             "VersionHistory": [
                 { "Date": "20240105", "ChangeLog": "Initial" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://www.ibm.com/docs/en/db2/11.1?topic=unix-kernel-parameter-requirements-linux",
             "SAPNote": "2936683"
         },
         {
@@ -4169,7 +4186,7 @@
             "VersionHistory": [
                 { "Date": "20240105", "ChangeLog": "Initial" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://www.ibm.com/docs/en/db2/11.1?topic=unix-kernel-parameter-requirements-linux",
             "SAPNote": "2936683"
         },
         {
@@ -4197,7 +4214,7 @@
             "VersionHistory": [
                 { "Date": "20240105", "ChangeLog": "Initial" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://www.ibm.com/docs/en/db2/11.1?topic=unix-kernel-parameter-requirements-linux",
             "SAPNote": "2936683"
         },
         {
@@ -4225,7 +4242,7 @@
             "VersionHistory": [
                 { "Date": "20240105", "ChangeLog": "Initial" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://www.ibm.com/docs/en/db2/11.1?topic=unix-kernel-parameter-requirements-linux",
             "SAPNote": "2936683"
         },
         {
@@ -4253,7 +4270,7 @@
             "VersionHistory": [
                 { "Date": "20240105", "ChangeLog": "Initial" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://www.ibm.com/docs/en/db2/11.1?topic=unix-kernel-parameter-requirements-linux",
             "SAPNote": "2936683"
         },
         {
@@ -4281,7 +4298,7 @@
             "VersionHistory": [
                 { "Date": "20240105", "ChangeLog": "Initial" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://www.ibm.com/docs/en/db2/11.1?topic=unix-kernel-parameter-requirements-linux",
             "SAPNote": "2936683"
         },
         {
@@ -4309,7 +4326,7 @@
             "VersionHistory": [
                 { "Date": "20240105", "ChangeLog": "Initial" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://www.ibm.com/docs/en/db2/11.1?topic=unix-kernel-parameter-requirements-linux",
             "SAPNote": "2936683"
         },
         {
