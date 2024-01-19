@@ -47,4 +47,5 @@ DC66       APAC   Sydney MS Azure               https://performancemanager10.suc
 
 ## License
 
+Copyright (c) Microsoft Corporation.
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
