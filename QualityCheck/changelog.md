@@ -1,5 +1,60 @@
 # Changelog
 
+# Version 2024011701
+* NEW: DB2 checks for storage stripe size.
+* Log OS command failures. 
+* Add Azure Fence Agent Configuration and OS HA checks
+
+# Version 2024011201
+* NEW: parameter AddJSONFile available to send output to HTML + JSON file for automatic analysis of files
+* NEW: possibility to have multiple SAP Notes
+    * ```"SAPNote": ["123123", "234234"]```
+* NEW: possibility to have multiple Links to documentation
+    * ```"MicrosoftDocs": ["https://azure.microsoft.com", "https://www.microsoft.com"]```
+* UPDATE: starting to move cluster checks to ranges, e.g. stonith-timeout
+* UPDATE: adding a lot of links and SAP notes to the checks
+
+# Version 2024010301
+* NEW: check for multiple valid result
+    * ```"ExpectedResult": { "Type": "multi", "Values": ["net.ipv4.tcp_tw_reuse = 0", "net.ipv4.tcp_tw_reuse = 2"] } ```
+    * Type is defined as "multi" and Values contains the possible results
+* NEW: check for valid result range
+    * ```"ExpectedResult": { "Type": "range", "low": 2, "high": 5 } ```
+    * Type is defined as "range" and the parameters low and high define the range including the values itself
+* single results have been unchanged
+    * ```"ExpectedResult": "2"```
+* UPDATE: link to SAP notes has been updated to "me.sap.com" instead of "launchpad.support.sap.com"
+
+
+# Version 2023120402
+* fixing issue with VMs that have more than 26 disks (/dev/sda to /dev/sdz), and disk names have 4 characters (e.g. /dev/sdaa) for OS disk / rootvg
+
+# Version 2023120401
+* fixing issue with VMs that have more than 26 disks (/dev/sda to /dev/sdz), and disk names have 4 characters (e.g. /dev/sdaa)
+
+## Version 2023113001
+* adding check for number of extensions on VM
+* check to identify whether the secondary IP is enabled on Primary NIC
+* adding check to identify the security type of VM (Standard/Trusted/)
+* identify whether the VM is deployed on VMSS flex
+* adding check to find the probe interval for a load balancer
+* check to know whether microsoft defender is installed on the VM running Windows OS
+* updated the GUI to take the ANF parameters as input
+* updated the logic to get the pacemaker corosync consensus
+* updated the command to get the pacemaker concurrent fencing
+
+## Version 2023112102
+
+* with Az.NetAppFiles 0.13 the field for throughput was changed, taking the max value of the old and the new field in module
+
+## Version 2023112101
+
+* add support in all checks for Premium SSD v2
+* add support for new M416s_8_v2 instance
+* add support for new Mv3 instances
+* fix a typo in the description of cluster checks (mix of 60 and 120 seconds, only description incorrect)
+* add additional checks for kernel issues related to accelerated networking
+
 ## Version 2023061301
 
 * adding support for ASE

@@ -280,12 +280,15 @@ param (
         [string][ValidateSet("SBD","FencingAgent","WCF",IgnoreCase = $false)]$HighAvailabilityAgent="SBD",
         # Run multiple QC at once
         [Parameter(Mandatory=$true, ParameterSetName='MultiRun')]
-        [string]$ImportFile
+        [string]$ImportFile,
+        # add JSON output in addition to HTML file
+        [switch]$AddJSONFile
 )
 
 
 # defining script version
-$scriptversion = 2023061301
+$scriptversion = 2024011701
+
 function LoadHTMLHeader {
 
 $script:_HTMLHeader = @"
@@ -985,6 +988,12 @@ function RunCommand {
 
                 # run the command
                 $_result = Invoke-SSHCommand -Command $_command -SessionId $script:_SessionID
+
+                # if result has errors, log them
+                if ($_result.ERROR -ne "")
+                {
+                    WriteRunLog -category "ERROR" -message ($p.CheckID + " " + $_result.Error)
+                }
                 # just store theoutput of the command in $_result
                 $_result = $_result.Output
             
@@ -1274,7 +1283,8 @@ function CollectVMStorage {
         # $_AzureDisk_row.DeviceName = ($script:_diskmapping | Where-Object { ($_.P5 -eq 0) -and ($_.P2 -eq $script:_OSDiskSCSIControllerID) }).P7
         $_AzureDisk_row.DeviceName = $_rootdisk
         try {
-            $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -like ($_AzureDisk_row.DeviceName + "*")}).vg[0].vg_name
+            # $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -like ($_AzureDisk_row.DeviceName + "*")}).vg[0].vg_name
+            $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -eq ($_AzureDisk_row.DeviceName)}).vg[0].vg_name
         }
         catch {
             if (-not $RunLocally) {
@@ -1293,7 +1303,8 @@ function CollectVMStorage {
         #$script:_diskmapping = RunCommand -p $_command
         #$script:_diskmapping = ConvertFrom-String_sgmap -p $script:_diskmapping
 
-        $_lsscsi_command = "lsscsi | sed 's/\[//; s/\]//; s/\.//' | sed 's/:/ /g' | grep Virtual | grep -v " + $_rootdisk + " | grep -v " + $_resourcedisk
+
+        $_lsscsi_command = "lsscsi | sed 's/\[//; s/\]//; s/\.//' | sed 's/:/ /g' | grep Virtual | grep -v '" + $_rootdisk + " ' | grep -v '" + $_resourcedisk + " '"
         $_command = PrepareCommand -Command $_lsscsi_command -CommandType OS
         $script:_diskmapping = RunCommand -p $_command
         $script:_diskmapping = ConvertFrom-String_lsscsi -p $script:_diskmapping
@@ -2117,6 +2128,139 @@ function RunQualityCheck {
         }
     }
 
+    # STORAGE CHECKS IBM DB2
+    # checking for data disks
+    if (($VMDatabase -eq "Db2") -and ($VMRole -eq "DB")) {
+
+        $_db2storagedocsurl = "https://learn.microsoft.com/en-us/azure/sap/workloads/dbms-guide-ibm"
+
+        if ($script:DBDataDir.Contains("/hana/data")) {
+            #default value is being used for DBDataDir
+            #Rewrite the correct default values for DB2
+
+            if ($SID) {
+                $script:_persistance_db2datavolumes = "/db2/" + $SID + "/sapdata"
+                $script:_persistance_db2logvolumes =  "/db2/" + $SID + "/log_dir"
+
+                # get all files for /db2/SID/sapdata
+                $_commandstring = "find $_persistance_db2datavolumes -type f"
+                $_command = PrepareCommand -Command $($_commandstring) -CommandType "OS" -RootRequired $true
+                $script:_persistance_datavolumes_files = RunCommand -p $_command
+
+                # get all files for /db2/SID/log_dir
+                $_commandstring = "find $_persistance_db2logvolumes -type f"
+                $_command = PrepareCommand -Command $($_commandstring) -CommandType "OS" -RootRequired $true
+                $script:_persistance_logvolumes_files = RunCommand -p $_command
+
+                # loop through all files and get the file systems they are using
+                $_datavolumes_filesystems = @()
+                foreach ($_datavolumes_file in $script:_persistance_datavolumes_files) {
+                    $_command = PrepareCommand -Command "findmnt -T $_datavolumes_file | tail -n +2" -CommandType "OS" -RootRequired $true
+                    $_findmnt_temp = RunCommand -p $_command
+                    $_findmnt_temp = ConvertFrom-String_findmnt -p $_findmnt_temp
+                    $_datavolumes_filesystems += $_findmnt_temp.target
+                }
+
+                # loop through all files and get the file systems they are using
+                $_logvolumes_filesystems = @()
+                foreach ($_logvolumes_file in $script:_persistance_logvolumes_files) {
+                    $_command = PrepareCommand -Command "findmnt -T $_logvolumes_file | tail -n +2" -CommandType "OS" -RootRequired $true
+                    $_findmnt_temp = RunCommand -p $_command
+                    $_findmnt_temp = ConvertFrom-String_findmnt -p $_findmnt_temp
+                    $_logvolumes_filesystems += $_findmnt_temp.target
+                }
+                
+                $script:DBDataDir = $_datavolumes_filesystems
+                $script:DBLogDir = $_logvolumes_filesystems
+            }
+            else {
+                WriteRunLog -message "SID is required parameter for running DB2 checks." -category "ERROR"
+            }
+        }
+
+        ## getting file system for /db2/SID/log_dir
+        $_filesystem_db2 = ($script:_filesystems | Where-Object {$_.Target -in $script:DBLogDir})
+        if ($_filesystem_db2.Source.StartsWith("/dev/sd")) {
+            $_filesystem_db2_type = "direct"
+        }
+        else {
+            $_filesystem_db2_type = "lvm"
+        }
+        
+        if($_filesystem_db2.fstype -eq 'xfs')
+        {
+            if ($_filesystem_db2_type -eq "lvm") {
+                $_AzureDisks_db2 = ($_AzureDisks | Where-Object {$_.VolumeGroup -in $_filesystem_db2.vg})
+            }
+            else {
+                $_AzureDisks_for_db2data_filesystems = $script:_filesystems | Where-Object {$_.target -in $script:DBLogDir}
+                $_AzureDisks_db2 = ($_AzureDisks | Where-Object { $_.DeviceName -in $_AzureDisks_for_db2data_filesystems.Source})
+            }
+        }
+        elseif (($_filesystem_db2.fstype -eq 'nfs') -or ($_filesystem_db2.fstype -eq 'nfs4')) {
+
+            $script:_StorageType += "ANF"
+            
+        }
+        else {
+            ## file system not found
+        }
+
+        # check if stripe size check required (no of disks greater than 1 in VG)
+        if (($_AzureDisks_db2.count -gt 1) -and ($_filesystem_db2_type -eq "lvm")) {
+            $_DB2StripeSize = $_jsonconfig.DB2StorageRequirements.DB2LogStripeSize
+
+            if ($_filesystem_db2.StripeSize -eq $_DB2StripeSize) {
+                # stripe size correct
+                AddCheckResultEntry -CheckID "DB2-RHEL-0001" -Description "IBM DB2 Log: stripe size" -TestResult $_filesystem_db2.StripeSize -ExptectedResult $_DB2StripeSize -Status "OK" -MicrosoftDocs $_db2storagedocsurl
+            }
+            else {
+                # Wrong Disk Type
+                AddCheckResultEntry -CheckID "DB2-RHEL-0001" -Description "IBM DB2 Log: stripe size" -TestResult $_filesystem_db2.StripeSize -ExptectedResult $_DB2StripeSize -Status "ERROR" -MicrosoftDocs $_db2storagedocsurl -ErrorCategory "ERROR"
+            }
+        }
+
+        ## getting file system for /db2/data
+        $_filesystem_db2 = ($script:_filesystems | Where-Object {$_.Target -in $script:DBDataDir})
+        if ($_filesystem_db2.Source.StartsWith("/dev/sd")) {
+            $_filesystem_db2_type = "direct"
+        }
+        else {
+            $_filesystem_db2_type = "lvm"
+        }
+        
+        if($_filesystem_db2.fstype -eq 'xfs')
+        {
+            if ($_filesystem_db2_type -eq "lvm") {
+                $_AzureDisks_db2 = ($_AzureDisks | Where-Object {$_.VolumeGroup -in $_filesystem_db2.vg})
+            }
+            else {
+                $_AzureDisks_for_db2data_filesystems = $script:_filesystems | Where-Object {$_.target -in $script:DBDataDir}
+                $_AzureDisks_db2 = ($_AzureDisks | Where-Object { $_.DeviceName -in $_AzureDisks_for_db2data_filesystems.Source})
+            }
+        }
+        elseif (($_filesystem_db2.fstype -eq 'nfs') -or ($_filesystem_db2.fstype -eq 'nfs4')) {
+
+            $script:_StorageType += "ANF"
+            
+        }
+        else {
+            ## file system not found
+        }
+
+        # check if stripe size check required (no of disks greater than 1 in VG)
+        if (($_AzureDisks_db2.count -gt 1) -and ($_filesystem_db2_type -eq "lvm")) {
+            $_DB2StripeSize = $_jsonconfig.DB2StorageRequirements.DB2DataStripeSize
+
+            if ($_filesystem_db2.StripeSize -eq $_DB2StripeSize) {
+                # stripe size correct
+                AddCheckResultEntry -CheckID "DB2-RHEL-0002" -Description "IBM DB2 Data: stripe size" -TestResult $_filesystem_db2.StripeSize -ExptectedResult $_DB2StripeSize -Status "OK" -MicrosoftDocs $_db2storagedocsurl
+            }
+            else {
+                AddCheckResultEntry -CheckID "DB2-RHEL-0002" -Description "IBM DB2 Data: stripe size" -TestResult $_filesystem_db2.StripeSize -ExptectedResult $_DB2StripeSize -Status "ERROR" -MicrosoftDocs $_db2storagedocsurl -ErrorCategory "ERROR"
+            }
+        }
+    }
 
     # remove duplicates from used storage types
     $script:_StorageType = $script:_StorageType | Select-Object -Unique
@@ -2161,45 +2305,121 @@ function RunQualityCheck {
                     $_Check_row.Description = $_check.Description
                     $_Check_row.AdditionalInfo = $_check.AdditionalInfo
                     $_Check_row.Testresult = $_result
-                    $_Check_row.ExpectedResult = $_check.ExpectedResult
+                    # $_Check_row.ExpectedResult = $_check.ExpectedResult
+                    # if multiple expected results are available the join will combine them and add a new line for each entry
+                    if ($_check.ExpectedResult.GetType().Name -eq "PSCustomObject") {    
+                        switch ($_check.ExpectedResult.Type) {
+                            "multi" { $_Check_row.ExpectedResult = $_check.ExpectedResult.Values -join (" or{0}" -f [environment]::NewLine) }
+                            "range" { $_Check_row.ExpectedResult = "from {0} to {1}" -f $_check.ExpectedResult.low, $_check.ExpectedResult.high }
+                            Default { "wrong default value in JSON"}
+                        }
+                    }
+                    else {
+                        $_Check_row.ExpectedResult = $_check.ExpectedResult
+                    }
+                    
 
                     if ($RunLocally) {
                         $_Check_row.VmRole = $VMRole
                     }
 
-                    if ($_check.SAPNote -ne "") {
-                        if (-not $RunLocally) {
-                            $_Check_row.SAPNote = "::SAPNOTEHTML1::" + $_check.SAPNote + "::SAPNOTEHTML2::" + $_check.SAPNote + "::SAPNOTEHTML3::"
+                    # if ($_check.SAPNote -ne "") {
+                    if (![string]::IsNullOrEmpty($_check.SAPNote)) {
+
+                        $_SAPNotes = @()
+
+                        foreach ($_SAPNote in $_check.SAPNote) {
+                            if (-not $RunLocally) {
+                                # $_Check_row.SAPNote = "::SAPNOTEHTML1::" + $_check.SAPNote + "::SAPNOTEHTML2::" + $_check.SAPNote + "::SAPNOTEHTML3::"
+                                $_SAPNotes += "::SAPNOTEHTML1::" + $_SAPNote + "::SAPNOTEHTML2::" + $_SAPNote + "::SAPNOTEHTML3::"
+                            }
+                            else {
+                                # $_Check_row.SAPNote = $_check.SAPNote
+                                $_SAPNotes += $_SAPNote
+                            }
+                        }
+                        
+                        $_Check_row.SAPNote = $_SAPNotes -join ("{0}" -f [environment]::NewLine)
+
+                    }
+
+                    # if ($_check.MicrosoftDocs -ne "") {
+                    if (![string]::IsNullOrEmpty($_check.MicrosoftDocs)) {
+                        
+                        $_HTMLLinks = @()
+                        
+                        foreach ($_HTMLLink in $_check.MicrosoftDocs) {                      
+                            if (-not $RunLocally) {
+                                # $_Check_row.MicrosoftDocs = "::MSFTDOCS1::" + $_check.MicrosoftDocs + "::MSFTDOCS2::" + "Link" + "::MSFTDOCS3::"
+                                $_HTMLLinks += "::MSFTDOCS1::" + $_HTMLLink + "::MSFTDOCS2::" + "Link" + "::MSFTDOCS3::"
+                            }
+                            else {
+                                # $_HTMLLinks += $_check.MicrosoftDocs
+                                $_HTMLLinks += $_HTMLLink
+                            }
+                        }
+
+                        $_Check_row.MicrosoftDocs = $_HTMLLinks -join ("{0}" -f [environment]::NewLine)
+
+                    }
+                    
+                    # check if the expected result has multiple values or just one
+                    # if ($_check.ExpectedResult.GetType().Name -eq "Object[]") {
+                    if ($_check.ExpectedResult.GetType().Name -eq "PSCustomObject") {    
+                        
+                        switch ($_check.ExpectedResult.type) {
+                            "multi" {
+                                        if ($_check.ExpectedResult.Values -contains $_result) {
+                                            $_Check_row.Status = "OK"
+                                            if ($RunLocally) {
+                                                $_Check_row.Success = $true
+                                            }
+                                        }
+                                        else {
+                                            # $_Check_row.Status = "ERROR"
+                                            $_Check_row.Status = $_check.ErrorCategory
+                                            if ($RunLocally) {
+                                                $_Check_row.Success = $false
+                                            }
+                                        }
+                                    }
+                            "range" {
+                                        if ($_result -ge $_check.ExpectedResult.low -and $_result -le $_check.ExpectedResult.high) {
+                                            $_Check_row.Status = "OK"
+                                            if ($RunLocally) {
+                                                $_Check_row.Success = $true
+                                            }
+                                        }
+                                        else {
+                                            # $_Check_row.Status = "ERROR"
+                                            $_Check_row.Status = $_check.ErrorCategory
+                                            if ($RunLocally) {
+                                                $_Check_row.Success = $false
+                                            }
+                                        }
+                                    }
+                            Default {
+                                        $_Check_row.Status = "JSONERROR"
+                                    }
+                        }
+                        
+                    }
+                    else {
+                        if ($_result -eq $_check.ExpectedResult) {
+                            $_Check_row.Status = "OK"
+                            if ($RunLocally) {
+                                $_Check_row.Success = $true
+                            }
                         }
                         else {
-                            $_Check_row.SAPNote = $_check.SAPNote
+                            # $_Check_row.Status = "ERROR"
+                            $_Check_row.Status = $_check.ErrorCategory
+                            if ($RunLocally) {
+                                $_Check_row.Success = $false
+                            }
                         }
                     }
 
-                    if ($_check.MicrosoftDocs -ne "") {
-                        if (-not $RunLocally) {
-                            $_Check_row.MicrosoftDocs = "::MSFTDOCS1::" + $_check.MicrosoftDocs + "::MSFTDOCS2::" + "Link" + "::MSFTDOCS3::"
-                        }
-                        else {
-                            $_Check_row.MicrosoftDocs = $_check.MicrosoftDocs
-                        }
-                
-                    }
-                    
-                    if ($_result -eq $_check.ExpectedResult) {
-                        $_Check_row.Status = "OK"
-                        if ($RunLocally) {
-                            $_Check_row.Success = $true
-                        }
-                    }
-                    else {
-                        # $_Check_row.Status = "ERROR"
-                        $_Check_row.Status = $_check.ErrorCategory
-                        if ($RunLocally) {
-                            $_Check_row.Success = $false
-                        }
-                    }
-                    
                     if (($_check.ShowAlternativeRequirement) -ne "" -or ($_check.ShowAlternativeResult -ne ""))
                     {
                         if ($_check.ShowAlternativeResult -ne "") {
@@ -2208,7 +2428,7 @@ function RunQualityCheck {
                         else {
                             $_Check_row.Testresult = ""
                         }
-                        if ($_check.ShowAlternativeRequirement -ne "") {
+                        if (![string]::IsNullOrEmpty($_check.ShowAlternativeRequirement)) {
                             $_Check_row.ExpectedResult = Invoke-Expression $_check.ShowAlternativeRequirement
                         }
                         else {
@@ -2231,7 +2451,8 @@ function RunQualityCheck {
     $_ChecksOutput = $_ChecksOutput -replace '<td>ERROR</td>','<td class="StatusError">ERROR</td>'
     $_ChecksOutput = $_ChecksOutput -replace '<td>WARNING</td>','<td class="StatusWarning">WARNING</td>'
     $_ChecksOutput = $_ChecksOutput -replace '<td>INFO</td>','<td class="StatusInfo">INFO</td>'
-    $_ChecksOutput = $_ChecksOutput -replace '::SAPNOTEHTML1::','<a href="https://launchpad.support.sap.com/#/notes/'
+    # $_ChecksOutput = $_ChecksOutput -replace '::SAPNOTEHTML1::','<a href="https://launchpad.support.sap.com/#/notes/'
+    $_ChecksOutput = $_ChecksOutput -replace '::SAPNOTEHTML1::','<a href="https://me.sap.com/notes/'
     $_ChecksOutput = $_ChecksOutput -replace '::SAPNOTEHTML2::','" target="_blank">'
     $_ChecksOutput = $_ChecksOutput -replace '::SAPNOTEHTML3::','</a>'
 
@@ -2292,9 +2513,11 @@ function CollectFileSystems {
                     # backup path for ANF volumes to have DNS names covered
                     # this path will just compared the volume export name
                     $_NFSmounttemp = ($_filesystem_row.Source.Split(":"))[1]
-                    $_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_NFSmounttemp.Equals(($_.NFSAddress.Split(":"))[1]) }).THROUGHPUTMIBPS
-                    if ([string]::IsNullOrEmpty($_filesystem_row.MaxMBPS)) {
-                        $_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_NFSmounttemp.StartsWith(($_.NFSAddress.Split(":"))[1]) }).THROUGHPUTMIBPS
+                    if (![string]::IsNullOrEmpty($_.NFSAddress)) {
+                        $_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_NFSmounttemp.Equals(($_.NFSAddress.Split(":"))[1]) }).THROUGHPUTMIBPS
+                        if ([string]::IsNullOrEmpty($_filesystem_row.MaxMBPS)) {
+                            $_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_NFSmounttemp.StartsWith(($_.NFSAddress.Split(":"))[1]) }).THROUGHPUTMIBPS
+                        }
                     }
                 }
             }
@@ -2379,10 +2602,13 @@ function CollectANFVolumes {
                 $_ANFVolume_row.Pool = $_ANFPoolName
                 $_ANFVolume_row.ServiceLevel = $_ANFVolume.ServiceLevel
                 $_ANFVolume_row.ProtocolTypes = [string]$_ANFVolume.ProtocolTypes
-                $_ANFVolume_row.ThroughputMibps = [int]$_ANFVolume.ThroughputMibps
+                # $_ANFVolume_row.ThroughputMibps = [int]$_ANFVolume.ThroughputMibps
+                $_ANFVolume_row.ThroughputMibps = (([int]$_ANFVolume.ThroughputMibps, [int]$_ANFVolume.ActualThroughputMibps) | Measure-Object -Maximum).Maximum
                 $_ANFVolume_row.QoSType = $_ANFPool.QosType
                 # $_ANFVolume_row.NFSAddress = $_ANFVolume.MountTargets[0].IpAddress + ":/" + $_ANFVolume_row.Name
-		        $_ANFVolume_row.NFSAddress = $_ANFVolume.MountTargets[0].IpAddress + ":/" + $_ANFVolume.CreationToken
+                if ($_ANFVolume.MountTargets.Count -gt 0){
+                    $_ANFVolume_row.NFSAddress = $_ANFVolume.MountTargets[0].IpAddress + ":/" + $_ANFVolume.CreationToken
+                }
 
                 $Script:_ANFVolumes += $_ANFVolume_row
 
@@ -2496,14 +2722,14 @@ function LoadGUI {
         xmlns:local="clr-namespace:QualityCheck"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Title="SAP on Azure - Quality Check" Height="600" Width="900">
-    <Grid Margin="0,0,-6.667,-29.333">
+        Title="SAP on Azure - Quality Check" Height="800" Width="900">
+        <Grid Margin="0,0,-13,-70">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="582*"/>
             <ColumnDefinition Width="325*"/>
         </Grid.ColumnDefinitions>
-        <Button x:Name="ButtonRun" Content="Run" HorizontalAlignment="Left" Margin="233,540,0,0" VerticalAlignment="Top" Width="75" Grid.Column="1" Height="20"/>
-        <ComboBox x:Name="Database" HorizontalAlignment="Left" Margin="188,40,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
+        <Button x:Name="ButtonRun" Content="Run" HorizontalAlignment="Left" Margin="109,582,0,0" VerticalAlignment="Top" Width="75" Grid.Column="1" Height="20"/>
+        <ComboBox x:Name="Database" HorizontalAlignment="Left" Margin="190,40,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
             <ComboBoxItem Content="HANA"/>
             <ComboBoxItem Content="MSSQL"/>
             <ComboBoxItem Content="Db2"/>
@@ -2511,14 +2737,14 @@ function LoadGUI {
             <ComboBoxItem Content="ASE"/>
         </ComboBox>
         <Label x:Name="LabelDatabase" Content="Database" HorizontalAlignment="Left" Margin="66,36,0,0" VerticalAlignment="Top" Height="26" Width="59"/>
-        <ComboBox x:Name="OperatingSystem" HorizontalAlignment="Left" Margin="188,75,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
+        <ComboBox x:Name="OperatingSystem" HorizontalAlignment="Left" Margin="190,75,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
             <ComboBoxItem Content="SUSE"/>
             <ComboBoxItem Content="RedHat"/>
             <ComboBoxItem Content="Windows"/>
             <ComboBoxItem Content="OracleLinux"/>
         </ComboBox>
         <Label x:Name="LabelOperatingSystem" Content="Operating System" HorizontalAlignment="Left" Margin="66,71,0,0" VerticalAlignment="Top" Height="26" Width="104"/>
-        <CheckBox x:Name="HighAvailability" Content="HighAvailability" HorizontalAlignment="Left" Margin="191,289,0,0" VerticalAlignment="Top" IsChecked="True" Height="15" Width="102"/>
+        <CheckBox x:Name="HighAvailability" Content="HighAvailability" HorizontalAlignment="Left" Margin="190,281,0,0" VerticalAlignment="Top" IsChecked="True" Height="15" Width="102"/>
         <ComboBox x:Name="HANAScenario" HorizontalAlignment="Left" Margin="64,138,0,0" VerticalAlignment="Top" Width="120" SelectedIndex="0" Grid.Column="1" Height="22">
             <ComboBoxItem Content="OLTP"/>
             <ComboBoxItem Content="OLAP"/>
@@ -2526,33 +2752,33 @@ function LoadGUI {
             <ComboBoxItem Content="OLAP-ScaleOut"/>
         </ComboBox>
         <Label x:Name="LabelHANAScenario" Content="HANA Scenario" HorizontalAlignment="Left" Margin="506,134,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="26" Width="91"/>
-        <ComboBox x:Name="Role" HorizontalAlignment="Left" Margin="188,109,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
+        <ComboBox x:Name="Role" HorizontalAlignment="Left" Margin="190,109,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
             <ComboBoxItem Content="DB"/>
             <ComboBoxItem Content="ASCS"/>
             <ComboBoxItem Content="APP"/>
         </ComboBox>
         <Label x:Name="LabelRole" Content="Role" HorizontalAlignment="Left" Margin="66,105,0,0" VerticalAlignment="Top" Height="26" Width="33"/>
-        <ComboBox x:Name="ResourceGroup" HorizontalAlignment="Left" Margin="188,180,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22" IsTextSearchEnabled="True">
+        <ComboBox x:Name="ResourceGroup" HorizontalAlignment="Left" Margin="190,180,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22" IsTextSearchEnabled="True">
         </ComboBox>
         <Label x:Name="LabelResourceGroup" Content="Resource Group" HorizontalAlignment="Left" Margin="66,176,0,0" VerticalAlignment="Top" Height="26" Width="95"/>
-        <ComboBox x:Name="VM" HorizontalAlignment="Left" Margin="188,211,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22"/>
+        <ComboBox x:Name="VM" HorizontalAlignment="Left" Margin="190,211,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22"/>
         <Label x:Name="LabelVM" Content="VM" HorizontalAlignment="Left" Margin="66,207,0,0" VerticalAlignment="Top" Height="26" Width="28"/>
-        <TextBox x:Name="SSHPort" HorizontalAlignment="Center" Height="22" Margin="0,478,0,0" TextWrapping="Wrap" Text="22" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+        <TextBox x:Name="SSHPort" HorizontalAlignment="Left" Height="22" Margin="64,478,0,0" TextWrapping="Wrap" Text="22" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
         <Label x:Name="LabelSSHPort" Content="SSH Port" HorizontalAlignment="Left" Margin="506,476,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Width="125" Height="26"/>
-        <TextBox x:Name="Username" HorizontalAlignment="Left" Height="23" Margin="191,435,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
-        <Label x:Name="LabelUsername" Content="Username" HorizontalAlignment="Left" Margin="66,432,0,0" VerticalAlignment="Top" Height="26" Width="63"/>
-        <Label x:Name="LabelPassword" Content="Password" HorizontalAlignment="Left" Margin="66,463,0,0" VerticalAlignment="Top" Height="26" Width="60"/>
-        <PasswordBox x:Name="Password" HorizontalAlignment="Left" Margin="191,466,0,0" VerticalAlignment="Top" Width="145" Height="23"/>
+        <TextBox x:Name="Username" HorizontalAlignment="Left" Height="23" Margin="190,501,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <Label x:Name="LabelUsername" Content="Username" HorizontalAlignment="Left" Margin="66,498,0,0" VerticalAlignment="Top" Height="26" Width="63"/>
+        <Label x:Name="LabelPassword" Content="Password" HorizontalAlignment="Left" Margin="66,529,0,0" VerticalAlignment="Top" Height="26" Width="60"/>
+        <PasswordBox x:Name="Password" HorizontalAlignment="Left" Margin="190,532,0,0" VerticalAlignment="Top" Width="145" Height="23"/>
         <TextBox x:Name="DBDataDir" HorizontalAlignment="Left" Height="23" Margin="64,40,0,0" TextWrapping="Wrap" Text="/hana/data" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
         <Label x:Name="LabelDBDataDir" Content="DB Data Directory" HorizontalAlignment="Left" Margin="506,37,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="26" Width="105"/>
         <TextBox x:Name="DBLogDir" HorizontalAlignment="Left" Height="23" Margin="64,74,0,0" TextWrapping="Wrap" Text="/hana/log" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
         <Label x:Name="LabelDBLogDir" Content="DB Log Directory" HorizontalAlignment="Left" Margin="506,71,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="26" Width="100"/>
-        <ComboBox x:Name="HardwareType" HorizontalAlignment="Left" Margin="188,140,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
+        <ComboBox x:Name="HardwareType" HorizontalAlignment="Left" Margin="190,140,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
             <ComboBoxItem Content="VM"/>
             <ComboBoxItem Content="HLI"/>
         </ComboBox>
         <Label x:Name="LabelHardwareType" Content="Hardware Type" HorizontalAlignment="Left" Margin="66,136,0,0" VerticalAlignment="Top" Height="26" Width="89"/>
-        <ComboBox x:Name="HighAvailabilityAgent" HorizontalAlignment="Left" Margin="191,311,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
+        <ComboBox x:Name="HighAvailabilityAgent" HorizontalAlignment="Left" Margin="190,311,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
             <ComboBoxItem Content="SBD"/>
             <ComboBoxItem Content="FencingAgent"/>
             <ComboBoxItem Content="WindowsCluster"/>
@@ -2560,22 +2786,34 @@ function LoadGUI {
         <Label x:Name="LabelHighAvailabilityAgent" Content="HA Agent" HorizontalAlignment="Left" Margin="66,307,0,0" VerticalAlignment="Top" Height="26" Width="61"/>
         <TextBox x:Name="DBSharedDir" HorizontalAlignment="Left" Height="23" Margin="64,106,0,0" TextWrapping="Wrap" Text="/hana/shared" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
         <Label x:Name="LabelDBSharedDir" Content="DB Shared Directory" HorizontalAlignment="Left" Margin="506,103,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="26" Width="117"/>
-        <TextBox x:Name="hostname" HorizontalAlignment="Left" Height="23" Margin="188,241,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="249"/>
+        <TextBox x:Name="hostname" HorizontalAlignment="Left" Height="23" Margin="190,241,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="249"/>
         <Label x:Name="LabelHostname" Content="Hostname/IP" HorizontalAlignment="Left" Margin="66,238,0,0" VerticalAlignment="Top" Height="26" Width="79"/>
 
 
-        <TextBlock HorizontalAlignment="Left" Margin="23,539,0,0" TextWrapping="Wrap" Text="If you want to find out more about Quality Check " VerticalAlignment="Top" Width="477" Height="16">
+        <TextBlock HorizontalAlignment="Left" Margin="66,582,0,0" TextWrapping="Wrap" Text=" If you want to find out more about SAP Quality Check " VerticalAlignment="Top" Width="477" Height="16">
             <Hyperlink NavigateUri="https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities/tree/main/QualityCheck">
                 <Hyperlink.Inlines>
-                    <Run Text="click here"/>
+                    <Run Text="Click here"/>
                 </Hyperlink.Inlines>
             </Hyperlink>
         </TextBlock>
-        <Button x:Name="ButtonExit" Content="Exit" HorizontalAlignment="Left" Margin="144,540,0,0" VerticalAlignment="Top" Width="75" Grid.Column="1" Height="20"/>
-        <ComboBox x:Name="LogonMethod" HorizontalAlignment="Left" Margin="191,397,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
+        <Button x:Name="ButtonExit" Content="Exit" HorizontalAlignment="Left" Margin="22,582,0,0" VerticalAlignment="Top" Width="75" Height="20" Grid.Column="1"/>
+        <ComboBox x:Name="LogonMethod" HorizontalAlignment="Left" Margin="190,463,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
             <ComboBoxItem Content="UserPassword"/>
         </ComboBox>
-        <Label x:Name="LabelHighAvailabilityAgent_Copy" Content="Logon Method" HorizontalAlignment="Left" Margin="66,395,0,0" VerticalAlignment="Top" Height="26" Width="89"/>
+        <Label x:Name="LabelHighAvailabilityAgent_Copy" Content="Logon Method" HorizontalAlignment="Left" Margin="66,461,0,0" VerticalAlignment="Top" Height="26" Width="89"/>
+        <ComboBox x:Name="DiskType" HorizontalAlignment="Left" Margin="190,349,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22">
+            <ComboBoxItem Content="ANF"/>
+            <ComboBoxItem Content="Managed Disk"/>
+            <ComboBoxItem Content="xNFS"/>
+            <ComboBoxItem Content="Shared Disk"/>
+            <ComboBoxItem Content="File Share"/>
+        </ComboBox>
+        <Label x:Name="LabelDiskType" Content="Disk Type" HorizontalAlignment="Left" Margin="66,349,0,0" VerticalAlignment="Top" Height="26" Width="61"/>
+        <ComboBox x:Name="ANFResourceGroup" HorizontalAlignment="Left" Margin="190,388,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22" IsTextSearchEnabled="True"/>
+        <Label x:Name="LabelANFResourceGroup" Content="ANF Resource Group" HorizontalAlignment="Left" Margin="66,384,0,0" VerticalAlignment="Top" Height="26" Width="124"/>
+        <ComboBox x:Name="ANFAccountName" HorizontalAlignment="Left" Margin="190,424,0,0" VerticalAlignment="Top" Width="250" SelectedIndex="0" Height="22"/>
+        <Label x:Name="LabelANFAccountName" Content="ANF Account Name" HorizontalAlignment="Left" Margin="66,420,0,0" VerticalAlignment="Top" Height="26" Width="119"/>
 
     </Grid>
 </Window>
@@ -2641,6 +2879,26 @@ function LoadGUI {
         }
     )
 
+    $_disktype = $_Form.FindName("DiskType")
+    $_disktype.add_SelectionChanged(
+        {
+            param($sender,$args)
+            $selected = $sender.SelectedItem.Content
+            if ($selected -eq "ANF") {
+                $_Form.FindName("LabelANFResourceGroup").Visibility = "Visible"
+                $_Form.FindName("LabelANFAccountName").Visibility = "Visible"
+                $_Form.FindName("ANFResourceGroup").Visibility = "Visible"
+                $_Form.FindName("ANFAccountName").Visibility = "Visible"
+            }
+            else {
+                $_Form.FindName("LabelANFResourceGroup").Visibility = "Hidden"
+                $_Form.FindName("LabelANFAccountName").Visibility = "Hidden"
+                $_Form.FindName("ANFResourceGroup").Visibility = "Hidden"
+                $_Form.FindName("ANFAccountName").Visibility = "Hidden"
+            }
+        }
+    )
+
     $_ButtonExit = $_Form.FindName("ButtonExit")
     $_ButtonExit.Add_Click(
         {
@@ -2683,6 +2941,26 @@ function LoadGUI {
         }
     )
 
+    $_GUI_ANFResourceGroups = $_Form.FindName("ANFResourceGroup")
+
+    # add ANF resource group
+    $_ANFResourceGroups = Get-AzResourceGroup | Select-Object ResourceGroupName | Sort-Object
+    $_GUI_ANFResourceGroups.ItemsSource = $_ANFResourceGroups.ResourceGroupName | Sort-Object
+
+    $_GUI_ANFAccountName = $_Form.FindName("ANFAccountName")
+
+    $_GUI_ANFResourceGroups.add_SelectionChanged(
+        {
+            # add ANFs
+            $_GUI_ANFAccountName.Items.Clear()
+
+            $_ANFs = Get-AzNetAppFilesAccount -ResourceGroupName $_GUI_ANFResourceGroups.Items[$_GUI_ANFResourceGroups.SelectedIndex]
+            foreach ($_ANF in $_ANFs) {
+                $_GUI_ANFAccountName.Items.Add($_ANF.Name)
+            }
+        }
+    )
+
     # add Run button
     $_ButtonRun = $_Form.FindName("ButtonRun")
     $_ButtonRun.Add_Click(
@@ -2706,6 +2984,10 @@ function LoadGUI {
             if ($_Form.FindName("HighAvailability").isChecked) {
                 $script:HighAvailability = $true
                 $script:HighAvailabilityAgent = $_Form.FindName("HighAvailabilityAgent").Items[$_Form.FindName("HighAvailabilityAgent").SelectedIndex].Content
+            }
+            if ($_Form.FindName("DiskType").Items[$_Form.FindName("DiskType").SelectedIndex].Content -eq "ANF") {
+                $script:ANFResourceGroup = $_Form.FindName("ANFResourceGroup").Items[$_Form.FindName("ANFResourceGroup").SelectedIndex]
+                $script:ANFAccountName = $_Form.FindName("ANFAccountName").Items[$_Form.FindName("ANFAccountName").SelectedIndex]
             }
             else {
                 $script:HighAvailability = $false
@@ -2989,8 +3271,28 @@ foreach ($_qcrun in $_MultiRunData) {
         $_RunLogContent = $script:_runlog | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""RunLog"">RunLog</h2>"
 
         $_HTMLReport = ConvertTo-Html -Body "$_Content $_CollectScriptParameter $_CollectVMInfo $_RunQualityCheck $_CollectFileSystems $_CollectVMStorage $_CollectLVMGroups $_CollectLVMVolumes $_CollectANFVolumes $_CollectNetworkInterfaces $_CollectLoadBalancer $_CollectVMInfoAdditional $_CollectFooter $_RunLogContent" -Head $script:_HTMLHeader -Title "Quality Check for SAP Worloads on Azure" -PostContent "<p id='CreationDate'>Creation Date: $(Get-Date)</p><p id='CreationDate'>Script Version: $scriptversion</p>"
-        $_HTMLReportFileName = $AzVMName + "-" + $(Get-Date -Format "yyyyMMdd-HHmm") + ".html"
+        $_HTMLReportFileDate = $(Get-Date -Format "yyyyMMdd-HHmm")
+        $_HTMLReportFileName = $AzVMName + "-" + $_HTMLReportFileDate + ".html"
         $_HTMLReport | Out-File .\$_HTMLReportFileName
+
+        if ($AddJSONFile) {
+            # adding JSONfile
+            $_jsonoutput = "" | Select-Object Checks, Parameters, InformationCollection, Disks, Filesystems, RunLog
+
+            WriteRunLog -category "INFO" -message ("Preparing JSON Output")
+
+            $_jsonoutput.Checks = $script:_Checks
+            $_jsonoutput.Parameters = $_ParameterValues
+            $_jsonoutput.Disks = $script:_AzureDisks
+            $_jsonoutput.Filesystems = $script:_filesystems
+            $_jsonoutput.RunLog = $script:_runlog
+
+            $_JSONReportFileName = $AzVMName + "-" + $_HTMLReportFileDate + ".json"
+            $_jsonoutput = $_jsonoutput | ConvertTo-Json
+            $_jsonoutput | Out-File .\$_JSONReportFileName
+        }
+
+
     }
     else {
         # script running locally, convert result to JSON

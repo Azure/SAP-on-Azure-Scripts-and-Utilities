@@ -1,5 +1,6 @@
 {
-    "Version": 2023061301,
+    "Version": 2024011701,
+
     "PowerShellPrerequisits": [
         {
             "ModuleName": "Posh-SSH",
@@ -976,6 +977,25 @@
             }
         },
         "Standard_M416s_v2": {
+            "DB": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing",
+                    "OLAP": "Standard Sizing",
+                    "OLAP-ScaleOut": "Standard Sizing",
+                    "OLTP-ScaleOut": "Standard Sizing"
+                }
+            },
+            "APP": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            },
+            "ASCS": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            }
+        },
+        "Standard_M416s_8_v2": {
             "DB": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
                 "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
@@ -2089,6 +2109,191 @@
             "ASCS": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
+        },
+        "Standard_M12s_v3": {
+            "DB": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+            },
+            "APP": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            },
+            "ASCS": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            }
+        },
+        "Standard_M24s_v3": {
+            "DB": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+            },
+            "APP": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            },
+            "ASCS": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            }
+        },
+        "Standard_M48s_1_v3": {
+            "DB": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+            },
+            "APP": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            },
+            "ASCS": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            }
+        },
+        "Standard_M96s_1_v3": {
+            "DB": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+            },
+            "APP": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            },
+            "ASCS": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            }
+        },
+        "Standard_M96s_2_v3": {
+            "DB": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+            },
+            "APP": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            },
+            "ASCS": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            }
+        },
+        "Standard_M176s_3_v3": {
+            "DB": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+            },
+            "APP": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            },
+            "ASCS": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            }
+        },
+        "Standard_M176s_4_v3": {
+            "DB": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+            },
+            "APP": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            },
+            "ASCS": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            }
+        },
+        "Standard_M12ds_v3": {
+            "DB": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+            },
+            "APP": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            },
+            "ASCS": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            }
+        },
+        "Standard_M24ds_v3": {
+            "DB": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+            },
+            "APP": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            },
+            "ASCS": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            }
+        },
+        "Standard_M48ds_1_v3": {
+            "DB": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
+            },
+            "APP": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            },
+            "ASCS": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            }
+        },
+        "Standard_M96ds_1_v3": {
+            "DB": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing",
+                    "OLAP": "Standard Sizing",
+                    "OLAP-ScaleOut": "Standard Sizing"
+                }
+            },
+            "APP": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            },
+            "ASCS": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            }
+        },
+        "Standard_M96ds_2_v3": {
+            "DB": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
+            },
+            "APP": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            },
+            "ASCS": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            }
+        },
+        "Standard_M176ds_3_v3": {
+            "DB": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing",
+                    "OLAP": "Standard Sizing",
+                    "OLAP-ScaleOut": "Standard Sizing"
+                }
+            },
+            "APP": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            },
+            "ASCS": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            }
+        },
+        "Standard_M96ds_4_v3": {
+            "DB": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing",
+                    "OLAP": "Standard Sizing",
+                    "OLAP-ScaleOut": "Standard Sizing"
+                }
+            },
+            "APP": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            },
+            "ASCS": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            }
         }
     },
     "HANAStorageRequirements": {
@@ -2099,11 +2304,15 @@
         "HANADataStripeSize": "256.00k",
         "HANALOGStripeSize": "64.00k"
     },
+    "DB2StorageRequirements": {
+        "DB2DataStripeSize": "256.00k",
+        "DB2LOGStripeSize": "64.00k"
+    },
     "VMCollectInformation": [
         {
             "CheckID": "IC-0001",
             "Description": "Hostname",
-            "OS": ["Windows","SUSE","RedHat","OracleLinux"],
+            "OS": ["SUSE","RedHat","OracleLinux"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
             "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
@@ -2111,6 +2320,22 @@
             "RunInLocalMode": true,
             "CommandType": "OS",
             "ProcessingCommand": "/bin/hostname",
+            "PostProcessingCommand": "",
+            "RootRequired": false,
+            "ShowInReport": true,
+            "HighAvailability": [false,true]
+        },
+        {
+            "CheckID": "IC-0001-01",
+            "Description": "Hostname",
+            "OS": ["Windows"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM", "HLI"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
+            "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": true,
+            "CommandType": "OS",
+            "ProcessingCommand": "hostname",
             "PostProcessingCommand": "",
             "RootRequired": false,
             "ShowInReport": true,
@@ -2271,6 +2496,70 @@
             "RunInLocalMode": false,
             "CommandType": "PowerShell",
             "ProcessingCommand": "$VMGeneration = (Get-AzDisk -Name (Get-AzVM -ResourceGroupName $AzVMResourceGroup -Name $AzVMName).StorageProfile.OsDisk.Name).HyperVGeneration; if ($VMGeneration -eq 'V1') { Set-Variable -Name VMGeneration -Scope Script -Value 'Gen1'; 'Gen1' } else { Set-Variable -Name VMGeneration -Scope Script -Value 'Gen2'; 'Gen2' }",
+            "PostProcessingCommand": "",
+            "RootRequired": false,
+            "ShowInReport": true,
+            "HighAvailability": [false,true]
+        },
+        {
+            "CheckID": "IC-0012",
+            "Description": "Extensions installed on VM",
+            "OS": ["Windows","SUSE","RedHat","OracleLinux"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM", "HLI"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
+            "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": false,
+            "CommandType": "PowerShell",
+            "ProcessingCommand": "$VmExtension = (Get-AzVMExtension -ResourceGroupName $AzVMResourceGroup -VMName $AzVMName); if (!$VmExtension) { 'No extensions installed' } else { $VmExtension.Name }",
+            "PostProcessingCommand": "",
+            "RootRequired": false,
+            "ShowInReport": true,
+            "HighAvailability": [false,true]
+        },
+        {
+            "CheckID": "IC-0013",
+            "Description": "Secondary IP enabled on VM",
+            "OS": ["Windows","SUSE","RedHat","OracleLinux"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM", "HLI"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
+            "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": false,
+            "CommandType": "PowerShell",
+            "ProcessingCommand": "$VmNIC = (Get-AzVM -ResourceGroupName  $AzVMResourceGroup -VMName $AzVMName | Select-Object -ExpandProperty 'NetworkProfile'); $NICObject = Get-AzNetworkInterface -ResourceGroupName $AzVMResourceGroup -Name ($VmNIC.NetworkInterfaces.Id.Split('/')[-1]); if ($NICObject.IpConfigurations.Count -gt 1) { 'Yes' } else { 'No' }",
+            "PostProcessingCommand": "",
+            "RootRequired": false,
+            "ShowInReport": true,
+            "HighAvailability": [false,true]
+        },
+        {
+            "CheckID": "IC-0014",
+            "Description": "VM Security Type",
+            "OS": ["Windows","SUSE","RedHat","OracleLinux"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM", "HLI"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
+            "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": false,
+            "CommandType": "PowerShell",
+            "ProcessingCommand": "$SecurityType = (Get-AzVM -ResourceGroupName $AzVMResourceGroup -VMName $AzVMName | Select-Object -ExpandProperty 'SecurityProfile'); if (!$SecurityType) {'Standard'} else {$SecurityType | Select SecurityType}",
+            "PostProcessingCommand": "",
+            "RootRequired": false,
+            "ShowInReport": true,
+            "HighAvailability": [false,true]
+        },
+        {
+            "CheckID": "IC-0015",
+            "Description": "VMSS Flex ID",
+            "OS": ["Windows","SUSE","RedHat","OracleLinux"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM", "HLI"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
+            "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": false,
+            "CommandType": "PowerShell",
+            "ProcessingCommand": "$Vmss = (Get-AzVM -ResourceGroupName $AzVMResourceGroup -Name $AzVMName); $VmssId = $Vmss.VirtualMachineScaleSet.Id; if ($VmssId.Length -eq 0) {'NA'} else {$VmssId}",
             "PostProcessingCommand": "",
             "RootRequired": false,
             "ShowInReport": true,
@@ -2542,7 +2831,7 @@
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["ASCS"],
             "DB": ["HANA", "Db2", "Oracle", "ASE"],
             "RunInLocalMode": true,
@@ -2559,20 +2848,19 @@
             "ShowInReport": true,
             "AdditionalInfo": "Timestamp parameter for HA Load Balancers",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-nfs-azure-files",
             "SAPNote": "2382421"
         },
-
-
         {
             "CheckID": "DB-NET-0001",
             "Description": "Load Balancer timestamps",
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA", "Db2", "ASE"],
             "RunInLocalMode": true,
@@ -2589,7 +2877,8 @@
             "ShowInReport": true,
             "AdditionalInfo": "Timestamp parameter for HA Load Balancers",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-netapp-files",
             "SAPNote": "2382421"
@@ -2600,7 +2889,7 @@
             "OS": ["SUSE","RedHat","OracleLinux","Windows"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB","ASCS","APP"],
             "DB": ["HANA","Db2","MSSQL","Oracle", "ASE"],
             "RunInLocalMode": true,
@@ -2617,9 +2906,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Is the VM Type support for SAP on Azure in this scenario",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/certifications",
             "SAPNote": "1928533"
         },
         {
@@ -2628,7 +2918,7 @@
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -2645,9 +2935,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Is the VM Type support for the specified HANA workload",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/certifications",
             "SAPNote": "1928533"
         },
         {
@@ -2656,7 +2947,7 @@
             "OS": ["SUSE","RedHat","OracleLinux","Windows"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB","ASCS","APP"],
             "DB": ["HANA","MSSQL","Oracle","Db2", "ASE"],
             "RunInLocalMode": true,
@@ -2673,10 +2964,39 @@
             "ShowInReport": true,
             "AdditionalInfo": "Is OS/DB combination supported for SAP on Azure",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
+            ],
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/certifications",
+            "SAPNote": "1928533"
+        },
+        {
+            "CheckID": "VM-0005",
+            "Description": "Is Microsoft Defender installed on the VM.",
+            "OS": ["Windows"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "Role": ["DB","ASCS","APP"],
+            "DB": ["HANA","Db2","MSSQL","Oracle", "ASE"],
+            "RunInLocalMode": true,
+            "ErrorCategory": "ERROR",
+            "HighAvailability": [false, true],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"],
+            "CommandType": "OS",
+            "ProcessingCommand": "sc query Windefend | findstr STATE | findstr RUNNING > nul && (echo True) || (echo False)",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "True",
+            "ShowAlternativeRequirement": "",
+            "ShowAlternativeResult": "",
+            "RootRequired": false,
+            "ShowInReport": true,
+            "AdditionalInfo": "Checking for Microsoft Defender on the VM",
+            "VersionHistory": [
+                { "Date": "20231130", "ChangeLog": "" }
             ],
             "MicrosoftDocs": "",
-            "SAPNote": "1928533"
+            "SAPNote": ""
         },
         {
             "CheckID": "HDB-ANF-0001",
@@ -3054,7 +3374,7 @@
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
-            "ErrorCategory": "WARN",
+            "ErrorCategory": "WARNING",
             "HighAvailability": [false, true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
             "CommandType": "OS",
@@ -3218,7 +3538,7 @@
             "OS": ["RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -3235,10 +3555,11 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking if tuned profile for SAP HANA is applied",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
             "MicrosoftDocs": "",
-            "SAPNote": ""
+            "SAPNote": ["2777782","3108302","2292690"]
         },
         {
             "CheckID": "HDB-HA-SLE-0001",
@@ -3246,7 +3567,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -3263,9 +3584,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for PREFER_SITE_TAKEOVER",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3274,7 +3596,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -3291,9 +3613,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for AUTOMATED_REGISTER=true",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3302,7 +3625,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -3310,18 +3633,20 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/sbin/crm configure show | grep 'stonith-enabled=true' | wc -l",
+            "ProcessingCommand": "crm_attribute --type crm_config --name=stonith-enabled -q",
             "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'stonith-enabled=true'",
+            "ExpectedResult": "true",
+            "ShowAlternativeRequirement": "",
             "ShowAlternativeResult": "",
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for stonith-enabled=true",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" },
+                { "Date": "20240112", "ChangeLog": "moving from /usr/sbin/crm configure show | grep 'stonith-enabled=true' | wc -l to direct command to check output" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3330,7 +3655,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -3338,18 +3663,20 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD"],
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/sbin/crm configure show | grep 'stonith-timeout=144' | wc -l",
+            "ProcessingCommand": "crm_attribute --type crm_config --name=stonith-timeout -q",
             "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'stonith-timeout=144'",
+            "ExpectedResult": { "Type": "range", "low": 144, "high": 300 },
+            "ShowAlternativeRequirement": "",
             "ShowAlternativeResult": "",
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for stonith-timeout=144",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" },
+                { "Date": "20240112", "ChangeLog": "moving from '/usr/sbin/crm configure show | grep 'stonith-timeout=144' | wc -l' to a command that can directly check the value, moving to ranges" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3358,7 +3685,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -3366,7 +3693,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/sbin/crm corosync get totem.token",
+            "ProcessingCommand": "corosync-cmapctl -g runtime.config.totem.token | awk -F'= ' '{print $2}'",
             "PostProcessingCommand": "",
             "ExpectedResult": "30000",
             "ShowAlternativeRequirement": "",
@@ -3375,9 +3702,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for token: 30000",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3386,7 +3714,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -3403,9 +3731,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for token_retransmits_before_loss_const: 10",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3414,7 +3743,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -3431,9 +3760,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for join: 60",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3442,7 +3772,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -3450,7 +3780,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/sbin/crm corosync get totem.consensus",
+            "ProcessingCommand": "corosync-cmapctl -g runtime.config.totem.consensus | awk -F'= ' '{print $2}'",
             "PostProcessingCommand": "",
             "ExpectedResult": "36000",
             "ShowAlternativeRequirement": "",
@@ -3459,9 +3789,11 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for consensus: 36000",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" },
+                { "Date": "20231120", "ChangeLog": "If consensus value is not present, we take the value of 1.2 times the token value." }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3470,7 +3802,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -3487,9 +3819,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for max_messages: 20",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3498,7 +3831,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -3515,9 +3848,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for expected_votes: 2",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3526,7 +3860,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -3543,9 +3877,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for two_node: 1",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3554,7 +3889,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -3571,9 +3906,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for watchdog timeout 60",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3582,7 +3918,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -3597,11 +3933,12 @@
             "ShowAlternativeResult": "",
             "RootRequired": false,
             "ShowInReport": true,
-            "AdditionalInfo": "Checking for msgwait timeout 60",
+            "AdditionalInfo": "Checking for msgwait timeout 120",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3610,7 +3947,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -3618,7 +3955,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/sbin/crm configure show | grep 'concurrent-fencing=true' | wc -l",
+            "ProcessingCommand": "crm_attribute --name=concurrent-fencing -q",
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
             "ShowAlternativeRequirement": "'concurrent-fencing=true'",
@@ -3627,9 +3964,11 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for concurrent-fencing=true",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" },
+                { "Date": "20231120", "ChangeLog": "Directly accessing the CRM attribute" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3638,7 +3977,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -3655,9 +3994,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3666,7 +4006,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -3674,18 +4014,20 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/sbin/crm configure show | grep 'stonith-timeout=900' | wc -l",
+            "ProcessingCommand": "crm_attribute --type crm_config --name=stonith-timeout -q",
             "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'stonith-timeout=900'",
+            "ExpectedResult": { "Type": "range", "low": 900, "high": 1200 },
+            "ShowAlternativeRequirement": "",
             "ShowAlternativeResult": "",
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for stonith-timeout=900",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" },
+                { "Date": "20240112", "ChangeLog": "moving from '/usr/sbin/crm configure show | grep 'stonith-timeout=900' | wc -l' to a command that can directly check the value, moving to ranges" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3694,7 +4036,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -3711,9 +4053,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "/etc/modules-load.d/softdog.conf",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3722,7 +4065,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -3739,9 +4082,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "checking lsmod for softdog",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3750,7 +4094,7 @@
             "OS": ["RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -3767,9 +4111,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for PREFER_SITE_TAKEOVER",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3778,7 +4123,7 @@
             "OS": ["RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -3795,9 +4140,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for AUTOMATED_REGISTER=true",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3806,7 +4152,7 @@
             "OS": ["RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -3823,9 +4169,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for stonith-enabled=true",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3834,7 +4181,7 @@
             "OS": ["RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -3851,9 +4198,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for token: 30000",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3862,7 +4210,7 @@
             "OS": ["RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -3879,9 +4227,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for Expected votes: 2",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3890,7 +4239,7 @@
             "OS": ["RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -3907,9 +4256,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for concurrent-fencing: true",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3918,7 +4268,7 @@
             "OS": ["RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -3935,9 +4285,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for optional fence_kdump device",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-rhel-pacemaker",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
         },
         {
@@ -3946,7 +4297,7 @@
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -3963,9 +4314,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for Idle Timeout 30",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": ["https://learn.microsoft.com/en-us/azure/sap/workloads/sap-hana-high-availability", "https://learn.microsoft.com/en-us/azure/sap/workloads/sap-hana-high-availability-rhel"],
             "SAPNote": ""
         },
         {
@@ -3974,7 +4326,7 @@
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -3991,9 +4343,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for Floating IP",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": ["https://learn.microsoft.com/en-us/azure/sap/workloads/sap-hana-high-availability", "https://learn.microsoft.com/en-us/azure/sap/workloads/sap-hana-high-availability-rhel"],
             "SAPNote": ""
         },
         {
@@ -4002,7 +4355,7 @@
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -4019,9 +4372,38 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for HA Ports",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": ["https://learn.microsoft.com/en-us/azure/sap/workloads/sap-hana-high-availability", "https://learn.microsoft.com/en-us/azure/sap/workloads/sap-hana-high-availability-rhel"],
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "HA-LB-0004",
+            "Description": "Load Balancer Probe Interval",
+            "OS": ["SUSE","RedHat", "Windows"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "Role": ["ASCS", "APP", "DB"],
+            "DB": ["HANA","MSSQL","Oracle","Db2"],
+            "RunInLocalMode": true,
+            "ErrorCategory": "WARNING",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"],
+            "CommandType": "PowerShell",
+            "ProcessingCommand": "$_result = 0; foreach ($_loadbalancer in $Script:_LoadBalancers) { $LBProbes = (Get-AzLoadBalancer -ResourceGroupName $AzVMResourceGroup -Name $_loadbalancer.Name | Get-AzLoadBalancerProbeConfig) ; foreach ($_probe in $LBProbes) { if ($_probe.IntervalInSeconds -ne 5) {$_result += 1}; }; }; $_result",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "0",
+            "ShowAlternativeRequirement": "'Probe Interval: 5'",
+            "ShowAlternativeResult": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "Checking for probe interval",
+            "VersionHistory": [
+                { "Date": "20231130", "ChangeLog": "" }
+            ],
+            "MicrosoftDocs": ["https://learn.microsoft.com/en-us/azure/sap/workloads/sap-hana-high-availability", "https://learn.microsoft.com/en-us/azure/sap/workloads/sap-hana-high-availability-rhel"],
             "SAPNote": ""
         },
         {
@@ -4030,7 +4412,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["12.4"],
             "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -4047,7 +4429,8 @@
             "ShowInReport": true,
             "AdditionalInfo": "",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
             "MicrosoftDocs": "",
             "SAPNote": "2814271"
@@ -4058,7 +4441,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["12.5"],
             "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -4075,7 +4458,8 @@
             "ShowInReport": true,
             "AdditionalInfo": "",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
             "MicrosoftDocs": "",
             "SAPNote": "2814271"
@@ -4086,7 +4470,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["15.0"],
             "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -4103,7 +4487,8 @@
             "ShowInReport": true,
             "AdditionalInfo": "",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
             "MicrosoftDocs": "",
             "SAPNote": "2814271"
@@ -4114,7 +4499,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["15.1"],
             "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -4131,7 +4516,8 @@
             "ShowInReport": true,
             "AdditionalInfo": "",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
             "MicrosoftDocs": "",
             "SAPNote": "2814271"
@@ -4142,7 +4528,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["12.4"],
             "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS"],
             "Role": ["DB","APP","ASCS"],
             "DB": ["HANA","Db2"],
             "RunInLocalMode": true,
@@ -4159,9 +4545,38 @@
             "ShowInReport": true,
             "AdditionalInfo": "set hv_storvsc.storvsc_ringbuffer_size=131072 and hv_storvsc.storvsc_vcpus_per_sub_channel=1024 in kernel boot line",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
             "MicrosoftDocs": "https://www.suse.com/support/kb/doc/?id=000020248",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "HDB-OS-SLES-0006",
+            "Description": "Azure Fence Agent Configuration",
+            "OS": ["SUSE", "RedHat"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS"],
+            "Role": ["DB"],
+            "DB": ["HANA","Db2"],
+            "RunInLocalMode": true,
+            "ErrorCategory": "WARNING",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["FencingAgent"],
+            "CommandType": "OS",
+            "ProcessingCommand": "pcs stonith config | grep msi=true | wc -l",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "1",
+            "ShowAlternativeRequirement": "",
+            "ShowAlternativeResult": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "When configuring the Azure Fence Agent, it must be configured with MSI. This is the default setting when using the Azure Portal to configure the agent.",
+            "VersionHistory": [
+                { "Date": "2024011701", "ChangeLog": "added OS HA checks" }
+            ],
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker#using-managed-identity",
             "SAPNote": ""
         },
         {
@@ -4170,7 +4585,7 @@
             "OS": ["SUSE","RedHat","OracleLinux"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["APP"],
             "DB": ["HANA","MSSQL","Oracle","Db2"],
             "RunInLocalMode": true,
@@ -4188,7 +4603,8 @@
             "AdditionalInfo": "optimize for faster reconnect after ASCS failover",
             "VersionHistory": [
                 { "Date": "initial", "ChangeLog": "" },
-                { "Date": "20230404", "ChangeLog": "update based on SAP note 1410736"}
+                { "Date": "20230404", "ChangeLog": "update based on SAP note 1410736"},
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
             "MicrosoftDocs": "",
             "SAPNote": "1410736"
@@ -4199,7 +4615,7 @@
             "OS": ["SUSE","RedHat","OracleLinux"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["APP"],
             "DB": ["HANA","MSSQL","Oracle","Db2"],
             "RunInLocalMode": true,
@@ -4216,10 +4632,11 @@
             "ShowInReport": true,
             "AdditionalInfo": "optimize for faster reconnect after ASCS failover",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
-            "SAPNote": ""
+            "MicrosoftDocs": "https://www.suse.com/de-de/support/kb/doc/?id=000019293",
+            "SAPNote": "2696099"
         },             
         {
             "CheckID": "APP-OS-0003",
@@ -4227,7 +4644,7 @@
             "OS": ["SUSE","RedHat","OracleLinux"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["APP"],
             "DB": ["HANA","MSSQL","Oracle","Db2"],
             "RunInLocalMode": true,
@@ -4244,7 +4661,8 @@
             "ShowInReport": true,
             "AdditionalInfo": "optimize for faster reconnect after ASCS failover",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
             "MicrosoftDocs": "",
             "SAPNote": "1410736"
@@ -4255,7 +4673,7 @@
             "OS": ["SUSE","RedHat","OracleLinux"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["APP"],
             "DB": ["HANA","MSSQL","Oracle","Db2"],
             "RunInLocalMode": true,
@@ -4272,7 +4690,8 @@
             "ShowInReport": true,
             "AdditionalInfo": "",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
             "MicrosoftDocs": "",
             "SAPNote": "1410736"
@@ -4283,7 +4702,7 @@
             "OS": ["SUSE","RedHat","OracleLinux"],
             "OSVersion": ["12.3"],
             "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["APP"],
             "DB": ["HANA","MSSQL","Oracle","Db2"],
             "RunInLocalMode": true,
@@ -4300,7 +4719,8 @@
             "ShowInReport": true,
             "AdditionalInfo": "",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
             "MicrosoftDocs": "https://www.suse.com/support/kb/doc/?id=000019722",
             "SAPNote": ""
@@ -4311,8 +4731,8 @@
             "OS": ["SUSE","RedHat","OracleLinux"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
-            "Role": ["APP"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+            "Role": ["APP", "DB", "ASCS"], 
             "DB": ["HANA","MSSQL","Oracle","Db2"],
             "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
@@ -4321,14 +4741,16 @@
             "CommandType": "OS",
             "ProcessingCommand": "/sbin/sysctl net.ipv4.tcp_tw_reuse",
             "PostProcessingCommand": "",
-            "ExpectedResult": "net.ipv4.tcp_tw_reuse = 0",
+            "ExpectedResult": { "Type": "multi", "Values": ["net.ipv4.tcp_tw_reuse = 0", "net.ipv4.tcp_tw_reuse = 2"] },
             "ShowAlternativeRequirement": "",
             "ShowAlternativeResult": "",
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" },
+                { "Date": "20231231", "ChangeLog": "add multiple options as results and add DB and ASCS to Roles"}
             ],
             "MicrosoftDocs": "https://www.suse.com/support/kb/doc/?id=000019722",
             "SAPNote": ""
@@ -4339,7 +4761,7 @@
             "OS": ["SUSE","RedHat","OracleLinux"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["APP"],
             "DB": ["HANA","MSSQL","Oracle","Db2"],
             "RunInLocalMode": true,
@@ -4356,7 +4778,8 @@
             "ShowInReport": true,
             "AdditionalInfo": "",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
             "MicrosoftDocs": "https://www.suse.com/support/kb/doc/?id=000019722",
             "SAPNote": ""
@@ -4367,7 +4790,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -4382,10 +4805,11 @@
             "ShowAlternativeResult": "if ($script:_CommandResult -eq 0) {'Disabled'} else {'Enabled'}",
             "RootRequired": true,
             "ShowInReport": true,
-            "AdditionalInfo": "Disable fstrim",
+            "AdditionalInfo": "Disable fstrim to avoid potential inconsistency problems",
             "VersionHistory": [
                 { "Date": "initial", "ChangeLog": "" },
-                { "Date": "20230404", "ChangeLog": "update based on SUSE note"}
+                { "Date": "20230404", "ChangeLog": "update based on SUSE note"},
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF, changed additional info" }
             ],
             "MicrosoftDocs": "https://www.suse.com/support/kb/doc/?id=000019447",
             "SAPNote": ""
@@ -4396,7 +4820,7 @@
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB"],
             "DB": ["HANA"],
             "RunInLocalMode": true,
@@ -4413,7 +4837,8 @@
             "ShowInReport": true,
             "AdditionalInfo": "swap space on HANA systems should be 2GB",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
             "MicrosoftDocs": "",
             "SAPNote": "1999997"
@@ -4424,7 +4849,7 @@
             "OS": ["SUSE","RedHat","OracleLinux","Windows"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["DB","ASCS","APP"],
             "DB": ["HANA","Db2","Oracle","MSSQL"],
             "RunInLocalMode": false,
@@ -4442,7 +4867,8 @@
             "AdditionalInfo": "enable Accelerated Networking on all interfaces, for VMs with 2 CPUs only one NIC can have Accelerated Networking",
             "VersionHistory": [
                 { "Date": "initial", "ChangeLog": "" },
-                { "Date": "20220712", "ChangeLog": "added link and updated description"}
+                { "Date": "20220712", "ChangeLog": "added link and updated description"},
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
             "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-deployment-checklist",
             "SAPNote": "1928533"
@@ -4453,7 +4879,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
             "RunInLocalMode": true,
@@ -4461,18 +4887,20 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/sbin/crm configure show | grep 'stonith-enabled=true' | wc -l",
+            "ProcessingCommand": "crm_attribute --type crm_config --name=stonith-enabled -q",
             "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'stonith-enabled=true'",
+            "ExpectedResult": "true",
+            "ShowAlternativeRequirement": "",
             "ShowAlternativeResult": "",
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for stonith-enabled=true",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" },
+                { "Date": "20240112", "ChangeLog": "moving from /usr/sbin/crm configure show | grep 'stonith-enabled=true' | wc -l to direct command to check output" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4481,7 +4909,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
             "RunInLocalMode": true,
@@ -4489,18 +4917,20 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD"],
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/sbin/crm configure show | grep 'stonith-timeout=144' | wc -l",
+            "ProcessingCommand": "crm_attribute --type crm_config --name=stonith-timeout -q",
             "PostProcessingCommand": "",
-            "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'stonith-timeout=144'",
+            "ExpectedResult": { "Type": "range", "low": 144, "high": 300 },
+            "ShowAlternativeRequirement": "",
             "ShowAlternativeResult": "",
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "Checking for stonith-timeout=144",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" },
+                { "Date": "20240112", "ChangeLog": "moving from '/usr/sbin/crm configure show | grep 'stonith-timeout=144' | wc -l' to a command that can directly check the value, moving to ranges" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4509,7 +4939,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
             "RunInLocalMode": true,
@@ -4517,7 +4947,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/sbin/crm corosync get totem.token",
+            "ProcessingCommand": "corosync-cmapctl -g runtime.config.totem.token | awk -F'= ' '{print $2}'",
             "PostProcessingCommand": "",
             "ExpectedResult": "30000",
             "ShowAlternativeRequirement": "",
@@ -4526,9 +4956,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for token: 30000",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4537,7 +4968,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
             "RunInLocalMode": true,
@@ -4554,9 +4985,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for token_retransmits_before_loss_const: 10",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4565,7 +4997,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
             "RunInLocalMode": true,
@@ -4582,9 +5014,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for join: 60",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4593,7 +5026,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
             "RunInLocalMode": true,
@@ -4601,7 +5034,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/sbin/crm corosync get totem.consensus",
+            "ProcessingCommand": "corosync-cmapctl -g runtime.config.totem.consensus | awk -F'= ' '{print $2}'",
             "PostProcessingCommand": "",
             "ExpectedResult": "36000",
             "ShowAlternativeRequirement": "",
@@ -4610,9 +5043,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for consensus: 36000",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4621,7 +5055,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
             "RunInLocalMode": true,
@@ -4638,9 +5072,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for max_messages: 20",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4649,7 +5084,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
             "RunInLocalMode": true,
@@ -4666,9 +5101,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for expected_votes: 2",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4677,7 +5113,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
             "RunInLocalMode": true,
@@ -4694,9 +5130,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for two_node: 1",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4705,7 +5142,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
             "RunInLocalMode": true,
@@ -4722,9 +5159,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for watchdog timeout 60",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4733,7 +5171,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
             "RunInLocalMode": true,
@@ -4748,11 +5186,12 @@
             "ShowAlternativeResult": "",
             "RootRequired": false,
             "ShowInReport": true,
-            "AdditionalInfo": "Checking for msgwait timeout 60",
+            "AdditionalInfo": "Checking for msgwait timeout 120",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4761,7 +5200,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
             "RunInLocalMode": true,
@@ -4778,9 +5217,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for concurrent-fencing=true",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4789,7 +5229,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
             "RunInLocalMode": true,
@@ -4806,9 +5246,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4817,7 +5258,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
             "RunInLocalMode": true,
@@ -4834,9 +5275,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for stonith-timeout=900",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4845,7 +5287,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
             "RunInLocalMode": true,
@@ -4862,9 +5304,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "/etc/modules-load.d/softdog.conf",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4873,7 +5316,7 @@
             "OS": ["SUSE"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
             "RunInLocalMode": true,
@@ -4890,9 +5333,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "checking lsmod for softdog",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
         },        
         {
@@ -4901,7 +5345,7 @@
             "OS": ["RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
             "RunInLocalMode": true,
@@ -4918,9 +5362,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for stonith-enabled=true",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4929,7 +5374,7 @@
             "OS": ["RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
             "RunInLocalMode": true,
@@ -4946,9 +5391,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for token: 30000",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4957,7 +5403,7 @@
             "OS": ["RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
             "RunInLocalMode": true,
@@ -4974,9 +5420,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for Expected votes: 2",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
         },
         {
@@ -4985,7 +5432,7 @@
             "OS": ["RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
             "RunInLocalMode": true,
@@ -5002,9 +5449,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for concurrent-fencing: true",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
         },
         {
@@ -5013,7 +5461,7 @@
             "OS": ["RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM", "HLI"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
             "RunInLocalMode": true,
@@ -5030,9 +5478,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for optional fence_kdump device",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-rhel-pacemaker",
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
         },
         {
@@ -5041,7 +5490,7 @@
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
             "RunInLocalMode": false,
@@ -5058,9 +5507,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for Idle Timeout 30",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": ["https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-nfs-simple-mount", "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-nfs-azure-files"],
             "SAPNote": ""
         },
         {
@@ -5069,7 +5519,7 @@
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
             "RunInLocalMode": false,
@@ -5086,9 +5536,10 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for Floating IP",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": ["https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-nfs-simple-mount", "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-nfs-azure-files"],
             "SAPNote": ""
         },
         {
@@ -5097,7 +5548,7 @@
             "OS": ["SUSE","RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
             "Role": ["ASCS"],
             "DB": ["HANA","Db2","Oracle"],
             "RunInLocalMode": false,
@@ -5114,37 +5565,415 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for HA Ports",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": ["https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-nfs-simple-mount", "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-nfs-azure-files"],
             "SAPNote": ""
         },
         {
             "CheckID": "HDB-OS-SLES-0006",
-            "Description": "Mellanox Driver can cause Kernel panic on SLES 15 SP2",
+            "Description": "Mellanox Driver can cause Kernel panic on SLES 12 SP4",
             "OS": ["SUSE"],
-            "OSVersion": ["15.2","15.4"],
+            "OSVersion": ["12.4"],
             "HardwareType": ["VM"],
-            "StorageType": ["Premium_LRS","UltraSSD_LRS"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS","ANF"],
             "Role": ["DB","APP","ASCS"],
-            "DB": ["HANA","Db2"],
+            "DB": ["HANA","Db2","ASE","Oracle"],
             "RunInLocalMode": true,
             "ErrorCategory": "WARNING",
             "HighAvailability": [true,false],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
             "CommandType": "PowerShell",
-            "ProcessingCommand": "if ((CheckForKernelVersion -version $Script:_Kernelversion -startversion '5.3.18-150200.24.139.1' -endversion '5.14.21-150400.24.38.1') -eq $true) {0} else {1}",
+            "ProcessingCommand": "if ((CheckForKernelVersion -version $Script:_Kernelversion -startversion '4.0.0-0.0.0' -endversion '4.12.14-95.125.1') -eq $true) {0} else {1}",
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
-            "ShowAlternativeRequirement": "'Kernel version higher than 5.14.21-150400.24.38.1'",
+            "ShowAlternativeRequirement": "'Kernel version higher than 4.12.14-95.125.1'",
             "ShowAlternativeResult": "$Script:_Kernelversion",
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
             ],
             "MicrosoftDocs": "https://www.suse.com/support/kb/doc/?id=000021005",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "HDB-OS-SLES-0007",
+            "Description": "Mellanox Driver can cause Kernel panic on SLES 12 SP5",
+            "OS": ["SUSE"],
+            "OSVersion": ["12.5"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS","ANF"],
+            "Role": ["DB","APP","ASCS"],
+            "DB": ["HANA","Db2","ASE","Oracle"],
+            "RunInLocalMode": true,
+            "ErrorCategory": "WARNING",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"],
+            "CommandType": "PowerShell",
+            "ProcessingCommand": "if ((CheckForKernelVersion -version $Script:_Kernelversion -startversion '4.0.0-0.0.0' -endversion '4.12.14-122.156.1') -eq $true) {0} else {1}",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "1",
+            "ShowAlternativeRequirement": "'Kernel version higher than 4.12.14-122.156.1'",
+            "ShowAlternativeResult": "$Script:_Kernelversion",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
+            ],
+            "MicrosoftDocs": "https://www.suse.com/support/kb/doc/?id=000021005",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "HDB-OS-SLES-0008",
+            "Description": "Mellanox Driver can cause Kernel panic on SLES 15 SP1",
+            "OS": ["SUSE"],
+            "OSVersion": ["15.1"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS","ANF"],
+            "Role": ["DB","APP","ASCS"],
+            "DB": ["HANA","Db2","ASE","Oracle"],
+            "RunInLocalMode": true,
+            "ErrorCategory": "WARNING",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"],
+            "CommandType": "PowerShell",
+            "ProcessingCommand": "if ((CheckForKernelVersion -version $Script:_Kernelversion -startversion '4.0.0-0.0.0' -endversion '4.12.14-150100.197.142.1') -eq $true) {0} else {1}",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "1",
+            "ShowAlternativeRequirement": "'Kernel version higher than 4.12.14-150100.197.142.1'",
+            "ShowAlternativeResult": "$Script:_Kernelversion",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
+            ],
+            "MicrosoftDocs": "https://www.suse.com/support/kb/doc/?id=000021005",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "HDB-OS-SLES-0009",
+            "Description": "Mellanox Driver can cause Kernel panic on SLES 15 SP2",
+            "OS": ["SUSE"],
+            "OSVersion": ["15.2"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS","ANF"],
+            "Role": ["DB","APP","ASCS"],
+            "DB": ["HANA","Db2","ASE","Oracle"],
+            "RunInLocalMode": true,
+            "ErrorCategory": "WARNING",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"],
+            "CommandType": "PowerShell",
+            "ProcessingCommand": "if ((CheckForKernelVersion -version $Script:_Kernelversion -startversion '4.0.0-0.0.0' -endversion '5.3.18-150200.24.148.1') -eq $true) {0} else {1}",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "1",
+            "ShowAlternativeRequirement": "'Kernel version higher than 5.3.18-150200.24.148.1'",
+            "ShowAlternativeResult": "$Script:_Kernelversion",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
+            ],
+            "MicrosoftDocs": "https://www.suse.com/support/kb/doc/?id=000021005",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "HDB-OS-SLES-0010",
+            "Description": "Mellanox Driver can cause Kernel panic on SLES 15 SP3",
+            "OS": ["SUSE"],
+            "OSVersion": ["15.3"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS","ANF"],
+            "Role": ["DB","APP","ASCS"],
+            "DB": ["HANA","Db2","ASE","Oracle"],
+            "RunInLocalMode": true,
+            "ErrorCategory": "WARNING",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"],
+            "CommandType": "PowerShell",
+            "ProcessingCommand": "if ((CheckForKernelVersion -version $Script:_Kernelversion -startversion '4.0.0-0.0.0' -endversion '5.3.18-150300.59.118.1') -eq $true) {0} else {1}",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "1",
+            "ShowAlternativeRequirement": "'Kernel version higher than 5.3.18-150300.59.118.1'",
+            "ShowAlternativeResult": "$Script:_Kernelversion",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
+            ],
+            "MicrosoftDocs": "https://www.suse.com/support/kb/doc/?id=000021005",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "HDB-OS-SLES-0011",
+            "Description": "Mellanox Driver can cause Kernel panic on SLES 15 SP4",
+            "OS": ["SUSE"],
+            "OSVersion": ["15.4"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS","ANF"],
+            "Role": ["DB","APP","ASCS"],
+            "DB": ["HANA","Db2","ASE","Oracle"],
+            "RunInLocalMode": true,
+            "ErrorCategory": "WARNING",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"],
+            "CommandType": "PowerShell",
+            "ProcessingCommand": "if ((CheckForKernelVersion -version $Script:_Kernelversion -startversion '4.0.0-0.0.0' -endversion '5.14.21-150400.24.60.1') -eq $true) {0} else {1}",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "1",
+            "ShowAlternativeRequirement": "'Kernel version higher than 5.14.21-150400.24.60.1'",
+            "ShowAlternativeResult": "$Script:_Kernelversion",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
+            ],
+            "MicrosoftDocs": "https://www.suse.com/support/kb/doc/?id=000021005",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "HDB-OS-SLES-0012",
+            "Description": "Pacemaker stonith pcmk_delay_max",
+            "OS": ["SUSE"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS"],
+            "Role": ["DB"],
+            "DB": ["HANA","Db2"],
+            "RunInLocalMode": true,
+            "ErrorCategory": "WARNING",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["FencingAgent", "SBD"],
+            "CommandType": "OS",
+            "ProcessingCommand": "crm configure show | grep pcmk_delay_max | awk '{print $2}' | cut -d '=' -f 2",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "15s",
+            "ShowAlternativeRequirement": "",
+            "ShowAlternativeResult": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "2024011701", "ChangeLog": "added OS HA checks" }
+            ],
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker#create-a-fencing-device-on-the-pacemaker-cluster",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "HDB-OS-RHEL-0001",
+            "Description": "Mellanox Driver can cause Kernel panic on RHEL 8.2",
+            "OS": ["RedHat"],
+            "OSVersion": ["8.2"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS","ANF"],
+            "Role": ["DB","APP","ASCS"],
+            "DB": ["HANA","Db2","ASE","Oracle"],
+            "RunInLocalMode": true,
+            "ErrorCategory": "WARNING",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["FencingAgent"],
+            "CommandType": "PowerShell",
+            "ProcessingCommand": "if ((CheckForKernelVersion -version $Script:_Kernelversion -startversion '4.0.0-0.0.0' -endversion '4.18.0-193.116.1') -eq $true) {0} else {1}",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "1",
+            "ShowAlternativeRequirement": "'Kernel version higher than 4.18.0-193.116.1'",
+            "ShowAlternativeResult": "$Script:_Kernelversion",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
+            ],
+            "MicrosoftDocs": "https://access.redhat.com/solutions/7009523",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "HDB-OS-RHEL-0002",
+            "Description": "Mellanox Driver can cause Kernel panic on RHEL 8.4",
+            "OS": ["RedHat"],
+            "OSVersion": ["8.4"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS","ANF"],
+            "Role": ["DB","APP","ASCS"],
+            "DB": ["HANA","Db2","ASE","Oracle"],
+            "RunInLocalMode": true,
+            "ErrorCategory": "WARNING",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["FencingAgent"],
+            "CommandType": "PowerShell",
+            "ProcessingCommand": "if ((CheckForKernelVersion -version $Script:_Kernelversion -startversion '4.0.0-0.0.0' -endversion '4.18.0-305.108.1') -eq $true) {0} else {1}",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "1",
+            "ShowAlternativeRequirement": "'Kernel version higher than 4.18.0-305.108.1'",
+            "ShowAlternativeResult": "$Script:_Kernelversion",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
+            ],
+            "MicrosoftDocs": "https://access.redhat.com/solutions/7009523",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "HDB-OS-RHEL-0003",
+            "Description": "Mellanox Driver can cause Kernel panic on RHEL 8.6",
+            "OS": ["RedHat"],
+            "OSVersion": ["8.6"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS","ANF"],
+            "Role": ["DB","APP","ASCS"],
+            "DB": ["HANA","Db2","ASE","Oracle"],
+            "RunInLocalMode": true,
+            "ErrorCategory": "WARNING",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["FencingAgent"],
+            "CommandType": "PowerShell",
+            "ProcessingCommand": "if ((CheckForKernelVersion -version $Script:_Kernelversion -startversion '4.0.0-0.0.0' -endversion '4.18.0-372.64.1') -eq $true) {0} else {1}",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "1",
+            "ShowAlternativeRequirement": "'Kernel version higher than 4.18.0-372.64.1'",
+            "ShowAlternativeResult": "$Script:_Kernelversion",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
+            ],
+            "MicrosoftDocs": "https://access.redhat.com/solutions/7009523",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "HDB-OS-RHEL-0004",
+            "Description": "Mellanox Driver can cause Kernel panic on RHEL 8.8",
+            "OS": ["RedHat"],
+            "OSVersion": ["8.8"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS","ANF"],
+            "Role": ["DB","APP","ASCS"],
+            "DB": ["HANA","Db2","ASE","Oracle"],
+            "RunInLocalMode": true,
+            "ErrorCategory": "WARNING",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["FencingAgent"],
+            "CommandType": "PowerShell",
+            "ProcessingCommand": "if ((CheckForKernelVersion -version $Script:_Kernelversion -startversion '4.0.0-0.0.0' -endversion '4.18.0-477.21.1') -eq $true) {0} else {1}",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "1",
+            "ShowAlternativeRequirement": "'Kernel version higher than 4.18.0-477.21.1'",
+            "ShowAlternativeResult": "$Script:_Kernelversion",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
+            ],
+            "MicrosoftDocs": "https://access.redhat.com/solutions/7009523",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "HDB-OS-RHEL-0005",
+            "Description": "Mellanox Driver can cause Kernel panic on RHEL 9.0",
+            "OS": ["RedHat"],
+            "OSVersion": ["9.0"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS","ANF"],
+            "Role": ["DB","APP","ASCS"],
+            "DB": ["HANA","Db2","ASE","Oracle"],
+            "RunInLocalMode": true,
+            "ErrorCategory": "WARNING",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["FencingAgent"],
+            "CommandType": "PowerShell",
+            "ProcessingCommand": "if ((CheckForKernelVersion -version $Script:_Kernelversion -startversion '4.0.0-0.0.0' -endversion '5.14.0-70.70.1') -eq $true) {0} else {1}",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "1",
+            "ShowAlternativeRequirement": "'Kernel version higher than 5.14.0-70.70.1'",
+            "ShowAlternativeResult": "$Script:_Kernelversion",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
+            ],
+            "MicrosoftDocs": "https://access.redhat.com/solutions/7009523",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "HDB-OS-RHEL-0006",
+            "Description": "Mellanox Driver can cause Kernel panic on RHEL 9.2",
+            "OS": ["RedHat"],
+            "OSVersion": ["9.2"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS","ANF"],
+            "Role": ["DB","APP","ASCS"],
+            "DB": ["HANA","Db2","ASE","Oracle"],
+            "RunInLocalMode": true,
+            "ErrorCategory": "WARNING",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["FencingAgent"],
+            "CommandType": "PowerShell",
+            "ProcessingCommand": "if ((CheckForKernelVersion -version $Script:_Kernelversion -startversion '4.0.0-0.0.0' -endversion '5.14.0-284.25.1') -eq $true) {0} else {1}",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "1",
+            "ShowAlternativeRequirement": "'Kernel version higher than 5.14.0-284.25.1'",
+            "ShowAlternativeResult": "$Script:_Kernelversion",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
+            ],
+            "MicrosoftDocs": "https://access.redhat.com/solutions/7009523",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "HDB-OS-RHEL-0007",
+            "Description": "Mellanox Driver can cause Kernel panic on RHEL 7.9",
+            "OS": ["RedHat"],
+            "OSVersion": ["7.9"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS","ANF"],
+            "Role": ["DB","APP","ASCS"],
+            "DB": ["HANA","Db2","ASE","Oracle"],
+            "RunInLocalMode": true,
+            "ErrorCategory": "WARNING",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["FencingAgent"],
+            "CommandType": "PowerShell",
+            "ProcessingCommand": "if ((CheckForKernelVersion -version $Script:_Kernelversion -startversion '4.0.0-0.0.0' -endversion '4.18.0-193.116') -eq $true) {0} else {1}",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "1",
+            "ShowAlternativeRequirement": "'Kernel version higher than 4.18.0-193.116'",
+            "ShowAlternativeResult": "$Script:_Kernelversion",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "Please upgrade to 8.2 or newer as 7.9 does not get a kernel update",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" },
+                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
+            ],
+            "MicrosoftDocs": "https://access.redhat.com/solutions/7009523",
             "SAPNote": ""
         }
     ]
