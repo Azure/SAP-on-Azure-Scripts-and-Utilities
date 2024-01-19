@@ -2134,7 +2134,7 @@ function RunQualityCheck {
 
         $_db2storagedocsurl = "https://learn.microsoft.com/en-us/azure/sap/workloads/dbms-guide-ibm"
 
-        if ($script:DBDataDir.Contains("/hana/data")) {
+        if ($script:DBDataDir.Contains("/db2")) {
             #default value is being used for DBDataDir
             #Rewrite the correct default values for DB2
 
