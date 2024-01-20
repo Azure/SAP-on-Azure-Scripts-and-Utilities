@@ -2802,7 +2802,23 @@
             "ShowInReport": true,
             "HighAvailability": [false,true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"]
-        },        
+        },
+        {
+            "CheckID": "IC-9001",
+            "Description": "hosts",
+            "OS": ["Windows"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM", "HLI"],
+            "DB": ["MSSQL", "Oracle"],
+            "CommandType": "OS",
+            "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": true,
+            "ProcessingCommand": "Invoke-Command -ComputerName $AzVMName -ScriptBlock {Get-Content -Path ('C:\\Windows\\System32\\drivers\\etc\\hosts')}",
+            "PostProcessingCommand": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "HighAvailability": [false,true]
+        },       
         {
             "CheckID": "IC-9002",
             "Description": "sysctl",
@@ -2817,9 +2833,25 @@
             "PostProcessingCommand": "",
             "RootRequired": true,
             "ShowInReport": true,
+            "HighAvailability": [false,true]
+        },
+        {
+            "CheckID": "IC-9002",
+            "Description": "MiniFilter Driver",
+            "OS": ["Windows"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM", "HLI"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2"],
+            "CommandType": "OS",
+            "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": true,
+            "ProcessingCommand": "Invoke-Command -ComputerName $AzVMName -ScriptBlock {fltmc}",
+            "PostProcessingCommand": "",
+            "RootRequired": true,
+            "ShowInReport": true,
             "HighAvailability": [false,true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"]
-        },  
+        },
         {
             "CheckID": "IC-9003",
             "Description": "fstab",
