@@ -1389,8 +1389,6 @@ else {}
     return $script:_AzureDisksOutput
  
 
-}
-
 # get LVM groups (VGs)
 function CollectLVMGroups {
 
