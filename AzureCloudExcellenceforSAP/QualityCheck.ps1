@@ -1377,7 +1377,7 @@ if ($VMOperatingSystem -eq "Windows") {
 
     return $_FilesystemsOutput
 #    return $_DatadisksOutput
-
+					}
 else {}
 
     # convert output to HTML 
