@@ -291,7 +291,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2024011901
+$scriptversion = 2024011701
 
 function LoadHTMLHeader {
 
@@ -1377,7 +1377,7 @@ if ($VMOperatingSystem -eq "Windows") {
 
     return $_FilesystemsOutput
 #    return $_DatadisksOutput
-					}
+
 else {}
 
     # convert output to HTML 
@@ -1388,6 +1388,8 @@ else {}
 
     return $script:_AzureDisksOutput
  
+
+}
 
 # get LVM groups (VGs)
 function CollectLVMGroups {
