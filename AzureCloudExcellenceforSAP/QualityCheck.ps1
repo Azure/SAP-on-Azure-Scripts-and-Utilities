@@ -1379,7 +1379,7 @@ if ($VMOperatingSystem -eq "Windows") {
 #    return $_DatadisksOutput
 
                                     } 
-else {
+else {}
 
     # convert output to HTML 
     $script:_AzureDisksOutput = $script:_AzureDisks | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""VMStorage"">Collect VM Storage Information</h2>This table contains the disks directly attached to the VM"
