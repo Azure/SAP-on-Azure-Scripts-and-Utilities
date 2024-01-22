@@ -1,5 +1,5 @@
 {
-    "Version": 2024011901,
+    "Version": 2024012201,
 
     "PowerShellPrerequisits": [
         {
@@ -3255,7 +3255,7 @@
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
-            "Role": ["ASCS"],
+            "Role": ["ASCS","APP"],
             "DB": ["HANA","MSSQL","Oracle"],
             "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
@@ -3282,7 +3282,7 @@
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
-            "Role": ["ASCS"],
+            "Role": ["ASCS","APP"],
             "DB": ["MSSQL","Oracle"],
             "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
@@ -3309,7 +3309,7 @@
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
-            "Role": ["ASCS"],
+            "Role": ["ASCS","APP"],
             "DB": ["MSSQL","Oracle"],
             "RunInLocalMode": true,
             "ErrorCategory": "ERROR",
