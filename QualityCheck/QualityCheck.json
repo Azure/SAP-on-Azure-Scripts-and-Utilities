@@ -2764,26 +2764,7 @@
             "HighAvailability": [false,true],
             "VersionHistory": [
                 { "Date": "20240109", "ChangeLog": "Initial" } ]
-        },
-         {
-            "CheckID": "IC-0018",
-            "Description": "Db2 Active since",
-            "OS": ["SLES","RedHat"],
-            "DB": [ "Db2"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "Role": ["DB","ASCS","APP"],
-            "RunInLocalMode": false,
-            "CommandType": "OS",
-            "ProcessingCommand": "su - $SIDadm -c \\'db2pd - -alldbs | awk '{print \\$10  \\$11 \\$12 }''",
-            "PostProcessingCommand": "",
-            "RootRequired": false,
-            "ShowInReport": true,
-            "HighAvailability": [false,true],
-            "VersionHistory": [
-                { "Date": "20240109", "ChangeLog": "Initial" } ]
         }
-
     ],
     "VMCollectInformationAdditional": [
         {
@@ -3863,22 +3844,22 @@
             "Role": ["DB","ASCS","APP"],
             "DB": ["Db2"],
             "RunInLocalMode": true,
-            "ErrorCategory": "INFO",
+            "ErrorCategory": "WARN",
             "HighAvailability": [false, true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
             "CommandType": "OS",
             "ProcessingCommand": "lscpu | grep -E 'Architecture:|Vendor ID:|Model name:' | grep 'x86_64' | awk '{print $2}'",
             "PostProcessingCommand": "",
-            "ExpectedResult": "x86_64",
+            "ExpectedResult":  { "Type": "multi", "Values": ["x86_64", "x64"] },
             "ShowAlternativeRequirement": "",
             "ShowAlternativeResult": "",
             "RootRequired": true,
             "ShowInReport": true,
-            "AdditionalInfo": "Hardware platform used for SAP software on Linux",
+            "AdditionalInfo": "Hardware platform used for Db2 software on Linux",
             "VersionHistory": [
                 { "Date": "20240105", "ChangeLog": "Initial" }
             ],
-            "MicrosoftDocs": "",
+            "MicrosoftDocs": "https://public.dhe.ibm.com/ps/products/db2/info/vr105/pdf/en_US/DB2AdminGettingStarted-db2xpe1050.pdf",
             "SAPNote": ""
         },
         {
