@@ -1,5 +1,10 @@
 # Changelog
 
+# Version 2024012202
+* NEW: Windows, SQL Server, application servers and Windows Cluster Parameter validation
+* NEW: Oracle database and application servers
+* NEW: Db2 database and application servers
+
 # Version 2024011701
 * NEW: DB2 checks for storage stripe size.
 * Log OS command failures. 

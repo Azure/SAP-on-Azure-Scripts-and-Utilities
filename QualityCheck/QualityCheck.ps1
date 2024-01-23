@@ -8,7 +8,7 @@
 
 .LINK
     https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities
-
+											   
 #>
 <#
 Copyright (c) Microsoft Corporation.
@@ -287,7 +287,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2024011701
+$scriptversion = 2024012202
 
 function LoadHTMLHeader {
 
@@ -1221,6 +1221,7 @@ function CollectVMStorage {
             # get VM info
             $script:_VMinfo = Get-AzVM -ResourceGroupName $AzVMResourceGroup -Name $AzVMName
         }
+        }
 
         # collect LVM configuration
         $_command = PrepareCommand -Command "/sbin/lvm fullreport --reportformat json" 
@@ -1358,21 +1359,29 @@ function CollectVMStorage {
         }
 
     }
-    
-    # convert output to HTML 
-    $script:_AzureDisksOutput = $script:_AzureDisks | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""VMStorage"">Collect VM Storage Information</h2>This table contains the disks directly attached to the VM"
-
-    # add VM Storage to HTML index
-    $script:_Content += "<a href=""#VMStorage"">VM Storage</a><br>"
-
-    return $script:_AzureDisksOutput
-
-}
+ 
+   
 
 # get LVM groups (VGs)
 function CollectLVMGroups {
 
-    # create empty object
+if ($VMOperatingSystem -eq "Windows") {
+
+    # Display the cluster nodes on the system
+    $_winclusternodes = Invoke-Command -ComputerName $AzVMName -ScriptBlock {Get-ClusterResource}
+
+
+    # create HTML output
+    $_winclusternodesOutput = $_winclusternodes |Select-Object Cluster, State, OwnerGroup, OwnerNode, ResourceType, MaintenanceMode| ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""Cluster Nodes"">Cluster Nodes</h2>This section shows you the Windows Cluster Nodes available on the VM."
+
+    # add entry in HTML index
+    $script:_Content += "<a href=""#Cluster Nodes"">Cluster Nodes</a><br>"
+
+    return $_winclusternodesOutput
+
+                                     } 
+else {
+   # create empty object
     $script:_lvmgroups = @()
 
     # loop through LVM report
@@ -1391,8 +1400,10 @@ function CollectLVMGroups {
 
         $script:_lvmgroups += $_lvmgroup_row
 
-    }
+	 
 
+    } 
+                                        }
     # convert output to HTML
     $script:_lvmgroupsOutput = $script:_lvmgroups | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""LVMGroups"">Collect LVM Groups Information</h2>"
 
@@ -1400,6 +1411,7 @@ function CollectLVMGroups {
     $script:_Content += "<a href=""#LVMGroups"">LVM Groups</a><br>"
 
     return $script:_lvmgroupsOutput
+ 
 
 }
 
@@ -1442,6 +1454,7 @@ function CollectLVMVolummes {
 
     # add entry to HTML index
     $script:_Content += "<a href=""#LVMVolumes"">LVM Volumes</a><br>"
+     $script:_Content += "<a href=""#LogicalDisks"">Logical Disks</a><br>"
 
     return $script:_lvmvolumesOutput
 
@@ -2420,6 +2433,7 @@ function RunQualityCheck {
                         }
                     }
 
+					
                     if (($_check.ShowAlternativeRequirement) -ne "" -or ($_check.ShowAlternativeResult -ne ""))
                     {
                         if ($_check.ShowAlternativeResult -ne "") {
@@ -2471,7 +2485,19 @@ function RunQualityCheck {
 function CollectFileSystems {
 
     if ($VMOperatingSystem -eq "Windows") {
-        # future Windows code
+
+        # Get information about Storage pool
+
+        $script:_datadisks = Invoke-Command -ComputerName $AzVMName -ScriptBlock {Get-StoragePool}
+
+        # create HTML output
+        $_FilesystemsOutput = $script:_datadisks | select-object FriendlyName, OperationalStatus, HealthStatus, IsPrimordial, IsReadOnly, @{Name="Size (GB)";Expression={[math]::Round($_.Size/1GB,2)}},AllocatedSize | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""Storage Pool"">Storage Pool</h2>This section shows you the Storage Pool configured on the windows VM."
+
+        # add entry in HTML index
+        $script:_Content += "<a href=""#Storage Pool"">Storage Pool</a><br>"
+
+        return $_FilesystemsOutput
+
     }
     else {
         # linux systems
@@ -2538,17 +2564,70 @@ function CollectFileSystems {
 
         }
 
+        # create HTML output						
+        $_FilesystemsOutput = $script:_filesystems | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""Filesystems"">Filesystems</h2>This section shows you the file systems available on the VM."
+
+        # add entry in HTML index
+        $script:_Content += "<a href=""#Filesystems"">Filesystems</a><br>"
+
+        return $_FilesystemsOutput
     }
 
-    # create HTML output
-    $_FilesystemsOutput = $script:_filesystems | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""Filesystems"">Filesystems</h2>This section shows you the file systems available on the VM."
-
-    # add entry in HTML index
-    $script:_Content += "<a href=""#Filesystems"">Filesystems</a><br>"
-
-    return $_FilesystemsOutput
-
 }
+
+# Windows Cluster Config Info
+function CollectWindowsClusterInfo {
+
+    if ($VMOperatingSystem -eq "Windows") {
+ 
+        # Display the cluster nodes on the system
+        $_winclusternodes = Invoke-Command -ComputerName $AzVMName -ScriptBlock {Get-ClusterResource}
+
+        # create HTML output
+        $_winclusternodesOutput = $_winclusternodes |Select-Object Cluster, State, OwnerGroup, OwnerNode, ResourceType, MaintenanceMode| ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""Cluster Nodes"">Cluster Nodes</h2>This section shows you the Windows Cluster Nodes available on the VM."
+
+        # add entry in HTML index
+        $script:_Content += "<a href=""#Cluster Nodes"">Cluster Nodes</a><br>"
+
+        return $_winclusternodesOutput
+    }
+ }
+
+# Windows Mini Filter drivers
+function MiniFilterWindowsInfo {
+
+    if ($VMOperatingSystem -eq "Windows") {
+ 
+        # Display the MiniFilter Drivers on the system
+        $_winminifilters = Invoke-Command -ComputerName $AzVMName -ScriptBlock {fltmc}
+
+        # create HTML output
+        $_winminifiltersOutput =$_winminifilter  | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""MiniFilter Drivers"">MiniFilter Drivers</h2>This section shows you the Windows MiniFilter attached to the Volumes on the VM."
+
+        # add entry in HTML index
+        $script:_Content += "<a href=""#Installed MiniFilter drivers"">MiniFilter Drivers</a><br>"
+
+        return $_winminifiltersOutput
+    }
+}
+
+# Windows HotFix Lists
+function MiniFilterWindowsInfo {
+
+    if ($VMOperatingSystem -eq "Windows") {
+ 
+        # Display the MiniFilter Drivers on the system
+        $_winhotfix = Invoke-Command -ComputerName $AzVMName -ScriptBlock {Get-HotFix}
+
+        # create HTML output
+        $_winhotfixOutput =$_winhotfix  | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""Windows HotFix"">Windows HotFix</h2>This section shows you the Windows HotFix Installed on the VM."
+
+        # add entry in HTML index
+        $script:_Content += "<a href=""#HotFixs"">Windows HotFix</a><br>"
+
+        return $_winhotfixOutput
+    }
+ }
 
 # collect ANF volume information
 function CollectANFVolumes {
