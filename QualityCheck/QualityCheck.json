@@ -1,5 +1,5 @@
 {
-    "Version": 2024012202,
+    "Version": 2024012601,
 
     "PowerShellPrerequisits": [
         {
@@ -2746,6 +2746,24 @@
             "HighAvailability": [false,true],
             "VersionHistory": [
                 { "Date": "20240109", "ChangeLog": "Initial" } ]
+        },
+        {
+            "CheckID": "IC-0019",
+            "Description": "HugePages_Total",
+            "OS": ["OracleLinux"],
+            "DB": [ "Oracle"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM", "HLI"],
+            "Role": ["DB"],
+            "RunInLocalMode": false,
+            "CommandType": "OS",
+            "ProcessingCommand": "grep HugePages_Total /proc/meminfo | awk '{print $2}'",
+            "PostProcessingCommand": "",
+            "RootRequired": false,
+            "ShowInReport": true,
+            "HighAvailability": [false,true],
+            "VersionHistory": [
+                { "Date": "20240125", "ChangeLog": "Initial" } ]
         }
     ],
     "VMCollectInformationAdditional": [
@@ -3035,7 +3053,24 @@
             "ShowInReport": true,
             "HighAvailability": [false,true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"]
-        }
+        },        
+        {
+            "CheckID": "IC-9017",
+            "Description": "SrHook Configuration",
+            "OS": ["SUSE","RedHat"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "DB": ["HANA"],
+            "Role": ["DB"],
+            "RunInLocalMode": true,
+            "CommandType": "OS",
+            "ProcessingCommand": "/bin/cat /etc/sudoers.d/20-saphana",
+            "PostProcessingCommand": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "HighAvailability": [true],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"]
+        } 
     ],
     "Checks": [
         {
