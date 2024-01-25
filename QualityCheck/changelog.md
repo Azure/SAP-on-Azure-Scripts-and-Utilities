@@ -1,5 +1,9 @@
 # Changelog
 
+# Version 2025011701
+* NEW: SrHook configuration collection for HANA HA configuration
+* NEW: Oracle HugePages_Total Information collection
+
 # Version 2024011701
 * NEW: DB2 checks for storage stripe size.
 * Log OS command failures. 
