@@ -1,5 +1,9 @@
 # Changelog
 
+# Version 2024012501
+* NEW: HANA SrHook Configuration collection check
+* NEW: Oracle database HugePage_Total collection check
+
 # Version 2024012202
 * NEW: Windows, SQL Server, application servers and Windows Cluster Parameter validation
 * NEW: Oracle database and application servers
