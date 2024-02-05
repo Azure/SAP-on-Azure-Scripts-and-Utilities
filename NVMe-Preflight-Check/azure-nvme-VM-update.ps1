@@ -33,7 +33,9 @@ param (
     # Start VM after update
     [bool]$start_vm_after_update = $true,
     # Write Log File
-    [bool]$write_logfile = $false
+    [bool]$write_logfile = $false,
+    # Ignore VM availability check
+    [switch]$ignore_vmsku_check
 )
 
 # RunLog function for more detailed data during execution
@@ -162,31 +164,36 @@ $_vminfo = Get-AzVM -ResourceGroupName $resource_group_name -Name $vm_name -Stat
 # checking VM capabilities
 WriteRunLog -category "INFO" -message ("Getting all VM SKUs available in Region " + $_vm.Location)
 WriteRunLog -category "INFO" -message ("This will take about a minute ...")
-$_VMSKUs = Get-AzComputeResourceSku | Where-Object { $_.Locations -contains $_vm.Location -and $_.ResourceType.Contains("virtualMachines") }
-$_VMSKU = $_VMSKUs | Where-Object { $_.Name -eq $vm_size_change_to }
-if ($_VMSKU) {
-    WriteRunLog -category "INFO" -message "Found VM SKU - Checking for Capabilities"
-    $_supported_controller = ($_VMSKU.Capabilities | Where-Object { $_.Name -eq "DiskControllerTypes" }).Value
+if (-not $ignore_vmsku_check) {
+    $_VMSKUs = Get-AzComputeResourceSku | Where-Object { $_.Locations -contains $_vm.Location -and $_.ResourceType.Contains("virtualMachines") }
+    $_VMSKU = $_VMSKUs | Where-Object { $_.Name -eq $vm_size_change_to }
+    if ($_VMSKU) {
+        WriteRunLog -category "INFO" -message "Found VM SKU - Checking for Capabilities"
+        $_supported_controller = ($_VMSKU.Capabilities | Where-Object { $_.Name -eq "DiskControllerTypes" }).Value
 
-    if ($disk_controller_change_to -eq "NVMe") {
-        # NVMe destination
-        if ($_supported_controller.Contains("NVMe") ) {
-            WriteRunLog -category "INFO" -message "VM supports NVMe"
-            $_continue += 1
+        if ($disk_controller_change_to -eq "NVMe") {
+            # NVMe destination
+            if ($_supported_controller.Contains("NVMe") ) {
+                WriteRunLog -category "INFO" -message "VM supports NVMe"
+                $_continue += 1
+            }
+            else {
+                WriteRunLog -category "ERROR" -message "VM doesn't support NVMe"
+                $_continue -= 100
+            }
         }
         else {
-            WriteRunLog -category "ERROR" -message "VM doesn't support NVMe"
-            $_continue -= 100
-        }
+            # SCSI destination
+            $_continue += 1 # all VMs support SCSI
+        }  
     }
     else {
-        # SCSI destination
-        $_continue += 1 # all VMs support SCSI
-    }  
+        WriteRunLog -category "ERROR" -message ("VM SKU doesn't exist, please check your input: " + $vm_size_change_to )
+        $_continue -= 100
+    }
 }
 else {
-    WriteRunLog -category "ERROR" -message ("VM SKU doesn't exist, please check your input: " + $vm_size_change_to )
-    $_continue -= 100
+    $_continue = 1
 }
 
 WriteRunLog -category "INFO" -message "Checking for TrustedLaunch"
