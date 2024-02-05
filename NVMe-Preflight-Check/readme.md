@@ -10,7 +10,7 @@ You can learn more about Azure NVMe enabled virtual machines on [https://learn.m
 
 ```
 azure-nvme-VM-update.ps1 [-subscription_id] <String> [-resource_group_name] <String>
-    [-vm_name] <String> [[-disk_controller_change_to] <String>] [-vm_size_change_to] <String> [[-start_vm_after_update] <Boolean>] [[-write_logfile] <Boolean>]
+    [-vm_name] <String> [[-disk_controller_change_to] <String>] [-vm_size_change_to] <String> [[-start_vm_after_update] <Boolean>] [[-write_logfile] <Boolean>] [-ignore_vmsku_check]
 ```
 
 The script has some mandatory parameters:
@@ -24,6 +24,6 @@ The script has some mandatory parameters:
 | disk_controller_change_to | NVMe or SCSI |
 | start_vm_after_update | true or false, default is true |
 | write_logfile | also store log in file, default false |
-
+| ignore_vmsku_check | ignore the check for VM SKU availability in region |
 
 
