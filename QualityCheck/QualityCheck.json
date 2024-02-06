@@ -1,5 +1,5 @@
 {
-    "Version": 2024012501,
+    "Version": 2024020601,
 
     "PowerShellPrerequisits": [
         {
@@ -8,15 +8,15 @@
         },
         {
             "ModuleName": "Az.Compute",
-            "Version": "4.0.0"
+            "Version": "5.0.0"
         },
         {
             "ModuleName": "Az.Network",
-            "Version": "4.0.0"
+            "Version": "5.0.0"
         },
         {
             "ModuleName": "Az.NetAppFiles",
-            "Version": "0.6.0"
+            "Version": "0.11.0"
         }
     ],
     "SupportedOSDBCombinations": {
@@ -5548,9 +5548,9 @@
             "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
             "Role": ["ASCS", "APP", "DB"],
             "DB": ["HANA","MSSQL","Oracle","Db2"],
-            "RunInLocalMode": true,
+            "RunInLocalMode": false,
             "ErrorCategory": "WARNING",
-            "HighAvailability": [true,false],
+            "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
             "CommandType": "PowerShell",
             "ProcessingCommand": "$_result = 0; foreach ($_loadbalancer in $Script:_LoadBalancers) { $LBProbes = (Get-AzLoadBalancer -ResourceGroupName $AzVMResourceGroup -Name $_loadbalancer.Name | Get-AzLoadBalancerProbeConfig) ; foreach ($_probe in $LBProbes) { if ($_probe.IntervalInSeconds -ne 5) {$_result += 1}; }; }; $_result",
@@ -5563,6 +5563,34 @@
             "AdditionalInfo": "Checking for probe interval",
             "VersionHistory": [
                 { "Date": "20231130", "ChangeLog": "" }
+            ],
+            "MicrosoftDocs": ["https://learn.microsoft.com/en-us/azure/sap/workloads/sap-hana-high-availability", "https://learn.microsoft.com/en-us/azure/sap/workloads/sap-hana-high-availability-rhel"],
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "HA-LB-0005",
+            "Description": "Load Balancer probeThreshold",
+            "OS": ["SUSE","RedHat"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF"],
+            "Role": ["ASCS", "APP", "DB"],
+            "DB": ["HANA","MSSQL","Oracle","Db2"],
+            "RunInLocalMode": false,
+            "ErrorCategory": "ERROR",
+            "HighAvailability": [true],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"],
+            "CommandType": "PowerShell",
+            "ProcessingCommand": "$_result = 0; foreach ($_loadbalancer in $script:_LoadBalancers) { if ($_loadbalancer.ProbeThreshold -ne 2) {$_result += 1}; }; $_result",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "0",
+            "ShowAlternativeRequirement": "'probeThreshold: 2'",
+            "ShowAlternativeResult": "$script:_LoadBalancers.ProbeThreshold",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "Checking for Load Balancer setting ProbeThreshold to be equal to 2",
+            "VersionHistory": [
+                { "Date": "20240206", "ChangeLog": "new setting for high availability" }
             ],
             "MicrosoftDocs": ["https://learn.microsoft.com/en-us/azure/sap/workloads/sap-hana-high-availability", "https://learn.microsoft.com/en-us/azure/sap/workloads/sap-hana-high-availability-rhel"],
             "SAPNote": ""

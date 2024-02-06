@@ -1,5 +1,9 @@
 # Changelog
 
+# Version 2024020601
+* UPDATE: moving to newer versions of Azure networking module due to Loadbalancer ProbeThreshold requirement
+* NEW: the reference architecture has been updated with a new parameter for load balancers, ProbeThreshold
+
 # Version 2024012501
 * NEW: HANA SrHook Configuration collection check
 * NEW: Oracle database HugePage_Total collection check

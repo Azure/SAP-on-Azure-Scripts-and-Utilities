@@ -287,7 +287,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2024012501
+$scriptversion = 2024020601
 
 function LoadHTMLHeader {
 
@@ -1527,7 +1527,7 @@ function CollectLoadBalancer {
             foreach ($_loadbalancerbackendpool in $_ipconfig.LoadBalancerBackendAddressPools) {
 
                 # create empty load balancer row entry
-                $_loadbalancer_row = "" | Select-Object Name,Type,IdleTimeout,FloatingIP,Protocols
+                $_loadbalancer_row = "" | Select-Object Name,Type,IdleTimeout,FloatingIP,Protocols,ProbeThreshold
 
                 # split data from pool to (full resource string) for LB name and Resource Group
                 $_loadbalancername = ($_loadbalancerbackendpool.id).Split("/")[8]
@@ -1542,6 +1542,7 @@ function CollectLoadBalancer {
                 $_loadbalancer_row.IdleTimeout = $_loadbalancer.LoadBalancingRules[0].IdleTimeoutInMinutes
                 $_loadbalancer_row.FloatingIP = $_loadbalancer.LoadBalancingRules[0].EnableFloatingIP
                 $_loadbalancer_row.Protocols = $_loadbalancer.LoadBalancingRules[0].Protocol
+                $_loadbalancer_row.ProbeThreshold = $_loadbalancer.Probes[0].ProbeThreshold
 
                 # add data to table
                 $Script:_LoadBalancers += $_loadbalancer_row
