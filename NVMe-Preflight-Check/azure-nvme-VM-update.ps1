@@ -31,7 +31,7 @@ param (
     # New VM Size
     [Parameter(Mandatory=$true)][string]$vm_size_change_to,
     # Start VM after update
-    [bool]$start_vm_after_update = $true,
+    [bool]$start_vm_after_update = $false,
     # Write Log File
     [bool]$write_logfile = $false,
     # Ignore VM availability check
@@ -245,6 +245,8 @@ if ($_continue -gt 0) {
 
     if ($start_vm_after_update) {
         # Start the VM
+        WriteRunLog -category "INFO" -message "Waiting for 1 min before starting up"
+        Start-Sleep 60
         WriteRunLog -category "INFO" -message "Starting VM"
         Start-AzVM -ResourceGroupName $resource_group_name -Name $vm_name
     }
