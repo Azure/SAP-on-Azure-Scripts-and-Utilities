@@ -1,5 +1,9 @@
 # Changelog
 
+# Version 2024021501
+* NEW: the HADR dump for DB2 systems
+* NEW: Db2 database PEER_WINDOW and HADR_TIMEOUT checks for SUSE and RHEL
+
 # Version 2024020601
 * UPDATE: moving to newer versions of Azure networking module due to Loadbalancer ProbeThreshold requirement
 * NEW: the reference architecture has been updated with a new parameter for load balancers, ProbeThreshold
