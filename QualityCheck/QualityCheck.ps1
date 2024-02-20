@@ -287,7 +287,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2024022001
+$scriptversion = 2024022002
 
 function LoadHTMLHeader {
 
@@ -1310,7 +1310,7 @@ function CollectVMStorage {
         #$script:_diskmapping = ConvertFrom-String_sgmap -p $script:_diskmapping
 
 
-        $_lsscsi_command = "lsscsi | sed 's/\[//; s/\]//; s/\.//' | sed 's/:/ /g' | grep Virtual | grep -v '" + $_rootdisk + " ' | grep -v '" + $_resourcedisk + " '"
+        $_lsscsi_command = "lsscsi | sed 's/\[//; s/\]//; s/\.//' | sed 's/:/ /g' | grep Virtual | grep -v '" + $_rootdisk + " ' | grep -v '" + $_resourcedisk + " ' | grep -v 'cd/dvd'"
         $_command = PrepareCommand -Command $_lsscsi_command -CommandType OS
         $script:_diskmapping = RunCommand -p $_command
         $script:_diskmapping = ConvertFrom-String_lsscsi -p $script:_diskmapping
@@ -2806,6 +2806,13 @@ function CheckForNewerVersion {
     }
     if (-not $RunLocally) {
         WriteRunLog -category "INFO" -message "Script Version $scriptversion"
+    }
+
+    $_scriptdate = [DateTime]::ParseExact($scriptversion, 'yyyyMMddHH', (Get-Culture))
+    $_currentDate_minus60 = (Get-Date).AddDays(-60)
+
+    if ($_scriptdate -lt $_currentDate_minus60) {
+        WriteRunLog -category "ERROR" -message "You are running a script version that is older than 60 days, please update"
     }
 
 }

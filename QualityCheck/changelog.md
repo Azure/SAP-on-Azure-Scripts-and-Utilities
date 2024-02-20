@@ -1,5 +1,9 @@
 # Changelog
 
+# Version 2024022002
+* FIX: remove cd/dvd drive from lsscsi output
+* NEW: add an error if the script version is older than 60 days
+
 # Version 2024022001
 * FIX: Fixing issue for HDB-OS-SLES-0006 and HDB-OS-SLES-0012 as they don't apply to Non-HA scenarios and only apply to RedHat (SUSE doesn't use pcs command)
 * FIX: Fixing Azure Disk output summary not shown in report
