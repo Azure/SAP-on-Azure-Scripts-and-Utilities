@@ -287,7 +287,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2024021501
+$scriptversion = 2024022001
 
 function LoadHTMLHeader {
 
@@ -961,7 +961,8 @@ function RunCommand {
                 # root permissions required?
                 if (($p.RootRequired) -and ($VMUsername -ne "root") -and (-not $LogonWithUserSSHKey)) {
                     # add sudo to the command
-                    $_command = "echo '$_ClearTextPassword' | sudo -E -S " + $p.ProcessingCommand
+                    # $_command = "echo '$_ClearTextPassword' | sudo -E -S " + $p.ProcessingCommand
+                    $_command = "printf '$_ClearTextPassword\n' | sudo -E -S " + $p.ProcessingCommand
                 }
                 else {
                     if ($LogonWithUserSSHKey) {
@@ -989,10 +990,15 @@ function RunCommand {
                 # run the command
                 $_result = Invoke-SSHCommand -Command $_command -SessionId $script:_SessionID
 
+                # certain versions of Linux come back with sudo on standard error, removing the string
+                $_result_ERROR = $_result.ERROR.replace("[sudo] password for ${VMUsername}: ","")
+                
                 # if result has errors, log them
-                if ($_result.ERROR -ne "")
+                #if ($_result_ERROR -ne "")
+                # if ($_result.ERROR -ne "")
+                if (-not [string]::IsNullOrEmpty($_result_ERROR))
                 {
-                    WriteRunLog -category "ERROR" -message ($p.CheckID + " " + $_result.Error)
+                    WriteRunLog -category "ERROR" -message ($p.CheckID + " " + $_result_ERROR)
                 }
                 # just store theoutput of the command in $_result
                 $_result = $_result.Output
@@ -1221,7 +1227,6 @@ function CollectVMStorage {
             # get VM info
             $script:_VMinfo = Get-AzVM -ResourceGroupName $AzVMResourceGroup -Name $AzVMName
         }
-        }
 
         # collect LVM configuration
         $_command = PrepareCommand -Command "/sbin/lvm fullreport --reportformat json" 
@@ -1358,7 +1363,16 @@ function CollectVMStorage {
 
         }
 
+        # convert output to HTML
+        $script:_azurediskOutput = $script:_AzureDisks | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""AzureDisks"">Azure Disks</h2>"
+
+        # add LVM Groups to HTML index
+        $script:_Content += "<a href=""#AzureDisks"">Azure Disks</a><br>"
+
+        return $script:_azurediskOutput
+
     }
+}
  
    
 
@@ -1889,7 +1903,8 @@ function RunQualityCheck {
             }
             else {
                 $_AzureDisks_for_hanadata_filesystems = $script:_filesystems | Where-Object {$_.target -in $script:DBDataDir}
-                $_AzureDisks_hana = ($_AzureDisks | Where-Object { $_.DeviceName -in $_AzureDisks_for_hanadata_filesystems.Source})
+                # $_AzureDisks_hana = ($_AzureDisks | Where-Object { $_.DeviceName -in $_AzureDisks_for_hanadata_filesystems.Source})
+                $_AzureDisks_hana = ($_AzureDisks | Where-Object { $_AzureDisks_for_hanadata_filesystems.Source.Contains($_.DeviceName) })
             }
 
             $_FirstDisk = $_AzureDisks_hana[0]
@@ -1921,8 +1936,9 @@ function RunQualityCheck {
             }
 
             # if LVM is used check for same disk type as multiple volumes might be used
-            if ($_filesystem_hana_type -eq "lvm") {
-                foreach ($_AzureDisk_hana in $_AzureDisks_hana) {
+            foreach ($_AzureDisk_hana in $_AzureDisks_hana) {
+
+                if ($_filesystem_hana_type -eq "lvm") {
 
                     if ($_AzureDisk_hana.Disktype -eq $_FirstDisk.Disktype) {
                         # disk type correct
@@ -1943,40 +1959,41 @@ function RunQualityCheck {
                         # Wrong Disk Type
                         AddCheckResultEntry -CheckID "HDB-FS-0006" -Description "SAP HANA Data: same disk performance type" -AdditionalInfo ("Disk " + $_AzureDisk_hana.name) -TestResult $_AzureDisk_hana.Disktype -ExptectedResult $_FirstDisk.Disktype -Status "ERROR" -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
                     }
+                }
 
-                    # setting storage type for later checks
-                    $script:_StorageType += $_AzureDisk_hana.StorageType
+                # setting storage type for later checks
+                $script:_StorageType += $_AzureDisk_hana.StorageType
 
-                    # check if storage type is supported
-                    if ($_jsonconfig.SupportedVMs.$_VMType.$VMRole.HANAStorageTypeData -contains $_AzureDisk_hana.StorageType) {
-                        # storage type is supported for HANA
-                        AddCheckResultEntry -CheckID "HDB-FS-0015" -Description "SAP HANA Data: storage type supported" -AdditionalInfo ("Storage Type " + $_AzureDisk_hana.StorageType) -TestResult "Supported" -ExptectedResult "Supported" -Status "OK" -MicrosoftDocs $_saphanastorageurl
+                # check if storage type is supported
+                if ($_jsonconfig.SupportedVMs.$_VMType.$VMRole.HANAStorageTypeData -contains $_AzureDisk_hana.StorageType) {
+                    # storage type is supported for HANA
+                    AddCheckResultEntry -CheckID "HDB-FS-0015" -Description "SAP HANA Data: storage type supported" -AdditionalInfo ("Storage Type " + $_AzureDisk_hana.StorageType) -TestResult "Supported" -ExptectedResult "Supported" -Status "OK" -MicrosoftDocs $_saphanastorageurl
 
+                }
+                else {
+                    # Wrong Disk Type
+                    AddCheckResultEntry -CheckID "HDB-FS-0015" -Description "SAP HANA Data: storage type supported" -AdditionalInfo ("Storage Type " + $_AzureDisk_hana.StorageType) -TestResult "Unsupported" -ExptectedResult "Supported" -Status "ERROR" -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
+                }
+
+                # check Premium SSD v2 sector size
+                if ($_AzureDisk_hana.StorageType -eq "PremiumV2_LRS") {
+                    $_diskdevicename_command = "/sys/block/" + $_AzureDisk_hana.DeviceName.Split("/")[2] + "/queue/logical_block_size"
+                    $_sectorsize_command = PrepareCommand -Command "cat $_diskdevicename_command" -RootRequired $true -CommandType "OS"
+                    $_sectorsize = RunCommand -p $_sectorsize_command
+
+                    if ($_sectorsize -eq "4096") {
+                        # sector size supported
+                        AddCheckResultEntry -CheckID "HDB-FS-0017" -Description "SAP HANA Data: sector size Premium SSD V2" -AdditionalInfo "Sector size of 4096 bytes" -TestResult "4096" -ExptectedResult "4096" -Status "OK" -MicrosoftDocs $_saphanastorageurl
                     }
                     else {
-                        # Wrong Disk Type
-                        AddCheckResultEntry -CheckID "HDB-FS-0015" -Description "SAP HANA Data: storage type supported" -AdditionalInfo ("Storage Type " + $_AzureDisk_hana.StorageType) -TestResult "Unsupported" -ExptectedResult "Supported" -Status "ERROR" -MicrosoftDocs $_saphanastorageurl
-                    }
-
-                    # check Premium SSD v2 sector size
-                    if ($_AzureDisk_hana.StorageType -eq "PremiumV2_LRS") {
-                        $_diskdevicename_command = "/sys/block/" + $_AzureDisk_hana.DeviceName.Split("/")[2] + "/queue/logical_block_size"
-                        $_sectorsize_command = PrepareCommand -Command "cat $_diskdevicename_command" -RootRequired $true -CommandType "OS"
-                        $_sectorsize = RunCommand -p $_sectorsize_command
-
-                        if ($_sectorsize -eq "4096") {
-                            # sector size supported
-                            AddCheckResultEntry -CheckID "HDB-FS-0017" -Description "SAP HANA Data: sector size Premium SSD V2" -AdditionalInfo "Sector size of 4096 bytes" -TestResult "4096" -ExptectedResult "4096" -Status "OK" -MicrosoftDocs $_saphanastorageurl
-                        }
-                        else {
-                            # sector size unsupported
-                            AddCheckResultEntry -CheckID "HDB-FS-0017" -Description "SAP HANA Data: sector size Premium SSD V2" -AdditionalInfo "Sector size of 512 bytes" -TestResult "512" -ExptectedResult "4096" -Status "ERROR" -MicrosoftDocs $_saphanastorageurl
-                        }
-
+                        # sector size unsupported
+                        AddCheckResultEntry -CheckID "HDB-FS-0017" -Description "SAP HANA Data: sector size Premium SSD V2" -AdditionalInfo "Sector size of 512 bytes" -TestResult "512" -ExptectedResult "4096" -Status "ERROR" -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
                     }
 
                 }
+
             }
+
         }
         elseif (($_filesystem_hana.fstype -eq 'nfs') -or ($_filesystem_hana.fstype -eq 'nfs4')) {
 
@@ -2020,7 +2037,8 @@ function RunQualityCheck {
             }
             else {
                 $_AzureDisks_for_hanalog_filesystems = $script:_filesystems | Where-Object {$_.target -in $script:DBLogDir}
-                $_AzureDisks_hana = ($_AzureDisks | Where-Object { $_.DeviceName -in $_AzureDisks_for_hanalog_filesystems.Source})
+                # $_AzureDisks_hana = ($_AzureDisks | Where-Object { $_.DeviceName -in $_AzureDisks_for_hanalog_filesystems.Source})
+                $_AzureDisks_hana = ($_AzureDisks | Where-Object { $_AzureDisks_for_hanalog_filesystems.Source.Contains($_.DeviceName) })
             }
             $_FirstDisk = $_AzureDisks_hana[0]
 
@@ -2096,7 +2114,7 @@ function RunQualityCheck {
                 }
                 else {
                     # Wrong Disk Type
-                    AddCheckResultEntry -CheckID "HDB-FS-0016" -Description "SAP HANA Log: storage type supported" -AdditionalInfo ("Storage Type " + $_AzureDisk_hana.StorageType) -TestResult "Unsupported" -ExptectedResult "Supported" -Status "ERROR" -MicrosoftDocs $_saphanastorageurl
+                    AddCheckResultEntry -CheckID "HDB-FS-0016" -Description "SAP HANA Log: storage type supported" -AdditionalInfo ("Storage Type " + $_AzureDisk_hana.StorageType) -TestResult "Unsupported" -ExptectedResult "Supported" -Status "ERROR" -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
                 }
 
                 # check Premium SSD v2 sector size
@@ -2107,11 +2125,11 @@ function RunQualityCheck {
 
                     if ($_sectorsize -eq "4096") {
                         # sector size supported
-                        AddCheckResultEntry -CheckID "HDB-FS-0018" -Description "SAP HANA Data: sector size Premium SSD V2" -AdditionalInfo "Sector size of 4096 bytes" -TestResult "4096" -ExptectedResult "4096" -Status "OK" -MicrosoftDocs $_saphanastorageurl
+                        AddCheckResultEntry -CheckID "HDB-FS-0018" -Description "SAP HANA Log: sector size Premium SSD V2" -AdditionalInfo "Sector size of 4096 bytes" -TestResult "4096" -ExptectedResult "4096" -Status "OK" -MicrosoftDocs $_saphanastorageurl
                     }
                     else {
                         # sector size unsupported
-                        AddCheckResultEntry -CheckID "HDB-FS-0018" -Description "SAP HANA Data: sector size Premium SSD V2" -AdditionalInfo "Sector size of 512 bytes" -TestResult "512" -ExptectedResult "4096" -Status "ERROR" -MicrosoftDocs $_saphanastorageurl
+                        AddCheckResultEntry -CheckID "HDB-FS-0018" -Description "SAP HANA Log: sector size Premium SSD V2" -AdditionalInfo "Sector size of 512 bytes" -TestResult "512" -ExptectedResult "4096" -Status "ERROR" -MicrosoftDocs $_saphanastorageurl -ErrorCategory "ERROR"
                     }
 
                 }
@@ -2551,8 +2569,10 @@ function CollectFileSystems {
             else {
                 if ($_filesystem.Filesystem.StartsWith("/dev/sd")) {
                     # add IOPS and MBPS from disk infos
-                    $_filesystem_row.MaxMBPS = ($script:_AzureDisks | Where-Object { $_.DeviceName -eq $_filesystem_row.Source}).MBPS
-                    $_filesystem_row.MaxIOPS = ($script:_AzureDisks | Where-Object { $_.DeviceName -eq $_filesystem_row.Source}).IOPS
+                    # $_filesystem_row.MaxMBPS = ($script:_AzureDisks | Where-Object { $_.DeviceName -eq $_filesystem_row.Source}).MBPS
+                    # $_filesystem_row.MaxIOPS = ($script:_AzureDisks | Where-Object { $_.DeviceName -eq $_filesystem_row.Source}).IOPS
+                    $_filesystem_row.MaxMBPS = ($script:_AzureDisks | Where-Object { $_filesystem_row.Source.Contains($_.DeviceName)}).MBPS
+                    $_filesystem_row.MaxIOPS = ($script:_AzureDisks | Where-Object { $_filesystem_row.Source.Contains($_.DeviceName)}).IOPS
                 }
                 else {
                     # add IOPS and MBPS from LVM infos

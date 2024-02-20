@@ -1,5 +1,16 @@
 # Changelog
 
+# Version 2024022001
+* FIX: Fixing issue for HDB-OS-SLES-0006 and HDB-OS-SLES-0012 as they don't apply to Non-HA scenarios and only apply to RedHat (SUSE doesn't use pcs command)
+* FIX: Fixing Azure Disk output summary not shown in report
+* FIX: Sector size for Premium SSD V2 not shown for /hana/data directory
+* FIX: Check if disk configuration is supported not shown for direct file systems (/dev/sdX)
+* FIX: HDB-FS-0016 added error category
+* FIX: moving from echo to printf for sudo commands to avoid cases on newer kernels
+* FIX: removing the sudo output from stderr as newer kernel versions show errors during execution, even if there is no error
+* FIX: fixing the search IOPS and MBPS for direct file systems (/dev/sdX)
+* UPDATE: update to Readme.md
+
 # Version 2024021501
 * NEW: the HADR dump for DB2 systems
 * NEW: Db2 database PEER_WINDOW and HADR_TIMEOUT checks for SUSE and RHEL

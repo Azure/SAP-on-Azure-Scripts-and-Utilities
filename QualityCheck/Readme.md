@@ -39,7 +39,7 @@ It will query your system for required parameters and match it with Microsoft's 
 
 A jumpbox could be a special VM to access your SAP system or your local machine, we'll just call ist jumpbox.
 
-1. Install PowerShell 7.2
+1. Install PowerShell 7.2 or newer
     * Windows
 
         To install Powershell on Windows use the link below, after installation search for "PowerShell 7" from the Start Menu
@@ -147,16 +147,21 @@ If a check fails it will continue with the next entry.
 .\QualityCheck.ps1 -LogonWithUserPassword -VMOperatingSystem Windows,SUSE,RedHat,OracleLinux -VMDatabase HANA,Oracle,MSSQL,Db2,ASE -VMRole DB,ASCS,APP -AzVMResourceGroup resourcegroupname -AzVMName AzureVMName -VMHostname hostname or ip address -VMUsername username [-HighAvailability $true or $false] [-VMConnectionPort 22>] [-DBDataDir /hana/data] [-DBLogDir /hana/log] [-DBSharedDir /hana/shared] [-ANFResourceGroup resourcegroup-for-anf] [-ANFAccountName anf-account-name] [-Hardwaretype VM] [-HANADeployment OLTP,OLAP,OLTP-ScaleOut,OLAP-ScaleOut] [-HighAvailabilityAgent SBD,FencingAgent]
 ```
 
-#### Login with SSH Keys
+#### Login with SSH Keys (no password required for sudo)
 
 ```powershell
 .\QualityCheck.ps1 -LogonWithUserSSHKey -VMOperatingSystem Windows,SUSE,RedHat,OracleLinux -VMDatabase HANA,Oracle,MSSQL,Db2,ASE -VMRole DB,ASCS,APP -AzVMResourceGroup resourcegroupname -AzVMName AzureVMName -VMHostname hostname or ip address -VMUsername username [-HighAvailability $true or $false] [-VMConnectionPort 22>] [-DBDataDir /hana/data] [-DBLogDir /hana/log] [-DBSharedDir /hana/shared] [-ANFResourceGroup resourcegroup-for-anf] [-ANFAccountName anf-account-name] [-Hardwaretype VM] [-HANADeployment OLTP,OLAP,OLTP-ScaleOut,OLAP-ScaleOut] [-HighAvailabilityAgent SBD,FencingAgent] -SSHKey Path-To-SSH-Key-File
 ```
-
-#### Login with SSH Keys and Passphrase
+#### Login with SSH Keys (password required for sudo)
 
 ```powershell
-.\QualityCheck.ps1 -LogonWithUserSSHKey -VMOperatingSystem Windows,SUSE,RedHat,OracleLinux -VMDatabase HANA,Oracle,MSSQL,Db2,ASE -VMRole DB,ASCS,APP -AzVMResourceGroup resourcegroupname -AzVMName AzureVMName -VMHostname hostname or ip address -VMUsername username [-HighAvailability $true or $false] [-VMConnectionPort 22>] [-DBDataDir /hana/data] [-DBLogDir /hana/log] [-DBSharedDir /hana/shared] [-ANFResourceGroup resourcegroup-for-anf] [-ANFAccountName anf-account-name] [-Hardwaretype VM] [-HANADeployment OLTP,OLAP,OLTP-ScaleOut,OLAP-ScaleOut] [-HighAvailabilityAgent SBD,FencingAgent] -SSHKey Path-To-SSH-Key-File
+.\QualityCheck.ps1 -LogonWithUserPasswordSSHKey -VMOperatingSystem Windows,SUSE,RedHat,OracleLinux -VMDatabase HANA,Oracle,MSSQL,Db2,ASE -VMRole DB,ASCS,APP -AzVMResourceGroup resourcegroupname -AzVMName AzureVMName -VMHostname hostname or ip address -VMUsername username [-HighAvailability $true or $false] [-VMConnectionPort 22>] [-DBDataDir /hana/data] [-DBLogDir /hana/log] [-DBSharedDir /hana/shared] [-ANFResourceGroup resourcegroup-for-anf] [-ANFAccountName anf-account-name] [-Hardwaretype VM] [-HANADeployment OLTP,OLAP,OLTP-ScaleOut,OLAP-ScaleOut] [-HighAvailabilityAgent SBD,FencingAgent] -SSHKey Path-To-SSH-Key-File
+```
+
+#### Login with SSH Keys and Passphrase (no password required for sudo, but a passphrase for SSH keys)
+
+```powershell
+.\QualityCheck.ps1 -LogonWithUserPasswordSSHKeyPassphrase -VMOperatingSystem Windows,SUSE,RedHat,OracleLinux -VMDatabase HANA,Oracle,MSSQL,Db2,ASE -VMRole DB,ASCS,APP -AzVMResourceGroup resourcegroupname -AzVMName AzureVMName -VMHostname hostname or ip address -VMUsername username [-HighAvailability $true or $false] [-VMConnectionPort 22>] [-DBDataDir /hana/data] [-DBLogDir /hana/log] [-DBSharedDir /hana/shared] [-ANFResourceGroup resourcegroup-for-anf] [-ANFAccountName anf-account-name] [-Hardwaretype VM] [-HANADeployment OLTP,OLAP,OLTP-ScaleOut,OLAP-ScaleOut] [-HighAvailabilityAgent SBD,FencingAgent] -SSHKey Path-To-SSH-Key-File
 ```
 
 If you receive SSH key error, please generate the key using this command:

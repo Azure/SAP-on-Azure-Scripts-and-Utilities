@@ -1,5 +1,5 @@
 {
-    "Version": 2024021501,
+    "Version": 2024022001,
 
     "PowerShellPrerequisits": [
         {
@@ -5768,7 +5768,7 @@
             "DB": ["HANA"],
             "RunInLocalMode": true,
             "ErrorCategory": "WARNING",
-            "HighAvailability": [true,false],
+            "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
             "CommandType": "OS",
             "ProcessingCommand": "pcs stonith config | grep msi=true | wc -l",
@@ -6962,7 +6962,7 @@
             "DB": ["HANA","Db2"],
             "RunInLocalMode": true,
             "ErrorCategory": "WARNING",
-            "HighAvailability": [true,false],
+            "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent", "SBD"],
             "CommandType": "OS",
             "ProcessingCommand": "crm configure show | grep pcmk_delay_max | awk '{print $2}' | cut -d '=' -f 2",
