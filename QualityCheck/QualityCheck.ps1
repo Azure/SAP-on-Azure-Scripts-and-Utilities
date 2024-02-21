@@ -3384,7 +3384,7 @@ foreach ($_qcrun in $_MultiRunData) {
 
         if ($AddJSONFile) {
             # adding JSONfile
-            $_jsonoutput = "" | Select-Object Checks, Parameters, InformationCollection, Disks, Filesystems, RunLog
+            $_jsonoutput = "" | Select-Object Rundate, VMName, ResourceGroup, HighAvailability, Checks, Parameters, InformationCollection, Disks, Filesystems, RunLog, Filename
 
             WriteRunLog -category "INFO" -message ("Preparing JSON Output")
 
@@ -3393,8 +3393,13 @@ foreach ($_qcrun in $_MultiRunData) {
             $_jsonoutput.Disks = $script:_AzureDisks
             $_jsonoutput.Filesystems = $script:_filesystems
             $_jsonoutput.RunLog = $script:_runlog
+            $_jsonoutput.Rundate = (Get-Date)
+            $_jsonoutput.VMName = $AzVMName
+            $_jsonoutput.ResourceGroup = $AzVMResourceGroup
+            $_jsonoutput.HighAvailability = $HighAvailability
 
             $_JSONReportFileName = $AzVMName + "-" + $_HTMLReportFileDate + ".json"
+            $_jsonoutput.Filename = $_JSONReportFileName
             $_jsonoutput = $_jsonoutput | ConvertTo-Json
             $_jsonoutput | Out-File .\$_JSONReportFileName
         }
