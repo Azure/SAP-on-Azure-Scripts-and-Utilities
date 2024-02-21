@@ -1,5 +1,8 @@
 # Changelog
 
+# Version 2024022101
+* UPDATE: adding additional parameters to JSON output
+
 # Version 2024022002
 * FIX: remove cd/dvd drive from lsscsi output
 * NEW: add an error if the script version is older than 60 days

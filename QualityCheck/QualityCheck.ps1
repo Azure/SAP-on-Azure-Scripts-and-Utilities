@@ -287,7 +287,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2024022002
+$scriptversion = 2024022101
 
 function LoadHTMLHeader {
 
@@ -3403,7 +3403,7 @@ foreach ($_qcrun in $_MultiRunData) {
     }
     else {
         # script running locally, convert result to JSON
-        $_jsonoutput = "" | Select-Object Checks, Parameters, InformationCollection, Disks, Filesystems, RunLog
+        $_jsonoutput = "" | Select-Object Rundate, VMName, ResourceGroup, HighAvailability, Checks, Parameters, InformationCollection, Disks, Filesystems, RunLog
 
         WriteRunLog -category "INFO" -message ("Preparing JSON Output")
         WriteRunLog -category "INFO" -message ("End " + (Get-Date))
@@ -3413,7 +3413,11 @@ foreach ($_qcrun in $_MultiRunData) {
         $_jsonoutput.Disks = $script:_AzureDisks
         $_jsonoutput.Filesystems = $script:_filesystems
         $_jsonoutput.RunLog = $script:_runlog
-
+        $_jsonoutput.Rundate = (Get-Date)
+        $_jsonoutput.VMName = $AzVMName
+        $_jsonoutput.ResourceGroup = $AzVMResourceGroup
+        $_jsonoutput.HighAvailability = $HighAvailability
+                
         $_jsonoutput = $_jsonoutput | ConvertTo-Json
 
         Write-Host $_jsonoutput
