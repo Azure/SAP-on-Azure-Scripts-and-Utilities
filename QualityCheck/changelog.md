@@ -1,5 +1,9 @@
 # Changelog
 
+# Version 2024022201
+* NEW: add parameter OutputDirName to change the path for HTML and JSON files
+* UPDATE: add Version of Quality Check to JSON file
+
 # Version 2024022101
 * UPDATE: adding additional parameters to JSON output
 

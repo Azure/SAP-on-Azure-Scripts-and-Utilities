@@ -282,12 +282,14 @@ param (
         [Parameter(Mandatory=$true, ParameterSetName='MultiRun')]
         [string]$ImportFile,
         # add JSON output in addition to HTML file
-        [switch]$AddJSONFile
+        [switch]$AddJSONFile,
+        # add Output Directory for HTML and JSON
+        [string]$OutputDirName
 )
 
 
 # defining script version
-$scriptversion = 2024022101
+$scriptversion = 2024022201
 
 function LoadHTMLHeader {
 
@@ -3380,11 +3382,17 @@ foreach ($_qcrun in $_MultiRunData) {
         $_HTMLReport = ConvertTo-Html -Body "$_Content $_CollectScriptParameter $_CollectVMInfo $_RunQualityCheck $_CollectFileSystems $_CollectVMStorage $_CollectLVMGroups $_CollectLVMVolumes $_CollectANFVolumes $_CollectNetworkInterfaces $_CollectLoadBalancer $_CollectVMInfoAdditional $_CollectFooter $_RunLogContent" -Head $script:_HTMLHeader -Title "Quality Check for SAP Worloads on Azure" -PostContent "<p id='CreationDate'>Creation Date: $(Get-Date)</p><p id='CreationDate'>Script Version: $scriptversion</p>"
         $_HTMLReportFileDate = $(Get-Date -Format "yyyyMMdd-HHmm")
         $_HTMLReportFileName = $AzVMName + "-" + $_HTMLReportFileDate + ".html"
-        $_HTMLReport | Out-File .\$_HTMLReportFileName
+
+        if ([string]::IsNullOrEmpty($OutputDirName)) {
+            $_HTMLReport | Out-File .\$_HTMLReportFileName
+        }
+        else {
+            $_HTMLReport | Out-File $OutputDirName\$_HTMLReportFileName
+        }
 
         if ($AddJSONFile) {
             # adding JSONfile
-            $_jsonoutput = "" | Select-Object Rundate, VMName, ResourceGroup, HighAvailability, Checks, Parameters, InformationCollection, Disks, Filesystems, RunLog, Filename
+            $_jsonoutput = "" | Select-Object Rundate, VMName, ResourceGroup, HighAvailability, Checks, Parameters, InformationCollection, Disks, Filesystems, RunLog, Filename, QCVersion
 
             WriteRunLog -category "INFO" -message ("Preparing JSON Output")
 
@@ -3397,11 +3405,18 @@ foreach ($_qcrun in $_MultiRunData) {
             $_jsonoutput.VMName = $AzVMName
             $_jsonoutput.ResourceGroup = $AzVMResourceGroup
             $_jsonoutput.HighAvailability = $HighAvailability
+            $_jsonoutput.QCVersion = $scriptversion
 
             $_JSONReportFileName = $AzVMName + "-" + $_HTMLReportFileDate + ".json"
             $_jsonoutput.Filename = $_JSONReportFileName
             $_jsonoutput = $_jsonoutput | ConvertTo-Json
-            $_jsonoutput | Out-File .\$_JSONReportFileName
+
+            if ([string]::IsNullOrEmpty($OutputDirName)) {
+                $_jsonoutput | Out-File .\$_JSONReportFileName    
+            }
+            else {
+                $_jsonoutput | Out-File $OutputDirName\$_JSONReportFileName
+            }
         }
 
 
