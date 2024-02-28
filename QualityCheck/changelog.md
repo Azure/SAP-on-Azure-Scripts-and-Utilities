@@ -1,5 +1,10 @@
 # Changelog
 
+# Version 2024032801
+* Added OS checks related to memory configurations.
+* Updated oracle check to compare the memory value instead of logging the memory size.
+* Added HA check to find enqueue replicator version
+
 # Version 2024022201
 * NEW: add parameter OutputDirName to change the path for HTML and JSON files
 * UPDATE: add Version of Quality Check to JSON file

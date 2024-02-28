@@ -289,7 +289,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2024022201
+$scriptversion = 2024022801
 
 function LoadHTMLHeader {
 
@@ -2180,6 +2180,14 @@ function RunQualityCheck {
                 $_commandstring = "find $_persistance_db2datavolumes -type f"
                 $_command = PrepareCommand -Command $($_commandstring) -CommandType "OS" -RootRequired $true
                 $script:_persistance_datavolumes_files = RunCommand -p $_command
+
+                # scenario when /sapdata doesnot exists, get all files for /db2/SID/sapdata1
+                if ($script:_persistance_datavolumes_files -eq "" -or $script:_persistance_datavolumes_files -eq $null) {
+                    $script:_persistance_db2datavolumes = "/db2/" + $SID + "/sapdata1"
+                    $_commandstring = "find $_persistance_db2datavolumes -type f"
+                    $_command = PrepareCommand -Command $($_commandstring) -CommandType "OS" -RootRequired $true
+                    $script:_persistance_datavolumes_files = RunCommand -p $_command
+                }
 
                 # get all files for /db2/SID/log_dir
                 $_commandstring = "find $_persistance_db2logvolumes -type f"
