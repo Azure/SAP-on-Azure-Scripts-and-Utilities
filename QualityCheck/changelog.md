@@ -1,5 +1,12 @@
 # Changelog
 
+# Version 2024031101
+* NEW: Switch DetailedLog for more logs on the commands run
+* FIX: range sometimes doesn't provide correct result
+* FIX: HDB-OS-SLES-0006 is only for RedHat and is renamed to HDB-OS-RHEL-0008
+* FIX: moving back to echo instead of printf as there are issues on newer distributions
+* FIX: when using SSH Keys with root user a wrong if statement was taken
+
 # Version 2024022201
 * NEW: add parameter OutputDirName to change the path for HTML and JSON files
 * UPDATE: add Version of Quality Check to JSON file

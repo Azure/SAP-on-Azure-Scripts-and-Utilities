@@ -5758,9 +5758,9 @@
             "SAPNote": ""
         },
         {
-            "CheckID": "HDB-OS-SLES-0006",
+            "CheckID": "HDB-OS-RHEL-0008",
             "Description": "Azure Fence Agent Configuration",
-            "OS": ["SUSE", "RedHat"],
+            "OS": ["RedHat"],
             "OSVersion": ["all"],
             "HardwareType": ["VM"],
             "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS"],

@@ -284,7 +284,9 @@ param (
         # add JSON output in addition to HTML file
         [switch]$AddJSONFile,
         # add Output Directory for HTML and JSON
-        [string]$OutputDirName
+        [string]$OutputDirName,
+        # add detailed logs
+        [switch]$DetailedLog
 )
 
 
@@ -946,6 +948,10 @@ function RunCommand {
     param (
         [object]$p
     )
+    
+    if ($DetailedLog) {
+        WriteRunLog -category "INFO" -message ("Running " + $p.ProcessingCommand)
+    }
 
     # command needs to run inside OS
     if ($p.CommandType -eq "OS") {
@@ -961,13 +967,13 @@ function RunCommand {
                 # Linux
 
                 # root permissions required?
-                if (($p.RootRequired) -and ($VMUsername -ne "root") -and (-not $LogonWithUserSSHKey)) {
+                if (($p.RootRequired) -and ($VMUsername -ne "root") -and (-not $LogonWithUserSSHKey) -and (-not $LogonAsRootSSHKey)) {
                     # add sudo to the command
-                    # $_command = "echo '$_ClearTextPassword' | sudo -E -S " + $p.ProcessingCommand
-                    $_command = "printf '$_ClearTextPassword\n' | sudo -E -S " + $p.ProcessingCommand
+                    $_command = "echo '$_ClearTextPassword' | sudo -E -S " + $p.ProcessingCommand
+                    # $_command = "printf '$_ClearTextPassword\n' | sudo -E -S " + $p.ProcessingCommand
                 }
                 else {
-                    if ($LogonWithUserSSHKey) {
+                    if (($LogonWithUserSSHKey) -or ($LogonAsRootSSHKey -and ($VMUsername -ne "root"))  ) {
                         if ($p.RootRequired) {
                             $_command = "sudo -E -S " + $p.ProcessingCommand
                         }
@@ -2418,7 +2424,7 @@ function RunQualityCheck {
                                         }
                                     }
                             "range" {
-                                        if ($_result -ge $_check.ExpectedResult.low -and $_result -le $_check.ExpectedResult.high) {
+                                        if ([int]$_result -ge [int]$_check.ExpectedResult.low -and [int]$_result -le [int]$_check.ExpectedResult.high) {
                                             $_Check_row.Status = "OK"
                                             if ($RunLocally) {
                                                 $_Check_row.Success = $true
@@ -3409,7 +3415,7 @@ foreach ($_qcrun in $_MultiRunData) {
 
             $_JSONReportFileName = $AzVMName + "-" + $_HTMLReportFileDate + ".json"
             $_jsonoutput.Filename = $_JSONReportFileName
-            $_jsonoutput = $_jsonoutput | ConvertTo-Json
+            $_jsonoutput = $_jsonoutput | ConvertTo-Json -Depth 10
 
             if ([string]::IsNullOrEmpty($OutputDirName)) {
                 $_jsonoutput | Out-File .\$_JSONReportFileName    
@@ -3438,7 +3444,7 @@ foreach ($_qcrun in $_MultiRunData) {
         $_jsonoutput.ResourceGroup = $AzVMResourceGroup
         $_jsonoutput.HighAvailability = $HighAvailability
                 
-        $_jsonoutput = $_jsonoutput | ConvertTo-Json
+        $_jsonoutput = $_jsonoutput | ConvertTo-Json -Depth 10
 
         Write-Host $_jsonoutput
         
