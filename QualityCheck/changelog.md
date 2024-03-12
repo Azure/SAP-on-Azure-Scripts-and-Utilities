@@ -1,5 +1,8 @@
 # Changelog
 
+# Version 2024031201
+* FIX: missing updated version numbers in JSON and PS1 file
+
 # Version 2024031101
 * NEW: Switch DetailedLog for more logs on the commands run
 * FIX: range sometimes doesn't provide correct result
