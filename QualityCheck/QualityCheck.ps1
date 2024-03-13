@@ -291,7 +291,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2024031201
+$scriptversion = 2024031301
 
 function LoadHTMLHeader {
 
@@ -522,6 +522,11 @@ function ConvertFrom-String_df {
     # replace all characters with ','
     $_x = $p.Trim() -replace '\s+',','
     
+    # remove first line as it is the header
+    if ($_x[0].Contains("Filesystem")) {
+        $_x = $_x[1..($_x.Length-1)]
+    }
+
     # create a table object
     $_x | Foreach-Object {
 	    $_output += $_ | ConvertFrom-Csv -Header Filesystem,Size,Used,Free,UsedPercent,Mountpoint
@@ -543,11 +548,13 @@ function ConvertFrom-String_findmnt {
     $_output = @()
     
     # replace all characters with ','
-    $_x = $p.Trim() -replace '\s+',','
+    # $_x = $p.Trim() -replace '\s+',','
+    $_x = $p.Trim() -replace '\s+',';'
 
     # create table object
     $_x | Foreach-Object {
-	    $_output += $_ | ConvertFrom-Csv -Header target,source,fstype,options
+	    # $_output += $_ | ConvertFrom-Csv -Header target,source,fstype,options
+        $_output += $_ | ConvertFrom-Csv -Header target,source,fstype,options -Delimiter ";"
     }
 
     # return object
@@ -738,6 +745,10 @@ function ConnectVM {
         if ($script:_sshsession.Connected -eq $true) {
             # return SSH session ID for later use
             $script:_ConnectVMResult = $true
+
+            # add an SSH Stream
+            $script:_sshstream = New-SSHShellStream -SSHSession $_sshsession -BufferSize 20000
+
             return $script:_sshsession.SessionId
         }
         else {
@@ -746,6 +757,7 @@ function ConnectVM {
             $script:_ConnectVMResult = $false
             exit
         }
+   
     }
 }
 
@@ -844,6 +856,58 @@ function CollectVMInformation {
 
     # create empty array
     $_outputarray = @()
+
+    if ($VMOperatingSystem -eq "Windows") {
+        # windows code
+    }
+    else {
+        # Linux Code
+      
+        $_command = PrepareCommand -Command "curl -s -H Metadata:true --noproxy '*' 'http://169.254.169.254/metadata/instance?api-version=2021-02-01';echo" -CommandType "OS"
+        $_result = RunCommand -p $_command
+    }
+
+    $script:_vmmetadata = $_result | ConvertFrom-Json
+
+    # VM Type
+    $_outputarray_row = "" | Select-Object CheckID, Description, Output
+    $_outputarray_row.CheckID = "IC-VMType"
+    $_outputarray_row.Description = "VM SKU"
+    $_outputarray_row.Output = $script:_vmmetadata.compute.vmSize
+    $script:_VMType = $script:_vmmetadata.compute.vmSize
+    $_outputarray += $_outputarray_row
+
+    # VM Id
+    $_outputarray_row = "" | Select-Object CheckID, Description, Output
+    $_outputarray_row.CheckID = "IC-vmId"
+    $_outputarray_row.Description = "VM Unique ID"
+    $_outputarray_row.Output = $script:_vmmetadata.compute.vmId
+    $_outputarray += $_outputarray_row
+
+    # VM location
+    $_outputarray_row = "" | Select-Object CheckID, Description, Output
+    $_outputarray_row.CheckID = "IC-vmlocation"
+    $_outputarray_row.Description = "Azure Region"
+    $_outputarray_row.Output = $script:_vmmetadata.compute.location
+    $_outputarray += $_outputarray_row
+
+    # VM name
+    $_outputarray_row = "" | Select-Object CheckID, Description, Output
+    $_outputarray_row.CheckID = "IC-vmname"
+    $_outputarray_row.Description = "VM Name"
+    $_outputarray_row.Output = $script:_vmmetadata.compute.name
+    $_outputarray += $_outputarray_row
+
+    # VM zone
+    $_outputarray_row = "" | Select-Object CheckID, Description, Output
+    $_outputarray_row.CheckID = "IC-vmzone"
+    $_outputarray_row.Description = "Availability Zone"
+    if ([string]::IsNullOrEmpty($script:_vmmetadata.compute.zone)) {
+        $_outputarray_row.Output = "No Availability Zone"
+    } else {
+        $_outputarray_row.Output = $script:_vmmetadata.compute.zone
+    }
+    $_outputarray += $_outputarray_row
 
     # looping through VM checks
     foreach ($_CollectVMInformationCheck in $_jsonconfig.VMCollectInformation) {
@@ -966,6 +1030,10 @@ function RunCommand {
             else {
                 # Linux
 
+                <#
+
+                OLD SECTION OF Invoke-SSHCommand
+
                 # root permissions required?
                 if (($p.RootRequired) -and ($VMUsername -ne "root") -and (-not $LogonWithUserSSHKey) -and (-not $LogonAsRootSSHKey)) {
                     # add sudo to the command
@@ -1010,7 +1078,21 @@ function RunCommand {
                 }
                 # just store theoutput of the command in $_result
                 $_result = $_result.Output
-            
+                #>
+
+                # run the command
+                $_command = $p.ProcessingCommand
+                # $_result = Invoke-SSHCommandStream -Command $_command -SSHSession $script:_sshsession
+                $_result = Invoke-SSHStreamShellCommand -ShellStream $script:_sshstream -Command $_command
+
+                # remove CR from result just to make sure required since streams come back with CR
+                if (-not [string]::IsNullOrEmpty($_result)) {
+                    $_result = $_result.Replace("`r","")
+                }
+                else {
+                    $_result = ""
+                }
+                        
                 # if postprocessingcommand is defined in JSON
                 if (($p.PostProcessingCommand -ne "") -or ($p.PostProcessingCommand)) {
             
@@ -1241,7 +1323,7 @@ function CollectVMStorage {
         $script:_lvmconfig = RunCommand -p $_command | ConvertFrom-Json
 
         # get storage using metadata service
-        $_command = PrepareCommand -Command "/usr/bin/curl -s --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/storageProfile?api-version=2021-12-13'"
+        $_command = PrepareCommand -Command "/usr/bin/curl -s --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/storageProfile?api-version=2021-12-13';echo"
         $script:_azurediskconfig = RunCommand -p $_command | ConvertFrom-Json
 
         # get device for root
@@ -1302,7 +1384,7 @@ function CollectVMStorage {
         }
         catch {
             if (-not $RunLocally) {
-                WriteRunLog -category "WARNING" -message ("Couldn't find Volume Group for device " + $_AzureDisk_row.DeviceName)
+                WriteRunLog -category "INFO" -message ("Couldn't find Volume Group for device " + $_AzureDisk_row.DeviceName)
             }
             $_AzureDisk_row.VolumeGroup = "novg-" + $_AzureDisk_row.DeviceName.Replace("/dev/","") 
         }
@@ -1350,7 +1432,7 @@ function CollectVMStorage {
             }
             catch {
                 if (-not $RunLocally) {
-                    WriteRunLog -category "WARNING" -message ("Couldn't find Volume Group for device " + $_AzureDisk_row.DeviceName)
+                    WriteRunLog -category "INFO" -message ("Couldn't find Volume Group for device " + $_AzureDisk_row.DeviceName)
                 }
                 $_AzureDisk_row.VolumeGroup = "novg-" + $_AzureDisk_row.DeviceName.Replace("/dev/","") 
             }
@@ -1560,7 +1642,7 @@ function CollectLoadBalancer {
 
                 # add details
                 $_loadbalancer_row.Name = $_loadbalancername
-                $_loadbalancer_row.Type = $_loadbalancer.Sku
+                $_loadbalancer_row.Type = ($_loadbalancer.SkuText | ConvertFrom-JSON).Name
                 $_loadbalancer_row.IdleTimeout = $_loadbalancer.LoadBalancingRules[0].IdleTimeoutInMinutes
                 $_loadbalancer_row.FloatingIP = $_loadbalancer.LoadBalancingRules[0].EnableFloatingIP
                 $_loadbalancer_row.Protocols = $_loadbalancer.LoadBalancingRules[0].Protocol
@@ -2345,6 +2427,7 @@ function RunQualityCheck {
                     $_Check_row.Description = $_check.Description
                     $_Check_row.AdditionalInfo = $_check.AdditionalInfo
                     $_Check_row.Testresult = $_result
+
                     # $_Check_row.ExpectedResult = $_check.ExpectedResult
                     # if multiple expected results are available the join will combine them and add a new line for each entry
                     if ($_check.ExpectedResult.GetType().Name -eq "PSCustomObject") {    
@@ -2445,6 +2528,7 @@ function RunQualityCheck {
                         
                     }
                     else {
+                        
                         if ($_result -eq $_check.ExpectedResult) {
                             $_Check_row.Status = "OK"
                             if ($RunLocally) {
@@ -2463,12 +2547,21 @@ function RunQualityCheck {
 					
                     if (($_check.ShowAlternativeRequirement) -ne "" -or ($_check.ShowAlternativeResult -ne ""))
                     {
-                        if ($_check.ShowAlternativeResult -ne "") {
-                            $_Check_row.Testresult = Invoke-Expression $_check.ShowAlternativeResult
+                        if (-not [string]::IsNullOrEmpty($_check.ProcessingCommandOutput)) {
+
+                            $_checkoutputcommand = PrepareCommand -Command $_check.ProcessingCommandOutput -CommandType $_check.CommandType
+                            $_resultoutputcommand = RunCommand -p $_checkoutputcommand
+                            $_Check_row.Testresult = $_resultoutputcommand -join ("{0}" -f [environment]::NewLine)
+    
+                        } else {
+                            if ($_check.ShowAlternativeResult -ne "") {
+                                $_Check_row.Testresult = Invoke-Expression $_check.ShowAlternativeResult
+                            }
+                            else {
+                                $_Check_row.Testresult = ""
+                            }
                         }
-                        else {
-                            $_Check_row.Testresult = ""
-                        }
+
                         if (![string]::IsNullOrEmpty($_check.ShowAlternativeRequirement)) {
                             $_Check_row.ExpectedResult = Invoke-Expression $_check.ShowAlternativeRequirement
                         }
@@ -2530,7 +2623,7 @@ function CollectFileSystems {
         # linux systems
 
         # run findmnt command on OS
-        $_command = PrepareCommand -Command "findmnt -r -n" -CommandType "OS"
+        $_command = PrepareCommand -Command "findmnt -r -n -it autofs" -CommandType "OS"
         $script:_findmnt = RunCommand -p $_command
         $script:_findmnt = ConvertFrom-String_findmnt -p $script:_findmnt 
 
@@ -2774,8 +2867,14 @@ function CheckSudoPermission {
     
     if ($VMUsername -ne "root") {
         
-        $_command = PrepareCommand -Command "id" -CommandType "OS" -RootRequired $true
-        $_rootrights = RunCommand -p $_command
+        # $_command = PrepareCommand -Command "id" -CommandType "OS" -RootRequired $true
+        # $_rootrights = RunCommand -p $_command
+
+        $_command = "sudo bash"
+        $_result = Invoke-SSHStreamExpectSecureAction -ShellStream $script:_sshstream -Command $_command -ExpectRegex '\[sudo\].*' -SecureAction $VMPassword
+
+        $_command = "id"
+        $_rootrights = Invoke-SSHStreamShellCommand -ShellStream $script:_sshstream -Command $_command
 
         if ($_rootrights.Contains("root")) {
             # everything ok

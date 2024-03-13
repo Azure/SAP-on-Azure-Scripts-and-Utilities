@@ -1,5 +1,17 @@
 # Changelog
 
+# Version 2024031301
+* NEW: moving from Invoke-SSHCommand to Invoke-SSHStreamShellCommand for easier management of SSH sessions and to avoid using passwords on commands in JSON through variables
+* NEW: ProcessingCommandOutput in JSON can be used to run an OS command for showing the result, e.g. for sbd device checking 
+* NEW: check for SUSE Linux Kernel because of note https://www.suse.com/de-de/support/kb/doc/?id=000021035
+* UPDATE: update to SBD msgwait and watchdog to also include results of the outputs
+* UPDATE: moving some Information Collection checks directly to code for better analysis
+* UPDATE: moving from crm configure show for concurrent-fencing to crm_attribute
+* UPDATE: removing autofs entries from findmnt as they are mentioned twice
+* FIX: list of file systems included header, removed
+* FIX: update for Load Balancer SKU to reflect the correct Load Balancer SKU type
+* FIX: changing log messages for disks without volume groups from WARNING to INFO
+
 # Version 2024031201
 * FIX: missing updated version numbers in JSON and PS1 file
 
