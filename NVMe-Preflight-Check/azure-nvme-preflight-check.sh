@@ -46,8 +46,11 @@ check_NVMe_initrd () {
             # NVMe module is not loaded in initrd/initramfs
             echo -e "------------------------------------------------"
             echo -e "ERROR  NVMe Module is not loaded in the initramfs image."
-            echo -e "\t- Please run the following command on your instance to recreate initramfs:"
-            echo -e '\t# sudo dracut -f -v'
+            echo -e ""
+            echo -e "\tmkdir -p /etc/dracut.conf.d"
+            echo -e "\techo 'add_drivers+=\" nvme nvme-core nvme-fabrics nvme-fc nvme-rdma nvme-loop nvmet nvmet-fc nvme-tcp \"' >/etc/dracut.conf.d/nvme.conf"
+            echo -e '\tdracut -f -v'
+            echo -e ""
             echo -e "------------------------------------------------"
         else
             echo -e "------------------------------------------------"

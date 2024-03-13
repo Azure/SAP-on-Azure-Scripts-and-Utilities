@@ -1,9 +1,31 @@
 # Changelog
 
-# Version 2024032801
-* Added OS checks related to memory configurations.
-* Updated oracle check to compare the memory value instead of logging the memory size.
-* Added HA check to find enqueue replicator version
+# Version 2024031302
+* NEW: OS checks related to kernel configuration kernel.shmmni.
+* NEW: Instane memory check for DB2
+* Updated DB2 and oracle check to compare the memory value instead of logging the memory size.
+
+# Version 2024031301
+* NEW: moving from Invoke-SSHCommand to Invoke-SSHStreamShellCommand for easier management of SSH sessions and to avoid using passwords on commands in JSON through variables
+* NEW: ProcessingCommandOutput in JSON can be used to run an OS command for showing the result, e.g. for sbd device checking 
+* NEW: check for SUSE Linux Kernel because of note https://www.suse.com/de-de/support/kb/doc/?id=000021035
+* UPDATE: update to SBD msgwait and watchdog to also include results of the outputs
+* UPDATE: moving some Information Collection checks directly to code for better analysis
+* UPDATE: moving from crm configure show for concurrent-fencing to crm_attribute
+* UPDATE: removing autofs entries from findmnt as they are mentioned twice
+* FIX: list of file systems included header, removed
+* FIX: update for Load Balancer SKU to reflect the correct Load Balancer SKU type
+* FIX: changing log messages for disks without volume groups from WARNING to INFO
+
+# Version 2024031201
+* FIX: missing updated version numbers in JSON and PS1 file
+
+# Version 2024031101
+* NEW: Switch DetailedLog for more logs on the commands run
+* FIX: range sometimes doesn't provide correct result
+* FIX: HDB-OS-SLES-0006 is only for RedHat and is renamed to HDB-OS-RHEL-0008
+* FIX: moving back to echo instead of printf as there are issues on newer distributions
+* FIX: when using SSH Keys with root user a wrong if statement was taken
 
 # Version 2024022201
 * NEW: add parameter OutputDirName to change the path for HTML and JSON files
