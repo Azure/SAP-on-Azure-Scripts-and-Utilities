@@ -3710,18 +3710,18 @@
             "HighAvailability": [false, true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "[ $(/sbin/sysctl vm.max_map_count -n) -eq $(($(free -b | grep Mem: | awk '{print $2}') / 4096)) ] && echo OK || echo $(/sbin/sysctl vm.max_map_count -n)",
+            "ProcessingCommand": "/sbin/sysctl vm.max_map_count -n",
             "PostProcessingCommand": "",
-            "ExpectedResult": "OK",
+            "ExpectedResult": "2147483647",
             "ShowAlternativeRequirement": "",
             "ShowAlternativeResult": "",
             "RootRequired": true,
             "ShowInReport": true,
-            "AdditionalInfo": "vm.max_map_count should be set to <size of RAM in bytes>/4096",
+            "AdditionalInfo": "vm.max_map_count should be set to 2147483647",
             "VersionHistory": [
                 { "Date": "20240105", "ChangeLog": "Initial" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse",
+            "MicrosoftDocs": "",
             "SAPNote": "900929"
         },
         {
@@ -7313,14 +7313,14 @@
             "HighAvailability": [false,true],
             "HighAvailabilityAgent": ["FencingAgent", "SBD"],
             "CommandType": "OS",
-            "ProcessingCommand": "output=$(sudo su - $(sudo getent passwd | grep db2 | cut -d ':' -f1) -c 'db2pd -dbmcfg' | grep 'INSTANCE_MEMORY' | awk '{print $NF/1024/1024}'); echo $(awk -v output=\"$output\" 'BEGIN {print (output < 64) ? output : 64}')",
+            "ProcessingCommand": "output=$(sudo su - $(getent passwd | grep db2 | cut -d : -f1) -c 'db2pd -dbmcfg' | grep INSTANCE_MEMORY | awk '{print $NF}'); [[ $output -le 100 ]] && echo $output || echo $(awk -v output=$output 'BEGIN {print output * 4096 / 1024 / 1024 / 1024}')",
             "PostProcessingCommand": "",
-            "ExpectedResult": "64",
+            "ExpectedResult": 64,
             "ShowAlternativeRequirement": "",
             "ShowAlternativeResult": "",
             "RootRequired": false,
             "ShowInReport": true,
-            "AdditionalInfo": "The instance memoery size should be more than 64GB for production systems.",
+            "AdditionalInfo": "The instance memoery size should be more than 64GB for production systems or more than 75% of total RAM.",
             "VersionHistory": [
                 { "Date": "20240228", "ChangeLog": "" }
             ],
