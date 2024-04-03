@@ -7313,7 +7313,7 @@
             "HighAvailability": [false,true],
             "HighAvailabilityAgent": ["FencingAgent", "SBD"],
             "CommandType": "OS",
-            "ProcessingCommand": "output=$(sudo su - $(getent passwd | grep db2 | cut -d : -f1) -c 'db2pd -dbmcfg' | grep INSTANCE_MEMORY | awk '{print $NF}'); [[ $output -le 100 ]] && echo $output || echo $(awk -v output=$output 'BEGIN {print output * 4096 / 1024 / 1024 / 1024}')",
+            "ProcessingCommand": "output=$(su - $(getent passwd | grep db2 | cut -d : -f1) -c 'db2pd -dbmcfg' | grep INSTANCE_MEMORY | awk '{print $NF}'); [[ $output -le 100 ]] && echo $output || echo $(awk -v output=$output 'BEGIN {print output * 4096 / 1024 / 1024 / 1024}')",
             "PostProcessingCommand": "",
             "ExpectedResult": 64,
             "ShowAlternativeRequirement": "",
