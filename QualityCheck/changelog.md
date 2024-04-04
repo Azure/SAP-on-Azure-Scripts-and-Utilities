@@ -1,5 +1,10 @@
 # Changelog
 
+# Version 2024031302
+* NEW: OS checks related to kernel configuration kernel.shmmni.
+* NEW: Instane memory check for DB2
+* Updated DB2 and oracle check to compare the memory value instead of logging the memory size.
+
 # Version 2024031301
 * NEW: moving from Invoke-SSHCommand to Invoke-SSHStreamShellCommand for easier management of SSH sessions and to avoid using passwords on commands in JSON through variables
 * NEW: ProcessingCommandOutput in JSON can be used to run an OS command for showing the result, e.g. for sbd device checking 

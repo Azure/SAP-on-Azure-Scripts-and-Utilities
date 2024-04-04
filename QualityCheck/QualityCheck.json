@@ -1,5 +1,5 @@
 {
-    "Version": 2024031301,
+    "Version": 2024031302,
 
     "PowerShellPrerequisits": [
         {
@@ -3717,11 +3717,11 @@
             "ShowAlternativeResult": "",
             "RootRequired": true,
             "ShowInReport": true,
-            "AdditionalInfo": "The maximum number of memory map areas a process may have.",
+            "AdditionalInfo": "vm.max_map_count should be set to 2147483647",
             "VersionHistory": [
                 { "Date": "20240105", "ChangeLog": "Initial" }
             ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse",
+            "MicrosoftDocs": "",
             "SAPNote": "900929"
         },
         {
@@ -3906,14 +3906,14 @@
             "HighAvailability": [false, true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/sbin/sysctl vm.max_map_count -n",
+            "ProcessingCommand": "[ $(/sbin/sysctl vm.max_map_count -n) -eq $(($(free -b | grep Mem: | awk '{print $2}') / 4096)) ] && echo OK || echo $(/sbin/sysctl vm.max_map_count -n)",
             "PostProcessingCommand": "",
-            "ExpectedResult": "2147483647",
+            "ExpectedResult": "OK",
             "ShowAlternativeRequirement": "",
             "ShowAlternativeResult": "",
             "RootRequired": true,
             "ShowInReport": true,
-            "AdditionalInfo": "Linux kernel parameter that specifies the maximum number of memory map areas a process can have.",
+            "AdditionalInfo": "Linux kernel parameter that specifies the maximum number of memory map areas a process can have. (<size of RAM in bytes> / 4096)",
             "VersionHistory": [
                 { "Date": "20240105", "ChangeLog": "Initial" }
             ],
@@ -7297,6 +7297,62 @@
                 { "Date": "2024021501", "ChangeLog": "" }
             ],
             "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/dbms-guide-ha-ibm?tabs=lb-portal#installation-hints-for-setting-up-ibm-db2-luw-with-hadr",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "DB2-OS-0015",
+            "Description": "Instance Memory Size",
+            "OS": ["SUSE", "RedHat"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS"],
+            "Role": ["DB"],
+            "DB": ["Db2"],
+            "RunInLocalMode": true,
+            "ErrorCategory": "ERROR",
+            "HighAvailability": [false,true],
+            "HighAvailabilityAgent": ["FencingAgent", "SBD"],
+            "CommandType": "OS",
+            "ProcessingCommand": "output=$(su - $(getent passwd | grep db2 | cut -d : -f1) -c 'db2pd -dbmcfg' | grep INSTANCE_MEMORY | awk '{print $NF}'); [[ $output -le 100 ]] && echo $output || echo $(awk -v output=$output 'BEGIN {print output * 4096 / 1024 / 1024 / 1024}')",
+            "PostProcessingCommand": "",
+            "ExpectedResult": 64,
+            "ShowAlternativeRequirement": "",
+            "ShowAlternativeResult": "",
+            "RootRequired": false,
+            "ShowInReport": true,
+            "AdditionalInfo": "The instance memoery size should be more than 64GB for production systems or more than 75% of total RAM.",
+            "VersionHistory": [
+                { "Date": "20240228", "ChangeLog": "" }
+            ],
+            "MicrosoftDocs": "",
+            "SAPNote": "2751102"
+        },
+        {
+            "CheckID": "Db2-OS-0016",
+            "Description": "Maximum shared memory segments",
+            "OS": ["SLES","RedHat"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+            "Role": ["DB"],
+            "DB": ["Db2"],
+            "RunInLocalMode": true,
+            "ErrorCategory": "ERROR",
+            "HighAvailability": [false, true],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"],
+            "CommandType": "OS",
+            "ProcessingCommand": "[ $((256 * $(free -g | grep Mem: | awk '{print $2}')))  -ge $(/sbin/sysctl kernel.shmmni -n) ] && echo OK || echo $(/sbin/sysctl kernel.shmmni -n)",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "OK",
+            "ShowAlternativeRequirement": "",
+            "ShowAlternativeResult": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "Minimum setting 256 * <size of RAM in GB>",
+            "VersionHistory": [
+                { "Date": "20240228", "ChangeLog": "Initial" }
+            ],
+            "MicrosoftDocs": "https://www.ibm.com/docs/en/db2/11.1?topic=unix-kernel-parameter-requirements-linux",
             "SAPNote": ""
         },
         {
