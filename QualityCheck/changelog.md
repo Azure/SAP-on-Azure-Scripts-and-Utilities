@@ -1,5 +1,8 @@
 # Changelog
 
+# Version 2024040502
+* FIX: add a backup path for Azure NetApp Files throughput detection if the mounted file system is a subdirectory on the NFS share
+
 # Version 2024040501
 * UPDATE: add SAP HANA Standard Sizing to M416ms_v2 instances
 * NEW: add dynamic results

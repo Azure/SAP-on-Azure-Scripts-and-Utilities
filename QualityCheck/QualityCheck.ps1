@@ -291,7 +291,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2024040501
+$scriptversion = 2024040502
 
 function LoadHTMLHeader {
 
@@ -2730,7 +2730,7 @@ function CollectFileSystems {
                     # backup path for ANF volumes to have DNS names covered
                     # this path will just compared the volume export name
                     $_NFSmounttemp = ($_filesystem_row.Source.Split(":"))[1]
-                    if (![string]::IsNullOrEmpty($_.NFSAddress)) {
+                    if (![string]::IsNullOrEmpty($_NFSmounttemp)) {
                         $_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_NFSmounttemp.Equals(($_.NFSAddress.Split(":"))[1]) }).THROUGHPUTMIBPS
                         if ([string]::IsNullOrEmpty($_filesystem_row.MaxMBPS)) {
                             $_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_NFSmounttemp.StartsWith(($_.NFSAddress.Split(":"))[1]) }).THROUGHPUTMIBPS
