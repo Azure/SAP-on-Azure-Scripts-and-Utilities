@@ -1,8 +1,13 @@
 # Changelog
 
+# Version 2024040501
+* UPDATE: add SAP HANA Standard Sizing to M416ms_v2 instances
+* NEW: add dynamic results
+* UPDATE: add a backup path for Azure NetApp Files throughput detection if the mounted file system is a subdirectory on the NFS share
+
 # Version 2024031302
 * NEW: OS checks related to kernel configuration kernel.shmmni.
-* NEW: Instane memory check for DB2
+* NEW: Instance memory check for DB2
 * Updated DB2 and oracle check to compare the memory value instead of logging the memory size.
 
 # Version 2024031301

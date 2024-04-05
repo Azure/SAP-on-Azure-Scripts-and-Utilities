@@ -291,7 +291,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2024031302
+$scriptversion = 2024040501
 
 function LoadHTMLHeader {
 
@@ -2434,6 +2434,22 @@ function RunQualityCheck {
                         switch ($_check.ExpectedResult.Type) {
                             "multi" { $_Check_row.ExpectedResult = $_check.ExpectedResult.Values -join (" or{0}" -f [environment]::NewLine) }
                             "range" { $_Check_row.ExpectedResult = "from {0} to {1}" -f $_check.ExpectedResult.low, $_check.ExpectedResult.high }
+                            "dynamic" {
+                                $_dynamicresult = Invoke-Expression $_check.ExpectedResult
+                                $_Check_row.ExpectedResult = $_dynamicresult
+                            }
+                            "dynamicmulti" {
+                                $_multiresult = @()
+                                foreach ($_value in $_check.ExpectedResult.Values) {
+                                    $_multiresult += Invoke-Expression $_value
+                                }
+                                $_Check_row.ExpectedResult = $_multiresult -join (" or{0}" -f [environment]::NewLine)
+                            }
+                            "dynamicrange" {
+                                $_calculated_low = Invoke-Expression $_check.function.low
+                                $_calculated_high = Invoke-Expression $_check.function.high
+                                $_Check_row.ExpectedResult = "from {0} to {1}" -f $_calculated_low, $_calculated_high
+                            }
                             Default { "wrong default value in JSON"}
                         }
                     }
@@ -2492,35 +2508,90 @@ function RunQualityCheck {
                         
                         switch ($_check.ExpectedResult.type) {
                             "multi" {
-                                        if ($_check.ExpectedResult.Values -contains $_result) {
-                                            $_Check_row.Status = "OK"
-                                            if ($RunLocally) {
-                                                $_Check_row.Success = $true
-                                            }
-                                        }
-                                        else {
-                                            # $_Check_row.Status = "ERROR"
-                                            $_Check_row.Status = $_check.ErrorCategory
-                                            if ($RunLocally) {
-                                                $_Check_row.Success = $false
-                                            }
-                                        }
+                                if ($_check.ExpectedResult.Values -contains $_result) {
+                                    $_Check_row.Status = "OK"
+                                    if ($RunLocally) {
+                                        $_Check_row.Success = $true
                                     }
+                                }
+                                else {
+                                    # $_Check_row.Status = "ERROR"
+                                    $_Check_row.Status = $_check.ErrorCategory
+                                    if ($RunLocally) {
+                                        $_Check_row.Success = $false
+                                    }
+                                }
+                            }
                             "range" {
-                                        if ([int]$_result -ge [int]$_check.ExpectedResult.low -and [int]$_result -le [int]$_check.ExpectedResult.high) {
-                                            $_Check_row.Status = "OK"
-                                            if ($RunLocally) {
-                                                $_Check_row.Success = $true
-                                            }
-                                        }
-                                        else {
-                                            # $_Check_row.Status = "ERROR"
-                                            $_Check_row.Status = $_check.ErrorCategory
-                                            if ($RunLocally) {
-                                                $_Check_row.Success = $false
-                                            }
-                                        }
+                                if ([int]$_result -ge [int]$_check.ExpectedResult.low -and [int]$_result -le [int]$_check.ExpectedResult.high) {
+                                    $_Check_row.Status = "OK"
+                                    if ($RunLocally) {
+                                        $_Check_row.Success = $true
                                     }
+                                }
+                                else {
+                                    # $_Check_row.Status = "ERROR"
+                                    $_Check_row.Status = $_check.ErrorCategory
+                                    if ($RunLocally) {
+                                        $_Check_row.Success = $false
+                                    }
+                                }
+                            }
+                            "dynamic" {
+                                $_dynamicresult = Invoke-Expression $_check.ExpectedResult
+
+                                if ($_result -eq $_dynamicresult) {
+                                    $_Check_row.Status = "OK"
+                                    if ($RunLocally) {
+                                        $_Check_row.Success = $true
+                                    }
+                                }
+                                else {
+                                    # $_Check_row.Status = "ERROR"
+                                    $_Check_row.Status = $_check.ErrorCategory
+                                    if ($RunLocally) {
+                                        $_Check_row.Success = $false
+                                    }
+                                }
+                            }
+                            "dynamicmulti" {
+                                $_multiresult = @()
+                                foreach ($_value in $_check.ExpectedResult.Values) {
+                                    $_multiresult += Invoke-Expression $_value
+                                }
+                                if ($_multiresult -contains $_result) {
+                                    $_Check_row.Status = "OK"
+                                    if ($RunLocally) {
+                                        $_Check_row.Success = $true
+                                    }
+                                }
+                                else {
+                                    # $_Check_row.Status = "ERROR"
+                                    $_Check_row.Status = $_check.ErrorCategory
+                                    if ($RunLocally) {
+                                        $_Check_row.Success = $false
+                                    }
+                                }
+
+                            }
+                            "dynamicrange" {
+                                $_calculated_low = Invoke-Expression $_check.function.low
+                                $_calculated_high = Invoke-Expression $_check.function.high
+                                if ([int]$_result -ge [int]$_calculated_low -and [int]$_result -le [int]$_calculated_high) {
+                                    $_Check_row.Status = "OK"
+                                    if ($RunLocally) {
+                                        $_Check_row.Success = $true
+                                    }
+                                }
+                                else {
+                                    # $_Check_row.Status = "ERROR"
+                                    $_Check_row.Status = $_check.ErrorCategory
+                                    if ($RunLocally) {
+                                        $_Check_row.Success = $false
+                                    }
+                                }
+
+                            }
                             Default {
                                         $_Check_row.Status = "JSONERROR"
                                     }
@@ -2663,6 +2734,9 @@ function CollectFileSystems {
                         $_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_NFSmounttemp.Equals(($_.NFSAddress.Split(":"))[1]) }).THROUGHPUTMIBPS
                         if ([string]::IsNullOrEmpty($_filesystem_row.MaxMBPS)) {
                             $_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_NFSmounttemp.StartsWith(($_.NFSAddress.Split(":"))[1]) }).THROUGHPUTMIBPS
+                            if ([string]::IsNullOrEmpty($_filesystem_row.MaxMBPS)) {
+                                $_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_filesystem_row.Source.StartsWith($_.NFSAddress) }).THROUGHPUTMIBPS
+                            }
                         }
                     }
                 }

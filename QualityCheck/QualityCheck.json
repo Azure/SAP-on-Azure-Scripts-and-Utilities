@@ -1,5 +1,5 @@
 {
-    "Version": 2024031302,
+    "Version": 2024040501,
 
     "PowerShellPrerequisits": [
         {
@@ -1022,7 +1022,8 @@
                 "HANAScenario": {
                     "OLTP": "Standard Sizing",
                     "OLTP-ScaleOut": "Standard Sizing",
-                    "OLAP": "Workload Sizing"
+                    "OLAP": "Workload Sizing",
+                    "OLAP-ScaleOut": "Workload Sizing"
                 }
             },
             "APP": {
