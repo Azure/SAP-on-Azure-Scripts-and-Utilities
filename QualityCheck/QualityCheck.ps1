@@ -1161,7 +1161,8 @@ function RunCommand {
 function CheckAzureConnectivity {
 
     # check if connected to Azure
-    $_SubscriptionInfo = Get-AzSubscription
+    # $_SubscriptionInfo = Get-AzSubscription
+    $_SubscriptionInfo = Get-AzSubscription -SubscriptionId (Get-AzContext).Subscription
 
     # if $_SubscritpionInfo then it got subscriptions
     if ($_SubscriptionInfo)
@@ -3117,7 +3118,8 @@ function LoadGUI {
 
 
     # check if connected to Azure
-    $_SubscriptionInfo = Get-AzSubscription
+    # $_SubscriptionInfo = Get-AzSubscription
+    $_SubscriptionInfo = Get-AzSubscription -SubscriptionId (Get-AzContext).Subscription
 
     # if $_SubscritpionInfo then it got subscriptions
     if ($_SubscriptionInfo)
