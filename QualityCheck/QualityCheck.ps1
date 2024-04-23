@@ -286,12 +286,14 @@ param (
         # add Output Directory for HTML and JSON
         [string]$OutputDirName,
         # add detailed logs
-        [switch]$DetailedLog
+        [switch]$DetailedLog,
+        # Subscription ID
+        [string]$SubscriptionId
 )
 
 
 # defining script version
-$scriptversion = 2024040502
+$scriptversion = 2024042301
 
 function LoadHTMLHeader {
 
@@ -1161,8 +1163,12 @@ function RunCommand {
 function CheckAzureConnectivity {
 
     # check if connected to Azure
-    $_SubscriptionInfo = Get-AzSubscription
-    # $_SubscriptionInfo = Get-AzSubscription -SubscriptionId (Get-AzContext).Subscription
+    if ($SubscriptionId) {
+        $_SubscriptionInfo = Get-AzSubscription -SubscriptionId $SubscriptionId
+    }
+    else {
+        $_SubscriptionInfo = Get-AzSubscription
+    }
 
     # if $_SubscritpionInfo then it got subscriptions
     if ($_SubscriptionInfo)
@@ -3118,8 +3124,12 @@ function LoadGUI {
 
 
     # check if connected to Azure
-    $_SubscriptionInfo = Get-AzSubscription
-    # $_SubscriptionInfo = Get-AzSubscription -SubscriptionId (Get-AzContext).Subscription
+    if ($SubscriptionId) {
+        $_SubscriptionInfo = Get-AzSubscription -SubscriptionId $SubscriptionId
+    }
+    else {
+        $_SubscriptionInfo = Get-AzSubscription
+    }
 
     # if $_SubscritpionInfo then it got subscriptions
     if ($_SubscriptionInfo)

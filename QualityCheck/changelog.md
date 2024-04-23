@@ -1,5 +1,9 @@
 # Changelog
 
+# Version 2024042301
+* NEW: add HANA support for Standard_M176ds_4_v3
+* NEW: add subscription ID to limit the number of requests when checking available subscriptions and avoid a potential timeout when too many subscriptions exist
+
 # Version 2024040502
 * FIX: add a backup path for Azure NetApp Files throughput detection if the mounted file system is a subdirectory on the NFS share
 
