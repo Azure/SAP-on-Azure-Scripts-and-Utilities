@@ -1108,6 +1108,15 @@ function RunCommand {
                 # store the result in script variable to access it for alternative output in JSON
                 $script:_CommandResult = $_result
 
+                # Check the result and see if it's an array and if the first object in the array starts with '<'
+                # if so, then drop it from the array.
+                # This fixes an issue with some Linux commands that return the command as the first object in the array
+                if ($_result -is [array]) {
+                    if ($_result[0].StartsWith("<")) {
+                        $_result = $_result[1..($_result.Length-1)]
+                    }
+                }
+
                 # return result
                 return $_result
             }
