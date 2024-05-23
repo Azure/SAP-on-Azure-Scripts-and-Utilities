@@ -293,7 +293,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2024042301
+$scriptversion = 2024052301
 
 function LoadHTMLHeader {
 
@@ -749,8 +749,8 @@ function ConnectVM {
             $script:_ConnectVMResult = $true
 
             # add an SSH Stream
-            $script:_sshstream = New-SSHShellStream -SSHSession $_sshsession -BufferSize 20000
-
+            $script:_sshstream = New-SSHShellStream -SSHSession $_sshsession -BufferSize 200000
+            
             return $script:_sshsession.SessionId
         }
         else {
@@ -851,6 +851,47 @@ function CollectScriptParameters {
     $_outputarray
 
 
+
+}
+
+function CollectPowerShellDetails {
+
+    # create empty array
+    $_outputarray = @()
+
+    $_outputarray_row = "" | Select-Object Description, Value
+    $_outputarray_row.Description = "PowerShell Version"
+    $_outputarray_row.Value = [string]$PSVersionTable.PSVersion
+    $_outputarray += $_outputarray_row
+
+    $_outputarray_row = "" | Select-Object Description, Value
+    $_outputarray_row.Description = "PowerShell Operating System"
+    $_outputarray_row.Value = [string]$PSVersionTable.OS
+    $_outputarray += $_outputarray_row
+
+    $_outputarray_row = "" | Select-Object Description, Value
+    $_outputarray_row.Description = "PowerShell Edition"
+    $_outputarray_row.Value = [string]$PSVersionTable.PSEdition
+    $_outputarray += $_outputarray_row
+
+    $_outputarray_row = "" | Select-Object Description, Value
+    $_outputarray_row.Description = "PowerShell Module Posh-SSH"
+    $_outputarray_row.Value = [string](Get-InstalledModule Posh-SSH).Version
+    $_outputarray += $_outputarray_row
+
+    $_outputarray_row = "" | Select-Object Description, Value
+    $_outputarray_row.Description = "PowerShell Module Az"
+    $_outputarray_row.Value = [string](Get-InstalledModule Az).Version
+    $_outputarray += $_outputarray_row
+
+    # convert the output to HTML
+    $_outputarray = $_outputarray | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""PowerShellDetails"">PowerShell Details</h2>Here are PowerShell Details"
+    $_outputarray = $_outputarray.Replace("::","<br/>")
+
+    # add link to index of HTML file
+    $script:_Content += "<a href=""#PowerShellDetails"">PowerShell Details</a><br>"
+
+    $_outputarray
 
 }
 
@@ -1086,6 +1127,15 @@ function RunCommand {
                 $_command = $p.ProcessingCommand
                 # $_result = Invoke-SSHCommandStream -Command $_command -SSHSession $script:_sshsession
                 $_result = Invoke-SSHStreamShellCommand -ShellStream $script:_sshstream -Command $_command
+
+                # Check the result and see if it's an array and if the first object in the array starts with '<'
+                # if so, then drop it from the array.
+                # This fixes an issue with some Linux commands that return the command as the first object in the array
+                if ($_result -is [array]) {
+                    if ($_result[0].StartsWith("<")) {
+                        $_result = $_result[1..($_result.Length-1)]
+                    }
+                }
 
                 # remove CR from result just to make sure required since streams come back with CR
                 if (-not [string]::IsNullOrEmpty($_result)) {
@@ -3527,6 +3577,9 @@ foreach ($_qcrun in $_MultiRunData) {
     # Collect Script Parameters
     $_CollectScriptParameter = CollectScriptParameters
 
+    # Collect PowerShell details
+    $_CollectPowerShell = CollectPowerShellDetails
+
     # Collect VM info
     $_CollectVMInfo = CollectVMInformation
 
@@ -3570,7 +3623,7 @@ foreach ($_qcrun in $_MultiRunData) {
         WriteRunLog -category "INFO" -message ("Creating HTML File: " + $_HTMLReportFileName)
         $_RunLogContent = $script:_runlog | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""RunLog"">RunLog</h2>"
 
-        $_HTMLReport = ConvertTo-Html -Body "$_Content $_CollectScriptParameter $_CollectVMInfo $_RunQualityCheck $_CollectFileSystems $_CollectVMStorage $_CollectLVMGroups $_CollectLVMVolumes $_CollectANFVolumes $_CollectNetworkInterfaces $_CollectLoadBalancer $_CollectVMInfoAdditional $_CollectFooter $_RunLogContent" -Head $script:_HTMLHeader -Title "Quality Check for SAP Worloads on Azure" -PostContent "<p id='CreationDate'>Creation Date: $(Get-Date)</p><p id='CreationDate'>Script Version: $scriptversion</p>"
+        $_HTMLReport = ConvertTo-Html -Body "$_Content $_CollectScriptParameter $_CollectVMInfo $_RunQualityCheck $_CollectFileSystems $_CollectVMStorage $_CollectLVMGroups $_CollectLVMVolumes $_CollectANFVolumes $_CollectNetworkInterfaces $_CollectLoadBalancer $_CollectVMInfoAdditional $_CollectFooter $_RunLogContent $_CollectPowerShell" -Head $script:_HTMLHeader -Title "Quality Check for SAP Worloads on Azure" -PostContent "<p id='CreationDate'>Creation Date: $(Get-Date)</p><p id='CreationDate'>Script Version: $scriptversion</p>"
         $_HTMLReportFileDate = $(Get-Date -Format "yyyyMMdd-HHmm")
         $_HTMLReportFileName = $AzVMName + "-" + $_HTMLReportFileDate + ".html"
 

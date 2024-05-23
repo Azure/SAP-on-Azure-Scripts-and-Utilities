@@ -1,5 +1,10 @@
 # Changelog
 
+# Version 2024052301
+* FIX: solving issue with first line of result being the command
+* UPDATE: increase buffer size for SSH Stream
+* NEW: add PowerShell module versions to HTML file
+
 # Version 2024042301
 * NEW: add HANA support for Standard_M176ds_4_v3
 * NEW: add subscription ID to limit the number of requests when checking available subscriptions and avoid a potential timeout when too many subscriptions exist
