@@ -293,7 +293,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2024052301
+$scriptversion = 2024060301
 
 function LoadHTMLHeader {
 
@@ -3007,8 +3007,11 @@ function CheckSudoPermission {
         $_command = "id"
         $_rootrights = Invoke-SSHStreamShellCommand -ShellStream $script:_sshstream -Command $_command
 
-        if ($_rootrights.Contains("root")) {
-            # everything ok
+        # if ($_rootrights.Contains("root")) {
+
+        $_foundroot = $_rootrights | Select-String -Pattern "(root)"
+        if ($_foundroot) {
+                # everything ok
             WriteRunLog -category "INFO" -message "User can sudo"
             $script:_CheckSudo = $true
         }

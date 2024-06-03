@@ -1,5 +1,10 @@
 # Changelog
 
+# Version 2024060301
+* FIX: update on Db2 command
+* FIX: find if sudo worked
+* FIX: remove sudo
+
 # Version 2024052301
 * FIX: solving issue with first line of result being the command
 * UPDATE: increase buffer size for SSH Stream
