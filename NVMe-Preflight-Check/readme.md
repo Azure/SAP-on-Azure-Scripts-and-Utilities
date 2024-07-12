@@ -26,4 +26,9 @@ The script has some mandatory parameters:
 | write_logfile | also store log in file, default false |
 | ignore_vmsku_check | ignore the check for VM SKU availability in region |
 
+Note: With below below command, you can download script directly to Azure cloudshell session
 
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/main/NVMe-Preflight-Check/azure-nvme-VM-update.ps1" -OutFile ".\azure-nvme-VM-update.ps1"
+
+## Example:
+./azure-nvme-VM-update.ps1 -subscription_id "<SubID>" -resource_group_name "<RGName>" -vm_name "<VMName>" -disk_controller_change_to "NVMe" -vm_size_change_to "<VM_SKU>" -start_vm_after_update <$False/$True> -write_logfile <$True/$False> -ignore_vmsku_check
