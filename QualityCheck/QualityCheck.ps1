@@ -3334,16 +3334,16 @@ function LoadGUI {
             $script:HANADeployment = $_Form.FindName("HANAScenario").Items[$_Form.FindName("HANAScenario").SelectedIndex].Content
             $script:VMRole = $_Form.FindName("Role").Items[$_Form.FindName("Role").SelectedIndex].Content
             $script:VMConnectionPort = $_Form.FindName("SSHPort").Text
-            if ($_Form.FindName("HighAvailability").isChecked) {
+            if ($_Form.FindName("HighAvailability").IsChecked) {
                 $script:HighAvailability = $true
                 $script:HighAvailabilityAgent = $_Form.FindName("HighAvailabilityAgent").Items[$_Form.FindName("HighAvailabilityAgent").SelectedIndex].Content
+            }
+            else {
+                $script:HighAvailability = $false
             }
             if ($_Form.FindName("DiskType").Items[$_Form.FindName("DiskType").SelectedIndex].Content -eq "ANF") {
                 $script:ANFResourceGroup = $_Form.FindName("ANFResourceGroup").Items[$_Form.FindName("ANFResourceGroup").SelectedIndex]
                 $script:ANFAccountName = $_Form.FindName("ANFAccountName").Items[$_Form.FindName("ANFAccountName").SelectedIndex]
-            }
-            else {
-                $script:HighAvailability = $false
             }
             $script:GUILogonMethod = $_Form.FindName("LogonMethod").Items[$_Form.FindName("LogonMethod").SelectedIndex].Content
 
