@@ -288,12 +288,14 @@ param (
         # add detailed logs
         [switch]$DetailedLog,
         # Subscription ID
-        [string]$SubscriptionId
+        [string]$SubscriptionId,
+        # Write to specific debug file
+        [switch]$DetailedDebugFile
 )
 
 
 # defining script version
-$scriptversion = 2024060301
+$scriptversion = 2024081301
 
 function LoadHTMLHeader {
 
@@ -411,6 +413,11 @@ function WriteRunLog {
     }
 }
 
+function WriteDetailedDebugLog([String]$logmessage) {
+    if ($script:DetailedDebugFile) {
+        Add-Content -Path $script:_WriteDetailedDebugFileName $logmessage
+    }
+}
 
 # CheckRequiredModules - checking for installed Modules and their versions
 function CheckRequiredModules {
@@ -579,6 +586,20 @@ function CheckTCPConnectivity {
             if ($_testresult.Connected) {
                 # connected
                 $script:_CheckTCPConnectivityResult = $true
+
+                $_ping = Test-Connection -Ping -IPv4 -TargetName 10.18.1.4 -Count 1
+                
+                if ($_ping.Status -eq "Success") {
+                    $script:_sshstreamwait = $_ping.Latency
+                    WriteRunLog -category "INFO" -message "Ping successful - setting SSH Stream Latency to $script:_sshstreamwait ms"
+                }
+                else {
+                    $script:_sshstreamwait = 700
+                    WriteRunLog -category "WARNING" -message "Ping might be blocked - setting SSH Stream Latency to $script:_sshstreamwait ms"
+
+                }
+
+
             }
         }
         catch {
@@ -749,7 +770,7 @@ function ConnectVM {
             $script:_ConnectVMResult = $true
 
             # add an SSH Stream
-            $script:_sshstream = New-SSHShellStream -SSHSession $_sshsession -BufferSize 200000
+            $script:_sshstream = New-SSHShellStream -SSHSession $_sshsession -BufferSize 200000 -Columns 200 -Rows 1000 -Height 1500
             
             return $script:_sshsession.SessionId
         }
@@ -908,9 +929,24 @@ function CollectVMInformation {
       
         $_command = PrepareCommand -Command "curl -s -H Metadata:true --noproxy '*' 'http://169.254.169.254/metadata/instance?api-version=2021-02-01';echo" -CommandType "OS"
         $_result = RunCommand -p $_command
+
+        $script:_vmmetadata = $_result | ConvertFrom-Json
+
+        # check OS for NVMe devices
+        $_command = PrepareCommand -Command "ls -l /dev/nvme* 2>/dev/null | wc -l" -CommandType "OS"
+        $_result = RunCommand -p $_command
+        if ($_result -gt 0) {
+            WriteRunLog -category "INFO" -message "Detected NVMe devices, setting controller type"
+            $script:_DiskControllerType = "NVMe"
+        }
+        else {
+            WriteRunLog -category "INFO" -message "Detected SCSI devices, setting controller type"
+            $script:_DiskControllerType = "SCSI"
+        }
+
+
     }
 
-    $script:_vmmetadata = $_result | ConvertFrom-Json
 
     # VM Type
     $_outputarray_row = "" | Select-Object CheckID, Description, Output
@@ -952,6 +988,13 @@ function CollectVMInformation {
     }
     $_outputarray += $_outputarray_row
 
+    # Disk Controller Type
+    $_outputarray_row = "" | Select-Object CheckID, Description, Output
+    $_outputarray_row.CheckID = "IC-Controller"
+    $_outputarray_row.Description = "Disk Controller"
+    $_outputarray_row.Output = $script:_DiskControllerType
+    $_outputarray += $_outputarray_row
+    
     # looping through VM checks
     foreach ($_CollectVMInformationCheck in $_jsonconfig.VMCollectInformation) {
 
@@ -1126,17 +1169,65 @@ function RunCommand {
                 # run the command
                 $_command = $p.ProcessingCommand
                 # $_result = Invoke-SSHCommandStream -Command $_command -SSHSession $script:_sshsession
-                $_result = Invoke-SSHStreamShellCommand -ShellStream $script:_sshstream -Command $_command
 
+                # shell stream command
+                ## start
+                # $_result = Invoke-SSHStreamShellCommand -ShellStream $script:_sshstream -Command $_command
+                
                 # Check the result and see if it's an array and if the first object in the array starts with '<'
                 # if so, then drop it from the array.
                 # This fixes an issue with some Linux commands that return the command as the first object in the array
-                if ($_result -is [array]) {
-                    if ($_result[0].StartsWith("<")) {
-                        $_result = $_result[1..($_result.Length-1)]
+                #if ($_result -is [array]) {
+                #    if ($_result[0].StartsWith("<")) {
+                #        $_result = $_result[1..($_result.Length-1)]
+                #    }
+                #}
+                ## end
+
+
+                ## start of new section using read and writeline
+                # empty stream
+                # $_result = $script:_sshstream.read()
+                $script:_sshstream.read() | Out-Null
+                
+                # send command
+                WriteDetailedDebugLog("Command: ")
+                WriteDetailedDebugLog($_command)
+                $script:_sshstream.WriteLine($_command)
+                
+                while (!$script:_sshstream.DataAvailable) {
+                    if (!$p.LongRunningCommand) {
+                        Start-Sleep -Milliseconds ($script:_sshstreamwait * 3)
                     }
+                    else {
+                        Start-Sleep -Milliseconds ($script:_sshstreamwait * 10)
+                    }
+                    WriteDetailedDebugLog("Waiting...")
                 }
 
+                $_loop = 0
+                $_result = ""
+                do {
+                    $_loop += 1
+                    WriteDetailedDebugLog("Loop: $_loop")
+                    if ($DetailedLog) {
+                        WriteRunLog -category "INFO" -message ("Loop: $_loop")
+                    }
+                    $_result += $script:_sshstream.read()
+                    # wait a little more
+                    if (!$p.LongRunningCommand) {
+                        Start-Sleep -Milliseconds ($script:_sshstreamwait * 2)
+                    }
+                    else {
+                        Start-Sleep -Milliseconds ($script:_sshstreamwait * 5)
+                    }
+                } while ($script:_sshstream.DataAvailable)
+                
+                WriteDetailedDebugLog("Result:")
+                WriteDetailedDebugLog($_result)
+                
+                # create an array from multiline string
+                $_result = $_result.Split("`n")
                 # remove CR from result just to make sure required since streams come back with CR
                 if (-not [string]::IsNullOrEmpty($_result)) {
                     $_result = $_result.Replace("`r","")
@@ -1144,6 +1235,15 @@ function RunCommand {
                 else {
                     $_result = ""
                 }
+                # remove first line as it is the command itself and last line as it is the prompt
+                if ($_result -is [array]) {
+                    # if ($_result[0].StartsWith("<")) {
+                        $_result = $_result[1..($_result.Length-2)]
+                    #}
+                }
+                ## end of new section using read and writeline
+
+
                         
                 # if postprocessingcommand is defined in JSON
                 if (($p.PostProcessingCommand -ne "") -or ($p.PostProcessingCommand)) {
@@ -1157,6 +1257,9 @@ function RunCommand {
             
                 # store the result in script variable to access it for alternative output in JSON
                 $script:_CommandResult = $_result
+
+                WriteDetailedDebugLog("Final Result:")
+                WriteDetailedDebugLog($_result)
 
                 # return result
                 return $_result
@@ -1258,14 +1361,16 @@ function PrepareCommand {
         [string]$Command,
         [string]$CommandType = "OS",
         [boolean]$RootRequired = $true,
-        [string]$PostProcessingCommand = ""
+        [string]$PostProcessingCommand = "",
+        [boolean]$LongRunningCommand = $false
     )
 
-    $_p = "" | Select-Object ProcessingCommand, CommandType, RootRequired, PostProcessingCommand
+    $_p = "" | Select-Object ProcessingCommand, CommandType, RootRequired, PostProcessingCommand, LongRunningCommand
     $_p.ProcessingCommand = $Command
     $_p.CommandType = $CommandType
     $_p.RootRequired = $RootRequired
     $_p.PostProcessingCommand = $PostProcessingCommand
+    $_p.LongRunningCommand = $LongRunningCommand
 
     return $_p
 }
@@ -1373,6 +1478,17 @@ function CollectVMStorage {
         if (-not $RunLocally) {
             # get VM info
             $script:_VMinfo = Get-AzVM -ResourceGroupName $AzVMResourceGroup -Name $AzVMName
+            $script:_DiskControllerType = $script:_VMinfo.StorageProfile.DiskControllerType
+        }
+        else {
+            $_command = PrepareCommand -Command "ls -l /dev/nvme* 2>/dev/null | wc -l"
+            $_number_of_NVMe_disks = RunCommand -p $_command
+            if ([int]$_number_of_NVMe_disks -gt 0) {
+                $script:_DiskControllerType = "NVMe"
+            }
+            else {
+                $script:_DiskControllerType = "SCSI"
+            }
         }
 
         # collect LVM configuration
@@ -1383,15 +1499,51 @@ function CollectVMStorage {
         $_command = PrepareCommand -Command "/usr/bin/curl -s --noproxy '*' -H Metadata:true 'http://169.254.169.254/metadata/instance/compute/storageProfile?api-version=2021-12-13';echo"
         $script:_azurediskconfig = RunCommand -p $_command | ConvertFrom-Json
 
-        # get device for root
-        # $_command = PrepareCommand -Command "realpath /dev/disk/azure/root" -CommandType "OS"
-        $_command = PrepareCommand -Command "realpath -m /dev/disk/cloud/azure_root" -CommandType "OS"
-        $_rootdisk = RunCommand -p $_command
-        if ($_rootdisk -eq "/dev/disk/cloud/azure_root") {
-            # backup if the virtual device doesn't exist
-            $_rootdisk = "/dev/sda"
-        }
 
+        if ($script:_DiskControllerType -eq "SCSI") {
+            # SCSI part
+
+            # get device for root
+            $_command = PrepareCommand -Command "realpath /dev/disk/azure/root" -CommandType "OS"
+            # $_command = PrepareCommand -Command "realpath -m /dev/disk/cloud/azure_root" -CommandType "OS"
+            $_rootdisk = RunCommand -p $_command
+
+            if ($_rootdisk.Contains("/dev/sd")) {
+                # SCSI Disk found
+            }
+            else {
+
+                $_command = PrepareCommand -Command "realpath -m /dev/disk/cloud/azure_root" -CommandType "OS"
+                $_rootdisk = RunCommand -p $_command
+
+                if ($_rootdisk.Contains("/dev/mapper")) {
+                    # OS disk is running LVM
+                    $_rootdisk = ($script:_lvmconfig.report | Where-Object {$_.lv.lv_dm_path -like $_rootdisk}).pv[0].pv_name
+
+                    # remove partition number
+                    $_rootdisk = $_rootdisk -replace '\d+',''
+                }
+                else {
+                # backup if the virtual device doesn't exist
+                $_rootdisk = "/dev/sda"
+
+                }
+
+            }
+            #if ($_rootdisk -eq "/dev/disk/cloud/azure_root") {
+                # backup if the virtual device doesn't exist
+                # $_rootdisk = "/dev/sda"
+            #}
+
+        }
+        else {
+            # NVMe part
+            $_command = PrepareCommand -Command "findmnt -n -o SOURCE /" -CommandType "OS"
+            $_rootdisk = RunCommand -p $_command
+
+        }
+        
+        # Azure Resource Disks are SCSI, even OS and data disk are NVMe
         # get device for resource disk
         # $_command = PrepareCommand -Command "realpath /dev/disk/azure/resource" -CommandType "OS"
         if ($script:_azurediskconfig.resourceDisk.size -gt 0) {
@@ -1406,7 +1558,7 @@ function CollectVMStorage {
             # setting a value for systems that don't have a resource disk for lsscsi grep command
             $_resourcedisk = "/dev/noresourcedisk"
         }
-        
+
         if (-not $RunLocally) {
             # get Azure Disks in Resource Group
             $_command = PrepareCommand -Command "Get-AzDisk -ResourceGroupName $AzVMResourceGroup" -CommandType "PowerShell"
@@ -1437,7 +1589,7 @@ function CollectVMStorage {
         $_AzureDisk_row.DeviceName = $_rootdisk
         try {
             # $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -like ($_AzureDisk_row.DeviceName + "*")}).vg[0].vg_name
-            $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -eq ($_AzureDisk_row.DeviceName)}).vg[0].vg_name
+            $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -like ($_AzureDisk_row.DeviceName + "*")}).vg[0].vg_name
         }
         catch {
             if (-not $RunLocally) {
@@ -1457,10 +1609,22 @@ function CollectVMStorage {
         #$script:_diskmapping = ConvertFrom-String_sgmap -p $script:_diskmapping
 
 
-        $_lsscsi_command = "lsscsi | sed 's/\[//; s/\]//; s/\.//' | sed 's/:/ /g' | grep Virtual | grep -v '" + $_rootdisk + " ' | grep -v '" + $_resourcedisk + " ' | grep -v 'cd/dvd'"
-        $_command = PrepareCommand -Command $_lsscsi_command -CommandType OS
-        $script:_diskmapping = RunCommand -p $_command
-        $script:_diskmapping = ConvertFrom-String_lsscsi -p $script:_diskmapping
+        if ($script:_DiskControllerType -eq "SCSI") {
+
+            # SCSI part
+
+            $_lsscsi_command = "lsscsi | sed 's/\[//; s/\]//; s/\.//' | sed 's/:/ /g' | grep Virtual | grep -v '" + $_rootdisk + " ' | grep -v '" + $_resourcedisk + " ' | grep -v 'cd/dvd'"
+            $_command = PrepareCommand -Command $_lsscsi_command -CommandType "OS"
+            $script:_diskmapping = RunCommand -p $_command
+            $script:_diskmapping = ConvertFrom-String_lsscsi -p $script:_diskmapping
+        }
+        else {
+            # NVMe part
+            $_nvme_command = 'for nvmedev in /dev/disk/by-id/nvme-MSFT_NVMe_Accelerator_v1.0_SN:_000001_*; do if [[ $nvmedev != *"part"* ]]; then real=$(realpath $nvmedev); lunid=$(echo $nvmedev | cut -d "_" -f 7); lunid=$((lunid-2)); if [[ $lunid -ge 0 ]]; then echo $lunid","$real; fi; fi; done'
+            $_command = PrepareCommand -Command $_nvme_command -CommandType "OS"
+            $script:_diskmapping = RunCommand -p $_command
+            $script:_diskmapping = $script:_diskmapping | ConvertFrom-Csv -Delimiter "," -Header LUN,Device 
+        }
 
         # add datadisks to table
         foreach ($_datadisk in $script:_azurediskconfig.dataDisks) {
@@ -1478,12 +1642,26 @@ function CollectVMStorage {
 
             # $_AzureDisk_row.DeviceName = ($script:_diskmapping | Where-Object { ($_.P5 -eq $_datadisk.lun) -and ($_.P2 -eq $script:_DataDiskSCSIControllerID) }).P7
             # $_AzureDisk_row.DeviceName = ($script:_diskmapping | Where-Object { ($_.P5 -eq $_datadisk.lun) }).P7
-            try {
-                $_AzureDisk_row.DeviceName = ($script:_diskmapping | Where-Object { ($_.P4 -eq $_datadisk.lun) }).P10
+
+            if ($script:_DiskControllerType -eq "SCSI") {
+                # SCSI part
+                try {
+                    $_AzureDisk_row.DeviceName = ($script:_diskmapping | Where-Object { ($_.P4 -eq $_datadisk.lun) }).P10
+                }
+                catch {
+                    WriteRunLog -category "WARNING" -message ("Couldn't find device name for LUN " + $_datadisk.lun)
+                }
             }
-            catch {
-                WriteRunLog -category "WARNING" -message ("Couldn't find device name for LUN " + $_datadisk.lun)
+            else {
+                # NVMe part
+                try {
+                    $_AzureDisk_row.DeviceName = ($script:_diskmapping | Where-Object { ($_.LUN -eq $_datadisk.lun) }).Device
+                }
+                catch {
+                    WriteRunLog -category "WARNING" -message ("Couldn't find device name for LUN " + $_datadisk.lun)
+                }
             }
+
             try {
                 $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -like ($_AzureDisk_row.DeviceName + "*")}).vg[0].vg_name
             }
@@ -2021,7 +2199,14 @@ function RunQualityCheck {
 
         ## getting file system for /hana/data
         $_filesystem_hana = ($script:_filesystems | Where-Object {$_.Target -in $script:DBDataDir})
-        if ($_filesystem_hana.Source.StartsWith("/dev/sd")) {
+        if ([String]::IsNullOrEmpty($_filesystem_hana)){
+            # didn't find file system
+            WriteRunLog -category "ERROR" -message "Couldn't find mounted file system $script:DBDataDir"
+            if (-not $RunLocally) {
+                exit
+            }
+        }
+        if ($_filesystem_hana.Source.StartsWith("/dev/sd") -or $_filesystem_hana.Source.StartsWith("/dev/nvme0n")) {
             $_filesystem_hana_type = "direct"
         }
         else {
@@ -2155,7 +2340,14 @@ function RunQualityCheck {
 
         ## getting file system for /hana/log
         $_filesystem_hana = ($Script:_filesystems | Where-Object {$_.Target -in $script:DBLogDir})
-        if ($_filesystem_hana.Source.StartsWith("/dev/sd")) {
+        if ([String]::IsNullOrEmpty($_filesystem_hana)){
+            # didn't find file system
+            WriteRunLog -category "ERROR" -message "Couldn't find mounted file system $script:DBLogDir"
+            if (-not $RunLocally) {
+                exit
+            }
+        }
+        if ($_filesystem_hana.Source.StartsWith("/dev/sd") -or $_filesystem_hana.Source.StartsWith("/dev/nvme0n")) {
             $_filesystem_hana_type = "direct"
         }
         else {
@@ -2359,7 +2551,14 @@ function RunQualityCheck {
 
         ## getting file system for /db2/SID/log_dir
         $_filesystem_db2 = ($script:_filesystems | Where-Object {$_.Target -in $script:DBLogDir})
-        if ($_filesystem_db2.Source.StartsWith("/dev/sd")) {
+        if ([String]::IsNullOrEmpty($_filesystem_db2)){
+            # didn't find file system
+            WriteRunLog -category "ERROR" -message "Couldn't find mounted file system $script:DBLogDir"
+            if (-not $RunLocally) {
+                exit
+            }
+        }
+        if ($_filesystem_db2.Source.StartsWith("/dev/sd") -or $_filesystem_db2.Source.StartsWith("/dev/nvme0n")) {
             $_filesystem_db2_type = "direct"
         }
         else {
@@ -2401,7 +2600,14 @@ function RunQualityCheck {
 
         ## getting file system for /db2/data
         $_filesystem_db2 = ($script:_filesystems | Where-Object {$_.Target -in $script:DBDataDir})
-        if ($_filesystem_db2.Source.StartsWith("/dev/sd")) {
+        if ([String]::IsNullOrEmpty($_filesystem_db2)){
+            # didn't find file system
+            WriteRunLog -category "ERROR" -message "Couldn't find mounted file system $script:DBDataDir"
+            if (-not $RunLocally) {
+                exit
+            }
+        }
+        if ($_filesystem_db2.Source.StartsWith("/dev/sd") -or $_filesystem_db2.Source.StartsWith("/dev/nvme0n")) {
             $_filesystem_db2_type = "direct"
         }
         else {
@@ -2799,7 +3005,7 @@ function CollectFileSystems {
                 }
             }
             else {
-                if ($_filesystem.Filesystem.StartsWith("/dev/sd")) {
+                if ($_filesystem.Filesystem.StartsWith("/dev/sd") -or  $_filesystem.Filesystem.StartsWith("/dev/nvme0n")) {
                     # add IOPS and MBPS from disk infos
                     # $_filesystem_row.MaxMBPS = ($script:_AzureDisks | Where-Object { $_.DeviceName -eq $_filesystem_row.Source}).MBPS
                     # $_filesystem_row.MaxIOPS = ($script:_AzureDisks | Where-Object { $_.DeviceName -eq $_filesystem_row.Source}).IOPS
@@ -2989,6 +3195,41 @@ function CollectFooter {
     $_FooterContent = $_Footer | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""SupportInfo"">Info for Support Cases</h2>" 
 
     return $_FooterContent
+
+}
+
+function CheckOSPrompt {
+
+    # empty the buffer
+    $script:_sshstream.read() | Out-Null
+
+    # sending an "echo 1"
+    $script:_sshstream.WriteLine("cat /etc/hostname")
+
+    while (!$script:_sshstream.DataAvailable) {
+        Start-Sleep -Milliseconds ($script:_sshstreamwait * 3)
+    }
+
+    $_output = $script:_sshstream.read()
+    WriteDetailedDebugLog("Result:")
+    WriteDetailedDebugLog($_output)    
+
+    $_output = $_output.Replace("`r","")
+    WriteDetailedDebugLog("Result:1")
+    WriteDetailedDebugLog($_output)    
+    $_array = $_output -split "`n"
+    WriteDetailedDebugLog("Result:")
+    WriteDetailedDebugLog($_array)    
+
+    # get last line
+    # first line is command
+    # second line is output of echo
+    # third line is OS prompt
+    $script:_osprompt = $_array[2]
+    WriteDetailedDebugLog("Result:")
+    WriteDetailedDebugLog($script:_osprompt)    
+
+    WriteRunLog -category "INFO" -message ("OS Prompt: " + $script:_osprompt)
 
 }
 
@@ -3367,6 +3608,8 @@ function LoadGUI {
 
 $script:_runlog = @()
 
+$script:_WriteDetailedDebugFileName = "DebugLog-" + $(Get-Date -Format "yyyyMMdd-HHmm") + ".txt"
+
 $_breakingchangewarning = Get-AzConfig -DisplayBreakingChangeWarning
 if ($_breakingchangewarning.Value -eq $true) {
     Update-AzConfig -DisplayBreakingChangeWarning $false
@@ -3527,6 +3770,9 @@ foreach ($_qcrun in $_MultiRunData) {
         else {
             $script:_CheckSudo = $false
         }
+
+        # getting OS prompt for verifications
+        # CheckOSPrompt
 
     }
 

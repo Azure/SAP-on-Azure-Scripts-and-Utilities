@@ -1,5 +1,16 @@
 # Changelog
 
+# Version 2024081301
+* NEW: Parameter -DetailedDebugFile added, creates a debug log for better diagnostics
+* NEW: adding a ping to get latency to server, required to fix SSH Stream timings
+* NEW: support for NVMe
+* NEW: script stops when file systems provided are invalid (DBDataDir, DBLogDir, DBSharedDir)
+* NEW: added support for Dsv6, Ddsv6, Dasv6, Ddasv6, Esv6, Edsv6, Easv6, Eadsv6, look for SAP Note 1928533 for final certification
+* NEW: added support for NVMe enabled Mv3 instances
+* UPDATE: move to Posh-SSH 3.2.0
+* FIX: SSH Stream updated to check for data available and have sleep timings as SSH stream are running async
+* FIX: in RedHat cases the OS disk might run LVM, fixing issue where LVM is not detected
+
 # Version 2024060301
 * FIX: update on Db2 command
 * FIX: find if sudo worked
