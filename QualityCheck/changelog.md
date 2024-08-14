@@ -1,7 +1,11 @@
 # Changelog
 
+# Version 2024081401
+* NEW: added support for Fasv6 and Famsv6, look for SAP Note 1928533 for final certification
+* FIX: change pacemaker commands when using grep to ignore case sensitivity
+
 # Version 2024081302
-* FIX: Update the loadbalanncer checks to show the correct and verbose output in error scenarios.
+* FIX: Update the load-balancer checks to show the correct and verbose output in error scenarios.
 
 # Version 2024081301
 * NEW: Parameter -DetailedDebugFile added, creates a debug log for better diagnostics

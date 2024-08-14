@@ -1,5 +1,5 @@
 {
-    "Version": 2024081302,
+    "Version": 2024081401,
 
     "PowerShellPrerequisits": [
         {
@@ -3416,6 +3416,160 @@
             "ASCS": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
+        },
+        "Standard_F2as_v6": {
+            "DB": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+            },
+            "APP": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            },
+            "ASCS": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            }
+        },
+        "Standard_F4as_v6": {
+            "DB": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+            },
+            "APP": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            },
+            "ASCS": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            },
+            "Standard_F8as_v6": {
+                "DB": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+                },
+                "APP": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+                },
+                "ASCS": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+                }
+            },
+            "Standard_F16as_v6": {
+                "DB": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+                },
+                "APP": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+                },
+                "ASCS": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+                }
+            },
+            "Standard_F32as_v6": {
+                "DB": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+                },
+                "APP": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+                },
+                "ASCS": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+                }
+            },
+            "Standard_F48as_v6": {
+                "DB": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+                },
+                "APP": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+                },
+                "ASCS": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+                }
+            },
+            "Standard_F64as_v6": {
+                "DB": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+                },
+                "APP": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+                },
+                "ASCS": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+                }
+            },
+            "Standard_F2ams_v6": {
+                "DB": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+                },
+                "APP": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+                },
+                "ASCS": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+                }
+            },
+            "Standard_F4ams_v6": {
+                "DB": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+                },
+                "APP": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+                },
+                "ASCS": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+                }
+            },
+            "Standard_F8ams_v6": {
+                "DB": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+                },
+                "APP": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+                },
+                "ASCS": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+                }
+            },
+            "Standard_F16ams_v6": {
+                "DB": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+                },
+                "APP": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+                },
+                "ASCS": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+                }
+            },
+            "Standard_F32ams_v6": {
+                "DB": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+                },
+                "APP": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+                },
+                "ASCS": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+                }
+            },
+            "Standard_F48ams_v6": {
+                "DB": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+                },
+                "APP": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+                },
+                "ASCS": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+                }
+            },
+            "Standard_F64ams_v6": {
+                "DB": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+                },
+                "APP": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+                },
+                "ASCS": {
+                    "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+                }
+            }
         }
     },
     "HANAStorageRequirements": {
@@ -5860,7 +6014,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/sbin/crm configure show | grep 'PREFER_SITE_TAKEOVER=true' | wc -l",
+            "ProcessingCommand": "/usr/sbin/crm configure show | grep -ignore-case  'PREFER_SITE_TAKEOVER=true' | wc -l",
             "ProcessingCommandOutput": "crm configure show | grep AUTOMATED_REGISTER | awk -F' ' '{for (i=0; ++i <= length($0);) if (match($i,\"PREFER_SITE_TAKEOVER\")) print $i}'",
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
@@ -5890,7 +6044,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/sbin/crm configure show | grep 'AUTOMATED_REGISTER=true' | wc -l",
+            "ProcessingCommand": "/usr/sbin/crm configure show | grep -ignore-case 'AUTOMATED_REGISTER=true' | wc -l",
             "ProcessingCommandOutput": "crm configure show | grep AUTOMATED_REGISTER | awk -F' ' '{for (i=0; ++i <= length($0);) if (match($i,\"AUTOMATED_REGISTER\")) print $i}'",
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
@@ -5931,7 +6085,7 @@
             "VersionHistory": [
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" },
-                { "Date": "20240112", "ChangeLog": "moving from /usr/sbin/crm configure show | grep 'stonith-enabled=true' | wc -l to direct command to check output" }
+                { "Date": "20240112", "ChangeLog": "moving from /usr/sbin/crm configure show | grep -ignore-case 'stonith-enabled=true' | wc -l to direct command to check output" }
             ],
             "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
@@ -5961,7 +6115,7 @@
             "VersionHistory": [
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" },
-                { "Date": "20240112", "ChangeLog": "moving from '/usr/sbin/crm configure show | grep 'stonith-timeout=144' | wc -l' to a command that can directly check the value, moving to ranges" }
+                { "Date": "20240112", "ChangeLog": "moving from '/usr/sbin/crm configure show | grep -ignore-case 'stonith-timeout=144' | wc -l' to a command that can directly check the value, moving to ranges" }
             ],
             "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
@@ -6184,8 +6338,8 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD"],
             "CommandType": "OS",
-            "ProcessingCommand": "expectedresult='Timeout (watchdog) : 60'; result=0; for i in $(cat /etc/sysconfig/sbd | grep '^SBD_DEVICE' | cut -d '=' -f 2 | tr -d '\"' | tr ';' ' '); do resultcommand=$(sbd -d ${i} dump | grep watchdog); if [[ $resultcommand == $expectedresult ]]; then result=$((result + 1)); else result=$((result - 10)); fi; done; if [ $result -gt 0 ]; then echo 'OK'; else echo 'ERROR'; fi",
-            "ProcessingCommandOutput": "for i in $(cat /etc/sysconfig/sbd | grep '^SBD_DEVICE' | cut -d '=' -f 2 | tr -d '\"' | tr ';' ' '); do echo $(sbd -d ${i} dump | grep watchdog); done",
+            "ProcessingCommand": "expectedresult='Timeout (watchdog) : 60'; result=0; for i in $(cat /etc/sysconfig/sbd | grep -ignore-case '^SBD_DEVICE' | cut -d '=' -f 2 | tr -d '\"' | tr ';' ' '); do resultcommand=$(sbd -d ${i} dump | grep watchdog); if [[ $resultcommand == $expectedresult ]]; then result=$((result + 1)); else result=$((result - 10)); fi; done; if [ $result -gt 0 ]; then echo 'OK'; else echo 'ERROR'; fi",
+            "ProcessingCommandOutput": "for i in $(cat /etc/sysconfig/sbd | grep -ignore-case '^SBD_DEVICE' | cut -d '=' -f 2 | tr -d '\"' | tr ';' ' '); do echo $(sbd -d ${i} dump | grep watchdog); done",
             "PostProcessingCommand": "",
             "ExpectedResult": "OK",
             "ShowAlternativeRequirement": "'Timeout (watchdog) : 60'",
@@ -6214,8 +6368,8 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD"],
             "CommandType": "OS",
-            "ProcessingCommand": "expectedresult='Timeout (msgwait)  : 120'; result=0; for i in $(cat /etc/sysconfig/sbd | grep '^SBD_DEVICE' | cut -d '=' -f 2 | tr -d '\"' | tr ';' ' '); do resultcommand=$(sbd -d ${i} dump | grep msgwait); if [[ $resultcommand == $expectedresult ]]; then result=$((result + 1)); else result=$((result - 10)); fi; done; if [ $result -gt 0 ]; then echo 'OK'; else echo 'ERROR'; fi",
-            "ProcessingCommandOutput": "for i in $(cat /etc/sysconfig/sbd | grep '^SBD_DEVICE' | cut -d '=' -f 2 | tr -d '\"' | tr ';' ' '); do echo $(sbd -d ${i} dump | grep msgwait); done",
+            "ProcessingCommand": "expectedresult='Timeout (msgwait)  : 120'; result=0; for i in $(cat /etc/sysconfig/sbd | grep -ignore-case '^SBD_DEVICE' | cut -d '=' -f 2 | tr -d '\"' | tr ';' ' '); do resultcommand=$(sbd -d ${i} dump | grep msgwait); if [[ $resultcommand == $expectedresult ]]; then result=$((result + 1)); else result=$((result - 10)); fi; done; if [ $result -gt 0 ]; then echo 'OK'; else echo 'ERROR'; fi",
+            "ProcessingCommandOutput": "for i in $(cat /etc/sysconfig/sbd | grep -ignore-case '^SBD_DEVICE' | cut -d '=' -f 2 | tr -d '\"' | tr ';' ' '); do echo $(sbd -d ${i} dump | grep msgwait); done",
             "PostProcessingCommand": "",
             "ExpectedResult": "OK",
             "ShowAlternativeRequirement": "'Timeout (msgwait) : 120'",
@@ -6275,7 +6429,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/sbin/crm configure show | grep 'stonith:fence_azure_arm' | wc -l",
+            "ProcessingCommand": "/usr/sbin/crm configure show | grep -ignore-case 'stonith:fence_azure_arm' | wc -l",
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
             "ShowAlternativeRequirement": "",
@@ -6315,7 +6469,7 @@
             "VersionHistory": [
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" },
-                { "Date": "20240112", "ChangeLog": "moving from '/usr/sbin/crm configure show | grep 'stonith-timeout=900' | wc -l' to a command that can directly check the value, moving to ranges" }
+                { "Date": "20240112", "ChangeLog": "moving from '/usr/sbin/crm configure show | grep -ignore-case 'stonith-timeout=900' | wc -l' to a command that can directly check the value, moving to ranges" }
             ],
             "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
@@ -6392,7 +6546,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/sbin/pcs config show | grep 'PREFER_SITE_TAKEOVER=true' | wc -l",
+            "ProcessingCommand": "/sbin/pcs config show | grep -ignore-case 'PREFER_SITE_TAKEOVER=true' | wc -l",
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
             "ShowAlternativeRequirement": "'PREFER_SITE_TAKEOVER=true'",
@@ -6421,7 +6575,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/sbin/pcs config show | grep 'AUTOMATED_REGISTER=true' | wc -l",
+            "ProcessingCommand": "/sbin/pcs config show | grep -ignore-case 'AUTOMATED_REGISTER=true' | wc -l",
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
             "ShowAlternativeRequirement": "'AUTOMATED_REGISTER=true'",
@@ -6450,7 +6604,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/sbin/pcs config show | grep 'stonith-enabled: true' | wc -l",
+            "ProcessingCommand": "/sbin/pcs config show | grep -ignore-case 'stonith-enabled: true' | wc -l",
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
             "ShowAlternativeRequirement": "'stonith-enabled=true'",
@@ -6479,7 +6633,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/bin/cat /etc/corosync/corosync.conf | xargs | grep 'token: 30000 ' | wc -l",
+            "ProcessingCommand": "/bin/cat /etc/corosync/corosync.conf | xargs | grep -ignore-case 'token: 30000 ' | wc -l",
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
             "ShowAlternativeRequirement": "'token: 30000'",
@@ -6508,7 +6662,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/sbin/pcs quorum status | xargs | grep 'Expected votes: 2' | wc -l",
+            "ProcessingCommand": "/sbin/pcs quorum status | xargs | grep -ignore-case 'Expected votes: 2' | wc -l",
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
             "ShowAlternativeRequirement": "'Expected votes: 2'",
@@ -6537,7 +6691,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/sbin/pcs config show | grep 'concurrent-fencing: true' | wc -l",
+            "ProcessingCommand": "/sbin/pcs config show | grep -ignore-case 'concurrent-fencing: true' | wc -l",
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
             "ShowAlternativeRequirement": "'concurrent-fencing: true'",
@@ -6566,7 +6720,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/sbin/pcs config show | grep 'fence_kdump' | wc -l",
+            "ProcessingCommand": "/sbin/pcs config show | grep -ignore-case 'fence_kdump' | wc -l",
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
             "ShowAlternativeRequirement": "",
@@ -7469,8 +7623,8 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD"],
             "CommandType": "OS",
-            "ProcessingCommand": "expectedresult='Timeout (watchdog) : 60'; result=0; for i in $(cat /etc/sysconfig/sbd | grep '^SBD_DEVICE' | cut -d '=' -f 2 | tr -d '\"' | tr ';' ' '); do resultcommand=$(sbd -d ${i} dump | grep watchdog); if [[ $resultcommand == $expectedresult ]]; then result=$((result + 1)); else result=$((result - 10)); fi; done; if [ $result -gt 0 ]; then echo 'OK'; else echo 'ERROR'; fi",
-            "ProcessingCommandOutput": "for i in $(cat /etc/sysconfig/sbd | grep '^SBD_DEVICE' | cut -d '=' -f 2 | tr -d '\"' | tr ';' ' '); do echo $(sbd -d ${i} dump | grep watchdog); done",
+            "ProcessingCommand": "expectedresult='Timeout (watchdog) : 60'; result=0; for i in $(cat /etc/sysconfig/sbd | grep -ignore-case '^SBD_DEVICE' | cut -d '=' -f 2 | tr -d '\"' | tr ';' ' '); do resultcommand=$(sbd -d ${i} dump | grep watchdog); if [[ $resultcommand == $expectedresult ]]; then result=$((result + 1)); else result=$((result - 10)); fi; done; if [ $result -gt 0 ]; then echo 'OK'; else echo 'ERROR'; fi",
+            "ProcessingCommandOutput": "for i in $(cat /etc/sysconfig/sbd | grep -ignore-case '^SBD_DEVICE' | cut -d '=' -f 2 | tr -d '\"' | tr ';' ' '); do echo $(sbd -d ${i} dump | grep watchdog); done",
             "PostProcessingCommand": "",
             "ExpectedResult": "OK",
             "ShowAlternativeRequirement": "'Timeout (watchdog) : 60'",
@@ -7499,8 +7653,8 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD"],
             "CommandType": "OS",
-            "ProcessingCommand": "expectedresult='Timeout (msgwait)  : 120'; result=0; for i in $(cat /etc/sysconfig/sbd | grep '^SBD_DEVICE' | cut -d '=' -f 2 | tr -d '\"' | tr ';' ' '); do resultcommand=$(sbd -d ${i} dump | grep msgwait); if [[ $resultcommand == $expectedresult ]]; then result=$((result + 1)); else result=$((result - 10)); fi; done; if [ $result -gt 0 ]; then echo 'OK'; else echo 'ERROR'; fi",
-            "ProcessingCommandOutput": "for i in $(cat /etc/sysconfig/sbd | grep '^SBD_DEVICE' | cut -d '=' -f 2 | tr -d '\"' | tr ';' ' '); do echo $(sbd -d ${i} dump | grep msgwait); done",
+            "ProcessingCommand": "expectedresult='Timeout (msgwait)  : 120'; result=0; for i in $(cat /etc/sysconfig/sbd | grep -ignore-case '^SBD_DEVICE' | cut -d '=' -f 2 | tr -d '\"' | tr ';' ' '); do resultcommand=$(sbd -d ${i} dump | grep msgwait); if [[ $resultcommand == $expectedresult ]]; then result=$((result + 1)); else result=$((result - 10)); fi; done; if [ $result -gt 0 ]; then echo 'OK'; else echo 'ERROR'; fi",
+            "ProcessingCommandOutput": "for i in $(cat /etc/sysconfig/sbd | grep -ignore-case '^SBD_DEVICE' | cut -d '=' -f 2 | tr -d '\"' | tr ';' ' '); do echo $(sbd -d ${i} dump | grep msgwait); done",
             "PostProcessingCommand": "",
             "ExpectedResult": "OK",
             "ShowAlternativeRequirement": "'Timeout (msgwait) : 120'",
@@ -7559,7 +7713,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/sbin/crm configure show | grep 'stonith:fence_azure_arm' | wc -l",
+            "ProcessingCommand": "/usr/sbin/crm configure show | grep -ignore-case 'stonith:fence_azure_arm' | wc -l",
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
             "ShowAlternativeRequirement": "",
@@ -7588,7 +7742,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/sbin/crm configure show | grep 'stonith-timeout=900' | wc -l",
+            "ProcessingCommand": "/usr/sbin/crm configure show | grep -ignore-case 'stonith-timeout=900' | wc -l",
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
             "ShowAlternativeRequirement": "'stonith-timeout=900'",
@@ -7675,7 +7829,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/sbin/pcs config show | grep 'stonith-enabled: true' | wc -l",
+            "ProcessingCommand": "/sbin/pcs config show | grep -ignore-case 'stonith-enabled: true' | wc -l",
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
             "ShowAlternativeRequirement": "'stonith-enabled=true'",
@@ -7704,7 +7858,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/bin/cat /etc/corosync/corosync.conf | xargs | grep 'token: 30000 ' | wc -l",
+            "ProcessingCommand": "/bin/cat /etc/corosync/corosync.conf | xargs | grep -ignore-case 'token: 30000 ' | wc -l",
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
             "ShowAlternativeRequirement": "'token: 30000'",
@@ -7733,7 +7887,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/sbin/pcs quorum status | xargs | grep 'Expected votes: 2' | wc -l",
+            "ProcessingCommand": "/sbin/pcs quorum status | xargs | grep -ignore-case 'Expected votes: 2' | wc -l",
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
             "ShowAlternativeRequirement": "'Expected votes: 2'",
@@ -7762,7 +7916,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/sbin/pcs config show | grep 'concurrent-fencing: true' | wc -l",
+            "ProcessingCommand": "/sbin/pcs config show | grep -ignore-case 'concurrent-fencing: true' | wc -l",
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
             "ShowAlternativeRequirement": "'concurrent-fencing: true'",
@@ -7791,7 +7945,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/sbin/pcs config show | grep 'fence_kdump' | wc -l",
+            "ProcessingCommand": "/sbin/pcs config show | grep -ignore-case 'fence_kdump' | wc -l",
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
             "ShowAlternativeRequirement": "",
@@ -8312,7 +8466,7 @@
             "HighAvailability": [false,true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "su - $(getent passwd | cut -d ':' -f1 | grep db2) -c 'db2pd -alldbs -hadr' | grep 'HADR_TIMEOUT' | awk '{print $NF}'",
+            "ProcessingCommand": "su - $(getent passwd | cut -d ':' -f1 | grep db2) -c 'db2pd -alldbs -hadr' | grep -ignore-case 'HADR_TIMEOUT' | awk '{print $NF}'",
             "PostProcessingCommand": "",
             "ExpectedResult": "45",
             "ShowAlternativeRequirement": "",
@@ -8340,7 +8494,7 @@
             "HighAvailability": [false,true],
             "HighAvailabilityAgent": ["SBD", "FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "su - $(getent passwd | cut -d ':' -f1 | grep db2) -c 'db2pd -alldbs -hadr' | grep 'HADR_TIMEOUT' | awk '{print $NF}'",
+            "ProcessingCommand": "su - $(getent passwd | cut -d ':' -f1 | grep db2) -c 'db2pd -alldbs -hadr' | grep -ignore-case 'HADR_TIMEOUT' | awk '{print $NF}'",
             "PostProcessingCommand": "",
             "ExpectedResult": "60",
             "ShowAlternativeRequirement": "",
@@ -8368,7 +8522,7 @@
             "HighAvailability": [false,true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "su - $(getent passwd | cut -d ':' -f1 | grep db2) -c 'db2pd -alldbs -hadr' | grep 'PEER_WINDOW(seconds)' | awk '{print $NF}'",
+            "ProcessingCommand": "su - $(getent passwd | cut -d ':' -f1 | grep db2) -c 'db2pd -alldbs -hadr' | grep -ignore-case 'PEER_WINDOW(seconds)' | awk '{print $NF}'",
             "PostProcessingCommand": "",
             "ExpectedResult": "240",
             "ShowAlternativeRequirement": "",
@@ -8396,7 +8550,7 @@
             "HighAvailability": [false,true],
             "HighAvailabilityAgent": ["SBD"],
             "CommandType": "OS",
-            "ProcessingCommand": "su - $(getent passwd | cut -d ':' -f1 | grep db2) -c 'db2pd -alldbs -hadr' | grep 'PEER_WINDOW(seconds)' | awk '{print $NF}'",
+            "ProcessingCommand": "su - $(getent passwd | cut -d ':' -f1 | grep db2) -c 'db2pd -alldbs -hadr' | grep -ignore-case 'PEER_WINDOW(seconds)' | awk '{print $NF}'",
             "PostProcessingCommand": "",
             "ExpectedResult": "300",
             "ShowAlternativeRequirement": "",
@@ -8424,7 +8578,7 @@
             "HighAvailability": [false,true],
             "HighAvailabilityAgent": ["FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "su - $(getent passwd | cut -d ':' -f1 | grep db2) -c 'db2pd -alldbs -hadr' | grep 'PEER_WINDOW(seconds)' | awk '{print $NF}'",
+            "ProcessingCommand": "su - $(getent passwd | cut -d ':' -f1 | grep db2) -c 'db2pd -alldbs -hadr' | grep -ignore-case 'PEER_WINDOW(seconds)' | awk '{print $NF}'",
             "PostProcessingCommand": "",
             "ExpectedResult": "900",
             "ShowAlternativeRequirement": "",
