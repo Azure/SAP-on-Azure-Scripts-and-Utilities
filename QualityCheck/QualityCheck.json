@@ -1,5 +1,5 @@
 {
-    "Version": 2024081301,
+    "Version": 2024081302,
 
     "PowerShellPrerequisits": [
         {
@@ -6599,10 +6599,10 @@
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
             "ShowAlternativeRequirement": "'idle timeout: 30'",
-            "ShowAlternativeResult": "$Script:_Loadbalancers.idletimeout",
+            "ShowAlternativeResult": "($Script:_LoadBalancers | ForEach-Object { 'LoadBalancer ' + ($Script:_LoadBalancers.IndexOf($_) + 1) + ' ' + $_.name + ':' + $_.idletimeout }) -join ', '",
             "RootRequired": true,
             "ShowInReport": true,
-            "AdditionalInfo": "Checking for Idle Timeout 30",
+            "AdditionalInfo": "Checking for Idle Timeout of 30 seconds for SAP-specific Load Balancer. Errors can be ignored if the Load Balancer is not used for SAP.",
             "VersionHistory": [
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
@@ -6628,10 +6628,10 @@
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
             "ShowAlternativeRequirement": "'floating IP: true'",
-            "ShowAlternativeResult": "$Script:_Loadbalancers.FloatingIP",
+            "ShowAlternativeResult": "($Script:_LoadBalancers | ForEach-Object { 'LoadBalancer ' + ($Script:_LoadBalancers.IndexOf($_) + 1) + ' ' + $_.name + ':' + $_.floatingip }) -join ', '",
             "RootRequired": true,
             "ShowInReport": true,
-            "AdditionalInfo": "Checking for Floating IP",
+            "AdditionalInfo": "Checking for Floating IP in SAP-specific Load Balancer. Errors can be ignored if the Load Balancer is not used for SAP.",
             "VersionHistory": [
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
@@ -6657,10 +6657,10 @@
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
             "ShowAlternativeRequirement": "'HA Ports: enabled'",
-            "ShowAlternativeResult": "$Script:_Loadbalancers.Protocols",
+            "ShowAlternativeResult": "($Script:_LoadBalancers | ForEach-Object { 'LoadBalancer ' + ($Script:_LoadBalancers.IndexOf($_) + 1) + ' ' + $_.name + ':' + $_.protocols }) -join ', '",
             "RootRequired": true,
             "ShowInReport": true,
-            "AdditionalInfo": "Checking for HA Ports",
+            "AdditionalInfo": "Checking for HA Ports in SAP-specific Load Balancer. Errors can be ignored if the Load Balancer is not used for SAP.",
             "VersionHistory": [
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
@@ -6682,15 +6682,15 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"],
             "CommandType": "PowerShell",
-            "ProcessingCommand": "$_result = 0; foreach ($_loadbalancer in $Script:_LoadBalancers) { $LBProbes = (Get-AzLoadBalancer -ResourceGroupName $AzVMResourceGroup -Name $_loadbalancer.Name | Get-AzLoadBalancerProbeConfig) ; foreach ($_probe in $LBProbes) { if ($_probe.IntervalInSeconds -ne 5) {$_result += 1}; }; }; $_result",
-            "ProcessingCommandOutput": "foreach ($_loadbalancer in $Script:_LoadBalancers) { $LBProbes = (Get-AzLoadBalancer -ResourceGroupName $AzVMResourceGroup -Name $_loadbalancer.Name | Get-AzLoadBalancerProbeConfig) ; foreach ($_probe in $LBProbes) { $_probe.IntervalInSeconds }; }",
+            "ProcessingCommand": "$_result = 0; foreach ($_loadbalancer in $script:_LoadBalancers) { if ($_loadbalancer.ProbeInterval -ne 5) {$_result += 1}; }; $_result",
+            "ProcessingCommandOutput": "",
             "PostProcessingCommand": "",
             "ExpectedResult": "0",
             "ShowAlternativeRequirement": "'Probe Interval: 5'",
-            "ShowAlternativeResult": "",
+            "ShowAlternativeResult": "($Script:_LoadBalancers | ForEach-Object { 'LoadBalancer ' + ($Script:_LoadBalancers.IndexOf($_) + 1) + ' ' + $_.name + ':' + $_.ProbeInterval }) -join ', '",
             "RootRequired": true,
             "ShowInReport": true,
-            "AdditionalInfo": "Checking for probe interval",
+            "AdditionalInfo": "Checking for probe interval in SAP-specific Load Balancer. Errors can be ignored if the Load Balancer is not used for SAP.",
             "VersionHistory": [
                 { "Date": "20231130", "ChangeLog": "" }
             ],
@@ -6715,10 +6715,10 @@
             "PostProcessingCommand": "",
             "ExpectedResult": "0",
             "ShowAlternativeRequirement": "'probeThreshold: 2'",
-            "ShowAlternativeResult": "$script:_LoadBalancers.ProbeThreshold",
+            "ShowAlternativeResult": "($Script:_LoadBalancers | ForEach-Object { 'LoadBalancer ' + ($Script:_LoadBalancers.IndexOf($_) + 1) + ' ' + $_.name + ':' + $_.ProbeThreshold }) -join ', '",
             "RootRequired": true,
             "ShowInReport": true,
-            "AdditionalInfo": "Checking for Load Balancer setting ProbeThreshold to be equal to 2",
+            "AdditionalInfo": "Checking for Load Balancer setting ProbeThreshold = 2 in SAP-specific Load Balancer. Errors can be ignored if the Load Balancer is not used for SAP.",
             "VersionHistory": [
                 { "Date": "20240206", "ChangeLog": "new setting for high availability" }
             ],
@@ -7824,10 +7824,10 @@
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
             "ShowAlternativeRequirement": "'idle timeout: 30'",
-            "ShowAlternativeResult": "$Script:_Loadbalancers.idletimeout",
+            "ShowAlternativeResult": "($Script:_LoadBalancers | ForEach-Object { 'LoadBalancer ' + ($Script:_LoadBalancers.IndexOf($_) + 1) + ' ' + $_.name + ':' + $_.idletimeout }) -join ', '",
             "RootRequired": true,
             "ShowInReport": true,
-            "AdditionalInfo": "Checking for Idle Timeout 30",
+            "AdditionalInfo": "Checking for Idle Timeout 30 in SAP-specific Load Balancer. Errors can be ignored if the Load Balancer is not used for SAP.",
             "VersionHistory": [
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
@@ -7853,10 +7853,10 @@
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
             "ShowAlternativeRequirement": "'floating IP: true'",
-            "ShowAlternativeResult": "$Script:_Loadbalancers.FloatingIP",
+            "ShowAlternativeResult": "($Script:_LoadBalancers | ForEach-Object { 'LoadBalancer ' + ($Script:_LoadBalancers.IndexOf($_) + 1) + ' ' + $_.name + ':' + $_.floatingip }) -join ', '",
             "RootRequired": true,
             "ShowInReport": true,
-            "AdditionalInfo": "Checking for Floating IP",
+            "AdditionalInfo": "Checking for Floating IP in SAP-specific Load Balancer. Errors can be ignored if the Load Balancer is not used for SAP.",
             "VersionHistory": [
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
@@ -7882,10 +7882,10 @@
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
             "ShowAlternativeRequirement": "'HA Ports: enabled'",
-            "ShowAlternativeResult": "$Script:_Loadbalancers.Protocols",
+            "ShowAlternativeResult": "($Script:_LoadBalancers | ForEach-Object { 'LoadBalancer ' + ($Script:_LoadBalancers.IndexOf($_) + 1) + ' ' + $_.name + ':' + $_.protocols }) -join ', '",
             "RootRequired": true,
             "ShowInReport": true,
-            "AdditionalInfo": "Checking for HA Ports",
+            "AdditionalInfo": "Checking for HA Ports in SAP-specific Load Balancer. Errors can be ignored if the Load Balancer is not used for SAP.",
             "VersionHistory": [
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2" }
