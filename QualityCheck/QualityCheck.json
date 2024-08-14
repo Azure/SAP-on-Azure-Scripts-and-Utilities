@@ -6429,7 +6429,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "/usr/sbin/crm configure show | grep -ignore-case 'stonith:fence_azure_arm' | wc -l",
+            "ProcessingCommand": "/usr/sbin/crm configure show | grep -i 'stonith:fence_azure_arm' | wc -l",
             "PostProcessingCommand": "",
             "ExpectedResult": "1",
             "ShowAlternativeRequirement": "",
