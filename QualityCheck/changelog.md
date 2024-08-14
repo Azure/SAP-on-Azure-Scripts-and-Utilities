@@ -1,5 +1,9 @@
 # Changelog
 
+# Version 2024081402
+* FIX: change using -ignore-case in to -i grep to ignore case sensitivity
+* FIX: add loadbalancer details in new line
+
 # Version 2024081401
 * NEW: added support for Fasv6 and Famsv6, look for SAP Note 1928533 for final certification
 * FIX: change pacemaker commands when using grep to ignore case sensitivity
