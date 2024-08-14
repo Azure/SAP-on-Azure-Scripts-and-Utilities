@@ -1,5 +1,8 @@
 # Changelog
 
+# Version 2024081302
+* FIX: Update the loadbalanncer checks to show the correct and verbose output in error scenarios.
+
 # Version 2024081301
 * NEW: Parameter -DetailedDebugFile added, creates a debug log for better diagnostics
 * NEW: adding a ping to get latency to server, required to fix SSH Stream timings
