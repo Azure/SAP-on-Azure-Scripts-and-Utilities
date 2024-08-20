@@ -1,5 +1,8 @@
 # Changelog
 
+# Version 2024082001
+* FIX: QualityCheck.json VM list had a structure issue
+
 # Version 2024081402
 * FIX: change using -ignore-case in to -i grep to ignore case sensitivity
 * FIX: add loadbalancer details in new line
