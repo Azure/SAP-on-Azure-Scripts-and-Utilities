@@ -295,7 +295,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2024082201
+$scriptversion = 2024082202
 
 function LoadHTMLHeader {
 
@@ -587,11 +587,19 @@ function CheckTCPConnectivity {
                 # connected
                 $script:_CheckTCPConnectivityResult = $true
 
+                $_minimumlatency = 120
+
                 $_ping = Test-Connection -Ping -IPv4 -TargetName $VMHostname -Count 1
                 
                 if ($_ping.Status -eq "Success") {
-                    $script:_sshstreamwait = $_ping.Latency
-                    WriteRunLog -category "INFO" -message "Ping successful - setting SSH Stream Latency to $script:_sshstreamwait ms"
+                    if ($_ping.Latency -gt $_minimumlatency) {
+                        $script:_sshstreamwait = $_ping.Latency
+                        WriteRunLog -category "INFO" -message "Ping successful - setting SSH Stream Latency to $script:_sshstreamwait ms"
+                    } 
+                    else {
+                        $script:_sshstreamwait = $_minimumlatency
+                        WriteRunLog -category "INFO" -message "Ping successful - setting SSH Stream Latency to minimum of $script:_sshstreamwait ms"
+                    }
                 }
                 else {
                     $script:_sshstreamwait = 700

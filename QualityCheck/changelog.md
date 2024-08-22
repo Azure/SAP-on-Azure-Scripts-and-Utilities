@@ -1,5 +1,8 @@
 # Changelog
 
+# Version 2024082202
+* FIX: adding a minimum latency for the SSH streams
+
 # Version 2024082201
 * FIX: Test-Connection for latency test had a wrong entry
 
