@@ -295,7 +295,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2024082001
+$scriptversion = 2024082201
 
 function LoadHTMLHeader {
 
@@ -587,7 +587,7 @@ function CheckTCPConnectivity {
                 # connected
                 $script:_CheckTCPConnectivityResult = $true
 
-                $_ping = Test-Connection -Ping -IPv4 -TargetName 10.18.1.4 -Count 1
+                $_ping = Test-Connection -Ping -IPv4 -TargetName $VMHostname -Count 1
                 
                 if ($_ping.Status -eq "Success") {
                     $script:_sshstreamwait = $_ping.Latency

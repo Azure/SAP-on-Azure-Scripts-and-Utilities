@@ -1,5 +1,8 @@
 # Changelog
 
+# Version 2024082201
+* FIX: Test-Connection for latency test had a wrong entry
+
 # Version 2024082001
 * FIX: QualityCheck.json VM list had a structure issue
 
