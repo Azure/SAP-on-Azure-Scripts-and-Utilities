@@ -171,21 +171,28 @@ if (-not $ignore_vmsku_check) {
         WriteRunLog -category "INFO" -message "Found VM SKU - Checking for Capabilities"
         $_supported_controller = ($_VMSKU.Capabilities | Where-Object { $_.Name -eq "DiskControllerTypes" }).Value
 
-        if ($disk_controller_change_to -eq "NVMe") {
-            # NVMe destination
-            if ($_supported_controller.Contains("NVMe") ) {
-                WriteRunLog -category "INFO" -message "VM supports NVMe"
-                $_continue += 1
-            }
-            else {
-                WriteRunLog -category "ERROR" -message "VM doesn't support NVMe"
-                $_continue -= 100
-            }
+        if ([string]::IsNullOrEmpty($_supported_controller)) {
+            WriteRunLog -category "ERROR" -message "VM SKU doesn't have supported capabilities"
+            $_continue -= 100
         }
         else {
-            # SCSI destination
-            $_continue += 1 # all VMs support SCSI
-        }  
+            WriteRunLog -category "INFO" -message "VM SKU has supported capabilities"
+            if ($disk_controller_change_to -eq "NVMe") {
+                # NVMe destination
+                if ($_supported_controller.Contains("NVMe") ) {
+                    WriteRunLog -category "INFO" -message "VM supports NVMe"
+                    $_continue += 1
+                }
+                else {
+                    WriteRunLog -category "ERROR" -message "VM doesn't support NVMe"
+                    $_continue -= 100
+                }
+            }
+            else {
+                # SCSI destination
+                $_continue += 1 # all VMs support SCSI
+            }  
+        }
     }
     else {
         WriteRunLog -category "ERROR" -message ("VM SKU doesn't exist, please check your input: " + $vm_size_change_to )
