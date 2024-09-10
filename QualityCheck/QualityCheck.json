@@ -1737,6 +1737,24 @@
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
+        "Standard_M832ixs": {
+            "DB": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing",
+                    "OLTP-ScaleOut": "Standard Sizing",
+                    "OLAP": "Workload Sizing"
+                }
+            },
+            "APP": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            },
+            "ASCS": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            }
+        },
         "Standard_E2as_v5": {
             "DB": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
