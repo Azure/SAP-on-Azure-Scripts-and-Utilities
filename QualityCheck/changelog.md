@@ -1,5 +1,8 @@
 # Changelog
 
+# Version 2024091002
+* NEW: add support for Mv3 High Memory segment
+
 # Version 2024091001
 * FIX: Linux multiline prompts with caused problems when running commands
 

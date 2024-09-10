@@ -295,7 +295,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2024091001
+$scriptversion = 2024091002
 
 function LoadHTMLHeader {
 
