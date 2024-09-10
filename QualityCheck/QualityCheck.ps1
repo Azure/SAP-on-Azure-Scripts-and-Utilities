@@ -295,7 +295,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2024082202
+$scriptversion = 2024091001
 
 function LoadHTMLHeader {
 
@@ -3613,6 +3613,14 @@ function LoadGUI {
 
 }
 
+# Set Linux OS Prompt
+function SetOSPrompt {
+
+    $_command = PrepareCommand -Command "PS1='QualityCheck# '" -CommandType "OS"
+    $_output = RunCommand -p $_command
+
+}
+
 #########
 # Main module
 #########
@@ -3781,6 +3789,8 @@ foreach ($_qcrun in $_MultiRunData) {
         else {
             $script:_CheckSudo = $false
         }
+
+        SetOSPrompt
 
         # getting OS prompt for verifications
         # CheckOSPrompt

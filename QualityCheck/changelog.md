@@ -1,5 +1,8 @@
 # Changelog
 
+# Version 2024091001
+* FIX: Linux multiline prompts with caused problems when running commands
+
 # Version 2024082202
 * FIX: adding a minimum latency for the SSH streams
 
