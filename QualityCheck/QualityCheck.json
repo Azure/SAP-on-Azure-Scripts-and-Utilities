@@ -6656,7 +6656,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "crm_attribute --type crm_config --name=stonith-timeout -q",
+            "ProcessingCommand": "timeout_value=$(crm_attribute --type crm_config --name=stonith-timeout -q 2>/dev/null) && echo ${timeout_value%s} || echo 'stonith-timeout is not set.'",
             "PostProcessingCommand": "",
             "ExpectedResult": { "Type": "range", "low": 900, "high": 1200 },
             "ShowAlternativeRequirement": "",
