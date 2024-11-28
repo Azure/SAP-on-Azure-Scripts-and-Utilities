@@ -1,5 +1,8 @@
 # Changelog
 
+# Version 2024112801
+* NEW: add support for Mv3 Very High Memory segment with missing High Memory SKUs
+  
 # Version 2024091002
 * NEW: add support for Mv3 High Memory segment
 
