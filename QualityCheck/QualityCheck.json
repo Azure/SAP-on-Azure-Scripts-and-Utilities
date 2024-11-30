@@ -3813,7 +3813,7 @@
                 "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Workload Sizing",
-                    "OLAP": "Workload Sizing",
+                    "OLAP": "Workload Sizing"
                 }
             },
             "APP": {
@@ -3830,7 +3830,7 @@
                 "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Workload Sizing",
-                    "OLAP": "Workload Sizing",
+                    "OLAP": "Workload Sizing"
                 }
             },
             "APP": {
