@@ -3804,9 +3804,8 @@
             "ASCS": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
-        }
-    },
-    "Standard_M896ixds_32_v3": {
+        },
+        "Standard_M896ixds_32_v3": {
             "DB": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
                 "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
@@ -3839,7 +3838,8 @@
             "ASCS": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
-        },
+        }
+    },
     "HANAStorageRequirements": {
         "HANADataMBPS": 400,
         "HANALogMBPS": 250,
