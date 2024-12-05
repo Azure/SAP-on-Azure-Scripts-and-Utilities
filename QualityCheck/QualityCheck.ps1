@@ -295,7 +295,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2024112801
+$scriptversion = 2024120501
 
 function LoadHTMLHeader {
 
@@ -1016,21 +1016,25 @@ function CollectVMInformation {
             # check if check applies to HA or not and if HA check for HA-Agent
             if (($_CollectVMInformationCheck.HighAvailability.Contains($HighAvailability)) -or (($_CollectVMInformationCheck.HighAvailability.Contains($HighAvailability)) -and ($_CollectVMInformationCheck.HighAvailabilityAgent.Contains($HighAvailabilityAgent)))) {
 
-                if ((-not $RunLocally) -or ($RunLocally -and ($_CollectVMInformationCheck.RunInLocalMode))) {
+                if (($_CollectVMInformationCheck.Feature -and $script:_InstalledFeatures.Contains($_CollectVMInformationCheck.Feature)) -or (-not $_CollectVMInformationCheck.Feature)) {
 
-                    $_output = RunCommand -p $_CollectVMInformationCheck
 
-                    # check if result should be shown in report
-                    if ($_CollectVMInformationCheck.ShowInReport) {
+                    if ((-not $RunLocally) -or ($RunLocally -and ($_CollectVMInformationCheck.RunInLocalMode))) {
 
-                        # create a new empty object per line
-                        $_outputarray_row = "" | Select-Object CheckID, Description, Output
-                        $_outputarray_row.CheckID = $_CollectVMInformationCheck.CheckID
-                        $_outputarray_row.Description = $_CollectVMInformationCheck.Description
-                        $_outputarray_row.Output = $_output -join ';;:;;'
+                        $_output = RunCommand -p $_CollectVMInformationCheck
 
-                        # add line to outputarray
-                        $_outputarray += $_outputarray_row
+                        # check if result should be shown in report
+                        if ($_CollectVMInformationCheck.ShowInReport) {
+
+                            # create a new empty object per line
+                            $_outputarray_row = "" | Select-Object CheckID, Description, Output
+                            $_outputarray_row.CheckID = $_CollectVMInformationCheck.CheckID
+                            $_outputarray_row.Description = $_CollectVMInformationCheck.Description
+                            $_outputarray_row.Output = $_output -join ';;:;;'
+
+                            # add line to outputarray
+                            $_outputarray += $_outputarray_row
+                        }
                     }
                 }
             }
@@ -1066,28 +1070,29 @@ function CollectVMInformationAdditional {
             # check if check applies to HA or not and if HA check for HA-Agent
             if (($_CollectVMInformationCheck.HighAvailability.Contains($HighAvailability)) -or (($_CollectVMInformationCheck.HighAvailability.Contains($HighAvailability)) -and ($_CollectVMInformationCheck.HighAvailabilityAgent.Contains($HighAvailabilityAgent)))) {
 
-                
                 if ((-not $RunLocally) -or ($RunLocally -and ($_CollectVMInformationCheck.RunInLocalMode))) {
 
-                    $_output = RunCommand -p $_CollectVMInformationCheck
+                    if (($_CollectVMInformationCheck.Feature -and $script:_InstalledFeatures.Contains($_CollectVMInformationCheck.Feature)) -or (-not $_CollectVMInformationCheck.Feature)) {
+                        $_output = RunCommand -p $_CollectVMInformationCheck
 
-                    # check if result should be shown in report
-                    if ($_CollectVMInformationCheck.ShowInReport) {
+                        # check if result should be shown in report
+                        if ($_CollectVMInformationCheck.ShowInReport) {
 
-                        $_outputarray_row = "" | Select-Object Output
-                        $_outputarray_row.Output = $_output -join ';;:;;'
+                            $_outputarray_row = "" | Select-Object Output
+                            $_outputarray_row.Output = $_output -join ';;:;;'
 
-                        $_outputarray += $_outputarray_row
+                            $_outputarray += $_outputarray_row
 
-                        $_htmllink = "additionalinfo" + $_counter
-                        $_description = $_CollectVMInformationCheck.Description
-                        $_outputarray = $_outputarray | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""$_htmllink"">$_description</h2>"
-                        $script:_Content += "<a href=""#$_htmllink"">$_description</a><br>"
-                        $_outputarray = $_outputarray.Replace(";;:;;","<br/>")
-            
-                        $_counter += 1
-                        $_outputarray_total += $_outputarray
-            
+                            $_htmllink = "additionalinfo" + $_counter
+                            $_description = $_CollectVMInformationCheck.Description
+                            $_outputarray = $_outputarray | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""$_htmllink"">$_description</h2>"
+                            $script:_Content += "<a href=""#$_htmllink"">$_description</a><br>"
+                            $_outputarray = $_outputarray.Replace(";;:;;","<br/>")
+                
+                            $_counter += 1
+                            $_outputarray_total += $_outputarray
+                
+                        }
                     }
                 }
             }
@@ -1328,7 +1333,9 @@ function CheckAzureConnectivity {
         $_SubscriptionInfo = Get-AzSubscription -SubscriptionId $SubscriptionId
     }
     else {
-        $_SubscriptionInfo = Get-AzSubscription
+        $_context = Get-AzContext
+        $SubscriptionId = $_context.Subscription.Id
+        $_SubscriptionInfo = Get-AzSubscription -SubscriptionId $SubscriptionId
     }
 
     # if $_SubscritpionInfo then it got subscriptions
@@ -1628,7 +1635,9 @@ function CollectVMStorage {
         }
         else {
             # NVMe part
-            $_nvme_command = 'for nvmedev in /dev/disk/by-id/nvme-MSFT_NVMe_Accelerator_v1.0_SN:_000001_*; do if [[ $nvmedev != *"part"* ]]; then real=$(realpath $nvmedev); lunid=$(echo $nvmedev | cut -d "_" -f 7); lunid=$((lunid-2)); if [[ $lunid -ge 0 ]]; then echo $lunid","$real; fi; fi; done'
+            # old NVMe command, Red Hat doesn't show MSFT devices, going through block instead to get NSID (Namespace ID) which is always LUN-ID + 2
+            # $_nvme_command = 'for nvmedev in /dev/disk/by-id/nvme-MSFT_NVMe_Accelerator_v1.0_SN:_000001_*; do if [[ $nvmedev != *"part"* ]]; then real=$(realpath $nvmedev); lunid=$(echo $nvmedev | cut -d "_" -f 7); lunid=$((lunid-2)); if [[ $lunid -ge 0 ]]; then echo $lunid","$real; fi; fi; done'
+            $_nvme_command = 'for nvmedev in /sys/block/nvme0n*; do device=$(echo $nvmedev | cut -d "/" -f 4); lunid=$(cat $nvmedev/nsid); lunid=$((lunid-2)); if [[ $lunid -ge 0 ]]; then echo $lunid",/dev/"$device; fi; done'
             $_command = PrepareCommand -Command $_nvme_command -CommandType "OS"
             $script:_diskmapping = RunCommand -p $_command
             $script:_diskmapping = $script:_diskmapping | ConvertFrom-Csv -Delimiter "," -Header LUN,Device 
@@ -1883,19 +1892,22 @@ function CollectLoadBalancer {
                 # get details for load balancer
                 $_loadbalancer = Get-AzLoadBalancer -Name $_loadbalancername -ResourceGroupName $_loadbalancerresourcegroup
 
-                # add details
-                $_loadbalancer_row.Name = $_loadbalancername
-                $_loadbalancer_row.Type = ($_loadbalancer.SkuText | ConvertFrom-JSON).Name
-                $_loadbalancer_row.IdleTimeout = $_loadbalancer.LoadBalancingRules[0].IdleTimeoutInMinutes
-                $_loadbalancer_row.FloatingIP = $_loadbalancer.LoadBalancingRules[0].EnableFloatingIP
-                $_loadbalancer_row.Protocols = $_loadbalancer.LoadBalancingRules[0].Protocol
-                if ($_loadbalancer.Probes -ne $null -and $_loadbalancer.Probes.Count -gt 0) {
-                    $_loadbalancer_row.ProbeThreshold = $_loadbalancer.Probes[0].ProbeThreshold
-                    $_loadbalancer_row.ProbeInterval = $_loadbalancer.Probes[0].IntervalInSeconds
-                }
+                if ($_loadbalancer.LoadBalancingRules) {
+                
+                    # add details
+                    $_loadbalancer_row.Name = $_loadbalancername
+                    $_loadbalancer_row.Type = ($_loadbalancer.SkuText | ConvertFrom-JSON).Name
+                    $_loadbalancer_row.IdleTimeout = $_loadbalancer.LoadBalancingRules[0].IdleTimeoutInMinutes
+                    $_loadbalancer_row.FloatingIP = $_loadbalancer.LoadBalancingRules[0].EnableFloatingIP
+                    $_loadbalancer_row.Protocols = $_loadbalancer.LoadBalancingRules[0].Protocol
+                    if ($_loadbalancer.Probes -ne $null -and $_loadbalancer.Probes.Count -gt 0) {
+                        $_loadbalancer_row.ProbeThreshold = $_loadbalancer.Probes[0].ProbeThreshold
+                        $_loadbalancer_row.ProbeInterval = $_loadbalancer.Probes[0].IntervalInSeconds
+                    }
 
-                # add data to table
-                $Script:_LoadBalancers += $_loadbalancer_row
+                    # add data to table
+                    $Script:_LoadBalancers += $_loadbalancer_row
+                }
 
             }
         }
@@ -2684,238 +2696,241 @@ function RunQualityCheck {
             if  (($HighAvailability -eq $false) -and ($_check.HighAvailability.Contains($HighAvailability)) -or `
                 (($HighAvailability -eq $true) -and ($_check.HighAvailability.Contains($HighAvailability)) -and ($_check.HighAvailabilityAgent.Contains($HighAvailabilityAgent)))) {
 
-                if ((-not $RunLocally) -or ($RunLocally -and ($_check.RunInLocalMode))) {
+                if (($_check.Feature -and $script:_InstalledFeatures.Contains($_check.Feature)) -or (-not $_check.Feature)) {
 
-                    if (-not $RunLocally) {
-                        $_Check_row = "" | Select-Object CheckID, Description, AdditionalInfo, Testresult, ExpectedResult, Status, SAPNote, MicrosoftDocs
-                    }
-                    else {
-                        $_Check_row = "" | Select-Object CheckID, Description, AdditionalInfo, Testresult, ExpectedResult, Status, SAPNote, MicrosoftDocs, Success, VmRole
-                    }
+                    if ((-not $RunLocally) -or ($RunLocally -and ($_check.RunInLocalMode))) {
 
-                    $_result = RunCommand -p $_check
-
-                    $_result = RemoveTabsAndSpaces -OriginalString $_result
-
-                    $_Check_row.CheckID = $_check.CheckID
-                    $_Check_row.Description = $_check.Description
-                    $_Check_row.AdditionalInfo = $_check.AdditionalInfo
-                    $_Check_row.Testresult = $_result
-
-                    # $_Check_row.ExpectedResult = $_check.ExpectedResult
-                    # if multiple expected results are available the join will combine them and add a new line for each entry
-                    if ($_check.ExpectedResult.GetType().Name -eq "PSCustomObject") {    
-                        switch ($_check.ExpectedResult.Type) {
-                            "multi" { $_Check_row.ExpectedResult = $_check.ExpectedResult.Values -join (" or{0}" -f [environment]::NewLine) }
-                            "range" { $_Check_row.ExpectedResult = "from {0} to {1}" -f $_check.ExpectedResult.low, $_check.ExpectedResult.high }
-                            "dynamic" {
-                                $_dynamicresult = Invoke-Expression $_check.ExpectedResult
-                                $_Check_row.ExpectedResult = $_dynamicresult
-                            }
-                            "dynamicmulti" {
-                                $_multiresult = @()
-                                foreach ($_value in $_check.ExpectedResult.Values) {
-                                    $_multiresult += Invoke-Expression $_value
-                                }
-                                $_Check_row.ExpectedResult = $_multiresult -join (" or{0}" -f [environment]::NewLine)
-                            }
-                            "dynamicrange" {
-                                $_calculated_low = Invoke-Expression $_check.function.low
-                                $_calculated_high = Invoke-Expression $_check.function.high
-                                $_Check_row.ExpectedResult = "from {0} to {1}" -f $_calculated_low, $_calculated_high
-                            }
-                            Default { "wrong default value in JSON"}
+                        if (-not $RunLocally) {
+                            $_Check_row = "" | Select-Object CheckID, Description, AdditionalInfo, Testresult, ExpectedResult, Status, SAPNote, MicrosoftDocs
                         }
-                    }
-                    else {
-                        $_Check_row.ExpectedResult = $_check.ExpectedResult
-                    }
-                    
-
-                    if ($RunLocally) {
-                        $_Check_row.VmRole = $VMRole
-                    }
-
-                    # if ($_check.SAPNote -ne "") {
-                    if (![string]::IsNullOrEmpty($_check.SAPNote)) {
-
-                        $_SAPNotes = @()
-
-                        foreach ($_SAPNote in $_check.SAPNote) {
-                            if (-not $RunLocally) {
-                                # $_Check_row.SAPNote = "::SAPNOTEHTML1::" + $_check.SAPNote + "::SAPNOTEHTML2::" + $_check.SAPNote + "::SAPNOTEHTML3::"
-                                $_SAPNotes += "::SAPNOTEHTML1::" + $_SAPNote + "::SAPNOTEHTML2::" + $_SAPNote + "::SAPNOTEHTML3::"
-                            }
-                            else {
-                                # $_Check_row.SAPNote = $_check.SAPNote
-                                $_SAPNotes += $_SAPNote
-                            }
-                        }
-                        
-                        $_Check_row.SAPNote = $_SAPNotes -join ("{0}" -f [environment]::NewLine)
-
-                    }
-
-                    # if ($_check.MicrosoftDocs -ne "") {
-                    if (![string]::IsNullOrEmpty($_check.MicrosoftDocs)) {
-                        
-                        $_HTMLLinks = @()
-                        
-                        foreach ($_HTMLLink in $_check.MicrosoftDocs) {                      
-                            if (-not $RunLocally) {
-                                # $_Check_row.MicrosoftDocs = "::MSFTDOCS1::" + $_check.MicrosoftDocs + "::MSFTDOCS2::" + "Link" + "::MSFTDOCS3::"
-                                $_HTMLLinks += "::MSFTDOCS1::" + $_HTMLLink + "::MSFTDOCS2::" + "Link" + "::MSFTDOCS3::"
-                            }
-                            else {
-                                # $_HTMLLinks += $_check.MicrosoftDocs
-                                $_HTMLLinks += $_HTMLLink
-                            }
+                        else {
+                            $_Check_row = "" | Select-Object CheckID, Description, AdditionalInfo, Testresult, ExpectedResult, Status, SAPNote, MicrosoftDocs, Success, VmRole
                         }
 
-                        $_Check_row.MicrosoftDocs = $_HTMLLinks -join ("{0}" -f [environment]::NewLine)
+                        $_result = RunCommand -p $_check
 
-                    }
-                    
-                    # check if the expected result has multiple values or just one
-                    # if ($_check.ExpectedResult.GetType().Name -eq "Object[]") {
-                    if ($_check.ExpectedResult.GetType().Name -eq "PSCustomObject") {    
-                        
-                        switch ($_check.ExpectedResult.type) {
-                            "multi" {
-                                if ($_check.ExpectedResult.Values -contains $_result) {
-                                    $_Check_row.Status = "OK"
-                                    if ($RunLocally) {
-                                        $_Check_row.Success = $true
-                                    }
-                                }
-                                else {
-                                    # $_Check_row.Status = "ERROR"
-                                    $_Check_row.Status = $_check.ErrorCategory
-                                    if ($RunLocally) {
-                                        $_Check_row.Success = $false
-                                    }
-                                }
-                            }
-                            "range" {
-                                if ([int]$_result -ge [int]$_check.ExpectedResult.low -and [int]$_result -le [int]$_check.ExpectedResult.high) {
-                                    $_Check_row.Status = "OK"
-                                    if ($RunLocally) {
-                                        $_Check_row.Success = $true
-                                    }
-                                }
-                                else {
-                                    # $_Check_row.Status = "ERROR"
-                                    $_Check_row.Status = $_check.ErrorCategory
-                                    if ($RunLocally) {
-                                        $_Check_row.Success = $false
-                                    }
-                                }
-                            }
-                            "dynamic" {
-                                $_dynamicresult = Invoke-Expression $_check.ExpectedResult
+                        $_result = RemoveTabsAndSpaces -OriginalString $_result
 
-                                if ($_result -eq $_dynamicresult) {
-                                    $_Check_row.Status = "OK"
-                                    if ($RunLocally) {
-                                        $_Check_row.Success = $true
-                                    }
-                                }
-                                else {
-                                    # $_Check_row.Status = "ERROR"
-                                    $_Check_row.Status = $_check.ErrorCategory
-                                    if ($RunLocally) {
-                                        $_Check_row.Success = $false
-                                    }
-                                }
-                            }
-                            "dynamicmulti" {
-                                $_multiresult = @()
-                                foreach ($_value in $_check.ExpectedResult.Values) {
-                                    $_multiresult += Invoke-Expression $_value
-                                }
-                                if ($_multiresult -contains $_result) {
-                                    $_Check_row.Status = "OK"
-                                    if ($RunLocally) {
-                                        $_Check_row.Success = $true
-                                    }
-                                }
-                                else {
-                                    # $_Check_row.Status = "ERROR"
-                                    $_Check_row.Status = $_check.ErrorCategory
-                                    if ($RunLocally) {
-                                        $_Check_row.Success = $false
-                                    }
-                                }
+                        $_Check_row.CheckID = $_check.CheckID
+                        $_Check_row.Description = $_check.Description
+                        $_Check_row.AdditionalInfo = $_check.AdditionalInfo
+                        $_Check_row.Testresult = $_result
 
-                            }
-                            "dynamicrange" {
-                                $_calculated_low = Invoke-Expression $_check.function.low
-                                $_calculated_high = Invoke-Expression $_check.function.high
-                                if ([int]$_result -ge [int]$_calculated_low -and [int]$_result -le [int]$_calculated_high) {
-                                    $_Check_row.Status = "OK"
-                                    if ($RunLocally) {
-                                        $_Check_row.Success = $true
-                                    }
+                        # $_Check_row.ExpectedResult = $_check.ExpectedResult
+                        # if multiple expected results are available the join will combine them and add a new line for each entry
+                        if ($_check.ExpectedResult.GetType().Name -eq "PSCustomObject") {    
+                            switch ($_check.ExpectedResult.Type) {
+                                "multi" { $_Check_row.ExpectedResult = $_check.ExpectedResult.Values -join (" or{0}" -f [environment]::NewLine) }
+                                "range" { $_Check_row.ExpectedResult = "from {0} to {1}" -f $_check.ExpectedResult.low, $_check.ExpectedResult.high }
+                                "dynamic" {
+                                    $_dynamicresult = Invoke-Expression $_check.ExpectedResult
+                                    $_Check_row.ExpectedResult = $_dynamicresult
                                 }
-                                else {
-                                    # $_Check_row.Status = "ERROR"
-                                    $_Check_row.Status = $_check.ErrorCategory
-                                    if ($RunLocally) {
-                                        $_Check_row.Success = $false
+                                "dynamicmulti" {
+                                    $_multiresult = @()
+                                    foreach ($_value in $_check.ExpectedResult.Values) {
+                                        $_multiresult += Invoke-Expression $_value
                                     }
+                                    $_Check_row.ExpectedResult = $_multiresult -join (" or{0}" -f [environment]::NewLine)
                                 }
-
-                            }
-                            Default {
-                                        $_Check_row.Status = "JSONERROR"
-                                    }
-                        }
-                        
-                    }
-                    else {
-                        
-                        if ($_result -eq $_check.ExpectedResult) {
-                            $_Check_row.Status = "OK"
-                            if ($RunLocally) {
-                                $_Check_row.Success = $true
+                                "dynamicrange" {
+                                    $_calculated_low = Invoke-Expression $_check.function.low
+                                    $_calculated_high = Invoke-Expression $_check.function.high
+                                    $_Check_row.ExpectedResult = "from {0} to {1}" -f $_calculated_low, $_calculated_high
+                                }
+                                Default { "wrong default value in JSON"}
                             }
                         }
                         else {
-                            # $_Check_row.Status = "ERROR"
-                            $_Check_row.Status = $_check.ErrorCategory
-                            if ($RunLocally) {
-                                $_Check_row.Success = $false
-                            }
+                            $_Check_row.ExpectedResult = $_check.ExpectedResult
                         }
-                    }
+                        
 
-					
-                    if (($_check.ShowAlternativeRequirement) -ne "" -or ($_check.ShowAlternativeResult -ne ""))
-                    {
-                        if (-not [string]::IsNullOrEmpty($_check.ProcessingCommandOutput)) {
-
-                            $_checkoutputcommand = PrepareCommand -Command $_check.ProcessingCommandOutput -CommandType $_check.CommandType
-                            $_resultoutputcommand = RunCommand -p $_checkoutputcommand
-                            $_Check_row.Testresult = $_resultoutputcommand -join ("{0}" -f [environment]::NewLine)
-    
-                        } else {
-                            if ($_check.ShowAlternativeResult -ne "") {
-                                $_Check_row.Testresult = Invoke-Expression $_check.ShowAlternativeResult
-                            }
-                            else {
-                                $_Check_row.Testresult = ""
-                            }
+                        if ($RunLocally) {
+                            $_Check_row.VmRole = $VMRole
                         }
 
-                        if (![string]::IsNullOrEmpty($_check.ShowAlternativeRequirement)) {
-                            $_Check_row.ExpectedResult = Invoke-Expression $_check.ShowAlternativeRequirement
+                        # if ($_check.SAPNote -ne "") {
+                        if (![string]::IsNullOrEmpty($_check.SAPNote)) {
+
+                            $_SAPNotes = @()
+
+                            foreach ($_SAPNote in $_check.SAPNote) {
+                                if (-not $RunLocally) {
+                                    # $_Check_row.SAPNote = "::SAPNOTEHTML1::" + $_check.SAPNote + "::SAPNOTEHTML2::" + $_check.SAPNote + "::SAPNOTEHTML3::"
+                                    $_SAPNotes += "::SAPNOTEHTML1::" + $_SAPNote + "::SAPNOTEHTML2::" + $_SAPNote + "::SAPNOTEHTML3::"
+                                }
+                                else {
+                                    # $_Check_row.SAPNote = $_check.SAPNote
+                                    $_SAPNotes += $_SAPNote
+                                }
+                            }
+                            
+                            $_Check_row.SAPNote = $_SAPNotes -join ("{0}" -f [environment]::NewLine)
+
+                        }
+
+                        # if ($_check.MicrosoftDocs -ne "") {
+                        if (![string]::IsNullOrEmpty($_check.MicrosoftDocs)) {
+                            
+                            $_HTMLLinks = @()
+                            
+                            foreach ($_HTMLLink in $_check.MicrosoftDocs) {                      
+                                if (-not $RunLocally) {
+                                    # $_Check_row.MicrosoftDocs = "::MSFTDOCS1::" + $_check.MicrosoftDocs + "::MSFTDOCS2::" + "Link" + "::MSFTDOCS3::"
+                                    $_HTMLLinks += "::MSFTDOCS1::" + $_HTMLLink + "::MSFTDOCS2::" + "Link" + "::MSFTDOCS3::"
+                                }
+                                else {
+                                    # $_HTMLLinks += $_check.MicrosoftDocs
+                                    $_HTMLLinks += $_HTMLLink
+                                }
+                            }
+
+                            $_Check_row.MicrosoftDocs = $_HTMLLinks -join ("{0}" -f [environment]::NewLine)
+
+                        }
+                        
+                        # check if the expected result has multiple values or just one
+                        # if ($_check.ExpectedResult.GetType().Name -eq "Object[]") {
+                        if ($_check.ExpectedResult.GetType().Name -eq "PSCustomObject") {    
+                            
+                            switch ($_check.ExpectedResult.type) {
+                                "multi" {
+                                    if ($_check.ExpectedResult.Values -contains $_result) {
+                                        $_Check_row.Status = "OK"
+                                        if ($RunLocally) {
+                                            $_Check_row.Success = $true
+                                        }
+                                    }
+                                    else {
+                                        # $_Check_row.Status = "ERROR"
+                                        $_Check_row.Status = $_check.ErrorCategory
+                                        if ($RunLocally) {
+                                            $_Check_row.Success = $false
+                                        }
+                                    }
+                                }
+                                "range" {
+                                    if ([int]$_result -ge [int]$_check.ExpectedResult.low -and [int]$_result -le [int]$_check.ExpectedResult.high) {
+                                        $_Check_row.Status = "OK"
+                                        if ($RunLocally) {
+                                            $_Check_row.Success = $true
+                                        }
+                                    }
+                                    else {
+                                        # $_Check_row.Status = "ERROR"
+                                        $_Check_row.Status = $_check.ErrorCategory
+                                        if ($RunLocally) {
+                                            $_Check_row.Success = $false
+                                        }
+                                    }
+                                }
+                                "dynamic" {
+                                    $_dynamicresult = Invoke-Expression $_check.ExpectedResult
+
+                                    if ($_result -eq $_dynamicresult) {
+                                        $_Check_row.Status = "OK"
+                                        if ($RunLocally) {
+                                            $_Check_row.Success = $true
+                                        }
+                                    }
+                                    else {
+                                        # $_Check_row.Status = "ERROR"
+                                        $_Check_row.Status = $_check.ErrorCategory
+                                        if ($RunLocally) {
+                                            $_Check_row.Success = $false
+                                        }
+                                    }
+                                }
+                                "dynamicmulti" {
+                                    $_multiresult = @()
+                                    foreach ($_value in $_check.ExpectedResult.Values) {
+                                        $_multiresult += Invoke-Expression $_value
+                                    }
+                                    if ($_multiresult -contains $_result) {
+                                        $_Check_row.Status = "OK"
+                                        if ($RunLocally) {
+                                            $_Check_row.Success = $true
+                                        }
+                                    }
+                                    else {
+                                        # $_Check_row.Status = "ERROR"
+                                        $_Check_row.Status = $_check.ErrorCategory
+                                        if ($RunLocally) {
+                                            $_Check_row.Success = $false
+                                        }
+                                    }
+
+                                }
+                                "dynamicrange" {
+                                    $_calculated_low = Invoke-Expression $_check.function.low
+                                    $_calculated_high = Invoke-Expression $_check.function.high
+                                    if ([int]$_result -ge [int]$_calculated_low -and [int]$_result -le [int]$_calculated_high) {
+                                        $_Check_row.Status = "OK"
+                                        if ($RunLocally) {
+                                            $_Check_row.Success = $true
+                                        }
+                                    }
+                                    else {
+                                        # $_Check_row.Status = "ERROR"
+                                        $_Check_row.Status = $_check.ErrorCategory
+                                        if ($RunLocally) {
+                                            $_Check_row.Success = $false
+                                        }
+                                    }
+
+                                }
+                                Default {
+                                            $_Check_row.Status = "JSONERROR"
+                                        }
+                            }
+                            
                         }
                         else {
-                            $_Check_row.ExpectedResult = ""
+                            
+                            if ($_result -eq $_check.ExpectedResult) {
+                                $_Check_row.Status = "OK"
+                                if ($RunLocally) {
+                                    $_Check_row.Success = $true
+                                }
+                            }
+                            else {
+                                # $_Check_row.Status = "ERROR"
+                                $_Check_row.Status = $_check.ErrorCategory
+                                if ($RunLocally) {
+                                    $_Check_row.Success = $false
+                                }
+                            }
                         }
+
+                        
+                        if (($_check.ShowAlternativeRequirement) -ne "" -or ($_check.ShowAlternativeResult -ne ""))
+                        {
+                            if (-not [string]::IsNullOrEmpty($_check.ProcessingCommandOutput)) {
+
+                                $_checkoutputcommand = PrepareCommand -Command $_check.ProcessingCommandOutput -CommandType $_check.CommandType
+                                $_resultoutputcommand = RunCommand -p $_checkoutputcommand
+                                $_Check_row.Testresult = $_resultoutputcommand -join ("{0}" -f [environment]::NewLine)
+        
+                            } else {
+                                if ($_check.ShowAlternativeResult -ne "") {
+                                    $_Check_row.Testresult = Invoke-Expression $_check.ShowAlternativeResult
+                                }
+                                else {
+                                    $_Check_row.Testresult = ""
+                                }
+                            }
+
+                            if (![string]::IsNullOrEmpty($_check.ShowAlternativeRequirement)) {
+                                $_Check_row.ExpectedResult = Invoke-Expression $_check.ShowAlternativeRequirement
+                            }
+                            else {
+                                $_Check_row.ExpectedResult = ""
+                            }
+                        }
+                    
+                        $script:_Checks += $_Check_row
                     }
-                
-                    $script:_Checks += $_Check_row
                 }
             }
         }
@@ -3278,6 +3293,62 @@ function CheckSudoPermission {
 
 }
 
+function CheckFeatures {
+    
+    # create empty array
+    $_outputarray = @()
+
+    $script:_InstalledFeatures = @()
+    
+    # looping through feature checks
+    foreach ($_FeatureCheck in $_jsonconfig.CheckFeatures) {
+
+        # check if Feature tasks needs to be executed against this OS and database
+        if ( $_FeatureCheck.OS.Contains($VMOperatingSystem) -and `
+          $_FeatureCheck.DB.Contains($VMDatabase) -and `
+          $_FeatureCheck.Role.Contains($VMRole) -and `
+          ($_FeatureCheck.OSVersion.Contains("all") -or $_FeatureCheck.OSVersion.Contains($VMOSRelease)) -and `
+          $_FeatureCheck.Hardwaretype.Contains($Hardwaretype)) {
+
+            # check if check applies to HA or not and if HA check for HA-Agent
+            if (($_FeatureCheck.HighAvailability.Contains($HighAvailability)) -or (($_FeatureCheck.HighAvailability.Contains($HighAvailability)) -and ($_FeatureCheck.HighAvailabilityAgent.Contains($HighAvailabilityAgent)))) {
+
+                if ((-not $RunLocally) -or ($RunLocally -and ($_FeatureCheck.RunInLocalMode))) {
+
+                    $_output = RunCommand -p $_FeatureCheck
+
+                    # check if result should be shown in report
+                    if ($_FeatureCheck.ShowInReport) {
+
+                        # create a new empty object per line
+                        $_outputarray_row = "" | Select-Object CheckID, Description, Output
+                        $_outputarray_row.CheckID = $_FeatureCheck.FeatureId
+                        $_outputarray_row.Description = $_FeatureCheck.Description
+                        $_outputarray_row.Output = $_output -join ';;:;;'
+
+                        if ($_output -eq "Installed") {
+                            $script:_InstalledFeatures += $_FeatureCheck.FeatureName
+                        }
+
+                        # add line to outputarray
+                        $_outputarray += $_outputarray_row
+                    }
+                }
+            }
+        }
+    }
+
+    # create HTML output
+    $_outputarray = $_outputarray | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""FeatureCheck"">Feature Check</h2>This section checks for installed software and features"
+    $_outputarray = $_outputarray.Replace(";;:;;","<br/>")
+
+    # add Features to index
+    $script:_Content += "<a href=""#FeatureCheck"">Installed Features and additional Software</a><br>"
+
+    return $_outputarray
+
+}
+
 function CheckForNewerVersion {
 
     # download online version
@@ -3542,7 +3613,7 @@ function LoadGUI {
             # get IP of first nic
             $_VM = Get-AzVM -ResourceGroupName $_GUI_ResourceGroups.Items[$_GUI_ResourceGroups.SelectedIndex] -Name $_GUI_VMs.Items[$_GUI_VMs.SelectedIndex]
             #$_NetworkInterface = Get-AzNetworkInterfaceIpConfig -NetworkInterface $_VM.NetworkProfile.NetworkInterfaces
-            $_GUI_IPaddress.Text = (Get-AzNetworkInterface -resourceid  $_VM.NetworkProfile.NetworkInterfaces.Id).IpConfigurations.PrivateIpAddress
+            $_GUI_IPaddress.Text = (Get-AzNetworkInterface -resourceid  $_VM.NetworkProfile.NetworkInterfaces.Id)[0].IpConfigurations[0].PrivateIpAddress
         }
     )
 
@@ -3799,24 +3870,15 @@ foreach ($_qcrun in $_MultiRunData) {
 
     if ($HighAvailability) {
 
-        # setting Fencing Agent for RH independant of customer settings as only RH is allowed
-        if ($VMOperatingSystem -eq "RedHat") {
-            WriteRunLog "OS is set to RedHat, HighAvailability set to FencingAgent"
+        $_sbdcommand = PrepareCommand -Command "cat /etc/sysconfig/sbd | grep ^SBD_DEVICE | wc -l" -CommandType "OS" -RootRequired $true
+        $_sbdconfig = RunCommand -p $_sbdcommand
+
+        if ($_sbdconfig -eq "0") {
+            # SBD Device config not found
             $HighAvailabilityAgent = "FencingAgent"
         }
-
-        if ($VMOperatingSystem -eq "SUSE") {
-
-            $_sbdcommand = PrepareCommand -Command "cat /etc/sysconfig/sbd | grep ^SBD_DEVICE | wc -l" -CommandType "OS" -RootRequired $true
-            $_sbdconfig = RunCommand -p $_sbdcommand
-
-            if ($_sbdconfig -eq "0") {
-                # SBD Device config not found
-                $HighAvailabilityAgent = "FencingAgent"
-            }
-            else {
-                $HighAvailabilityAgent = "SBD"
-            }
+        else {
+            $HighAvailabilityAgent = "SBD"
         }
 
     }
@@ -3849,6 +3911,9 @@ foreach ($_qcrun in $_MultiRunData) {
 
     # Collect PowerShell details
     $_CollectPowerShell = CollectPowerShellDetails
+
+    # Collecct Features and Installed Software
+    $_Features = CheckFeatures
 
     # Collect VM info
     $_CollectVMInfo = CollectVMInformation
@@ -3893,7 +3958,7 @@ foreach ($_qcrun in $_MultiRunData) {
         WriteRunLog -category "INFO" -message ("Creating HTML File: " + $_HTMLReportFileName)
         $_RunLogContent = $script:_runlog | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""RunLog"">RunLog</h2>"
 
-        $_HTMLReport = ConvertTo-Html -Body "$_Content $_CollectScriptParameter $_CollectVMInfo $_RunQualityCheck $_CollectFileSystems $_CollectVMStorage $_CollectLVMGroups $_CollectLVMVolumes $_CollectANFVolumes $_CollectNetworkInterfaces $_CollectLoadBalancer $_CollectVMInfoAdditional $_CollectFooter $_RunLogContent $_CollectPowerShell" -Head $script:_HTMLHeader -Title "Quality Check for SAP Worloads on Azure" -PostContent "<p id='CreationDate'>Creation Date: $(Get-Date)</p><p id='CreationDate'>Script Version: $scriptversion</p>"
+        $_HTMLReport = ConvertTo-Html -Body "$_Content $_CollectScriptParameter $_CollectVMInfo $_RunQualityCheck $_CollectFileSystems $_CollectVMStorage $_Features $_CollectLVMGroups $_CollectLVMVolumes $_CollectANFVolumes $_CollectNetworkInterfaces $_CollectLoadBalancer $_CollectVMInfoAdditional $_CollectFooter $_RunLogContent $_CollectPowerShell" -Head $script:_HTMLHeader -Title "Quality Check for SAP Worloads on Azure" -PostContent "<p id='CreationDate'>Creation Date: $(Get-Date)</p><p id='CreationDate'>Script Version: $scriptversion</p>"
         $_HTMLReportFileDate = $(Get-Date -Format "yyyyMMdd-HHmm")
         $_HTMLReportFileName = $AzVMName + "-" + $_HTMLReportFileDate + ".html"
 
@@ -3906,7 +3971,7 @@ foreach ($_qcrun in $_MultiRunData) {
 
         if ($AddJSONFile) {
             # adding JSONfile
-            $_jsonoutput = "" | Select-Object Rundate, VMName, ResourceGroup, HighAvailability, Checks, Parameters, InformationCollection, Disks, Filesystems, RunLog, Filename, QCVersion
+            $_jsonoutput = "" | Select-Object Rundate, VMName, ResourceGroup, HighAvailability, Checks, Parameters, InformationCollection, Disks, Filesystems, RunLog, Filename, QCVersion, Features
 
             WriteRunLog -category "INFO" -message ("Preparing JSON Output")
 
@@ -3920,6 +3985,7 @@ foreach ($_qcrun in $_MultiRunData) {
             $_jsonoutput.ResourceGroup = $AzVMResourceGroup
             $_jsonoutput.HighAvailability = $HighAvailability
             $_jsonoutput.QCVersion = $scriptversion
+            $_jsonoutput.Features = $_Features
 
             $_JSONReportFileName = $AzVMName + "-" + $_HTMLReportFileDate + ".json"
             $_jsonoutput.Filename = $_JSONReportFileName

@@ -1,5 +1,15 @@
 # Changelog
 
+# Version 2024120501
+* NEW: add support for new Mv3 High Memory SKUs
+* NEW: support for new category "Features", Features are used to dynamically run checks, e.g. for Antivirus Solutions
+* NEW: initial checks for Microsoft Defender for Linux
+* FIX: in GUI the IP address for multi-interface or multi-IP interfaces was not shown
+* FIX: customers with multiple subscriptions/tenants had long run times, getting Azure Context before checking subscription to avoid long run times
+* UPDATE: removing fixed setting "Agent" for Red Hat High Availability as SBD is also supported -> checks for SBD Red Hat coming soon
+* UPDATE: NVMe device identification changed (LUN-ID) from MSFT_NVMe* to /sys/block/nvme0n*
+* UPDATE: Checks for Load Balancers are only done on inbound load balancers (outgoing internet load balancers excluded)
+
 # Version 2024112801
 * NEW: add support for Mv3 Very High Memory segment with missing High Memory SKUs
   

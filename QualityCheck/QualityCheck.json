@@ -1,5 +1,5 @@
 {
-    "Version": 2024112801,
+    "Version": 2024120501,
 
     "PowerShellPrerequisits": [
         {
@@ -2332,23 +2332,6 @@
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
-        "Standard_M896ixds_32_v3": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLTP-ScaleOut": "Standard Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
-            }
-        },
         "Standard_M176bds_3_v3": {
             "DB": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
@@ -3679,24 +3662,6 @@
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
-                "Standard_M832is_16_v3": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Standard Sizing",
-                    "OLAP-ScaleOut": "Standard Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
-            }
-        },
         "Standard_M416ds_6_v3": {
             "DB": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
@@ -3769,24 +3734,6 @@
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
             }
         },
-        "Standard_M832ids_16_v3": {
-            "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
-                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
-                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
-                "HANAScenario": {
-                    "OLTP": "Standard Sizing",
-                    "OLAP": "Standard Sizing",
-                    "OLAP-ScaleOut": "Standard Sizing"
-                }
-            },
-            "APP": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
-            },
-            "ASCS": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
-            }
-        },
         "Standard_M832ds_16_v3": {
             "DB": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
@@ -3812,7 +3759,7 @@
                 "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Workload Sizing",
-                    "OLAP": "Workload Sizing"
+                    "OLAP": "Standard Sizing"
                 }
             },
             "APP": {
@@ -3829,7 +3776,71 @@
                 "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Workload Sizing",
-                    "OLAP": "Workload Sizing"
+                    "OLAP": "Standard Sizing"
+                }
+            },
+            "APP": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            },
+            "ASCS": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            }
+        },
+        "Standard_M832is_16_v3": {
+            "DB": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
+            },
+            "APP": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            },
+            "ASCS": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            }
+        },
+        "Standard_M832is_12_v3": {
+            "DB": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
+            },
+            "APP": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            },
+            "ASCS": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            }
+        },
+        "Standard_M832ids_16_v3": {
+            "DB": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
+            },
+            "APP": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            },
+            "ASCS": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            }
+        },
+        "Standard_M832ids_12_v3": {
+            "DB": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
                 }
             },
             "APP": {
@@ -3852,6 +3863,120 @@
         "DB2DataStripeSize": "256.00k",
         "DB2LOGStripeSize": "64.00k"
     },
+    "CheckFeatures": [
+        {
+            "FeatureId": "FC-0001",
+            "FeatureName": "EndpointProtection-DefenderLinux",
+            "Description": "Microsoft Defender Linux",
+            "OS": ["SUSE","RedHat","OracleLinux"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM", "HLI"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
+            "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": true,
+            "CommandType": "OS",
+            "ProcessingCommand": "[ -f /usr/bin/mdatp ] && echo 'Installed' || echo 'Not installed'",
+            "PostProcessingCommand": "",
+            "ShowInReport": true,
+            "HighAvailability": [false,true]
+        },
+        {
+            "FeatureId": "FC-0002",
+            "FeatureName": "EndpointProtection-CrowdstrikeFalcon",
+            "Description": "Crownstrike Falcon",
+            "OS": ["SUSE","RedHat","OracleLinux"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM", "HLI"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
+            "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": true,
+            "CommandType": "OS",
+            "ProcessingCommand": "[ -f /opt/CrowdStrike/falconctl ] && echo 'Installed' || echo 'Not installed'",
+            "PostProcessingCommand": "",
+            "ShowInReport": true,
+            "HighAvailability": [false,true]
+        },
+        {
+            "FeatureId": "FC-0003",
+            "FeatureName": "EndpointProtection-SentinelOne",
+            "Description": "Sentinel One",
+            "OS": ["SUSE","RedHat","OracleLinux"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM", "HLI"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
+            "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": true,
+            "CommandType": "OS",
+            "ProcessingCommand": "[ -f /opt/sentinelone/bin/sentinelctl ] && echo 'Installed' || echo 'Not installed'",
+            "PostProcessingCommand": "",
+            "ShowInReport": true,
+            "HighAvailability": [false,true]
+        },
+        {
+            "FeatureId": "FC-0004",
+            "FeatureName": "EndpointProtection-Trendmicro",
+            "Description": "Trendmicro Deep Security",
+            "OS": ["SUSE","RedHat","OracleLinux"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM", "HLI"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
+            "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": true,
+            "CommandType": "OS",
+            "ProcessingCommand": "[ -f /opt/ds_agent/dsa_control ] && echo 'Installed' || echo 'Not installed'",
+            "PostProcessingCommand": "",
+            "ShowInReport": true,
+            "HighAvailability": [false,true]
+        },
+        {
+            "FeatureId": "FC-0005",
+            "FeatureName": "EndpointProtection-Sophos",
+            "Description": "Sophos Server Protection",
+            "OS": ["SUSE","RedHat","OracleLinux"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM", "HLI"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
+            "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": true,
+            "CommandType": "OS",
+            "ProcessingCommand": "[ -f /opt/sophos-spl/plugins/av/bin/avscanner ] && echo 'Installed' || echo 'Not installed'",
+            "PostProcessingCommand": "",
+            "ShowInReport": true,
+            "HighAvailability": [false,true]
+        },
+        {
+            "FeatureId": "FC-0006",
+            "FeatureName": "EndpointProtection-Trellix",
+            "Description": "Trellix Endpoint Security (McAfee)",
+            "OS": ["SUSE","RedHat","OracleLinux"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM", "HLI"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
+            "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": true,
+            "CommandType": "OS",
+            "ProcessingCommand": "[ -f  /usr/local/bin/uvscan ] && echo 'Installed' || echo 'Not installed'",
+            "PostProcessingCommand": "",
+            "ShowInReport": true,
+            "HighAvailability": [false,true]
+        },
+        {
+            "FeatureId": "FC-0007",
+            "FeatureName": "EndpointProtection-ClamAV",
+            "Description": "ClamAV",
+            "OS": ["SUSE","RedHat","OracleLinux"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM", "HLI"],
+            "DB": ["HANA", "MSSQL", "Oracle", "Db2", "ASE"],
+            "Role": ["DB","ASCS","APP"],
+            "RunInLocalMode": true,
+            "CommandType": "OS",
+            "ProcessingCommand": "[ -f  /usr/bin/clamscan ] && echo 'Installed' || echo 'Not installed'",
+            "PostProcessingCommand": "",
+            "ShowInReport": true,
+            "HighAvailability": [false,true]
+        }
+    ],
     "VMCollectInformation": [
         {
             "CheckID": "IC-0001",
@@ -4616,6 +4741,42 @@
             "ShowInReport": true,
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD","FencingAgent"]
+        },
+        {
+            "CheckID": "IC-9020",
+            "Description": "Microsoft Defender Exclusion List",
+            "OS": ["SUSE","RedHat", "OracleLinux"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "DB": ["HANA","ASE","Db2","Oracle"],
+            "Role": ["DB","APP","ASCS"],
+            "RunInLocalMode": true,
+            "CommandType": "OS",
+            "ProcessingCommand": "mdatp exclusion list",
+            "PostProcessingCommand": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"],
+            "Feature": "EndpointProtection-DefenderLinux"
+        },
+        {
+            "CheckID": "IC-9021",
+            "Description": "Microsoft Defender Health",
+            "OS": ["SUSE","RedHat", "OracleLinux"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "DB": ["HANA","ASE","Db2","Oracle"],
+            "Role": ["DB","APP","ASCS"],
+            "RunInLocalMode": true,
+            "CommandType": "OS",
+            "ProcessingCommand": "mdatp health",
+            "PostProcessingCommand": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"],
+            "Feature": "EndpointProtection-DefenderLinux"
         } 
     ],
     "Checks": [
@@ -5762,34 +5923,6 @@
             "SAPNote": "3024346"
         },
         {
-            "CheckID": "HDB-ANF-0005",
-            "Description": "sysctl net.core.optmem_max",
-            "OS": ["SUSE","RedHat"],
-            "OSVersion": ["all"],
-            "HardwareType": ["VM", "HLI"],
-            "StorageType": ["ANF"],
-            "Role": ["DB"],
-            "DB": ["HANA"],
-            "RunInLocalMode": true,
-            "ErrorCategory": "ERROR",
-            "HighAvailability": [false, true],
-            "HighAvailabilityAgent": ["SBD","FencingAgent"],
-            "CommandType": "OS",
-            "ProcessingCommand": "/sbin/sysctl net.core.optmem_max -n",
-            "PostProcessingCommand": "",
-            "ExpectedResult": "16777216",
-            "ShowAlternativeRequirement": "",
-            "ShowAlternativeResult": "",
-            "RootRequired": true,
-            "ShowInReport": true,
-            "AdditionalInfo": "OS parameter for ANF performance",
-            "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" }
-            ],
-            "MicrosoftDocs": "https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse",
-            "SAPNote": "3024346"
-        },
-        {
             "CheckID": "HDB-ANF-0006",
             "Description": "sysctl net.ipv4.tcp_rmem",
             "OS": ["SUSE","RedHat"],
@@ -6372,7 +6505,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["SBD"],
             "CommandType": "OS",
-            "ProcessingCommand": "crm_attribute --type crm_config --name=stonith-timeout -q",
+            "ProcessingCommand": "timeout_value=$(crm_attribute --type crm_config --name=stonith-timeout -q 2>/dev/null) && echo ${timeout_value%s} || echo 'stonith-timeout is not set.'",
             "PostProcessingCommand": "",
             "ExpectedResult": { "Type": "range", "low": 144, "high": 300 },
             "ShowAlternativeRequirement": "",
@@ -6383,7 +6516,8 @@
             "VersionHistory": [
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" },
-                { "Date": "20240112", "ChangeLog": "moving from '/usr/sbin/crm configure show | grep -i 'stonith-timeout=144' | wc -l' to a command that can directly check the value, moving to ranges" }
+                { "Date": "20240112", "ChangeLog": "moving from '/usr/sbin/crm configure show | grep -i 'stonith-timeout=144' | wc -l' to a command that can directly check the value, moving to ranges" },
+                { "Date": "20241022", "ChangeLog": "crm_attribute --type crm_config --name=stonith-timeout -q was used in the the past, new command has error handling"}
             ],
             "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-suse-pacemaker",
             "SAPNote": ""
@@ -6726,7 +6860,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent"],
             "CommandType": "OS",
-            "ProcessingCommand": "timeout_value=$(crm_attribute --type crm_config --name=stonith-timeout -q 2>/dev/null) && echo ${timeout_value%s} || echo 'stonith-timeout is not set.'",
+            "ProcessingCommand": "crm_attribute --type crm_config --name=stonith-timeout -q",
             "PostProcessingCommand": "",
             "ExpectedResult": { "Type": "range", "low": 900, "high": 1200 },
             "ShowAlternativeRequirement": "",
@@ -8998,6 +9132,266 @@
                 { "Date": "20240313", "ChangeLog": "added check" }
             ],
             "MicrosoftDocs": "https://www.suse.com/de-de/support/kb/doc/?id=000021035",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "AV-GEN-0001",
+            "Description": "Detect installed Endpoint Protections",
+            "OS": ["SUSE","RedHat","OracleLinux"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS","ANF"],
+            "Role": ["DB","APP","ASCS"],
+            "DB": ["HANA","Db2","ASE","Oracle"],
+            "RunInLocalMode": true,
+            "ErrorCategory": "INFO",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"],
+            "CommandType": "PowerShell",
+            "ProcessingCommand": "$script:_InstalledFeatures.Contains('Endpoint')",
+            "PostProcessingCommand": "",
+            "ExpectedResult": false,
+            "ShowAlternativeRequirement": "",
+            "ShowAlternativeResult": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "Please always check SAP notes for any Endpoint Protection (Antivirus) and required exclusions",
+            "VersionHistory": [
+                { "Date": "20240918", "ChangeLog": "added check" }
+            ],
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/defender-endpoint/mde-linux-deployment-on-sap",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "AV-MDE-0001",
+            "Description": "Microsoft Defender Health",
+            "OS": ["SUSE","RedHat","OracleLinux"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS","ANF"],
+            "Role": ["DB","APP","ASCS"],
+            "DB": ["HANA","Db2","ASE","Oracle"],
+            "Feature": "EndpointProtection-DefenderLinux",
+            "RunInLocalMode": true,
+            "ErrorCategory": "ERROR",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"],
+            "CommandType": "OS",
+            "ProcessingCommand": "mdatp health | grep healthy | tr -d ' ' | cut -d':' -f2",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "true",
+            "ShowAlternativeRequirement": "",
+            "ShowAlternativeResult": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "20240918", "ChangeLog": "added check" }
+            ],
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/defender-endpoint/mde-linux-deployment-on-sap",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "AV-MDE-0002",
+            "Description": "Microsoft Defender Release Ring",
+            "OS": ["SUSE","RedHat","OracleLinux"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS","ANF"],
+            "Role": ["DB","APP","ASCS"],
+            "DB": ["HANA","Db2","ASE","Oracle"],
+            "Feature": "EndpointProtection-DefenderLinux",
+            "RunInLocalMode": true,
+            "ErrorCategory": "ERROR",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"],
+            "CommandType": "OS",
+            "ProcessingCommand": "mdatp health | grep release_ring | tr -d ' ' | tr -d '\"' | cut -d':' -f2",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "Production",
+            "ShowAlternativeRequirement": "",
+            "ShowAlternativeResult": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "20240918", "ChangeLog": "added check" }
+            ],
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/defender-endpoint/mde-linux-deployment-on-sap",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "AV-MDE-0003",
+            "Description": "Microsoft Defender Realtime Protection",
+            "OS": ["SUSE","RedHat","OracleLinux"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS","ANF"],
+            "Role": ["DB","APP","ASCS"],
+            "DB": ["HANA","Db2","ASE","Oracle"],
+            "Feature": "EndpointProtection-DefenderLinux",
+            "RunInLocalMode": true,
+            "ErrorCategory": "ERROR",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"],
+            "CommandType": "OS",
+            "ProcessingCommand": "mdatp health | grep real_time_protection_enabled | tr -d ' ' | tr -d '\"' | cut -d':' -f2",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "false",
+            "ShowAlternativeRequirement": "",
+            "ShowAlternativeResult": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "20240918", "ChangeLog": "added check" }
+            ],
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/defender-endpoint/mde-linux-deployment-on-sap",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "AV-MDE-0004",
+            "Description": "Microsoft Defender Automatic Definition Update",
+            "OS": ["SUSE","RedHat","OracleLinux"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS","ANF"],
+            "Role": ["DB","APP","ASCS"],
+            "DB": ["HANA","Db2","ASE","Oracle"],
+            "Feature": "EndpointProtection-DefenderLinux",
+            "RunInLocalMode": true,
+            "ErrorCategory": "ERROR",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"],
+            "CommandType": "OS",
+            "ProcessingCommand": "mdatp health | grep automatic_definition_update_enabled | tr -d ' ' | tr -d '\"' | cut -d':' -f2",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "true",
+            "ShowAlternativeRequirement": "",
+            "ShowAlternativeResult": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "20240918", "ChangeLog": "added check" }
+            ],
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/defender-endpoint/mde-linux-deployment-on-sap",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "AV-MDE-0005",
+            "Description": "Microsoft Defender Definition Status",
+            "OS": ["SUSE","RedHat","OracleLinux"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS","ANF"],
+            "Role": ["DB","APP","ASCS"],
+            "DB": ["HANA","Db2","ASE","Oracle"],
+            "Feature": "EndpointProtection-DefenderLinux",
+            "RunInLocalMode": true,
+            "ErrorCategory": "ERROR",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"],
+            "CommandType": "OS",
+            "ProcessingCommand": "mdatp health | grep definitions_status | tr -d ' ' | tr -d '\"' | cut -d':' -f2",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "up_to_date",
+            "ShowAlternativeRequirement": "",
+            "ShowAlternativeResult": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "20240918", "ChangeLog": "added check" }
+            ],
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/defender-endpoint/mde-linux-deployment-on-sap",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "AV-MDE-0006",
+            "Description": "Microsoft Defender EDR Early Preview",
+            "OS": ["SUSE","RedHat","OracleLinux"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS","ANF"],
+            "Role": ["DB","APP","ASCS"],
+            "DB": ["HANA","Db2","ASE","Oracle"],
+            "Feature": "EndpointProtection-DefenderLinux",
+            "RunInLocalMode": true,
+            "ErrorCategory": "ERROR",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"],
+            "CommandType": "OS",
+            "ProcessingCommand": "mdatp health | grep edr_early_preview_enabled | tr -d ' ' | tr -d '\"' | cut -d':' -f2",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "disabled",
+            "ShowAlternativeRequirement": "",
+            "ShowAlternativeResult": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "20240918", "ChangeLog": "added check" }
+            ],
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/defender-endpoint/mde-linux-deployment-on-sap",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "AV-MDE-0007",
+            "Description": "Microsoft Defender Conflicting Applications",
+            "OS": ["SUSE","RedHat","OracleLinux"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS","ANF"],
+            "Role": ["DB","APP","ASCS"],
+            "DB": ["HANA","Db2","ASE","Oracle"],
+            "Feature": "EndpointProtection-DefenderLinux",
+            "RunInLocalMode": true,
+            "ErrorCategory": "ERROR",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"],
+            "CommandType": "OS",
+            "ProcessingCommand": "mdatp health | grep conflicting_applications | tr -d ' ' | tr -d '\"' | cut -d':' -f2",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "[]",
+            "ShowAlternativeRequirement": "",
+            "ShowAlternativeResult": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "20240918", "ChangeLog": "added check" }
+            ],
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/defender-endpoint/mde-linux-deployment-on-sap",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "AV-MDE-0008",
+            "Description": "Microsoft Defender Supplementary Events Subsystem",
+            "OS": ["SUSE","RedHat","OracleLinux"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","PremiumV2_LRS","ANF"],
+            "Role": ["DB","APP","ASCS"],
+            "DB": ["HANA","Db2","ASE","Oracle"],
+            "Feature": "EndpointProtection-DefenderLinux",
+            "RunInLocalMode": true,
+            "ErrorCategory": "ERROR",
+            "HighAvailability": [true,false],
+            "HighAvailabilityAgent": ["SBD","FencingAgent"],
+            "CommandType": "OS",
+            "ProcessingCommand": "mdatp health | grep supplementary_events_subsystem | tr -d ' ' | tr -d '\"' | cut -d':' -f2",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "ebpf",
+            "ShowAlternativeRequirement": "",
+            "ShowAlternativeResult": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "",
+            "VersionHistory": [
+                { "Date": "20240918", "ChangeLog": "added check" }
+            ],
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/defender-endpoint/mde-linux-deployment-on-sap",
             "SAPNote": ""
         }
     ]
