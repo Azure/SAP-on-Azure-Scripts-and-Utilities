@@ -1,5 +1,8 @@
 # Changelog
 
+# Version 2024121001
+* NEW: adding more debugging messages
+
 # Version 2024120501
 * NEW: add support for new Mv3 High Memory SKUs
 * NEW: support for new category "Features", Features are used to dynamically run checks, e.g. for Antivirus Solutions

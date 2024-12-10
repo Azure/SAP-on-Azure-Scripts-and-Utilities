@@ -295,7 +295,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2024120501
+$scriptversion = 2024121001
 
 function LoadHTMLHeader {
 
@@ -631,6 +631,9 @@ function ConnectVM {
     else {
         
         # removing trusted host to make sure there is no error in case the host ssh keys were changed
+        if ($DetailedLog) {
+            WriteRunLog -category "INFO" -message ("ConnectVM - Removing SSH Trusted Hosts")
+        }
         Get-SSHTrustedHost -HostName $VMHostname | Remove-SSHTrustedHost -ErrorAction SilentlyContinue | Out-Null
         
         if ($script:LogonWithUserPassword -or (($script:GUILogonMethod -eq "UserPassword") -and $GUI ) -or ($Script:MultiRun) ) {
@@ -642,6 +645,9 @@ function ConnectVM {
             $script:_credentials = New-Object System.Management.Automation.PSCredential ($VMUsername, $VMPassword);
 
             # connect to VM
+            if ($DetailedLog) {
+                WriteRunLog -category "INFO" -message ("ConnectVM - Connecting with New-SSHSession")
+            }
             $script:_sshsession = New-SSHSession -ComputerName $VMHostname -Credential $_credentials -Port $VMConnectionPort -AcceptKey -ConnectionTimeout 5 -ErrorAction SilentlyContinue
             
         }
@@ -650,9 +656,15 @@ function ConnectVM {
         switch ($PsCmdlet.ParameterSetName) {
 
             "UserPassword" {
-
+                if ($DetailedLog) {
+                    WriteRunLog -category "INFO" -message ("ConnectVM - Section UserPassword")
+                }
             }
             "UserPasswordSSHKey" {
+
+                if ($DetailedLog) {
+                    WriteRunLog -category "INFO" -message ("ConnectVM - Section UserPasswordSSHKey")
+                }
 
                 # create a pasword hash that will be used to connect when using sudo commands
                 $script:_ClearTextPassword = ConvertFrom-SecureString -SecureString $VMPassword -AsPlainText
@@ -673,6 +685,10 @@ function ConnectVM {
             }
             "UserSSHKey" {
 
+                if ($DetailedLog) {
+                    WriteRunLog -category "INFO" -message ("ConnectVM - Section UserSSHKey")
+                }
+
                 # create credentials object
                 $_nopasswd = New-Object System.Security.SecureString
                 $script:_credentials = New-Object System.Management.Automation.PSCredential ($VMUsername, $_nopasswd);
@@ -688,6 +704,10 @@ function ConnectVM {
 
             }
             "UserPasswordSSHKeyPassphrase" {
+
+                if ($DetailedLog) {
+                    WriteRunLog -category "INFO" -message ("ConnectVM - Section UserPasswordSSHKeyPassphrase")
+                }
 
                 # create a pasword hash that will be used to connect when using sudo commands
                 $script:_ClearTextPassword = ConvertFrom-SecureString -SecureString $VMPassword -AsPlainText
@@ -709,6 +729,10 @@ function ConnectVM {
             }
             "UserPasswordAzureKeyvault" {
 
+                if ($DetailedLog) {
+                    WriteRunLog -category "INFO" -message ("ConnectVM - Section UserPasswordAzureKeyvault")
+                }
+
                 # create a pasword hash that will be used to connect when using sudo commands
                 $script:_ClearTextPassword = Get-AzKeyVaultSecret -VaultName $KeyVaultName -Name $KeyVaultEntry -AsPlainText
                 $VMPassword = ConvertTo-SecureString -String $script:_ClearTextPassword -AsPlainText -Force
@@ -721,6 +745,10 @@ function ConnectVM {
 
             }
             "UserPasswordAzureKeyvaultSSHKey" {
+
+                if ($DetailedLog) {
+                    WriteRunLog -category "INFO" -message ("ConnectVM - Section UserPasswordAzureKeyvaultSSHKey")
+                }
 
                 # create a pasword hash that will be used to connect when using sudo commands
                 $script:_ClearTextPassword = ConvertFrom-SecureString -SecureString $VMPassword -AsPlainText 
@@ -736,6 +764,10 @@ function ConnectVM {
 
             }
             "UserAsRootSSHKey" {
+
+                if ($DetailedLog) {
+                    WriteRunLog -category "INFO" -message ("ConnectVM - Section UserAsRootSSHKey")
+                }
 
                 # create a pasword hash that will be used to connect when using sudo commands
                 $script:_ClearTextPassword = ""
@@ -755,6 +787,10 @@ function ConnectVM {
 
             }
             "UserAsRootAzureKeyvaultSSHKey" {
+                
+                if ($DetailedLog) {
+                    WriteRunLog -category "INFO" -message ("ConnectVM - Section UserAsRootAzureKeyvaultSSHKey")
+                }
 
                 $_keystring = Get-AzKeyVaultKey -VaultName $KeyVaultName -Name $KeyVaultEntry -AsPlainText
 
@@ -774,6 +810,11 @@ function ConnectVM {
 
         # check if connection is successful (user/password/sshkeys correct)
         if ($script:_sshsession.Connected -eq $true) {
+
+            if ($DetailedLog) {
+                WriteRunLog -category "INFO" -message ("ConnectVM - Connected using SSH, creating SSH Stream")
+            }
+
             # return SSH session ID for later use
             $script:_ConnectVMResult = $true
 
@@ -3726,6 +3767,10 @@ else {
 
 $script:_CloseButtonPressed = $false
 
+if ($DetailedLog) {
+    WriteRunLog -category "INFO" -message ("Starting GUI ...")
+}
+
 if ($GUI) {
     if ($IsWindows) {
         LoadGUI
@@ -3741,6 +3786,9 @@ if ($GUI) {
 
 # read file in case of multiple runs
 if ($MultiRun) {
+    if ($DetailedLog) {
+        WriteRunLog -category "INFO" -message ("Detected Multirun setting")
+    }
     if (Test-Path -Path $ImportFile -PathType Leaf) {
         WriteRunLog -category "INFO" -message "Reading file for Quality Check runs"
         # read config file
@@ -3755,6 +3803,9 @@ if ($MultiRun) {
 if (-not $MultiRun) {
     # single run
     # generate dummy structure
+    if ($DetailedLog) {
+        WriteRunLog -category "INFO" -message ("Detected Single VM setting")
+    }
     $_MultiRunData = @()
     $_MultiRunData_Row = "" | Select-Object Data1
     $_MultiRunData_Row.Data1 = "onlysinglerun"
@@ -3839,28 +3890,49 @@ foreach ($_qcrun in $_MultiRunData) {
     if (-not $RunLocally) {
 
         # Check for required PowerShell modules
+        if ($DetailedLog) {
+            WriteRunLog -category "INFO" -message ("Starting CheckRequiredModules")
+        }
         CheckRequiredModules
 
         # Check for newer version of QualityCheck
+        if ($DetailedLog) {
+            WriteRunLog -category "INFO" -message ("Starting CheckForNewerVersion")
+        }
         CheckForNewerVersion
         
         # Check Azure connectivity
+        if ($DetailedLog) {
+            WriteRunLog -category "INFO" -message ("Starting CheckAzureConnectivity")
+        }
         CheckAzureConnectivity
         
         # Check TCP connectivity
+        if ($DetailedLog) {
+            WriteRunLog -category "INFO" -message ("Starting CheckTCPConnectivity")
+        }
         CheckTCPConnectivity
 
         # Connect to VM
+        if ($DetailedLog) {
+            WriteRunLog -category "INFO" -message ("Starting ConnectVM")
+        }
         $_SessionID = ConnectVM
 
         # Check if user is able to sudo
         if ($script:_ConnectVMResult) {
+            if ($DetailedLog) {
+                WriteRunLog -category "INFO" -message ("Starting CheckSudoPermission")
+            }
             CheckSudoPermission
         }
         else {
             $script:_CheckSudo = $false
         }
 
+        if ($DetailedLog) {
+            WriteRunLog -category "INFO" -message ("Starting SetOSPrompt")
+        }
         SetOSPrompt
 
         # getting OS prompt for verifications
@@ -3869,7 +3941,7 @@ foreach ($_qcrun in $_MultiRunData) {
     }
 
     if ($HighAvailability) {
-
+        
         $_sbdcommand = PrepareCommand -Command "cat /etc/sysconfig/sbd | grep ^SBD_DEVICE | wc -l" -CommandType "OS" -RootRequired $true
         $_sbdconfig = RunCommand -p $_sbdcommand
 
@@ -3883,10 +3955,16 @@ foreach ($_qcrun in $_MultiRunData) {
 
     }
 
-    # Load HTML Header
+    # Load HTML 
+    if ($DetailedLog) {
+        WriteRunLog -category "INFO" -message ("Starting LoadHTMLHeader")
+    }
     LoadHTMLHeader
 
     # Collect PowerShell Parameters
+    if ($DetailedLog) {
+        WriteRunLog -category "INFO" -message ("Starting Parameter Dump")
+    }
     $_ParameterValues = @{}
     $_ParametersToIgnore = @("Verbose", "Debug", "ErrorAction", "WarningAction", "InformationAction", "ErrorVariable", "WarningVariable", "InformationVariable", "OutVariable", "OutBuffer", "PipelineVariable")
     foreach ($_parameter in $MyInvocation.MyCommand.Parameters.GetEnumerator()) {
@@ -3907,49 +3985,91 @@ foreach ($_qcrun in $_MultiRunData) {
     }
 
     # Collect Script Parameters
+    if ($DetailedLog) {
+        WriteRunLog -category "INFO" -message ("Starting CollectScriptParameters")
+    }
     $_CollectScriptParameter = CollectScriptParameters
 
     # Collect PowerShell details
+    if ($DetailedLog) {
+        WriteRunLog -category "INFO" -message ("Starting CollectPowerShellDetails")
+    }
     $_CollectPowerShell = CollectPowerShellDetails
 
     # Collecct Features and Installed Software
+    if ($DetailedLog) {
+        WriteRunLog -category "INFO" -message ("Starting CheckFeatures")
+    }
     $_Features = CheckFeatures
 
     # Collect VM info
+    if ($DetailedLog) {
+        WriteRunLog -category "INFO" -message ("Starting CollectVMInformation")
+    }
     $_CollectVMInfo = CollectVMInformation
 
     # Get Azure Disks assigned to VMs
+    if ($DetailedLog) {
+        WriteRunLog -category "INFO" -message ("Starting CollectVMStorage")
+    }
     $_CollectVMStorage = CollectVMStorage
 
     # Get Volume Groups - CollectVMStorage needs to run first to define variables
+    if ($DetailedLog) {
+        WriteRunLog -category "INFO" -message ("Starting CollectLVMGroups")
+    }
     $_CollectLVMGroups = CollectLVMGroups
 
     # Get Logical Volumes - CollectVMStorage needs to run first to define variables
+    if ($DetailedLog) {
+        WriteRunLog -category "INFO" -message ("Starting CollectLVMVolummes")
+    }
     $_CollectLVMVolumes = CollectLVMVolummes
 
     if (-not $RunLocally) {
         # Get ANF Volume Info
+        if ($DetailedLog) {
+            WriteRunLog -category "INFO" -message ("Starting CollectANFVolumes")
+        }
         $_CollectANFVolumes = CollectANFVolumes
     }
 
     # Get Filesystems
+    if ($DetailedLog) {
+        WriteRunLog -category "INFO" -message ("Starting CollectFileSystems")
+    }
     $_CollectFileSystems = CollectFileSystems
 
     if (-not $RunLocally) {
         # Get Network Interfaces
+        if ($DetailedLog) {
+            WriteRunLog -category "INFO" -message ("Starting CollectNetworkInterfaces")
+        }
         $_CollectNetworkInterfaces = CollectNetworkInterfaces
 
         # Get Load Balancer - CollectNetworkInterfaces needs to run first to define variables
+        if ($DetailedLog) {
+            WriteRunLog -category "INFO" -message ("Starting CollectLoadBalancer")
+        }
         $_CollectLoadBalancer = CollectLoadBalancer
     }
 
     # run Quality Check
+    if ($DetailedLog) {
+        WriteRunLog -category "INFO" -message ("Starting RunQualityCheck")
+    }
     $_RunQualityCheck = RunQualityCheck
 
     # Collect VM info
+    if ($DetailedLog) {
+        WriteRunLog -category "INFO" -message ("Starting CollectVMInformationAdditional")
+    }
     $_CollectVMInfoAdditional = CollectVMInformationAdditional
 
     # Collect footer for support cases
+    if ($DetailedLog) {
+        WriteRunLog -category "INFO" -message ("Starting CollectFooter")
+    }
     $_CollectFooter = CollectFooter
 
 
@@ -4033,6 +4153,9 @@ foreach ($_qcrun in $_MultiRunData) {
 
 # load report in browser for GUI runs
 if ($GUI) {
+    if ($DetailedLog) {
+        WriteRunLog -category "INFO" -message ("Starting Browser with report")
+    }
     &(".\" + $_HTMLReportFileName)
 }
 
