@@ -1,5 +1,8 @@
 # Changelog
 
+# Version 2024121601
+* FIX: fixing a situation where the VG is not identified correct
+
 # Version 2024121001
 * NEW: adding more debugging messages
 

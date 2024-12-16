@@ -295,7 +295,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2024121001
+$scriptversion = 2024121601
 
 function LoadHTMLHeader {
 
@@ -648,7 +648,7 @@ function ConnectVM {
             if ($DetailedLog) {
                 WriteRunLog -category "INFO" -message ("ConnectVM - Connecting with New-SSHSession")
             }
-            $script:_sshsession = New-SSHSession -ComputerName $VMHostname -Credential $_credentials -Port $VMConnectionPort -AcceptKey -ConnectionTimeout 5 -ErrorAction SilentlyContinue
+                $script:_sshsession = New-SSHSession -ComputerName $VMHostname -Credential $_credentials -Port $VMConnectionPort -AcceptKey -ConnectionTimeout 5 -ErrorAction SilentlyContinue
             
         }
         
@@ -1720,8 +1720,18 @@ function CollectVMStorage {
                 }
             }
 
+            # checking for VG, direct device name (no partition)
             try {
-                $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -like ($_AzureDisk_row.DeviceName + "*")}).vg[0].vg_name
+                $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -eq $_AzureDisk_row.DeviceName}).vg[0].vg_name
+            }
+            catch {
+
+            }
+
+            try {
+                if (-not $_AzureDisk_row.VolumeGroup) {
+                    $_AzureDisk_row.VolumeGroup = ($script:_lvmconfig.report | Where-Object {$_.pv.pv_name -like ($_AzureDisk_row.DeviceName + "*")}).vg[0].vg_name
+                }
             }
             catch {
                 if (-not $RunLocally) {
