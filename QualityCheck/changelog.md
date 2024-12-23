@@ -1,5 +1,11 @@
 # Changelog
 
+# Version 2024122301
+* NEW: Detection for Azure Files shares
+* FIX: New NFS volume detection for AFS/ANF
+* UPDATE: reordering some columns for easier consumption of report
+* UPDATE: adding fixed parameter values to some functions
+
 # Version 2024121601
 * FIX: fixing a situation where the VG is not identified correct
 

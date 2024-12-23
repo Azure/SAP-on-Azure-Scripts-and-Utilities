@@ -295,7 +295,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2024121601
+$scriptversion = 2024122301
 
 function LoadHTMLHeader {
 
@@ -394,7 +394,7 @@ function WriteRunLog {
     [CmdletBinding()]
     param (
         [string]$message,
-        [string]$category="INFO"
+        [ValidateSet("INFO","WARNING","ERROR")][string]$category="INFO"
     )
 
     switch ($category) {
@@ -1415,7 +1415,7 @@ function PrepareCommand {
     [CmdletBinding()]
     param (
         [string]$Command,
-        [string]$CommandType = "OS",
+        [ValidateSet("OS","PowerShell")][string]$CommandType = "OS",
         [boolean]$RootRequired = $true,
         [string]$PostProcessingCommand = "",
         [boolean]$LongRunningCommand = $false
@@ -3050,7 +3050,7 @@ function CollectFileSystems {
         foreach ($_filesystem in $_filesystemfree) {
 
             # new empty object for file system entry
-            $_filesystem_row = "" | Select-Object Target,Source,FSType,VG,Options,Size,Free,Used,UsedPercent,MaxMBPS,MaxIOPS,StripeSize
+            $_filesystem_row = "" | Select-Object Target,Source,FSType,VG,Size,Free,Used,UsedPercent,MaxMBPS,MaxIOPS,StripeSize,Options
 
             $_filesystem_row.Target = $_filesystem.Mountpoint
             $_filesystem_row.Source = $_filesystem.Filesystem
@@ -3064,22 +3064,70 @@ function CollectFileSystems {
             $_filesystem_row.StripeSize = ($script:_lvmvolumes | Where-Object { $_.dmpath -eq $_filesystem.Filesystem}).stripesize
 
             if (($_filesystem_row.FSType -eq "nfs") -or ($_filesystem_row.FSType -eq "nfs4")) {
-                # NFS ANF volumes need throughput values from ANF infos
-                $_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_filesystem_row.Source.Equals($_.NFSAddress) }).THROUGHPUTMIBPS
-                if ((($script:_ANFVolumes | Where-Object { $_filesystem_row.Source.Equals($_.NFSAddress) }).THROUGHPUTMIBPS).count -eq 0) {
-                    # backup path for ANF volumes to have DNS names covered
-                    # this path will just compared the volume export name
-                    $_NFSmounttemp = ($_filesystem_row.Source.Split(":"))[1]
-                    if (![string]::IsNullOrEmpty($_NFSmounttemp)) {
-                        $_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_NFSmounttemp.Equals(($_.NFSAddress.Split(":"))[1]) }).THROUGHPUTMIBPS
-                        if ([string]::IsNullOrEmpty($_filesystem_row.MaxMBPS)) {
-                            $_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_NFSmounttemp.StartsWith(($_.NFSAddress.Split(":"))[1]) }).THROUGHPUTMIBPS
-                            if ([string]::IsNullOrEmpty($_filesystem_row.MaxMBPS)) {
-                                $_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_filesystem_row.Source.StartsWith($_.NFSAddress) }).THROUGHPUTMIBPS
-                            }
-                        }
-                    }
+                
+                # NEW NFS volume selection
+
+                $_nfsaddress = ($_filesystem_row.Source.Split(":"))[0]
+
+                if ([bool]$_nfsaddress -as [ipaddress]) {
+                    # NFS hostname is an ipaddress
+                    $_nfsipaddress = $_nfsaddress
+                    WriteRunLog -message "Found NFS share $($_filesystem_row.Source) with IP address $_nfsipaddress"
+                    $_nfsisdnsname = $true
                 }
+                else {
+                    # NFS hostname is a DNS name, need ip address
+                    $_nfsisdnsname = $false
+                    WriteRunLog -message "Found NFS share $($_filesystem_row.Source) with DNS name, getting IP address"
+                    # $_command = PrepareCommand -Command "ping -q -c 1 -t 1 -W 1 $_nfsaddress | grep -m 1 PING | cut -d '(' -f2 | cut -d ')' -f1" -CommandType "OS"
+                    $_command = PrepareCommand -Command "getent hosts qcswedenrhelhafiles.privatelink.file.core.windows.net | cut -d ' ' -f1" -CommandType "OS"
+                    $_nfsipaddress = RunCommand -p $_command
+                    WriteRunLog -message "Found NFS share $($_filesystem_row.Source) with IP address $_nfsipaddress"
+                }
+
+                $_nfssearch1=$_filesystem_row.Source
+                $_nfssearch2=$_nfsipaddress + ":" + ($_filesystem_row.Source.Split(":"))[1]
+
+
+
+                if ($_nfsipaddress.contains("privatelink")) {
+                    $_nfsprivatelink = $true
+                }
+                else {
+                    $_nfsprivatelink = $false
+                }
+
+                if ($_nfsipaddress.contains("file.core.windows.net")) {
+                    $_nfsazurefilesdns = $true
+                } else {
+                    $_nfsazurefilesdns = $false
+                }
+
+                try {
+                    $_filesystem_row.MaxMBPS = ($script:_nfsvolumes | Where-Object { $_nfssearch2.Startswith($_.NFSAddress) -or $_nfssearch1.Startswith($_.NFSAddressDNS)}).THROUGHPUTMIBPS
+                    $_filesystem_row.MaxIOPS = ($script:_nfsvolumes | Where-Object { $_nfssearch2.Startswith($_.NFSAddress) -or $_nfssearch1.Startswith($_.NFSAddressDNS)}).IOPS
+                } catch {
+                    # problem getting NFS volume
+                    WriteRunLog -message "Problem with getting Throughput and/or IOPS for NFS volume" -category WARNING
+                }
+
+
+                # NFS ANF volumes need throughput values from ANF infos
+                #$_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_filesystem_row.Source.Equals($_.NFSAddress) }).THROUGHPUTMIBPS
+                #if ((($script:_ANFVolumes | Where-Object { $_filesystem_row.Source.Equals($_.NFSAddress) }).THROUGHPUTMIBPS).count -eq 0) {
+                #    # backup path for ANF volumes to have DNS names covered
+                #    # this path will just compared the volume export name
+                #    $_NFSmounttemp = ($_filesystem_row.Source.Split(":"))[1]
+                #    if (![string]::IsNullOrEmpty($_NFSmounttemp)) {
+                #        $_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_NFSmounttemp.Equals(($_.NFSAddress.Split(":"))[1]) }).THROUGHPUTMIBPS
+                #        if ([string]::IsNullOrEmpty($_filesystem_row.MaxMBPS)) {
+                #            $_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_NFSmounttemp.StartsWith(($_.NFSAddress.Split(":"))[1]) }).THROUGHPUTMIBPS
+                #            if ([string]::IsNullOrEmpty($_filesystem_row.MaxMBPS)) {
+                #                $_filesystem_row.MaxMBPS = ($script:_ANFVolumes | Where-Object { $_filesystem_row.Source.StartsWith($_.NFSAddress) }).THROUGHPUTMIBPS
+                #            }
+                #        }
+                #    }
+                #}
             }
             else {
                 if ($_filesystem.Filesystem.StartsWith("/dev/sd") -or  $_filesystem.Filesystem.StartsWith("/dev/nvme0n")) {
@@ -3165,6 +3213,103 @@ function MiniFilterWindowsInfo {
     }
  }
 
+
+function CollectNFSVolumes {
+
+    $script:_nfsvolumes = @()
+    
+    # Get NFS data for ANF volumes
+    $_anfaccounts = @()
+    $_resourcegroups = Get-AzResourceGroup
+    foreach ($_resourcegroup in $_resourcegroups) {
+        $_anfaccount = Get-AzNetAppFilesAccount -ResourceGroupName $_resourcegroup.ResourceGroupName
+        if ($_anfaccount) {
+            $_anfaccounts += $_anfaccount
+
+            foreach ($_anfaccount in $_anfaccounts) {
+
+                $_anfpools = Get-AzNetAppFilesPool -ResourceGroupName $_anfaccount.ResourceGroupName -AccountName $_anfaccount.Name
+
+                foreach ($_anfpool in $_anfpools) {
+
+                    $_anfpool_split = $_anfpool.Name.Split("/")
+                    $_anfpoolname = $_anfpool_split[1]
+                    
+                    $_anfvolumes = Get-AzNetAppFilesVolume -ResourceGroupName $_anfaccount.ResourceGroupName -AccountName $_anfaccount.Name -PoolName $_anfpoolname
+
+
+                    foreach ($_anfvolume in $_anfvolumes) {
+
+                        $_nfsvolume_row = "" | Select-Object Name,Pool,ServiceLevel,ThroughputMibps,ProtocolTypes,NFSAddress,NFSAddressDNS,QoSType,Type,IOPS,Id
+
+                        $_nfsvolume_row.Type="ANF"
+                        $_nfsvolume_row.Id = $_anfvolume.Id
+                        $_nfsvolume_row.Name = ($_anfvolume.Name -split '/')[2]
+                        $_nfsvolume_row.Pool = $_anfpoolname
+                        $_nfsvolume_row.ServiceLevel = $_anfvolume.ServiceLevel
+                        $_nfsvolume_row.ProtocolTypes = [string]$_anfvolume.ProtocolTypes
+                        # $_ANFVolume_row.ThroughputMibps = [int]$_ANFVolume.ThroughputMibps
+                        $_nfsvolume_row.ThroughputMibps = (([int]$_anfvolume.ThroughputMibps, [int]$_anfvolume.ActualThroughputMibps) | Measure-Object -Maximum).Maximum
+                        $_nfsvolume_row.QoSType = $_ANFPool.QosType
+                        if ($_anfvolume.MountTargets.Count -gt 0){
+                            $_nfsvolume_row.NFSAddress = $_anfvolume.MountTargets[0].IpAddress + ":/" + $_anfvolume.CreationToken
+                        }
+
+                        $script:_nfsvolumes += $_nfsvolume_row
+
+                    }
+                }
+            }
+        }
+    }
+
+    $_storageaccounts = Get-AzStorageAccount | Where-Object {$_.Kind -eq "FileStorage"}
+
+    foreach ($_storageaccount in $_storageaccounts) {
+        $_shares = Get-AzRmStorageShare -ResourceGroupName $_storageaccount.ResourceGroupName -StorageAccountName $_storageaccount.StorageAccountName
+
+        foreach ($_share in $_shares) {
+            
+            if ($_share.EnabledProtocols -eq "NFS") {
+            
+                $_fileService = Get-AzStorageFileServiceProperty -ResourceGroupName $_storageaccount.ResourceGroupName -StorageAccountName $_storageaccount.StorageAccountName
+
+                # Get the DNS name for the storage account
+                $_dnsName = "$($storageAccount.StorageAccountName).file.core.windows.net"
+
+                # Get Private Endpoints for storage account
+                $_privateEndpoints = Get-AzPrivateEndpoint | Where-Object { $_.PrivateLinkServiceConnections.PrivateLinkServiceId -eq $_storageaccount.Id }
+                # Get all IP addresses for the Private Endpoint
+                $_privateEndpointsIPAddresses = $_privateEndpoints.CustomDnsConfigs.IpAddresses
+
+                foreach ($_privateEndpointsIPAddress in $_privateEndpointsIPAddresses) {
+                    $_nfsvolume_row = "" | Select-Object Name,Pool,ServiceLevel,ThroughputMibps,ProtocolTypes,NFSAddress,NFSAddressDNS,QoSType,Type,IOPS,Id
+
+                    $_nfsvolume_row.Type = "AFS"
+                    $_nfsvolume_row.Name = $_share.Name
+                    $_nfsvolume_row.Pool = $_storageaccount.StorageAccountName
+                    $_nfsvolume_row.ProtocolTypes = "NFS4.1"
+                    $_nfsvolume_row.ServiceLevel = $_share.AccessTier
+                    $_nfsvolume_row.NFSAddressDNS = $_dnsName + ":/" + $_storageaccount.StorageAccountName + "/" + $_share.Name
+                    $_nfsvolume_row.NFSAddress = $_privateEndpointsIPAddress + ":/" + $_storageaccount.StorageAccountName + "/" + $_share.Name
+                    $_nfsvolume_row.ThroughputMibps = 100 + [Math]::Ceiling(0.04 * $_share.QuotaGiB) + [Math]::Ceiling(0.06 * $_share.QuotaGiB)
+                    $_nfsvolume_row.IOPS = [math]::Min(3000 + 1 * $_share.QuotaGiB, 100000)
+                    $_nfsvolume_row.Id = $_storageaccount.Id
+
+                    $script:_nfsvolumes += $_nfsvolume_row
+
+                }
+            }
+        }
+    }
+
+    $_NFSVolumeOutput = $Script:_nfsvolumes | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""NFS"">NFS Volumes (Azure NetApp Files & Azure Files)</h2>" 
+
+    $script:_Content += "<a href=""#NFS"">NFS Volumes</a><br>"
+
+    return $_NFSVolumeOutput
+
+}
 # collect ANF volume information
 function CollectANFVolumes {
 
@@ -4037,11 +4182,18 @@ foreach ($_qcrun in $_MultiRunData) {
     $_CollectLVMVolumes = CollectLVMVolummes
 
     if (-not $RunLocally) {
-        # Get ANF Volume Info
+
+        # Get ANF and AFS Volumes (NFS)
         if ($DetailedLog) {
-            WriteRunLog -category "INFO" -message ("Starting CollectANFVolumes")
+            WriteRunLog -category "INFO" -message ("Starting CollectNFSVolumes")
         }
-        $_CollectANFVolumes = CollectANFVolumes
+        $_CollectNFSVolumes = CollectNFSVolumes
+
+        # Get ANF Volume Info
+        #if ($DetailedLog) {
+        #    WriteRunLog -category "INFO" -message ("Starting CollectANFVolumes")
+        #}
+        #$_CollectANFVolumes = CollectANFVolumes
     }
 
     # Get Filesystems
@@ -4088,7 +4240,7 @@ foreach ($_qcrun in $_MultiRunData) {
         WriteRunLog -category "INFO" -message ("Creating HTML File: " + $_HTMLReportFileName)
         $_RunLogContent = $script:_runlog | ConvertTo-Html -Property * -Fragment -PreContent "<br><h2 id=""RunLog"">RunLog</h2>"
 
-        $_HTMLReport = ConvertTo-Html -Body "$_Content $_CollectScriptParameter $_CollectVMInfo $_RunQualityCheck $_CollectFileSystems $_CollectVMStorage $_Features $_CollectLVMGroups $_CollectLVMVolumes $_CollectANFVolumes $_CollectNetworkInterfaces $_CollectLoadBalancer $_CollectVMInfoAdditional $_CollectFooter $_RunLogContent $_CollectPowerShell" -Head $script:_HTMLHeader -Title "Quality Check for SAP Worloads on Azure" -PostContent "<p id='CreationDate'>Creation Date: $(Get-Date)</p><p id='CreationDate'>Script Version: $scriptversion</p>"
+        $_HTMLReport = ConvertTo-Html -Body "$_Content $_CollectScriptParameter $_CollectVMInfo $_RunQualityCheck $_CollectFileSystems $_CollectVMStorage $_Features $_CollectLVMGroups $_CollectLVMVolumes $_CollectNFSVolumes $_CollectANFVolumes $_CollectNetworkInterfaces $_CollectLoadBalancer $_CollectVMInfoAdditional $_CollectFooter $_RunLogContent $_CollectPowerShell" -Head $script:_HTMLHeader -Title "Quality Check for SAP Worloads on Azure" -PostContent "<p id='CreationDate'>Creation Date: $(Get-Date)</p><p id='CreationDate'>Script Version: $scriptversion</p>"
         $_HTMLReportFileDate = $(Get-Date -Format "yyyyMMdd-HHmm")
         $_HTMLReportFileName = $AzVMName + "-" + $_HTMLReportFileDate + ".html"
 
