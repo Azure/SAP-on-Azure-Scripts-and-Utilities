@@ -1,5 +1,9 @@
 # Changelog
 
+* Version 2025022801
+* UPDATE: change script to be valid for 120 days instead of 60 days
+* FIX: if NIC was not in same RG the HA check for secondary IP would fail
+
 # Version 2024122301
 * NEW: Detection for Azure Files shares
 * FIX: New NFS volume detection for AFS/ANF

@@ -295,7 +295,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2024122301
+$scriptversion = 2025022801
 
 function LoadHTMLHeader {
 
@@ -3569,10 +3569,10 @@ function CheckForNewerVersion {
     }
 
     $_scriptdate = [DateTime]::ParseExact($scriptversion, 'yyyyMMddHH', (Get-Culture))
-    $_currentDate_minus60 = (Get-Date).AddDays(-60)
+    $_currentDate_minus120 = (Get-Date).AddDays(-120)
 
-    if ($_scriptdate -lt $_currentDate_minus60) {
-        WriteRunLog -category "ERROR" -message "You are running a script version that is older than 60 days, please update"
+    if ($_scriptdate -lt $_currentDate_minus120) {
+        WriteRunLog -category "ERROR" -message "You are running a script version that is older than 120 days, please update"
     }
 
 }
