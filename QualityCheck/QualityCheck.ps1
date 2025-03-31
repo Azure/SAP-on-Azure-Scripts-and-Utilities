@@ -295,7 +295,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2025022801
+$scriptversion = 2025033101
 
 function LoadHTMLHeader {
 
@@ -3080,7 +3080,7 @@ function CollectFileSystems {
                     $_nfsisdnsname = $false
                     WriteRunLog -message "Found NFS share $($_filesystem_row.Source) with DNS name, getting IP address"
                     # $_command = PrepareCommand -Command "ping -q -c 1 -t 1 -W 1 $_nfsaddress | grep -m 1 PING | cut -d '(' -f2 | cut -d ')' -f1" -CommandType "OS"
-                    $_command = PrepareCommand -Command "getent hosts qcswedenrhelhafiles.privatelink.file.core.windows.net | cut -d ' ' -f1" -CommandType "OS"
+                    $_command = PrepareCommand -Command "getent hosts $_nfsaddress | cut -d ' ' -f1" -CommandType "OS"
                     $_nfsipaddress = RunCommand -p $_command
                     WriteRunLog -message "Found NFS share $($_filesystem_row.Source) with IP address $_nfsipaddress"
                 }

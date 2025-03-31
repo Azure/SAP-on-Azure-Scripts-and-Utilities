@@ -1,6 +1,9 @@
 # Changelog
 
-* Version 2025022801
+# Version 2025033101
+* FIX: getent hosts for ANF had the wrong hostname in the search
+
+# Version 2025022801
 * UPDATE: change script to be valid for 120 days instead of 60 days
 * FIX: if NIC was not in same RG the HA check for secondary IP would fail
 
