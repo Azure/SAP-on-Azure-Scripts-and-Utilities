@@ -1,5 +1,8 @@
 # Changelog
 
+# Version 2025040601
+* FIX: with multiple network interface the Secondary IP check fails
+
 # Version 2025033101
 * FIX: getent hosts for ANF had the wrong hostname in the search
 

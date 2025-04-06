@@ -1,5 +1,5 @@
 {
-    "Version": 2025033101,
+    "Version": 2025040601,
 
     "PowerShellPrerequisits": [
         {
@@ -4292,7 +4292,7 @@
             "Role": ["DB","ASCS","APP"],
             "RunInLocalMode": false,
             "CommandType": "PowerShell",
-            "ProcessingCommand": "$VmNIC = (Get-AzVM -ResourceGroupName  $AzVMResourceGroup -VMName $AzVMName); $NICObject = Get-AzNetworkInterface -ResourceId $VmNIC.NetworkProfile.NetworkInterfaces.Id; if ($NICObject.IpConfigurations.Count -gt 1) { 'Yes' } else { 'No' }",
+            "ProcessingCommand": "$VmNIC = (Get-AzVM -ResourceGroupName  $AzVMResourceGroup -VMName $AzVMName); $NICObject = Get-AzNetworkInterface -ResourceId $VmNIC.NetworkProfile[0].NetworkInterfaces[0].Id; if ($NICObject.IpConfigurations.Count -gt 1) { 'Yes' } else { 'No' }",
             "PostProcessingCommand": "",
             "RootRequired": false,
             "ShowInReport": true,
