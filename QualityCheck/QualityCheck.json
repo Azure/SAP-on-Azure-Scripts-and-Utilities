@@ -7151,7 +7151,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent", "SBD"],
             "CommandType": "OS",
-            "ProcessingCommand": "cibadmin --query --xpath \"//nvpair[@name='priority-fencing-delay']\" | grep -o 'value=\"[^\"]*\"' | awk -F'\"' '{print $2}'",
+            "ProcessingCommand": "crm_attribute --type crm_config --name=priority-fencing-delay -q",
             "PostProcessingCommand": "",
             "ExpectedResult": "30",
             "ShowAlternativeRequirement": "",
