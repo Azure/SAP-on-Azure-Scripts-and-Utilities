@@ -7151,7 +7151,7 @@
             "HighAvailability": [true],
             "HighAvailabilityAgent": ["FencingAgent", "SBD"],
             "CommandType": "OS",
-            "ProcessingCommand": "crm_attribute --type crm_config --name=priority-fencing-delay -q",
+            "ProcessingCommand": "/usr/sbin/crm_attribute --type crm_config --name=priority-fencing-delay -q",
             "PostProcessingCommand": "",
             "ExpectedResult": "30",
             "ShowAlternativeRequirement": "",
@@ -7160,8 +7160,7 @@
             "ShowInReport": true,
             "AdditionalInfo": "Checking for Priority fencing delay",
             "VersionHistory": [
-                { "Date": "initial", "ChangeLog": "" },
-                { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
+                { "Date": "initial", "ChangeLog": "" }
             ],
             "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
