@@ -1,5 +1,8 @@
 # Changelog
 
+# Version 2025052401
+* UPDATE: add check for the priority-fencing-delay param for HANA database.
+
 # Version 2025040601
 * FIX: with multiple network interface the Secondary IP check fails
 
