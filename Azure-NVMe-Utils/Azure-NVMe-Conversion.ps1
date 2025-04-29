@@ -322,6 +322,18 @@ if (-not $IgnoreSKUCheck) {
     WriteRunLog -message "This might take a while ..."
     $_VMSKUs = Get-AzComputeResourceSku | Where-Object { $_.Locations -contains $_vm.Location -and $_.ResourceType.Contains("virtualMachines") }
     $_VMSKU = $_VMSKUs | Where-Object { $_.Name -eq $VMSize }
+
+    # Check if VM SKU is available in the VM's zone
+    if ($_VM.Zones -and $_VM.Zones.Count -gt 0) {
+        $vmZone = $_VM.Zones[0]
+        if (-not ($_VMSKU.LocationInfo | Where-Object { $_.Zones -contains $vmZone })) {
+            WriteRunLog -message "VM SKU $VMSize is not available in zone $vmZone" -category "ERROR"
+            exit
+        }
+        else {
+            WriteRunLog -message "VM SKU $VMSize is available in zone $vmZone"
+        }
+    }
     if ($_VMSKU) {
         WriteRunLog -message "Found VM SKU - Checking for Capabilities"
         $_supported_controller = ($_VMSKU.Capabilities | Where-Object { $_.Name -eq "DiskControllerTypes" }).Value
