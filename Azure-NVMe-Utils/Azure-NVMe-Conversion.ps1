@@ -334,6 +334,19 @@ if (-not $IgnoreSKUCheck) {
             WriteRunLog -message "VM SKU $VMSize is available in zone $vmZone"
         }
     }
+
+    # Check if both VMs have or do not have a resource disk
+    $originalVmHasResourceDisk = ($_VMSKUs | Where-Object { $_.Name -eq $script:_original_vm_size }).Capabilities | Where-Object { $_.Name -eq "EphemeralOSDiskSupported" -and $_.Value -eq "True" }
+    $newVmHasResourceDisk = ($_VMSKU.Capabilities | Where-Object { $_.Name -eq "EphemeralOSDiskSupported" -and $_.Value -eq "True" })
+
+    if (($originalVmHasResourceDisk -and -not $newVmHasResourceDisk) -or (-not $originalVmHasResourceDisk -and $newVmHasResourceDisk)) {
+        WriteRunLog -message "Mismatch in resource disk support between original VM size ($script:_original_vm_size) and new VM size ($VMSize)." -category "ERROR"
+        exit
+    }
+    else {
+        WriteRunLog -message "Resource disk support matches between original VM size and new VM size."
+    }
+    
     if ($_VMSKU) {
         WriteRunLog -message "Found VM SKU - Checking for Capabilities"
         $_supported_controller = ($_VMSKU.Capabilities | Where-Object { $_.Name -eq "DiskControllerTypes" }).Value
