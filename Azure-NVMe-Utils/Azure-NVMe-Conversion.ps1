@@ -346,7 +346,7 @@ if (-not $IgnoreSKUCheck) {
     else {
         WriteRunLog -message "Resource disk support matches between original VM size and new VM size."
     }
-    
+
     if ($_VMSKU) {
         WriteRunLog -message "Found VM SKU - Checking for Capabilities"
         $_supported_controller = ($_VMSKU.Capabilities | Where-Object { $_.Name -eq "DiskControllerTypes" }).Value
@@ -839,10 +839,20 @@ if ($StartVM) {
         }
         else {
             WriteRunLog -message "Error starting VM $VMName" -category "ERROR"
+            if ($NewControllerType -eq "NVMe") {
+                WriteRunLog -message "If you have any issues after the conversion you can revert the changes by running the script with the old settings"
+                WriteRunLog -message "Here is the command to revert the changes:" -category "IMPORTANT"
+                WriteRunLog -message "   .\Azure-NVMe-Conversion.ps1 -ResourceGroupName $ResourceGroupName -VMName $VMName -NewControllerType SCSI -VMSize $script:_original_vm_size -StartVM"
+            }
             exit
         }
     } catch {
         WriteRunLog -message "Error starting VM $VMName" -category "ERROR"
+        if ($NewControllerType -eq "NVMe") {
+            WriteRunLog -message "If you have any issues after the conversion you can revert the changes by running the script with the old settings"
+            WriteRunLog -message "Here is the command to revert the changes:" -category "IMPORTANT"
+            WriteRunLog -message "   .\Azure-NVMe-Conversion.ps1 -ResourceGroupName $ResourceGroupName -VMName $VMName -NewControllerType SCSI -VMSize $script:_original_vm_size -StartVM"
+        }
         WriteRunLog $_.Exception.Message "ERROR"
         exit
     }
