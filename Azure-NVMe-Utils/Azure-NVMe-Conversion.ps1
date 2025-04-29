@@ -575,7 +575,7 @@ check_nvme_driver() {
                 fi
             fi
             ;;
-        redhat|centos|rocky|suse|sles)
+        redhat|centos|rocky|suse|sles|ol)
             if lsinitrd | grep -q nvme; then
                 echo "[INFO] NVMe driver found in initrd/initramfs."
             else
@@ -615,8 +615,28 @@ check_nvme_timeout() {
                     update-grub
                     ;;
                 redhat|centos|rocky|suse|sles)
-                    sed -i 's/GRUB_CMDLINE_LINUX="/GRUB_CMDLINE_LINUX="nvme_core.io_timeout=240 /g' /etc/default/grub
-                    grub2-mkconfig -o /boot/grub2/grub.cfg
+                    if [ -f /etc/default/grub ]; then
+                        sed -i 's/GRUB_CMDLINE_LINUX="/GRUB_CMDLINE_LINUX="nvme_core.io_timeout=240 /g' /etc/default/grub
+                        grub2-mkconfig -o /boot/grub2/grub
+                    elif [ -f /etc/default/grub.conf ]; then
+                        sed -i 's/GRUB_CMDLINE_LINUX="/GRUB_CMDLINE_LINUX="nvme_core.io_timeout=240 /g' /etc/default/grub.conf
+                        grub2-mkconfig -o /boot/grub2/grub.cfg
+                    else
+                        echo "[ERROR] No grub config found."
+                        exit 1
+                    fi
+                    ;;
+                ol)
+                    if [ -f /etc/default/grub ]; then
+                        sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="/GRUB_CMDLINE_LINUX_DEFAULT="nvme_core.io_timeout=240 /g' /etc/default/grub
+                        grub2-mkconfig -o /boot/grub2/grub
+                    elif [ -f /etc/default/grub.conf ]; then
+                        sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="/GRUB_CMDLINE_LINUX_DEFAULT="nvme_core.io_timeout=240 /g' /etc/default/grub.conf
+                        grub2-mkconfig -o /boot/grub2/grub.cfg
+                    else
+                        echo "[ERROR] No grub config found."
+                        exit 1
+                    fi
                     ;;
                 *)
                     echo "[ERROR] Unsupported distribution for nvme_core.io_timeout fix."
