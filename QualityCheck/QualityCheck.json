@@ -1,5 +1,5 @@
 {
-    "Version": 2025040601,
+    "Version": 2025052401,
 
     "PowerShellPrerequisits": [
         {
@@ -7133,6 +7133,34 @@
             "VersionHistory": [
                 { "Date": "initial", "ChangeLog": "" },
                 { "Date": "20231121", "ChangeLog": "add Premium SSD v2 and ANF" }
+            ],
+            "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-pacemaker",
+            "SAPNote": ""
+        },
+        {
+            "CheckID": "HDB-HA-RH-0008",
+            "Description": "Priority fencing delay",
+            "OS": ["RedHat", "SUSE"],
+            "OSVersion": ["all"],
+            "HardwareType": ["VM", "HLI"],
+            "StorageType": ["Premium_LRS","UltraSSD_LRS","ANF","PremiumV2_LRS"],
+            "Role": ["DB"],
+            "DB": ["HANA"],
+            "RunInLocalMode": true,
+            "ErrorCategory": "INFO",
+            "HighAvailability": [true],
+            "HighAvailabilityAgent": ["FencingAgent", "SBD"],
+            "CommandType": "OS",
+            "ProcessingCommand": "/usr/sbin/crm_attribute --type crm_config --name=priority-fencing-delay -q",
+            "PostProcessingCommand": "",
+            "ExpectedResult": "30",
+            "ShowAlternativeRequirement": "",
+            "ShowAlternativeResult": "",
+            "RootRequired": true,
+            "ShowInReport": true,
+            "AdditionalInfo": "Checking for Priority fencing delay",
+            "VersionHistory": [
+                { "Date": "initial", "ChangeLog": "" }
             ],
             "MicrosoftDocs": "https://learn.microsoft.com/en-us/azure/sap/workloads/high-availability-guide-rhel-pacemaker",
             "SAPNote": ""
