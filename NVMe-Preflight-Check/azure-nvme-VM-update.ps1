@@ -35,7 +35,9 @@ param (
     # Write Log File
     [bool]$write_logfile = $false,
     # Ignore VM availability check
-    [switch]$ignore_vmsku_check
+    [switch]$ignore_vmsku_check,
+    # print SKU capabilities
+    [switch]$print_vmsku_capabilities
 )
 
 # RunLog function for more detailed data during execution
@@ -169,9 +171,17 @@ if (-not $ignore_vmsku_check) {
     $_VMSKU = $_VMSKUs | Where-Object { $_.Name -eq $vm_size_change_to }
     if ($_VMSKU) {
         WriteRunLog -category "INFO" -message "Found VM SKU - Checking for Capabilities"
+
+        if ($print_vmsku_capabilities) {
+            foreach ($capability in $_VMSKU.Capabilities) {
+                WriteRunLog -category "INFO" -message ("  Capability: " + $capability.name + " - " + $capability.value)
+            }
+        }
+
         $_supported_controller = ($_VMSKU.Capabilities | Where-Object { $_.Name -eq "DiskControllerTypes" }).Value
 
-        if ([string]::IsNullOrEmpty($_supported_controller)) {
+        #only check for supported capabilities if we're going to NVMe
+        if ([string]::IsNullOrEmpty($_supported_controller) -and $disk_controller_change_to -eq "NVMe") {
             WriteRunLog -category "ERROR" -message "VM SKU doesn't have supported capabilities"
             $_continue -= 100
         }
