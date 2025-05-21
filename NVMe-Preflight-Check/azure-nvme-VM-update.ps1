@@ -110,7 +110,7 @@ if ($os_disk_name) {
     # found OS Disk
     WriteRunLog -category "INFO" -message "OS Disk found"
 }
-else 
+else
 {
     WriteRunLog -category "ERROR" -message "Please check the OS Disk"
 }
@@ -178,18 +178,34 @@ if (-not $ignore_vmsku_check) {
             }
         }
 
-        $_supported_controller = ($_VMSKU.Capabilities | Where-Object { $_.Name -eq "DiskControllerTypes" }).Value
+        #Certain SKUs have a capability called DiskControllerTypes, but only for newer skus.  if DiskControllerTypes
+        #exists, use it, otherwise assume SCSI only.
+        $_supports_to_nvme = $false
+        $_supports_to_scsi = $false
+        if ($_VMSKU.Capabilities.name -contains "DiskControllerTypes") {
+            $_all_controller_types = $_VMSKU.Capabilities.Where({$_.name -eq "DiskControllerTypes"}).Value
+
+            $_supports_to_nvme = $_all_controller_types.ToLower().Contains("nvme")
+            $_supports_to_scsi = $_all_controller_types.ToLower().Contains("scsi")
+        }
+        else {
+            $_supports_to_scsi = $true
+        }
+        #$_supported_controller = ($_VMSKU.Capabilities | Where-Object { $_.Name -eq "DiskControllerTypes" }).Value
 
         #only check for supported capabilities if we're going to NVMe
-        if ([string]::IsNullOrEmpty($_supported_controller) -and $disk_controller_change_to -eq "NVMe") {
-            WriteRunLog -category "ERROR" -message "VM SKU doesn't have supported capabilities"
+        if (($disk_controller_change_to -eq "NVMe") -and (-not $_supports_to_nvme)) {
+            WriteRunLog -category "ERROR" -message "VM SKU doesn't have supported NVMe capabilities"
+            $_continue -= 100
+        } elseif (($disk_controller_change_to -eq "SCSI") -and (-not $_supports_to_scsi)) {
+            WriteRunLog -category "ERROR" -message "VM SKU doesn't have supported SCSI capabilities"
             $_continue -= 100
         }
         else {
-            WriteRunLog -category "INFO" -message "VM SKU has supported capabilities"
+            #WriteRunLog -category "INFO" -message "VM SKU has supported capabilities"
             if ($disk_controller_change_to -eq "NVMe") {
                 # NVMe destination
-                if ($_supported_controller.Contains("NVMe") ) {
+                if ($_supports_to_nvme) {
                     WriteRunLog -category "INFO" -message "VM supports NVMe"
                     $_continue += 1
                 }
@@ -199,9 +215,16 @@ if (-not $ignore_vmsku_check) {
                 }
             }
             else {
-                # SCSI destination
-                $_continue += 1 # all VMs support SCSI
-            }  
+                # SCSI destination - not all VMs support SCSI
+                if ($_supports_to_scsi) {
+                    WriteRunLog -category "INFO" -message "VM supports SCSI"
+                    $_continue += 1
+                }
+                else {
+                    WriteRunLog -category "ERROR" -message "VM doesn't support SCSI"
+                    $_continue -= 100
+                }
+            }
         }
     }
     else {
@@ -218,7 +241,7 @@ if ($_vm.SecurityProfile.SecurityType -eq "TrustedLaunch") {
     WriteRunLog -category "ERROR" -message "The VM is configured with Trusted Launch, NVMe doesn't support trusted launch."
     $_continue -= 100
 }
-
+exit
 # checking if the $_continue variable is positive or negative
 # for any case where it is negative a pre-requisit hasn't been met
 if ($_continue -gt 0) {
