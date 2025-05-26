@@ -26,6 +26,8 @@
         Ignore Windows version check
     .PARAMETER FixOperatingSystemSettings:
         Fix operating system settings
+    .PARAMETER IgnoreAzureModuleCheck:
+        Do not check if the Azure module is installed and the version is correct
 
     .INPUTS
         None.
@@ -67,7 +69,9 @@ param (
     # Ignore Windows Operating System Version Check
     [switch]$IgnoreWindowsVersionCheck,
     # Fix operating system settings
-    [switch]$FixOperatingSystemSettings
+    [switch]$FixOperatingSystemSettings,
+    # Ignore Azure Module Check
+    [switch]$IgnoreAzureModuleCheck
 )
 
 # function to write log messages
@@ -148,15 +152,51 @@ function AskToContinue {
 }
 
 
+function CheckForNewerVersion {
+
+    # download online version
+    # and compare it with version numbers in files to see if there is a newer version available on GitHub
+    $ConfigFileUpdateURL = "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/main/Azure-NVMe-Utils/version.json"
+    try {
+        $OnlineFileVersion = (Invoke-WebRequest -Uri $ConfigFileUpdateURL -UseBasicParsing -ErrorAction SilentlyContinue).Content  | ConvertFrom-Json
+
+        if ($OnlineFileVersion.Version -gt $scriptversion) {
+            WriteRunLog -category "WARNING" -message "There is a newer version of Azure-NVMe-Utils available on GitHub, please consider downloading it"
+            WriteRunLog -category "WARNING" -message "You can download it on https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities/tree/main/Azure-NVMe-Utils"
+            WriteRunLog -category "WARNING" -message "Script will continue"
+            Start-Sleep -Seconds 3
+        }
+
+    }
+    catch {
+        WriteRunLog -category "WARNING" -message "Can't connect to GitHub to check version"
+    }
+    if (-not $RunLocally) {
+        WriteRunLog -category "INFO" -message "Script Version $scriptversion"
+    }
+
+    #$_scriptdate = [DateTime]::ParseExact($scriptversion, 'yyyyMMddHH', (Get-Culture))
+    #$_currentDate_minus120 = (Get-Date).AddDays(-120)
+
+    #if ($_scriptdate -lt $_currentDate_minus120) {
+    #    WriteRunLog -category "ERROR" -message "You are running a script version that is older than 120 days, please update"
+    #}
+
+}
+
+
 ##############################################################################################################
 # Main Script
 ##############################################################################################################
+
+$_version = "2025052601" # version of the script
 
 # creating variable for log file
 $script:_runlog = @()
 $script:_starttime = Get-Date
 WriteRunLog -message "Starting script Azure-NVMe-Conversion.ps1"
 WriteRunLog -message "Script started at $script:_starttime"
+WriteRunLog -message "Script version: $_version"
 $script:_logfile = "Azure-NVMe-Conversion-$($VMName)-$((Get-Date).ToString('yyyyMMdd-HHmmss')).log"
 if ($WriteLogfile) {
     WriteRunLog -message "Log file will be written to $script:_logfile"
@@ -170,15 +210,24 @@ foreach ($key in $MyInvocation.BoundParameters.keys)
     WriteRunLog -message "  $key -> $value"
 }
 
+CheckForNewerVersion
+
 # Check if breaking change warning is enabled
 $_breakingchangewarning = Get-AzConfig -DisplayBreakingChangeWarning
 if ($_breakingchangewarning.Value -eq $true) {
     Update-AzConfig -DisplayBreakingChangeWarning $false
 }
 
-
 # Check module versions
-CheckInstalledModules -ModuleName "Az" -ModuleVersion "11.0"
+#CheckInstalledModules -ModuleName "Az" -ModuleVersion "11.0"
+if (-not $IgnoreAzureModuleCheck) {
+    CheckInstalledModules -ModuleName "Az.Compute" -ModuleVersion "9.0"
+    CheckInstalledModules -ModuleName "Az.Accounts" -ModuleVersion "4.0"
+    CheckInstalledModules -ModuleName "Az.Resources" -ModuleVersion "7.0"
+}
+else {
+    WriteRunLog -message "Skipping Azure module check"
+}
 
 # Getting Azure Context
 try {
@@ -320,7 +369,7 @@ try {
 if (-not $IgnoreSKUCheck) {
     WriteRunLog -message "Getting available SKU resources"
     WriteRunLog -message "This might take a while ..."
-    $_VMSKUs = Get-AzComputeResourceSku | Where-Object { $_.Locations -contains $_vm.Location -and $_.ResourceType.Contains("virtualMachines") }
+    $_VMSKUs = Get-AzComputeResourceSku -Location $_vm.Location | Where-Object { $_.ResourceType.Contains("virtualMachines") }
     $_VMSKU = $_VMSKUs | Where-Object { $_.Name -eq $VMSize }
 
     # Check if VM SKU is available in the VM's zone
@@ -336,11 +385,26 @@ if (-not $IgnoreSKUCheck) {
     }
 
     # Check if both VMs have or do not have a resource disk
-    $originalVmHasResourceDisk = ($_VMSKUs | Where-Object { $_.Name -eq $script:_original_vm_size }).Capabilities | Where-Object { $_.Name -eq "EphemeralOSDiskSupported" -and $_.Value -eq "True" }
-    $newVmHasResourceDisk = ($_VMSKU.Capabilities | Where-Object { $_.Name -eq "EphemeralOSDiskSupported" -and $_.Value -eq "True" })
+    # $originalVmHasResourceDisk = ($_VMSKUs | Where-Object { $_.Name -eq $script:_original_vm_size }).Capabilities | Where-Object { $_.Name -eq "EphemeralOSDiskSupported" -and $_.Value -eq "True" }
+    # $newVmHasResourceDisk = ($_VMSKU.Capabilities | Where-Object { $_.Name -eq "EphemeralOSDiskSupported" -and $_.Value -eq "True" })
 
-    if (($originalVmHasResourceDisk -and -not $newVmHasResourceDisk) -or (-not $originalVmHasResourceDisk -and $newVmHasResourceDisk)) {
+    #if (($originalVmHasResourceDisk -and -not $newVmHasResourceDisk) -or (-not $originalVmHasResourceDisk -and $newVmHasResourceDisk)) {
+    #    WriteRunLog -message "Mismatch in resource disk support between original VM size ($script:_original_vm_size) and new VM size ($VMSize)." -category "ERROR"
+    #    exit
+    #}
+    #else {
+    #    WriteRunLog -message "Resource disk support matches between original VM size and new VM size."
+    #}
+
+    # Check if VM SKU has supported capabilities
+    $_originalVMHasResourceDisk = ($_VMSKUs | Where-Object { $_.Name -eq $script:_original_vm_size }).Capabilities | Where-Object { $_.Name -eq "MaxResourceVolumeMB" -and $_.Value -eq 0 }
+    $_newVMHasResourceDisk = ($_VMSKU.Capabilities | Where-Object { $_.Name -eq "MaxResourceVolumeMB" -and $_.Value -eq 0 })
+
+    if (($_originalVMHasResourceDisk -and -not $_newVMHasResourceDisk) -or (-not $_originalVMHasResourceDisk -and $_newVMHasResourceDisk)) {
         WriteRunLog -message "Mismatch in resource disk support between original VM size ($script:_original_vm_size) and new VM size ($VMSize)." -category "ERROR"
+        WriteRunLog -message "Please check the VM sizes and their capabilities." -category "ERROR"
+        WriteRunLog -message "IMPORTANT: If you try to convert to a v6 VM size (e.g. Standard_E4ds_v6 or Standard_E4ads_v6) an error might occur." -category "ERROR"
+        WriteRunLog -message "We are working on a fix for this issue." -category "ERROR"
         exit
     }
     else {
