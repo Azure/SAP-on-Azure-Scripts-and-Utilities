@@ -1,5 +1,8 @@
 # Changelog
 
+# Version 2025052601
+* UPDATE: new default value for latency, new 500ms, old 120ms due to some connectivity issues
+
 # Version 2025050801
 * UPDATE: add check for the priority-fencing-delay param for HANA database.
 
