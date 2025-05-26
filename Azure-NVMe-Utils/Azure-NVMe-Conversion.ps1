@@ -160,7 +160,7 @@ function CheckForNewerVersion {
     try {
         $OnlineFileVersion = (Invoke-WebRequest -Uri $ConfigFileUpdateURL -UseBasicParsing -ErrorAction SilentlyContinue).Content  | ConvertFrom-Json
 
-        if ($OnlineFileVersion.Version -gt $scriptversion) {
+        if ($OnlineFileVersion.Version -gt $script:_version) {
             WriteRunLog -category "WARNING" -message "There is a newer version of Azure-NVMe-Utils available on GitHub, please consider downloading it"
             WriteRunLog -category "WARNING" -message "You can download it on https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities/tree/main/Azure-NVMe-Utils"
             WriteRunLog -category "WARNING" -message "Script will continue"
@@ -172,7 +172,7 @@ function CheckForNewerVersion {
         WriteRunLog -category "WARNING" -message "Can't connect to GitHub to check version"
     }
     if (-not $RunLocally) {
-        WriteRunLog -category "INFO" -message "Script Version $scriptversion"
+        WriteRunLog -category "INFO" -message "Script Version $script:_version"
     }
 
     #$_scriptdate = [DateTime]::ParseExact($scriptversion, 'yyyyMMddHH', (Get-Culture))
