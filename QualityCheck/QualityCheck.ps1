@@ -295,7 +295,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2025050801
+$scriptversion = 2025052601
 
 function LoadHTMLHeader {
 
@@ -587,7 +587,7 @@ function CheckTCPConnectivity {
                 # connected
                 $script:_CheckTCPConnectivityResult = $true
 
-                $_minimumlatency = 120
+                $_minimumlatency = 500
 
                 $_ping = Test-Connection -Ping -IPv4 -TargetName $VMHostname -Count 1
                 

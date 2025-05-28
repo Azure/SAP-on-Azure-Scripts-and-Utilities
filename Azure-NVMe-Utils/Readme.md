@@ -62,7 +62,7 @@ Select-AzSubscription -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 | `-IgnoreWindowsVersionCheck`   | Ignore the Windows Version check                                             | No       |
 | `-FixOperatingSystemSettings`  | Automatically fix the OS settings using Azure RunCommands                    | No       |
 | `-WriteLogfile`                | Create a Log File                                                            | No       |
-
+| `-IgnoreAzureModuleCheck`      | Do not run the check for installed Azure modules                             | No       |
 
 ## Contributing
 
