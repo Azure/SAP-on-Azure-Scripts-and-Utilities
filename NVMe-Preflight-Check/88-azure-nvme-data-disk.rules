@@ -13,10 +13,11 @@ LABEL="azure_nvme_remote_start"
 KERNEL=="nvme*[0-9]n1", ENV{DEVTYPE}=="disk", ENV{ID_MODEL}=="MSFT NVMe Accelerator v1.0", SYMLINK+="disk/azure/root", GOTO="azure_udev_end"
 # create os disk symlink partitions
 KERNEL=="nvme*[0-9]n1p[0-9]", ENV{DEVTYPE}=="partition", ENV{ID_MODEL}=="MSFT NVMe Accelerator v1.0", SYMLINK+="disk/azure/root-part%n", GOTO="azure_udev_end"
+
 # create SYMLINKs for NVMe disks mapping to LUN IDs from Azure portal by subtracting 2 (NVMe Namespace ID starts at 1, first data disk has Namespace ID 2 which matches LUN ID 0)
-KERNEL=="nvme*[0-9]n*[0-9]", ENV{DEVTYPE}=="disk", ENV{ID_MODEL}=="MSFT NVMe Accelerator v1.0", ENV{ID_SERIAL_SHORT}=="?*", ENV{ID_NSID}=="?*", OPTIONS="string_escape=replace", ENV{ID_SERIAL}="$env{ID_MODEL}_$env{ID_SERIAL_SHORT}_$env{ID_NSID}", PROGRAM+="/bin/sh -c 'let LUNID=$env{ID_NSID}-2; echo $LUNID'", SYMLINK+="disk/azure/data/by-lun/%c", GOTO="azure_udev_end"
+KERNEL=="nvme*[0-9]n*[0-9]", ENV{DEVTYPE}=="disk", ENV{ID_MODEL}=="MSFT NVMe Accelerator v1.0", ENV{ID_SERIAL_SHORT}=="?*", OPTIONS="string_escape=replace", PROGRAM="/bin/bash -c 'nsid=${ID_PATH##*-}; echo $((nsid - 2))'", SYMLINK+="disk/azure/data/by-lun/%c", GOTO="azure_udev_end"
 # create SYMLINKs for NVMe partitions
-KERNEL=="nvme*[0-9]n*[0-9]p[0-9]", ENV{DEVTYPE}=="partition", ENV{ID_MODEL}=="MSFT NVMe Accelerator v1.0", ENV{ID_SERIAL_SHORT}=="?*", ENV{ID_NSID}=="?*", OPTIONS="string_escape=replace", ENV{ID_SERIAL}="$env{ID_MODEL}_$env{ID_SERIAL_SHORT}_$env{ID_NSID}", PROGRAM+="/bin/sh -c 'let LUNID=$env{ID_NSID}-2; echo $LUNID'", SYMLINK+="disk/azure/data/by-lun/%c-part%n", GOTO="azure_udev_end"
+KERNEL=="nvme*[0-9]n*[0-9]p[0-9]", ENV{DEVTYPE}=="partition", ENV{ID_MODEL}=="MSFT NVMe Accelerator v1.0", ENV{ID_SERIAL_SHORT}=="?*", OPTIONS="string_escape=replace", PROGRAM="/bin/bash -c 'nsid=${ID_PATH##*-}; echo $((nsid - 2))'", SYMLINK+="disk/azure/data/by-lun/%c-part%n", GOTO="azure_udev_end"
 GOTO="azure_udev_end"
 
 LABEL="azure_nvme_end"
