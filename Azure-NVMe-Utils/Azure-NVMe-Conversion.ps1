@@ -532,68 +532,74 @@ if ($_os -eq "Windows") {
         WriteRunLog -message "Starting OS section"
 
         try {
-            if ($FixOperatingSystemSettings) {
-                if ($IgnoreOSCheck) {
-                    WriteRunLog -message "Ignore OS Check is not supported with -FixOperatingSystemSettings switch" -category "ERROR"
-                    exit
+
+            if (-not $IgnoreOSCheck) {
+                if ($FixOperatingSystemSettings) {
+                    WriteRunLog -message "Fixing operating system settings"
+                    WriteRunLog -message "Running command to set stornvme to boot"
+                    WriteRunLog -message "   sc.exe config stornvme start=boot"
+                    $RunCommandResult = Invoke-AzVMRunCommand -ResourceGroupName $ResourceGroupName -VMName $VMName -CommandId 'RunPowerShellScript' -ScriptString 'Start-Process -FilePath "C:\Windows\System32\sc.exe" -ArgumentList "config stornvme start=boot"'
                 }
-                WriteRunLog -message "Fixing operating system settings"
-                WriteRunLog -message "Running command to set stornvme to boot"
-                WriteRunLog -message "   sc.exe config stornvme start=boot"
-                $RunCommandResult = Invoke-AzVMRunCommand -ResourceGroupName $ResourceGroupName -VMName $VMName -CommandId 'RunPowerShellScript' -ScriptString 'Start-Process -FilePath "C:\Windows\System32\sc.exe" -ArgumentList "config stornvme start=boot"'
-            }
-            else {
-                if (-not $IgnoreSKUCheck) {
-                    WriteRunLog -message "Collecting details from OS"
-                    $_error = 0
-                    $_okay = 0
-                    $_scriptoutput = ""
-                    $RunCommandResult = Invoke-AzVMRunCommand -ResourceGroupName $ResourceGroupName -VMName $VMName -CommandId 'RunPowerShellScript' -ScriptString $Check_Windows_Script
+                else {
+                    if (-not $IgnoreSKUCheck) {
+                        WriteRunLog -message "Collecting details from OS"
+                        $_error = 0
+                        $_okay = 0
+                        $_scriptoutput = ""
+                        $RunCommandResult = Invoke-AzVMRunCommand -ResourceGroupName $ResourceGroupName -VMName $VMName -CommandId 'RunPowerShellScript' -ScriptString $Check_Windows_Script
 
-                    $_result = ($RunCommandResult.Value | ForEach-Object { $_.Message }) -split "`n"
+                        $_result = ($RunCommandResult.Value | ForEach-Object { $_.Message }) -split "`n"
 
-                    foreach ($_line in $_result) {
-                        WriteRunLog -message ("   Script output: " + $_line)
-                        if ($_line.Contains("OK") -or $_line.Contains("ERROR")) {
-                            $_scriptoutput += $_line + "`n"
+                        foreach ($_line in $_result) {
+                            WriteRunLog -message ("   Script output: " + $_line)
+                            if ($_line.Contains("OK") -or $_line.Contains("ERROR")) {
+                                $_scriptoutput += $_line + "`n"
 
-                            if ($_line.Contains("Start:")) {
-                                if ($_line.Contains("ERROR")) {
-                                    WriteRunLog -message "Start is not set to boot in the operating system" -category "ERROR"
-                                    $_error++
+                                if ($_line.Contains("Start:")) {
+                                    if ($_line.Contains("ERROR")) {
+                                        WriteRunLog -message "Start is not set to boot in the operating system" -category "ERROR"
+                                        $_error++
+                                    }
+                                    else {
+                                        WriteRunLog -message "Start is set to boot in the operating system" -category "INFO"
+                                        $_okay++
+                                    }
                                 }
-                                else {
-                                    WriteRunLog -message "Start is set to boot in the operating system" -category "INFO"
-                                    $_okay++
-                                }
-                            }
 
-                            if ($_line.Contains("StartOverride:")) {
-                                if ($_line.Contains("ERROR")) {
-                                    WriteRunLog -message "StartOverride is set in the operating system" -category "ERROR"
-                                    $_error++
-                                }
-                                else {
-                                    WriteRunLog -message "StartOverride does not exist" -category "INFO"
-                                    $_okay++
+                                if ($_line.Contains("StartOverride:")) {
+                                    if ($_line.Contains("ERROR")) {
+                                        WriteRunLog -message "StartOverride is set in the operating system" -category "ERROR"
+                                        $_error++
+                                    }
+                                    else {
+                                        WriteRunLog -message "StartOverride does not exist" -category "INFO"
+                                        $_okay++
+                                    }
                                 }
                             }
                         }
+
+                        WriteRunLog -message "Windows OS Check result:"
+                        WriteRunLog -message "Errors: $_error - OK: $_okay"
+
+                        if ($_error -gt 0) {
+                            WriteRunLog -message "Operating system does not seem to be ready, it might not after the conversion" -category "WARNING"
+                            WriteRunLog -message "Please check the operating system settings" -category "WARNING"
+                            WriteRunLog -message "If you want to continue, please use the -FixOperatingSystemSettings switch" -category "IMPORTANT"
+                            WriteRunLog -message "alternative: you can run 'sc.exe config stornvme start=boot' in the operating system and continue or stop the script" -category "IMPORTANT"
+                            AskToContinue -message "Do you want to continue?"
+                        }
                     }
-
-                    WriteRunLog -message "Windows OS Check result:"
-                    WriteRunLog -message "Errors: $_error - OK: $_okay"
-
-                    if ($_error -gt 0) {
-                        WriteRunLog -message "Operating system does not seem to be ready, it might not after the conversion" -category "WARNING"
-                        WriteRunLog -message "Please check the operating system settings" -category "WARNING"
-                        WriteRunLog -message "If you want to continue, please use the -FixOperatingSystemSettings switch" -category "IMPORTANT"
-                        WriteRunLog -message "alternative: you can run 'sc.exe config stornvme start=boot' in the operating system and continue or stop the script" -category "IMPORTANT"
-                        AskToContinue -message "Do you want to continue?"
+                    else {
+                        WriteRunLog -message "Skipping OS Check, assuming that the operating system is ready for conversion"
                     }
                 }
-                else {
-                    WriteRunLog -message "Skipping OS Check, assuming that the operating system is ready for conversion"
+            }
+            else {
+                WriteRunLog -message "Skipping OS Check, assuming that the operating system is ready for conversion"
+                if ($FixOperatingSystemSettings) {
+                    WriteRunLog -message "Fixing operating system settings not supported with skipped OS Check" -category "ERROR"
+                    exit
                 }
             }
         } catch {
@@ -821,7 +827,7 @@ exit 0
 $linux_fix_script = $linux_check_script.Replace("fix=false","fix=true")
 
         if ($NewControllerType -eq "NVMe") {
-            if ($IgnoreOSCheck) {
+            if (-not $IgnoreOSCheck) {
 
                 if ($FixOperatingSystemSettings) {
                     # Invoke the Run Command
@@ -867,7 +873,11 @@ $linux_fix_script = $linux_check_script.Replace("fix=false","fix=true")
                 }
             }
             else {
-                WriteRunLog -message "Ignoring OS Check, assuming that the operating system is ready for conversion"
+                WriteRunLog -message "Skipping OS Check, assuming that the operating system is ready for conversion"
+                if ($FixOperatingSystemSettings) {
+                    WriteRunLog -message "Fixing operating system settings not supported with skipped OS Check" -category "ERROR"
+                    exit
+                }
             }
         }
         else {
