@@ -2,6 +2,10 @@
 
 This file contains the change log for the PowerShell script.
 
+## Version 2025062705
+
+* fixing an issue in bash script
+
 ## Version 2025062704
 
 * fixing an issue where the script would not stop on Linux if there is an error during OS check
