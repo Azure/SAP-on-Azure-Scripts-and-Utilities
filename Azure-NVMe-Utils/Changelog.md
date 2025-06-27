@@ -2,6 +2,12 @@
 
 This file contains the change log for the PowerShell script.
 
+## Version 2025062702
+
+* adding sleepseconds parameter
+* fixing issues with new IgnoreOSCheck / FixOperatingSystem parameter combinations
+* updated documentation
+
 ## Version 2025062701
 
 * add new parameter IgnoreOSCheck, this will not check if VM is running and if the OS is ready to convert

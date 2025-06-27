@@ -75,7 +75,9 @@ param (
     # Ignore Azure Module Check
     [switch]$IgnoreAzureModuleCheck,
     # Ignore Operating System Check
-    [switch]$IgnoreOSCheck
+    [switch]$IgnoreOSCheck,
+    # SleepSeconds after VM Update
+    [int]$SleepSeconds=15
 )
 
 # function to write log messages
@@ -193,7 +195,7 @@ function CheckForNewerVersion {
 # Main Script
 ##############################################################################################################
 
-$_version = "2025062701" # version of the script
+$_version = "2025062702" # version of the script
 
 # creating variable for log file
 $script:_runlog = @()
@@ -976,9 +978,9 @@ try {
 if ($StartVM) {
     WriteRunLog -message "Start after update enabled for VM $VMName"
     try {
-        # waiting for 30 seconds before starting the VM
-        WriteRunLog -message "Waiting for 30 seconds before starting the VM"
-        Start-Sleep -Seconds 30
+        # waiting for X seconds before starting the VM - parameter SleepSeconds
+        WriteRunLog -message "Waiting for $SleepSeconds seconds before starting the VM"
+        Start-Sleep -Seconds $SleepSeconds
         # starting the VM
         WriteRunLog -message "Starting VM $VMName"
         $_startvm = Start-AzVM -ResourceGroupName $ResourceGroupName -Name $VMName

@@ -71,6 +71,8 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scr
 | `-FixOperatingSystemSettings`  | Automatically fix the OS settings using Azure RunCommands                    | No       |
 | `-WriteLogfile`                | Create a Log File                                                            | No       |
 | `-IgnoreAzureModuleCheck`      | Do not run the check for installed Azure modules                             | No       |
+| `-IgnoreOSCheck`               | Do not check for OS readiness, expectation is that the OS is ready           | No       |
+| `-SleepSeconds`                | Time for Azure to settle changes before starting the VM                      | No       |
 
 ## Contributing
 
