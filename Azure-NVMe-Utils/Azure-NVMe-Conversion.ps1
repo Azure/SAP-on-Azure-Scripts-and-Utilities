@@ -281,7 +281,8 @@ try {
             }
             else {
                 if ($FixOperatingSystemSettings) {
-                    WriteRunLog -message "Fixing operating system settings is not supported with IgnoreOSCheck" -category "ERROR"
+                    WriteRunLog -message "Fixing operating system settings is not supported with IgnoreOSCheck or when the VM is not running" -category "ERROR"
+                    WriteRunLog -message "Please start the VM and run the script again when using FixOperatingSystemSettings" -category "ERROR"
                     exit
                 }
             }
