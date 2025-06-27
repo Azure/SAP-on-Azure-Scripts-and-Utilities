@@ -195,7 +195,7 @@ function CheckForNewerVersion {
 # Main Script
 ##############################################################################################################
 
-$_version = "2025062702" # version of the script
+$_version = "2025062703" # version of the script
 
 # creating variable for log file
 $script:_runlog = @()
@@ -691,6 +691,8 @@ check_nvme_driver() {
                     else
                         echo "[ERROR] Failed to add NVMe driver to initrd/initramfs."
                     fi
+                else
+                    echo "[ERROR] NVMe driver not found in initrd/initramfs."
                 fi
             fi
             ;;
@@ -709,6 +711,8 @@ check_nvme_driver() {
                     else
                         echo "[ERROR] Failed to add NVMe driver to initrd/initramfs."
                     fi
+                else
+                    echo "[ERROR] NVMe driver not found in initrd/initramfs."
                 fi
             fi
             ;;

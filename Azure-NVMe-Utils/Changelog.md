@@ -2,6 +2,10 @@
 
 This file contains the change log for the PowerShell script.
 
+## Version 2025062703
+
+* when using Linux and not using FixOperatingSystem the script would not stop if the OS is not ready
+
 ## Version 2025062702
 
 * adding sleepseconds parameter
