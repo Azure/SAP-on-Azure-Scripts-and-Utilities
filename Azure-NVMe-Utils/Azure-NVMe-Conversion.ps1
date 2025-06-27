@@ -273,24 +273,22 @@ $script:_original_vm_size = $_VM.HardwareProfile.VmSize
 try {
     $_vminfo = Get-AzVM -ResourceGroupName $ResourceGroupName -Name $VMName -Status
     # Check if VM is running
-    if (($_vminfo.Statuses[1].Code -ne "PowerState/running") -and ($NewControllerType -eq "NVMe")) {
-        if ($IgnoreOSCheck) {
-            WriteRunLog -message "Ignoring VM Power State check, proceeding with conversion" -category "WARNING"
-            WriteRunLog -message "VM $VMName is not running, but OS check is ignored." -category "WARNING"
-        }
-        else {
-            if ($FixOperatingSystemSettings) {
-                WriteRunLog -message "Fixing operating system settings is not supported when the VM is running" -category "ERROR"
-                exit
+    if (($_vminfo.Statuses[1].Code -ne "PowerState/running")) {
+        if ($NewControllerType -eq "NVMe") {
+            if ($IgnoreOSCheck) {
+                WriteRunLog -message "Ignoring VM Power State check, proceeding with conversion" -category "WARNING"
+                WriteRunLog -message "VM $VMName is not running, but OS check is ignored." -category "WARNING"
+            }
+            else {
+                if ($FixOperatingSystemSettings) {
+                    WriteRunLog -message "Fixing operating system settings is not supported when the VM is running" -category "ERROR"
+                    exit
+                }
             }
         }
     }
     else {
         WriteRunLog -message "VM $VMName is running"
-        if ($FixOperatingSystemSettings) {
-            WriteRunLog -message "Fixing operating system settings is not supported when the VM is running" -category "ERROR"
-            exit
-        }
     }
 } catch {
     WriteRunLog -message "Error getting VM status" -category "ERROR"
