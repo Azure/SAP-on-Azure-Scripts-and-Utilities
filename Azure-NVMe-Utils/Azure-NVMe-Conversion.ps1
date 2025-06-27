@@ -195,7 +195,7 @@ function CheckForNewerVersion {
 # Main Script
 ##############################################################################################################
 
-$_version = "2025062703" # version of the script
+$_version = "2025062704" # version of the script
 
 # creating variable for log file
 $script:_runlog = @()
@@ -771,6 +771,8 @@ check_nvme_timeout() {
             else
                 echo "[ERROR] Failed to set nvme_core.io_timeout."
             fi
+        else
+            echo "[ERROR] nvme_core.io_timeout is not set to 240."
         fi
     fi
 }
@@ -823,7 +825,8 @@ check_fstab() {
             
             echo "[INFO] /etc/fstab updated with UUIDs.  Original fstab backed up to /etc/fstab.bak"
     	else 
-	    echo "[ERROR] /etc/fstab contains device names causing issues switching to NVMe"
+	        echo "[ERROR] /etc/fstab contains device names causing issues switching to NVMe"
+        fi
 	fi
     else
         echo "[INFO] /etc/fstab does not contain deprecated device names."
