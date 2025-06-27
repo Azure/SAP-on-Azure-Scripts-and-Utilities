@@ -731,7 +731,7 @@ check_nvme_timeout() {
     else
         echo "[WARNING] nvme_core.io_timeout is not set to 240."
         if $fix; then
-            echo "[INFO] Setting nvme_core.io_timeout to 240…"
+            echo "[INFO] Setting nvme_core.io_timeout to 240..."
             case "$distro" in
                 ubuntu|debian)
                     sed -i 's/GRUB_CMDLINE_LINUX="/GRUB_CMDLINE_LINUX="nvme_core.io_timeout=240 /g' /etc/default/grub
@@ -766,6 +766,7 @@ check_nvme_timeout() {
                     return 1
                     ;;
             esac
+
             if grep -q "nvme_core.io_timeout=240" /etc/default/grub /etc/grub.conf /boot/grub/grub.cfg; then
                 echo "[INFO] nvme_core.io_timeout set successfully."
             else
@@ -827,7 +828,6 @@ check_fstab() {
     	else 
 	        echo "[ERROR] /etc/fstab contains device names causing issues switching to NVMe"
         fi
-	fi
     else
         echo "[INFO] /etc/fstab does not contain deprecated device names."
     fi
