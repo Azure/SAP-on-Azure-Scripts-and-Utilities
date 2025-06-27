@@ -28,6 +28,8 @@
         Fix operating system settings
     .PARAMETER IgnoreAzureModuleCheck:
         Do not check if the Azure module is installed and the version is correct
+    .PARAMETER IgnoreOSCheck:
+        Do not check if the operating system is supported for NVMe conversion
 
     .INPUTS
         None.
@@ -71,7 +73,9 @@ param (
     # Fix operating system settings
     [switch]$FixOperatingSystemSettings,
     # Ignore Azure Module Check
-    [switch]$IgnoreAzureModuleCheck
+    [switch]$IgnoreAzureModuleCheck,
+    # Ignore Operating System Check
+    [switch]$IgnoreOSCheck
 )
 
 # function to write log messages
@@ -189,7 +193,7 @@ function CheckForNewerVersion {
 # Main Script
 ##############################################################################################################
 
-$_version = "2025052601" # version of the script
+$_version = "2025062701" # version of the script
 
 # creating variable for log file
 $script:_runlog = @()
@@ -268,8 +272,14 @@ try {
     $_vminfo = Get-AzVM -ResourceGroupName $ResourceGroupName -Name $VMName -Status
     # Check if VM is running
     if (($_vminfo.Statuses[1].Code -ne "PowerState/running") -and ($NewControllerType -eq "NVMe")) {
-        WriteRunLog -message "VM $VMName is not running. Please start the VM before running this script." -category "ERROR"
-        exit
+        if ($IgnoreOSCheck) {
+            WriteRunLog -message "Ignoring VM Power State check, proceeding with conversion" -category "WARNING"
+            WriteRunLog -message "VM $VMName is not running, but OS check is ignored." -category "WARNING"
+        }
+        else {
+            WriteRunLog -message "VM $VMName is not running. Please start the VM before running this script." -category "ERROR"
+            exit
+        }
     }
 } catch {
     WriteRunLog -message "Error getting VM status" -category "ERROR"
@@ -359,6 +369,26 @@ catch {
 # getting authentication token for REST API calls
 try {
     $access_token = (Get-AzAccessToken).Token
+
+    # Check if running in Azure Cloud Shell
+    if ($env:ACC_TERM_ID) {
+        WriteRunLog -message "Running in Azure Cloud Shell"
+    } else {
+        WriteRunLog -message "Not running in Azure Cloud Shell"
+    }
+
+    # Check if the access token is a SecureString
+    # might be needed for Azure Cloud Shell
+    if ($access_token.GetType().Name -eq "SecureString") {
+        WriteRunLog -message "Authentication token is a SecureString"
+        $_Ptr = [System.Runtime.InteropServices.Marshal]::SecureStringToCoTaskMemUnicode($access_token)
+        $_result = [System.Runtime.InteropServices.Marshal]::PtrToStringUni($_Ptr)
+        [System.Runtime.InteropServices.Marshal]::ZeroFreeCoTaskMemUnicode($_Ptr)
+        $access_token = $_result
+    } else {
+        WriteRunLog -message "Authentication token is not a SecureString, no conversion needed"
+    }
+
     WriteRunLog -message "Authentication token received"
 } catch {
     WriteRunLog -message "Error getting authentication token" -category "ERROR"
@@ -503,58 +533,67 @@ if ($_os -eq "Windows") {
 
         try {
             if ($FixOperatingSystemSettings) {
+                if ($IgnoreOSCheck) {
+                    WriteRunLog -message "Ignore OS Check is not supported with -FixOperatingSystemSettings switch" -category "ERROR"
+                    exit
+                }
                 WriteRunLog -message "Fixing operating system settings"
                 WriteRunLog -message "Running command to set stornvme to boot"
                 WriteRunLog -message "   sc.exe config stornvme start=boot"
                 $RunCommandResult = Invoke-AzVMRunCommand -ResourceGroupName $ResourceGroupName -VMName $VMName -CommandId 'RunPowerShellScript' -ScriptString 'Start-Process -FilePath "C:\Windows\System32\sc.exe" -ArgumentList "config stornvme start=boot"'
             }
             else {
-                WriteRunLog -message "Collecting details from OS"
-                $_error = 0
-                $_okay = 0
-                $_scriptoutput = ""
-                $RunCommandResult = Invoke-AzVMRunCommand -ResourceGroupName $ResourceGroupName -VMName $VMName -CommandId 'RunPowerShellScript' -ScriptString $Check_Windows_Script
+                if (-not $IgnoreSKUCheck) {
+                    WriteRunLog -message "Collecting details from OS"
+                    $_error = 0
+                    $_okay = 0
+                    $_scriptoutput = ""
+                    $RunCommandResult = Invoke-AzVMRunCommand -ResourceGroupName $ResourceGroupName -VMName $VMName -CommandId 'RunPowerShellScript' -ScriptString $Check_Windows_Script
 
-                $_result = ($RunCommandResult.Value | ForEach-Object { $_.Message }) -split "`n"
+                    $_result = ($RunCommandResult.Value | ForEach-Object { $_.Message }) -split "`n"
 
-                foreach ($_line in $_result) {
-                    WriteRunLog -message ("   Script output: " + $_line)
-                    if ($_line.Contains("OK") -or $_line.Contains("ERROR")) {
-                        $_scriptoutput += $_line + "`n"
+                    foreach ($_line in $_result) {
+                        WriteRunLog -message ("   Script output: " + $_line)
+                        if ($_line.Contains("OK") -or $_line.Contains("ERROR")) {
+                            $_scriptoutput += $_line + "`n"
 
-                        if ($_line.Contains("Start:")) {
-                            if ($_line.Contains("ERROR")) {
-                                WriteRunLog -message "Start is not set to boot in the operating system" -category "ERROR"
-                                $_error++
+                            if ($_line.Contains("Start:")) {
+                                if ($_line.Contains("ERROR")) {
+                                    WriteRunLog -message "Start is not set to boot in the operating system" -category "ERROR"
+                                    $_error++
+                                }
+                                else {
+                                    WriteRunLog -message "Start is set to boot in the operating system" -category "INFO"
+                                    $_okay++
+                                }
                             }
-                            else {
-                                WriteRunLog -message "Start is set to boot in the operating system" -category "INFO"
-                                $_okay++
-                            }
-                        }
 
-                        if ($_line.Contains("StartOverride:")) {
-                            if ($_line.Contains("ERROR")) {
-                                WriteRunLog -message "StartOverride is set in the operating system" -category "ERROR"
-                                $_error++
-                            }
-                            else {
-                                WriteRunLog -message "StartOverride does not exist" -category "INFO"
-                                $_okay++
+                            if ($_line.Contains("StartOverride:")) {
+                                if ($_line.Contains("ERROR")) {
+                                    WriteRunLog -message "StartOverride is set in the operating system" -category "ERROR"
+                                    $_error++
+                                }
+                                else {
+                                    WriteRunLog -message "StartOverride does not exist" -category "INFO"
+                                    $_okay++
+                                }
                             }
                         }
                     }
+
+                    WriteRunLog -message "Windows OS Check result:"
+                    WriteRunLog -message "Errors: $_error - OK: $_okay"
+
+                    if ($_error -gt 0) {
+                        WriteRunLog -message "Operating system does not seem to be ready, it might not after the conversion" -category "WARNING"
+                        WriteRunLog -message "Please check the operating system settings" -category "WARNING"
+                        WriteRunLog -message "If you want to continue, please use the -FixOperatingSystemSettings switch" -category "IMPORTANT"
+                        WriteRunLog -message "alternative: you can run 'sc.exe config stornvme start=boot' in the operating system and continue or stop the script" -category "IMPORTANT"
+                        AskToContinue -message "Do you want to continue?"
+                    }
                 }
-
-                WriteRunLog -message "Windows OS Check result:"
-                WriteRunLog -message "Errors: $_error - OK: $_okay"
-
-                if ($_error -gt 0) {
-                    WriteRunLog -message "Operating system does not seem to be ready, it might not after the conversion" -category "WARNING"
-                    WriteRunLog -message "Please check the operating system settings" -category "WARNING"
-                    WriteRunLog -message "If you want to continue, please use the -FixOperatingSystemSettings switch" -category "IMPORTANT"
-                    WriteRunLog -message "alternative: you can run 'sc.exe config stornvme start=boot' in the operating system and continue or stop the script" -category "IMPORTANT"
-                    AskToContinue -message "Do you want to continue?"
+                else {
+                    WriteRunLog -message "Skipping OS Check, assuming that the operating system is ready for conversion"
                 }
             }
         } catch {
@@ -782,47 +821,53 @@ exit 0
 $linux_fix_script = $linux_check_script.Replace("fix=false","fix=true")
 
         if ($NewControllerType -eq "NVMe") {
-            if ($FixOperatingSystemSettings) {
-                # Invoke the Run Command
-                $RunCommandResult = Invoke-AzVMRunCommand -ResourceGroupName $resourceGroupName -Name $vmName -CommandId 'RunShellScript' -ScriptString $linux_fix_script
+            if ($IgnoreOSCheck) {
 
+                if ($FixOperatingSystemSettings) {
+                    # Invoke the Run Command
+                    $RunCommandResult = Invoke-AzVMRunCommand -ResourceGroupName $resourceGroupName -Name $vmName -CommandId 'RunShellScript' -ScriptString $linux_fix_script
+
+                }
+                else {
+                    # Invoke the Run Command
+                    $RunCommandResult = Invoke-AzVMRunCommand -ResourceGroupName $resourceGroupName -Name $vmName -CommandId 'RunShellScript' -ScriptString $linux_check_script
+
+                }
+
+                $_result = ($RunCommandResult.Value | ForEach-Object { $_.Message }) -split "`n"
+
+                $_scriptoutput = ""
+                $_error=0
+                $_info=0
+                $_warning=0
+                foreach ($_line in $_result) {
+                    if ($_line.Contains("[INFO]") -or $_line.Contains("[ERROR]") -or $_line.Contains("[WARNING]")) {
+                        $_scriptoutput += $_line + "`n"
+                        if ($_line.Contains("[ERROR]")) {
+                            $_error++
+                        }
+                        if ($_line.Contains("[INFO]")) {
+                            $_info++
+                        }
+                        if ($_line.Contains("[WARNING]")) {
+                            $_warning++
+                        }
+                    }
+                    WriteRunLog -message ("   Script output: " + $_line)
+                }
+
+                WriteRunLog -message "Errors: $_error - Warnings: $_warning - Info: $_info"
+
+                if ($_error -gt 0) {
+                    WriteRunLog -message "Operating system does not seem to be ready, it might not after the conversion" -category "WARNING"
+                    WriteRunLog -message "Please check the operating system settings" -category "WARNING"
+                    WriteRunLog -message "If you want to continue, please use the -FixOperatingSystemSettings switch" -category "IMPORTANT"
+                    WriteRunLog -message "alternative: you can enable NVMe driver manually" -category "IMPORTANT"
+                    AskToContinue -message "Do you want to continue?"
+                }
             }
             else {
-                # Invoke the Run Command
-                $RunCommandResult = Invoke-AzVMRunCommand -ResourceGroupName $resourceGroupName -Name $vmName -CommandId 'RunShellScript' -ScriptString $linux_check_script
-
-            }
-
-            $_result = ($RunCommandResult.Value | ForEach-Object { $_.Message }) -split "`n"
-
-            $_scriptoutput = ""
-            $_error=0
-            $_info=0
-            $_warning=0
-            foreach ($_line in $_result) {
-                if ($_line.Contains("[INFO]") -or $_line.Contains("[ERROR]") -or $_line.Contains("[WARNING]")) {
-                    $_scriptoutput += $_line + "`n"
-                    if ($_line.Contains("[ERROR]")) {
-                        $_error++
-                    }
-                    if ($_line.Contains("[INFO]")) {
-                        $_info++
-                    }
-                    if ($_line.Contains("[WARNING]")) {
-                        $_warning++
-                    }
-                }
-                WriteRunLog -message ("   Script output: " + $_line)
-            }
-
-            WriteRunLog -message "Errors: $_error - Warnings: $_warning - Info: $_info"
-
-            if ($_error -gt 0) {
-                WriteRunLog -message "Operating system does not seem to be ready, it might not after the conversion" -category "WARNING"
-                WriteRunLog -message "Please check the operating system settings" -category "WARNING"
-                WriteRunLog -message "If you want to continue, please use the -FixOperatingSystemSettings switch" -category "IMPORTANT"
-                WriteRunLog -message "alternative: you can enable NVMe driver manually" -category "IMPORTANT"
-                AskToContinue -message "Do you want to continue?"
+                WriteRunLog -message "Ignoring OS Check, assuming that the operating system is ready for conversion"
             }
         }
         else {
