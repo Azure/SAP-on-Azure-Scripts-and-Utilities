@@ -277,7 +277,16 @@ try {
             WriteRunLog -message "VM $VMName is not running, but OS check is ignored." -category "WARNING"
         }
         else {
-            WriteRunLog -message "VM $VMName is not running. Please start the VM before running this script." -category "ERROR"
+            if ($FixOperatingSystemSettings) {
+                WriteRunLog -message "Fixing operating system settings is not supported when the VM is running" -category "ERROR"
+                exit
+            }
+        }
+    }
+    else {
+        WriteRunLog -message "VM $VMName is running"
+        if ($FixOperatingSystemSettings) {
+            WriteRunLog -message "Fixing operating system settings is not supported when the VM is running" -category "ERROR"
             exit
         }
     }
