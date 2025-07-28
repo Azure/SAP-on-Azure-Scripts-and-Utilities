@@ -195,7 +195,7 @@ function CheckForNewerVersion {
 # Main Script
 ##############################################################################################################
 
-$_version = "2025062705" # version of the script
+$_version = "2025072801" # version of the script
 
 # creating variable for log file
 $script:_runlog = @()
@@ -696,7 +696,7 @@ check_nvme_driver() {
                 fi
             fi
             ;;
-        redhat|centos|rocky|suse|sles|ol)
+        redhat|rhel|centos|rocky|suse|sles|ol)
             if lsinitrd | grep -q nvme; then
                 echo "[INFO] NVMe driver found in initrd/initramfs."
             else
@@ -737,7 +737,7 @@ check_nvme_timeout() {
                     sed -i 's/GRUB_CMDLINE_LINUX="/GRUB_CMDLINE_LINUX="nvme_core.io_timeout=240 /g' /etc/default/grub
                     update-grub
                     ;;
-                redhat|centos|rocky|suse|sles)
+                redhat|rhel|centos|rocky|suse|sles)
                     if [ -f /etc/default/grub ]; then
                         sed -i 's/GRUB_CMDLINE_LINUX="/GRUB_CMDLINE_LINUX="nvme_core.io_timeout=240 /g' /etc/default/grub
                         grub2-mkconfig -o /boot/grub2/grub

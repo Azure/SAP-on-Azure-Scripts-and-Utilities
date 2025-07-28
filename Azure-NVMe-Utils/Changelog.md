@@ -2,6 +2,10 @@
 
 This file contains the change log for the PowerShell script.
 
+## Version 2025072801
+
+* fixing issue for RHEL 8.X having rhel as ID instead of redhat
+
 ## Version 2025062705
 
 * fixing an issue in bash script
