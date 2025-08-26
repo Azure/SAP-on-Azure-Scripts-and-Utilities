@@ -195,7 +195,7 @@ function CheckForNewerVersion {
 # Main Script
 ##############################################################################################################
 
-$_version = "2025072801" # version of the script
+$_version = "2025082601" # version of the script
 
 # creating variable for log file
 $script:_runlog = @()
@@ -273,7 +273,8 @@ $script:_original_vm_size = $_VM.HardwareProfile.VmSize
 try {
     $_vminfo = Get-AzVM -ResourceGroupName $ResourceGroupName -Name $VMName -Status
     # Check if VM is running
-    if (($_vminfo.Statuses[1].Code -ne "PowerState/running")) {
+    #if (($_vminfo.Statuses[1].Code -ne "PowerState/running")) {
+    if (($_vminfo.PowerState -ne "VM running")) {
         if ($NewControllerType -eq "NVMe") {
             if ($IgnoreOSCheck) {
                 WriteRunLog -message "Ignoring VM Power State check, proceeding with conversion" -category "WARNING"
@@ -922,12 +923,13 @@ try {
 # Checking status of VM
 WriteRunLog -message "Checking if VM is stopped and deallocated"
 $_vminfo = Get-AzVM -ResourceGroupName $ResourceGroupName -Name $VMName -Status
-if ($_vminfo.Statuses[1].Code -ne "PowerState/deallocated") {
+#if ($_vminfo.Statuses[1].Code -ne "PowerState/deallocated") {
+if ($_vminfo.PowerState -ne "deallocated") {
     WriteRunLog -message "VM is not deallocated. Please deallocate the VM before running this script."
     WriteRunLog -message "giving it another try"
     $_stopvm = Stop-AzVM -ResourceGroupName $ResourceGroupName -Name $VMName -Force
     $_vminfo = Get-AzVM -ResourceGroupName $ResourceGroupName -Name $VMName -Status
-    if ($_vminfo.Statuses[1].Code -ne "PowerState/deallocated") {
+    if ($_vminfo.PowerState -ne "deallocated") {
         WriteRunLog -message "VM is not deallocated. Please check why the VM is not deallocated." -category "ERROR"
         exit
     }
