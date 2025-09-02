@@ -41,7 +41,7 @@ Select-AzSubscription -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 You can use this PowerShell Command to download the script.
 
 ```powershell
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/refs/heads/main/Azure-NVMe-Utils/Azure-NVMe-Conversion.ps1" -OutFile ".\NVMe-Conversion.ps1"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/refs/heads/main/Azure-NVMe-Utils/Azure-NVMe-Conversion.ps1" -OutFile ".\NVMe-Azure-NVMe-Conversion.ps1"
 ```
 
 6. Run the conversion script
