@@ -2,6 +2,10 @@
 
 This file contains the change log for the PowerShell script.
 
+## Version 2025090201
+
+* fixing Statuses, Get-AzVM with Resource Group returns statuses, Get-AzVM without Resource Group gets PowerState
+
 ## Version 2025082601
 
 * moving from Statuses to PowerState to check VM status

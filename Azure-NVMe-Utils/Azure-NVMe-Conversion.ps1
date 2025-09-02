@@ -195,7 +195,7 @@ function CheckForNewerVersion {
 # Main Script
 ##############################################################################################################
 
-$_version = "2025082601" # version of the script
+$_version = "2025090201" # version of the script
 
 # creating variable for log file
 $script:_runlog = @()
