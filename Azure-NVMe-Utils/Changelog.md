@@ -2,6 +2,10 @@
 
 This file contains the change log for the PowerShell script.
 
+## Version 2025090501
+
+* adding resource group to Get-AzDisk in case you have the same disk name in multiple RGs/regions
+
 ## Version 2025090201
 
 * fixing Statuses, Get-AzVM with Resource Group returns statuses, Get-AzVM without Resource Group gets PowerState

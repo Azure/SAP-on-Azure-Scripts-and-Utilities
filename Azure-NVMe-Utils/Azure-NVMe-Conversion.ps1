@@ -195,7 +195,7 @@ function CheckForNewerVersion {
 # Main Script
 ##############################################################################################################
 
-$_version = "2025090201" # version of the script
+$_version = "2025090501" # version of the script
 
 # creating variable for log file
 $script:_runlog = @()
@@ -349,7 +349,9 @@ else {
 
 # check if VM is running a Gen1 or Gen2 image
 try {
-    $_vm_osdisk = Get-AzDisk -Name $_vm.StorageProfile.OsDisk.Name
+    $_diskrg = $_vm.StorageProfile.OsDisk.ManagedDisk.Id.Split("/")[4]
+
+    $_vm_osdisk = Get-AzDisk -Name $_vm.StorageProfile.OsDisk.Name -ResourceGroupName $_diskrg
     if ($_vm_osdisk.HyperVGeneration -eq 'V1') { 
         WriteRunLog -message "VM $VMName is running a Generation 1 image" -category "ERROR"
         WriteRunLog -message "NVMe controller are only supported on Generation 2 images" -category "ERROR"
