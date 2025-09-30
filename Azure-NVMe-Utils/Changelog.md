@@ -2,6 +2,10 @@
 
 This file contains the change log for the PowerShell script.
 
+## Version 2025093001
+
+* Linux VMs supports tempdisk to non-tempdisk and vice-versa
+
 ## Version 2025090501
 
 * adding resource group to Get-AzDisk in case you have the same disk name in multiple RGs/regions

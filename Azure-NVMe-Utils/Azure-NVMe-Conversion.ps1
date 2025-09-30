@@ -181,13 +181,6 @@ function CheckForNewerVersion {
         WriteRunLog -category "INFO" -message "Script Version $script:_version"
     }
 
-    #$_scriptdate = [DateTime]::ParseExact($scriptversion, 'yyyyMMddHH', (Get-Culture))
-    #$_currentDate_minus120 = (Get-Date).AddDays(-120)
-
-    #if ($_scriptdate -lt $_currentDate_minus120) {
-    #    WriteRunLog -category "ERROR" -message "You are running a script version that is older than 120 days, please update"
-    #}
-
 }
 
 
@@ -195,7 +188,7 @@ function CheckForNewerVersion {
 # Main Script
 ##############################################################################################################
 
-$_version = "2025090501" # version of the script
+$_version = "2025093001" # version of the script
 
 # creating variable for log file
 $script:_runlog = @()
@@ -427,31 +420,25 @@ if (-not $IgnoreSKUCheck) {
         }
     }
 
-    # Check if both VMs have or do not have a resource disk
-    # $originalVmHasResourceDisk = ($_VMSKUs | Where-Object { $_.Name -eq $script:_original_vm_size }).Capabilities | Where-Object { $_.Name -eq "EphemeralOSDiskSupported" -and $_.Value -eq "True" }
-    # $newVmHasResourceDisk = ($_VMSKU.Capabilities | Where-Object { $_.Name -eq "EphemeralOSDiskSupported" -and $_.Value -eq "True" })
-
-    #if (($originalVmHasResourceDisk -and -not $newVmHasResourceDisk) -or (-not $originalVmHasResourceDisk -and $newVmHasResourceDisk)) {
-    #    WriteRunLog -message "Mismatch in resource disk support between original VM size ($script:_original_vm_size) and new VM size ($VMSize)." -category "ERROR"
-    #    exit
-    #}
-    #else {
-    #    WriteRunLog -message "Resource disk support matches between original VM size and new VM size."
-    #}
-
     # Check if VM SKU has supported capabilities
     $_originalVMHasResourceDisk = ($_VMSKUs | Where-Object { $_.Name -eq $script:_original_vm_size }).Capabilities | Where-Object { $_.Name -eq "MaxResourceVolumeMB" -and $_.Value -eq 0 }
     $_newVMHasResourceDisk = ($_VMSKU.Capabilities | Where-Object { $_.Name -eq "MaxResourceVolumeMB" -and $_.Value -eq 0 })
 
-    if (($_originalVMHasResourceDisk -and -not $_newVMHasResourceDisk) -or (-not $_originalVMHasResourceDisk -and $_newVMHasResourceDisk)) {
-        WriteRunLog -message "Mismatch in resource disk support between original VM size ($script:_original_vm_size) and new VM size ($VMSize)." -category "ERROR"
-        WriteRunLog -message "Please check the VM sizes and their capabilities." -category "ERROR"
-        WriteRunLog -message "IMPORTANT: If you try to convert to a v6 VM size (e.g. Standard_E4ds_v6 or Standard_E4ads_v6) an error might occur." -category "ERROR"
-        WriteRunLog -message "We are working on a fix for this issue." -category "ERROR"
-        exit
+    if ($_os -eq "Linux") {
+        WriteRunLog -message "Skipping resource disk support check for Linux VMs"
     }
     else {
-        WriteRunLog -message "Resource disk support matches between original VM size and new VM size."
+        WriteRunLog -message "Checking resource disk support for Windows VMs"
+        if (($_originalVMHasResourceDisk -and -not $_newVMHasResourceDisk) -or (-not $_originalVMHasResourceDisk -and $_newVMHasResourceDisk)) {
+            WriteRunLog -message "Mismatch in resource disk support between original VM size ($script:_original_vm_size) and new VM size ($VMSize)." -category "ERROR"
+            WriteRunLog -message "Please check the VM sizes and their capabilities." -category "ERROR"
+            WriteRunLog -message "IMPORTANT: If you try to convert to a v6 VM size (e.g. Standard_E4ds_v6 or Standard_E4ads_v6) an error might occur." -category "ERROR"
+            WriteRunLog -message "We are working on a fix for this issue." -category "ERROR"
+            exit
+        }
+        else {
+            WriteRunLog -message "Resource disk support matches between original VM size and new VM size."
+        }
     }
 
     if ($_VMSKU) {
