@@ -342,3 +342,4 @@ AzureImageBuilder/local-loadModules.ps1
 AzureImageBuilder/Temp/*
 AvZone-Latency-Test/.vscode/launch.json
 AvZone-Mapping/.vscode/launch.json
+QualityCheck/.vscode/settings.json

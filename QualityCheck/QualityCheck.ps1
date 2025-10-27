@@ -295,7 +295,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2025052601
+$scriptversion = 2025102701
 
 function LoadHTMLHeader {
 
@@ -434,7 +434,7 @@ function CheckRequiredModules {
     
     
     # looping through modules in json file
-    foreach ($_requiredmodule in $_jsonconfig.PowerShellPrerequisits) {
+    foreach ($_requiredmodule in $_jsonconfig.PowerShellPrerequisites) {
 
         # check if module is available
         $_modules = Get-Module -ListAvailable -Name $_requiredmodule.ModuleName

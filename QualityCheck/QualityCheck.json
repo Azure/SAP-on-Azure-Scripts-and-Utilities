@@ -1,7 +1,7 @@
 {
-    "Version": 2025052601,
+    "Version": 2025102701,
 
-    "PowerShellPrerequisits": [
+    "PowerShellPrerequisites": [
         {
             "ModuleName": "Posh-SSH",
             "Version": "3.2.0"
@@ -2683,7 +2683,12 @@
         },
         "Standard_E32s_v6": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
             },
             "APP": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
@@ -2694,7 +2699,12 @@
         },
         "Standard_E48s_v6": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
             },
             "APP": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
@@ -2705,7 +2715,12 @@
         },
         "Standard_E64s_v6": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
             },
             "APP": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
@@ -2716,7 +2731,12 @@
         },
         "Standard_E96s_v6": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
             },
             "APP": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
@@ -2727,7 +2747,13 @@
         },
         "Standard_E128s_v6": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing",
+                    "OLAP": "Standard Sizing"
+                }
             },
             "APP": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
@@ -2793,7 +2819,12 @@
         },
         "Standard_E32ds_v6": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
             },
             "APP": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
@@ -2804,7 +2835,12 @@
         },
         "Standard_E48ds_v6": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
             },
             "APP": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
@@ -2815,7 +2851,12 @@
         },
         "Standard_E64ds_v6": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
             },
             "APP": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
@@ -2826,7 +2867,12 @@
         },
         "Standard_E96ds_v6": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
             },
             "APP": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
@@ -2837,7 +2883,13 @@
         },
         "Standard_E128ds_v6": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing",
+                    "OLAP": "Standard Sizing"
+                }
             },
             "APP": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
@@ -3112,7 +3164,12 @@
         },
         "Standard_D64s_v6": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
             },
             "APP": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
@@ -3123,7 +3180,12 @@
         },
         "Standard_D96s_v6": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
             },
             "APP": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
@@ -3134,7 +3196,12 @@
         },
         "Standard_D128s_v6": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
             },
             "APP": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
@@ -3211,7 +3278,12 @@
         },
         "Standard_D64ds_v6": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
             },
             "APP": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
@@ -3222,7 +3294,12 @@
         },
         "Standard_D96ds_v6": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
             },
             "APP": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
@@ -3233,7 +3310,12 @@
         },
         "Standard_D128ds_v6": {
             "DB": {
-                "SupportedDB": ["MSSQL", "Oracle", "Db2", "ASE"]
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing"
+                }
             },
             "APP": {
                 "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
@@ -3841,6 +3923,40 @@
                 "HANAStorageTypeLog": ["Premium_LRS", "UltraSSD_LRS","ANF","PremiumV2_LRS"],
                 "HANAScenario": {
                     "OLTP": "Standard Sizing"
+                }
+            },
+            "APP": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            },
+            "ASCS": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            }
+        },
+        "Standard_E192ids_v6": {
+            "DB": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing",
+                    "OLAP": "Standard Sizing"
+                }
+            },
+            "APP": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            },
+            "ASCS": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"]
+            }
+        },
+        "Standard_E192is_v6": {
+            "DB": {
+                "SupportedDB": ["MSSQL", "Oracle", "Db2", "HANA", "ASE"],
+                "HANAStorageTypeData": ["ANF","PremiumV2_LRS"],
+                "HANAStorageTypeLog": ["ANF","PremiumV2_LRS"],
+                "HANAScenario": {
+                    "OLTP": "Standard Sizing",
+                    "OLAP": "Standard Sizing"
                 }
             },
             "APP": {

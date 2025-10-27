@@ -1,5 +1,9 @@
 # Changelog
 
+# Version 2025102701
+* Add support for v6 instances
+* Fixing typo on PowerShellPrerequisites
+
 # Version 2025052601
 * UPDATE: new default value for latency, new 500ms, old 120ms due to some connectivity issues
 
