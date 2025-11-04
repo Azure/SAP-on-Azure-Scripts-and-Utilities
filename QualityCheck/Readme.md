@@ -1,3 +1,13 @@
+### ⚠️ Important Notice: New Version Available ⚠️
+
+**A new version of Quality Check called "Configuration Checks" is now available!**
+
+🔗 **[Access the new Configuration Checks tool here](https://github.com/Azure/sap-automation-qa)**
+
+**⏰ End of Support:** This QualityCheck tool will no longer be supported after **June 30, 2026**. Please migrate to the new Configuration Checks solution to continue receiving updates, bug fixes, and support.
+
+**Why switch?** The new Configuration Checks tool offers enhanced features, better performance, and ongoing development support.
+
 # Quality Check for SAP workloads on Azure
 
 QualityCheck is an open-source tool to validate SAP on Azure installations. It connects to Azure Resource Manager and the operating system and validates the system configurations against Microsoft's best practise.
