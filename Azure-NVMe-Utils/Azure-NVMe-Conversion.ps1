@@ -262,6 +262,26 @@ try {
 # storing original VM Size
 $script:_original_vm_size = $_VM.HardwareProfile.VmSize
 
+# Check if the Azure Disk Encryption for Linux is present
+try {
+    $extension = Get-AzVMExtension -ResourceGroupName $ResourceGroupName -VMName $VMName -Name "AzureDiskEncryptionForLinux" -ErrorAction Stop
+
+    if ($extension.ProvisioningState -eq "Succeeded") {
+        WriteRunLog -message "ADE for Linux extension is installed and succeeded on VM: $($extension.VMName)" -category "ERROR"
+                WriteRunLog -message "Azure Disk Encryption for Linux don't support NVMe disks" -category "ERROR"
+                WriteRunLog $_.Exception.Message "ERROR"
+        exit
+    } else {
+        WriteRunLog -message "ADE for Linux extension is installed but provisioning state is: $($extension.ProvisioningState)" -category "ERROR"
+                WriteRunLog -message "If the VM has not been encrypted remove the extension and try again"  -category "ERROR"
+                WriteRunLog $_.Exception.Message "ERROR"
+        exit
+    }
+}
+catch {
+    WriteRunLog -message "ADE for Linux extension is NOT installed on this VM"
+}
+
 # Get VM Power State
 try {
     $_vminfo = Get-AzVM -ResourceGroupName $ResourceGroupName -Name $VMName -Status
