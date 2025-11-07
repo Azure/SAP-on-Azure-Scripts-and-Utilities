@@ -793,7 +793,7 @@ check_fstab() {
                             echo "[WARNING] Could not find UUID for $device.  Skipping."
                             echo "$line" >> /etc/fstab.new
                         fi
-                    elif [[ "$device" =~ ^/dev/disk/azure/scsi[0-9]*/lun[0-9]*$ ]]; then
+                    elif [[ "$device" =~ ^/dev/disk/azure/scsi[0-9]*/lun[0-9]* ]]; then
                         uuid=$(blkid "$device" | awk -F\" '/UUID=/ {print $2}')
                         if [ -n "$uuid" ]; then
                             newline=$(echo "$line" | sed "s|$device|UUID=$uuid|g")
