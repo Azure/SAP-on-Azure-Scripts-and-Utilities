@@ -2,6 +2,11 @@
 
 This file contains the change log for the PowerShell script.
 
+## Version 2025111001
+
+* adding check for Azure Disk Encryption (Linux) thanks to @jonathanbrenes
+* fixing regex to include partitions thans to @resilience777
+
 ## Version 2025093001
 
 * Linux VMs supports tempdisk to non-tempdisk and vice-versa
