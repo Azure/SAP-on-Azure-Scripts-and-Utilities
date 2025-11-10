@@ -1,5 +1,10 @@
 # Changelog
 
+# Version 2025110401
+* UPDATE: minimum module versions to fix a Posh-SSH issue
+* UPDATE: Check function for module version
+* NEW: Add end of support statement and direct to new product https://github.com/Azure/sap-automation-qa
+
 # Version 2025102701
 * Add support for v6 instances
 * Fixing typo on PowerShellPrerequisites

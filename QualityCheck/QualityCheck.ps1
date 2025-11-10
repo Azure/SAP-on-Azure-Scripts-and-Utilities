@@ -295,7 +295,7 @@ param (
 
 
 # defining script version
-$scriptversion = 2025102701
+$scriptversion = 2025110401
 
 function LoadHTMLHeader {
 
@@ -3905,6 +3905,17 @@ WriteRunLog -category "INFO" -message ("Start " + (Get-Date))
 
 WriteRunLog -category "INFO" -message "Quality Check for SAP on Azure systems is provided under MIT license"
 WriteRunLog -category "INFO" -message "see https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities/blob/main/LICENSE for details"
+WriteRunLog -category "WARNING" -message "---------------------------------------------------------------"
+WriteRunLog -category "WARNING" -message "Important Notice:"
+WriteRunLog -category "WARNING" -message "Open Source Quality Check will be retired on June 30, 2026"
+WriteRunLog -category "WARNING" -message "Please switch to the new SAP Testing Automation Framework available on https://github.com/Azure/sap-automation-qa"
+WriteRunLog -category "WARNING" -message "---------------------------------------------------------------"
+
+if ((Get-Date).Date -ge [DateTime]"06/30/2026") {
+    WriteRunLog -category "ERROR" -message "Open Source Quality Check has been retired on June 30, 2026"
+    WriteRunLog -category "ERROR" -message "Please switch to the new SAP Testing Automation Framework available on https://github.com/Azure/sap-automation-qa"
+}
+
 
 if ($LogonWithUserSSHKey -or $LogonAsRootSSHKey) {
     $script:VMPassword = ConvertTo-SecureString -String "dummypw" -AsPlainText -Force

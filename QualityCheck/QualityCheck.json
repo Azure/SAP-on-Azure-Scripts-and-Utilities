@@ -1,22 +1,21 @@
 {
-    "Version": 2025102701,
-
+    "Version": 2025110401,
     "PowerShellPrerequisites": [
         {
             "ModuleName": "Posh-SSH",
-            "Version": "3.2.0"
+            "Version": "3.2.2"
         },
         {
             "ModuleName": "Az.Compute",
-            "Version": "5.0.0"
+            "Version": "9.0.0"
         },
         {
             "ModuleName": "Az.Network",
-            "Version": "5.0.0"
+            "Version": "7.0.0"
         },
         {
             "ModuleName": "Az.NetAppFiles",
-            "Version": "0.11.0"
+            "Version": "0.24.0"
         }
     ],
     "SupportedOSDBCombinations": {
@@ -9381,14 +9380,15 @@
             "CommandType": "OS",
             "ProcessingCommand": "mdatp health | grep real_time_protection_enabled | tr -d ' ' | tr -d '\"' | cut -d':' -f2",
             "PostProcessingCommand": "",
-            "ExpectedResult": "false",
+            "ExpectedResult": { "Type": "multi", "Values": ["true", "true[managed]", "false", "false[managed]"] },
             "ShowAlternativeRequirement": "",
             "ShowAlternativeResult": "",
             "RootRequired": true,
             "ShowInReport": true,
-            "AdditionalInfo": "",
+            "AdditionalInfo": "Please make sure to exclude all required SAP directories and files from real time protection",
             "VersionHistory": [
-                { "Date": "20240918", "ChangeLog": "added check" }
+                { "Date": "20240918", "ChangeLog": "added check" },
+                { "Date": "20251027", "ChangeLog": "updated for multi value" }
             ],
             "MicrosoftDocs": "https://learn.microsoft.com/en-us/defender-endpoint/mde-linux-deployment-on-sap",
             "SAPNote": ""
@@ -9410,14 +9410,15 @@
             "CommandType": "OS",
             "ProcessingCommand": "mdatp health | grep automatic_definition_update_enabled | tr -d ' ' | tr -d '\"' | cut -d':' -f2",
             "PostProcessingCommand": "",
-            "ExpectedResult": "true",
+            "ExpectedResult": { "Type": "multi", "Values": ["true", "true[managed]"] },
             "ShowAlternativeRequirement": "",
             "ShowAlternativeResult": "",
             "RootRequired": true,
             "ShowInReport": true,
             "AdditionalInfo": "",
             "VersionHistory": [
-                { "Date": "20240918", "ChangeLog": "added check" }
+                { "Date": "20240918", "ChangeLog": "added check" },
+                { "Date": "20251027", "ChangeLog": "updated for multi value" }
             ],
             "MicrosoftDocs": "https://learn.microsoft.com/en-us/defender-endpoint/mde-linux-deployment-on-sap",
             "SAPNote": ""
