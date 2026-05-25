@@ -10,6 +10,7 @@ This file contains the change log for the PowerShell script.
 * changing the OS disk capabilities update from REST call to Update-AzDisk
 * removing Get-AccessToken authentication block
 * added new Azure feature VMTempDiskResizePreview to resize VMs with tempdisk to VMs without tempdisk
+* adding manual preparation script for Windows
 
 ## Version 2026011301
 
