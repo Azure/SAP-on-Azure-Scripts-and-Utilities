@@ -2,6 +2,20 @@
 
 This file contains the change log for the PowerShell script.
 
+## Version 2026052501
+
+* adding new Windows fix script to make migrations to v6 and newer possible
+* adding new prepare script for Windows
+* changing order for Gen1 check to be earlier
+* changing the OS disk capabilities update from REST call to Update-AzDisk
+* removing Get-AccessToken authentication block
+* added new Azure feature VMTempDiskResizePreview to resize VMs with tempdisk to VMs without tempdisk
+
+## Version 2026011301
+
+* adding check if VM Agent is deployed for using Azure RunCommands
+* add message on potential problem with Windows VMs
+
 ## Version 2025111001
 
 * adding check for Azure Disk Encryption (Linux) thanks to @jonathanbrenes

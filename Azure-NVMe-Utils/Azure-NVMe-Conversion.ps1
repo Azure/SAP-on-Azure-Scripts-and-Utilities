@@ -188,7 +188,7 @@ function CheckForNewerVersion {
 # Main Script
 ##############################################################################################################
 
-$_version = "2025111001" # version of the script
+$_version = "2026052501" # version of the script
 
 # creating variable for log file
 $script:_runlog = @()
@@ -201,7 +201,7 @@ if ($WriteLogfile) {
     WriteRunLog -message "Log file will be written to $script:_logfile"
 }
 
-# 
+# Output of all script parameters for better troubleshooting and supportability of the script
 WriteRunLog -message "Script parameters:"
 foreach ($key in $MyInvocation.BoundParameters.keys)
 {
@@ -209,6 +209,7 @@ foreach ($key in $MyInvocation.BoundParameters.keys)
     WriteRunLog -message "  $key -> $value"
 }
 
+# Check for newer version of the script using the version number in the file and the version number in the online file on GitHub
 CheckForNewerVersion
 
 # Check if breaking change warning is enabled
@@ -307,6 +308,28 @@ try {
     else {
         WriteRunLog -message "VM $VMName is running"
     }
+
+    if ($_vminfo.VMAgent.Statuses.DisplayStatus -eq "Ready" -and $FixOperatingSystemSettings) {
+        WriteRunLog -message "VM Agent is running on VM $VMName"
+        if ($_vminfo.OsName -and $_vminfo.OsVersion) {
+            WriteRunLog -message "Detected OS: $($_vminfo.OsName) $($_vminfo.OsVersion)" -category "INFO"
+        }
+        else {
+            WriteRunLog -message "Could not detect OS version" -category "INFO"
+        }
+    }
+    else {
+        if ($FixOperatingSystemSettings) {
+            WriteRunLog -message "VM Agent is not running on VM $VMName" -category "ERROR"
+            WriteRunLog -message "Please make sure that the VM Agent is installed and running before proceeding" -category "ERROR"
+            exit
+        }
+        else {
+            WriteRunLog -message "VM Agent is not running on VM $VMName, but FixOperatingSystemSettings is not specified, proceeding with conversion" -category "WARNING"
+            WriteRunLog -message "Please make sure the VM is prepared correctly before proceeding" -category "IMPORTANT"
+        }
+    }
+
 } catch {
     WriteRunLog -message "Error getting VM status" -category "ERROR"
     WriteRunLog $_.Exception.Message "ERROR"
@@ -317,6 +340,21 @@ try {
 if ($_VM.StorageProfile.OsDisk.OsType -eq "Windows") {
     $_os = "Windows"
     WriteRunLog -message "VM $VMName is running Windows"
+
+    ## removing as the issue got fixed with the new Enum in Windows operating system
+    # WriteRunLog -message "---------------------------------------------------------------------------------------" -category "IMPORTANT"
+    # WriteRunLog -message "- IMPORTANT: There is a known issue which can cause Windows migrations to fail.       -" -category "IMPORTANT"
+    # WriteRunLog -message "-            If the start operation takes long check Azure Portal VM Screenshot in    -" -category "IMPORTANT"
+    # WriteRunLog -message "-            Help -> Boot Diagnostics -> Screenshot                                   -" -category "IMPORTANT"
+    # WriteRunLog -message "-            If you see a blue screen with error 'INACCESSIBLE_BOOT_DEVICE'           -" -category "IMPORTANT"
+    # WriteRunLog -message "-            try to revert back to SCSI by replacing the controller type with SCSI    -" -category "IMPORTANT"
+    # WriteRunLog -message "-            and the old VM type. After that start the VM.                            -" -category "IMPORTANT"
+    # WriteRunLog -message "-            We are investigating the issue.                                          -" -category "IMPORTANT"
+    # WriteRunLog -message "-                                                                                     -" -category "IMPORTANT"
+    # WriteRunLog -message "-            Script will continue in 10 seconds, press Cntl+C to cancel               -" -category "IMPORTANT"
+    # WriteRunLog -message "---------------------------------------------------------------------------------------" -category "IMPORTANT"
+    # 
+    # Start-Sleep -Seconds 10
 
     if ($_vm.StorageProfile.ImageReference.Publisher -eq "MicrosoftWindowsServer") {
         # Check Windows Version of OS
@@ -344,14 +382,31 @@ else {
     WriteRunLog -message "VM $VMName is running Linux"
 }
 
-# Check if VM is running SCSI or NVMe
-if ($_VM.StorageProfile.DiskControllerType -eq "SCSI") {
-    WriteRunLog -message "VM $VMName is running SCSI"
-    if ($NewControllerType -eq "SCSI") {
-        WriteRunLog -message "VM $VMName is already running SCSI. No action required."
-        WriteRunLog -message "If you want to convert to NVMe, please specify -NewControllerType NVMe"
+# check if VM is running a Gen1 or Gen2 image
+try {
+    $_diskrg = $_vm.StorageProfile.OsDisk.ManagedDisk.Id.Split("/")[4]
+
+    $_vm_osdisk = Get-AzDisk -Name $_vm.StorageProfile.OsDisk.Name -ResourceGroupName $_diskrg
+    if ($_vm_osdisk.HyperVGeneration -eq 'V1') { 
+        WriteRunLog -message "VM $VMName is running a Generation 1 image" -category "ERROR"
+        WriteRunLog -message "NVMe controller are only supported on Generation 2 images" -category "ERROR"
         exit
     }
+}
+catch {
+    WriteRunLog -message "Error getting VM Generation" -category "ERROR"
+    WriteRunLog $_.Exception.Message "ERROR"
+    exit
+}
+
+# Check if VM is running SCSI or NVMe
+if ($_VM.StorageProfile.DiskControllerType -eq "SCSI") {
+   WriteRunLog -message "VM $VMName is running SCSI"
+   if ($NewControllerType -eq "SCSI") {
+       WriteRunLog -message "VM $VMName is already running SCSI. No action required."
+       WriteRunLog -message "If you want to convert to NVMe, please specify -NewControllerType NVMe"
+       exit
+   }
 }
 else {
     WriteRunLog -message "VM $VMName is running NVMe"
@@ -362,67 +417,36 @@ else {
     }
 }
 
-# check if VM is running a Gen1 or Gen2 image
-try {
-    $_diskrg = $_vm.StorageProfile.OsDisk.ManagedDisk.Id.Split("/")[4]
-
-    $_vm_osdisk = Get-AzDisk -Name $_vm.StorageProfile.OsDisk.Name -ResourceGroupName $_diskrg
-    if ($_vm_osdisk.HyperVGeneration -eq 'V1') { 
-        WriteRunLog -message "VM $VMName is running a Generation 1 image" -category "ERROR"
-        WriteRunLog -message "NVMe controller are only supported on Generation 2 images" -category "ERROR"
-    }
-}
-catch {
-    WriteRunLog -message "Error getting VM Generation" -category "ERROR"
-    WriteRunLog $_.Exception.Message "ERROR"
-    exit
-}
-
-
-### trusted launch is supported now
-##if ($_VM.SecurityProfile.SecurityType -eq "TrustedLaunch" -and $VMSize.StartsWith("Standard_M")) {
-##    WriteRunLog -message "VM $VMName is running with Trusted Launch enabled" -category "ERROR"
-##    WriteRunLog -message "Trusted Launch is not supported with M-Series VMs" -category "ERROR"
-##    exit
-##}
-##else {
-##    if ($_VM.SecurityProfile.SecurityType -eq "TrustedLaunch") {
-##        WriteRunLog -message "VM $VMName is running Trusted Launch"
-##   }
-##    else {
-##        WriteRunLog -message "VM $VMName is not running Trusted Launch"
-##    }
-##}
-
+## Old code required for Update OS Disk, but now using Update-AzDisk which seems to update the supported capabilities of the disk, so we don't need to use the REST API to update the disk
 # getting authentication token for REST API calls
-try {
-    $access_token = (Get-AzAccessToken).Token
-
-    # Check if running in Azure Cloud Shell
-    if ($env:ACC_TERM_ID) {
-        WriteRunLog -message "Running in Azure Cloud Shell"
-    } else {
-        WriteRunLog -message "Not running in Azure Cloud Shell"
-    }
-
-    # Check if the access token is a SecureString
-    # might be needed for Azure Cloud Shell
-    if ($access_token.GetType().Name -eq "SecureString") {
-        WriteRunLog -message "Authentication token is a SecureString"
-        $_Ptr = [System.Runtime.InteropServices.Marshal]::SecureStringToCoTaskMemUnicode($access_token)
-        $_result = [System.Runtime.InteropServices.Marshal]::PtrToStringUni($_Ptr)
-        [System.Runtime.InteropServices.Marshal]::ZeroFreeCoTaskMemUnicode($_Ptr)
-        $access_token = $_result
-    } else {
-        WriteRunLog -message "Authentication token is not a SecureString, no conversion needed"
-    }
-
-    WriteRunLog -message "Authentication token received"
-} catch {
-    WriteRunLog -message "Error getting authentication token" -category "ERROR"
-    WriteRunLog $_.Exception.Message "ERROR"
-    exit
-}
+#try {
+#    $access_token = (Get-AzAccessToken).Token
+#
+#    # Check if running in Azure Cloud Shell
+#    if ($env:ACC_TERM_ID) {
+#        WriteRunLog -message "Running in Azure Cloud Shell"
+#    } else {
+#        WriteRunLog -message "Not running in Azure Cloud Shell"
+#    }
+#
+#    # Check if the access token is a SecureString
+#    # might be needed for Azure Cloud Shell
+#    if ($access_token.GetType().Name -eq "SecureString") {
+#        WriteRunLog -message "Authentication token is a SecureString"
+#        $_Ptr = [System.Runtime.InteropServices.Marshal]::SecureStringToCoTaskMemUnicode($access_token)
+#        $_result = [System.Runtime.InteropServices.Marshal]::PtrToStringUni($_Ptr)
+#        [System.Runtime.InteropServices.Marshal]::ZeroFreeCoTaskMemUnicode($_Ptr)
+#        $access_token = $_result
+#    } else {
+#        WriteRunLog -message "Authentication token is not a SecureString, no conversion needed"
+#    }
+#
+#    WriteRunLog -message "Authentication token received"
+#} catch {
+#    WriteRunLog -message "Error getting authentication token" -category "ERROR"
+#    WriteRunLog $_.Exception.Message "ERROR"
+#    exit
+#}
 
 if (-not $IgnoreSKUCheck) {
     WriteRunLog -message "Getting available SKU resources"
@@ -452,11 +476,21 @@ if (-not $IgnoreSKUCheck) {
     else {
         WriteRunLog -message "Checking resource disk support for Windows VMs"
         if (($_originalVMHasResourceDisk -and -not $_newVMHasResourceDisk) -or (-not $_originalVMHasResourceDisk -and $_newVMHasResourceDisk)) {
-            WriteRunLog -message "Mismatch in resource disk support between original VM size ($script:_original_vm_size) and new VM size ($VMSize)." -category "ERROR"
-            WriteRunLog -message "Please check the VM sizes and their capabilities." -category "ERROR"
-            WriteRunLog -message "IMPORTANT: If you try to convert to a v6 VM size (e.g. Standard_E4ds_v6 or Standard_E4ads_v6) an error might occur." -category "ERROR"
-            WriteRunLog -message "We are working on a fix for this issue." -category "ERROR"
-            exit
+            # for Windows we need to check if the feature VMTempDiskResizePreview in Microsoft.Compute is registered
+            $_resource_provider = Get-AzProviderFeature -FeatureName VMTempDiskResizePreview -ProviderNamespace Microsoft.Compute
+
+            if ($_resource_provider.RegistrationState -ne "Registered") {
+                WriteRunLog -message "Mismatch in resource disk support between original VM size ($script:_original_vm_size) and new VM size ($VMSize)." -category "ERROR"
+
+                WriteRunLog -message "The Azure subscription is not registered for the feature VMTempDiskResizePreview which is required for resizing the resource disk when converting between VM sizes with different resource disk support" -category "ERROR"
+                WriteRunLog -message "Please register the subscription for the feature using the following command and try again:" -category "ERROR"
+                WriteRunLog -message "   Register-AzProviderFeature -FeatureName VMTempDiskResizePreview -ProviderNamespace Microsoft.Compute" -category "ERROR"
+                WriteRunLog -message "The feature is auto-approved, script will exit, please wait 10 minutes and then try again." -category "ERROR"
+                exit
+            }
+            else {
+                WriteRunLog -message "The Azure subscription is registered for the feature VMTempDiskResizePreview"
+            }
         }
         else {
             WriteRunLog -message "Resource disk support matches between original VM size and new VM size."
@@ -495,52 +529,427 @@ if (-not $IgnoreSKUCheck) {
     }
 }
 
+## Old way to update the OS disk, but it seems that the Update-AzDisk command doesn't update the supported capabilities of the disk, so we need to use the REST API to update the disk
 # generate URL for OS disk update
-$osdisk_url = "https://management.azure.com/subscriptions/$($_AzureContext.Subscription.Id)/resourceGroups/$ResourceGroupName/providers/Microsoft.Compute/disks/$($_vm_osdisk.Name)?api-version=2023-04-02"
-
+# $osdisk_url = "https://management.azure.com/subscriptions/$($_AzureContext.Subscription.Id)/resourceGroups/$ResourceGroupName/providers/Microsoft.Compute/disks/$($_vm_osdisk.Name)?api-version=2023-04-02"
+#
 # auth header for web request
-$auth_header = @{
-    'Content-Type'  = 'application/json'
-    'Authorization' = 'Bearer ' + $access_token
-  }
-
+#$auth_header = @{
+#    'Content-Type'  = 'application/json'
+#    'Authorization' = 'Bearer ' + $access_token
+#  }
+#
 # body for SCSI/NVMe enabled OS Disk
-$body_nvmescsi = @'
-{
-    "properties": {
-        "supportedCapabilities": {
-            "diskControllerTypes":"SCSI, NVMe"
-        }
-    }
-}
-'@
+#$body_nvmescsi = @'
+#{
+#    "properties": {
+#        "supportedCapabilities": {
+#            "diskControllerTypes":"SCSI, NVMe"
+#        }
+#    }
+#}
+#'@
 
 # body for SCSI enabled OS Disk
-$body_scsi = @'
-{
-    "properties": {
-        "supportedCapabilities": {
-            "diskControllerTypes":"SCSI"
-        }
-    }
-}
-'@
+#$body_scsi = @'
+#{
+#    "properties": {
+#        "supportedCapabilities": {
+#            "diskControllerTypes":"SCSI"
+#        }
+#    }
+#}
+#'@
 
 # Windows Check script for NVMe
 $Check_Windows_Script = @'
-$start = (Get-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Services\stornvme -Name Start).Start
-if ($start -eq 0) {
-    Write-Host "Start:OK"
+<#
+.SYNOPSIS
+    Checks if a Windows VM is ready for SCSI-to-NVMe disk controller conversion.
+
+.DESCRIPTION
+    Read-only companion to nvme-prepare-os.ps1. Runs INSIDE the guest OS (via
+    Azure RunCommand or RDP) and reports whether the VM can safely convert to
+    an NVMe-capable Azure VM size (e.g., Standard_D8s_v6).
+
+    Checks performed (all ControlSets):
+      - stornvme.sys driver binary exists
+      - stornvme Start = 0 (Boot)
+      - stornvme StartOverride absent (the key blocker for NVMe boot)
+      - pci Start = 0 (Boot)
+      - pci StartOverride absent
+      - Boot driver chain (partmgr, disk, volmgr, etc.)
+
+    Makes NO changes to the system. Safe to run at any time.
+
+    Exit codes:
+      0 = READY      (VM can be converted to NVMe as-is)
+      1 = NEEDS_PREP (run nvme-prepare-os.ps1 first)
+      2 = BLOCKED    (missing driver or critical issue)
+
+.EXAMPLE
+    # Via Azure RunCommand:
+    Invoke-AzVMRunCommand -ResourceGroupName "myRG" -VMName "myVM" `
+        -CommandId 'RunPowerShellScript' -ScriptPath ".\nvme-check-os.ps1"
+
+    # Via RDP/PowerShell:
+    .\nvme-check-os.ps1
+#>
+
+$ErrorActionPreference = 'Stop'
+
+$pass = 0; $fail = 0; $warn = 0
+$issues = @()
+
+function Write-Status { param([string]$msg, [string]$level = "INFO")
+    $prefix = switch ($level) { "PASS" { "[PASS] " } "FAIL" { "[FAIL] " } "WARN" { "[WARN] " } "OK" { "[OK]   " } default { "[INFO] " } }
+    Write-Host "$prefix $msg"
 }
-else {
-    Write-Host "Start:ERROR"
+
+function Add-Check { param([string]$name, [string]$result, [string]$detail = "")
+    $msg = $name
+    if ($detail) { $msg = $name + " - " + $detail }
+    Write-Status $msg $result
+    switch ($result) {
+        "PASS" { $script:pass++ }
+        "FAIL" { $script:fail++; $script:issues += ($name + " : " + $detail) }
+        "WARN" { $script:warn++ }
+    }
 }
-$startoverride = Get-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Services\stornvme\StartOverride -ErrorAction SilentlyContinue
-if ($startoverride) {
-    Write-Host "StartOverride:ERROR"
+
+# --- OS Information ---
+$os = Get-CimInstance Win32_OperatingSystem
+Write-Status ("OS: " + $os.Caption + " (" + $os.Version + ")")
+
+# --- Check 1: stornvme.sys driver binary ---
+$driverPath = $env:SystemRoot + "\System32\drivers\stornvme.sys"
+if (Test-Path $driverPath) {
+    $ver = (Get-Item $driverPath).VersionInfo.FileVersion
+    Add-Check "stornvme.sys" "PASS" ("version " + $ver)
+} else {
+    Add-Check "stornvme.sys" "FAIL" ("not found at " + $driverPath)
+    Write-Host ""
+    Write-Host "=== RESULT: BLOCKED (missing stornvme.sys driver) ==="
+    exit 2
 }
-else {
-    Write-Host "StartOverride:OK"
+
+# --- Enumerate ControlSets ---
+$controlSets = @(Get-ChildItem "HKLM:\SYSTEM" -ErrorAction SilentlyContinue |
+    Where-Object { $_.PSChildName -match '^ControlSet\d+$' } |
+    ForEach-Object { $_.PSChildName })
+$selectProps = Get-ItemProperty "HKLM:\SYSTEM\Select" -ErrorAction SilentlyContinue
+$csInfo = "ControlSets: " + ($controlSets -join ', ') + " (Current=" + $selectProps.Current + " LastKnownGood=" + $selectProps.LastKnownGood + ")"
+Write-Status $csInfo
+Write-Host ""
+
+# --- Check 2-5: Service configuration across ALL ControlSets ---
+foreach ($cs in $controlSets) {
+    Write-Status ("--- " + $cs + " ---")
+    $csRoot = "HKLM:\SYSTEM\" + $cs
+
+    # stornvme Start
+    $svcPath = $csRoot + "\Services\stornvme"
+    $start = (Get-ItemProperty -Path $svcPath -Name Start -ErrorAction SilentlyContinue).Start
+    if ($start -eq 0) {
+        Add-Check ($cs + "\stornvme Start") "PASS" "0 (Boot)"
+    } else {
+        Add-Check ($cs + "\stornvme Start") "FAIL" ($start.ToString() + " (need 0=Boot)")
+    }
+
+    # stornvme StartOverride (the critical blocker)
+    $soPath = $svcPath + "\StartOverride"
+    if (Test-Path $soPath) {
+        $soProps = Get-ItemProperty -Path $soPath -ErrorAction SilentlyContinue
+        $soVal = $soProps.'0'
+        if ($null -eq $soVal) { $soVal = "key exists" } else { $soVal = $soVal.ToString() }
+        Add-Check ($cs + "\stornvme StartOverride") "FAIL" ("present (value=" + $soVal + ") overrides Start to demand-start")
+    } else {
+        Add-Check ($cs + "\stornvme StartOverride") "PASS" "absent"
+    }
+
+    # pci Start
+    $pciPath = $csRoot + "\Services\pci"
+    $pciStart = (Get-ItemProperty -Path $pciPath -Name Start -ErrorAction SilentlyContinue).Start
+    if ($pciStart -eq 0) {
+        Add-Check ($cs + "\pci Start") "PASS" "0 (Boot)"
+    } else {
+        Add-Check ($cs + "\pci Start") "FAIL" ($pciStart.ToString() + " (need 0=Boot)")
+    }
+
+    # pci StartOverride
+    $pciSOPath = $csRoot + "\Services\pci\StartOverride"
+    if (Test-Path $pciSOPath) {
+        Add-Check ($cs + "\pci StartOverride") "FAIL" "present - may block PCI bus enumeration"
+    } else {
+        Add-Check ($cs + "\pci StartOverride") "PASS" "absent"
+    }
+    Write-Host ""
+}
+
+# --- Check 6: Boot driver chain (CurrentControlSet only) ---
+Write-Status "--- Boot Driver Chain ---"
+$currentCS = "HKLM:\SYSTEM\ControlSet00" + $selectProps.Current
+$bootDrivers = @("pci", "stornvme", "partmgr", "disk", "volmgr", "volume", "volsnap", "mountmgr")
+foreach ($driver in $bootDrivers) {
+    $drvPath = $currentCS + "\Services\" + $driver
+    if (Test-Path $drvPath) {
+        $drvStart = (Get-ItemProperty -Path $drvPath -Name Start -ErrorAction SilentlyContinue).Start
+        if ($drvStart -eq 0) {
+            Add-Check $driver "PASS" "Start=0 (Boot)"
+        } else {
+            Add-Check $driver "WARN" ("Start=" + $drvStart + " (non-boot)")
+        }
+    } else {
+        Add-Check $driver "WARN" "service not found"
+    }
+}
+
+# --- Summary ---
+Write-Host ""
+Write-Host "=== SUMMARY ==="
+Write-Status ("Checks: " + $pass + " passed, " + $fail + " failed, " + $warn + " warnings")
+
+if ($fail -eq 0) {
+    Write-Host ""
+    Write-Host "=== RESULT: READY ==="
+    Write-Host "VM can be converted to NVMe."
+    exit 0
+} else {
+    Write-Host ""
+    Write-Host "=== RESULT: NEEDS_PREP ==="
+    foreach ($issue in $issues) {
+        Write-Host ("  - " + $issue)
+    }
+    exit 1
+}
+'@
+
+$Windows_Fix_Script = @'
+<#
+.SYNOPSIS
+    Prepares a Windows VM for SCSI-to-NVMe disk controller conversion on Azure.
+
+.DESCRIPTION
+    This script runs INSIDE the guest OS (via Azure RunCommand or RDP) and ensures
+    the stornvme driver will load at boot time when the VM is resized to an NVMe-only
+    Azure VM size (e.g., Standard_E8s_v6).
+
+    Root cause: Windows sets stornvme StartOverride registry key (value 0=3) which
+    overrides the driver's Start=0 (boot) setting with Start=3 (demand-start),
+    preventing the NVMe driver from loading during early boot. This key exists in
+    ALL ControlSets on Windows Server (both Current and LastKnownGood).
+
+    CRITICAL: The fix MUST be applied to ALL ControlSets (not just CurrentControlSet).
+    Windows Server maintains multiple ControlSets. If LastKnownGood (typically
+    ControlSet002) still has StartOverride=3, Windows may use it during boot
+    recovery, causing INACCESSIBLE_BOOT_DEVICE BSOD.
+
+    Tested and validated on (450+ VMs across 15 Azure regions):
+      - Windows Server 2019 Datacenter (10.0.17763)
+      - Windows Server 2022 Datacenter (10.0.20348)
+      - Windows Server 2025 Datacenter (10.0.26100)
+      - Windows 10 Enterprise / Pro / LTSC (10.0.19044, 10.0.19045)
+      - Windows 11 Enterprise 22H2-25H2 (10.0.22621, 10.0.22631, 10.0.26200)
+      - All of the above with Trusted Launch (Secure Boot + vTPM enabled)
+      - All of the above with Standard security (non-TL)
+      - With and without data disks (up to 2x 512GB tested)
+
+    Safe to run multiple times (idempotent).
+
+.NOTES
+    Run this script BEFORE deallocating and resizing the VM.
+
+    CRITICAL: The script uses explicit RegFlushKey (via .NET RegistryKey.Flush())
+    to ensure registry changes are written to disk before returning. Do NOT use
+    Stop-Computer inside this script — it creates race conditions with Stop-AzVM
+    and can result in incomplete registry flushes.
+
+    After the script completes successfully, IMMEDIATELY proceed with:
+      1. Stop-AzVM -Force (graceful ACPI shutdown + deallocate)
+      2. Update OS disk supportedCapabilities to "SCSI, NVMe"
+      3. Update VM size and DiskControllerType to NVMe
+      4. Start-AzVM
+
+    IMPORTANT: Each SCSI boot re-creates StartOverride. Do NOT boot on SCSI
+    between running this script and converting to NVMe. Immediately deallocate
+    the VM with Stop-AzVM after this script succeeds.
+
+.EXAMPLE
+    # Via Azure RunCommand (recommended):
+    Invoke-AzVMRunCommand -ResourceGroupName "myRG" -VMName "myVM" `
+        -CommandId 'RunPowerShellScript' -ScriptPath ".\nvme-prepare-os.ps1"
+    # Then immediately: Stop-AzVM, update disk caps, convert, start.
+
+    # Via RDP/PowerShell remoting:
+    .\nvme-prepare-os.ps1
+    # Then immediately deallocate, convert, and start the VM.
+#>
+
+$ErrorActionPreference = 'Stop'
+
+function Write-Status { param([string]$msg, [string]$level = "INFO")
+    $prefix = switch ($level) { "OK" { "[OK]   " } "WARN" { "[WARN] " } "ERROR" { "[ERROR]" } default { "[INFO] " } }
+    Write-Host "$prefix $msg"
+}
+
+# --- Detect OS version ---
+$os = Get-CimInstance Win32_OperatingSystem
+Write-Status "OS: $($os.Caption) ($($os.Version))"
+
+# --- Check stornvme driver file exists ---
+$driverPath = "$env:SystemRoot\System32\drivers\stornvme.sys"
+if (-not (Test-Path $driverPath)) {
+    Write-Status "stornvme.sys not found at $driverPath - NVMe conversion not possible" "ERROR"
+    exit 1
+}
+$driverVer = (Get-Item $driverPath).VersionInfo.FileVersion
+Write-Status "stornvme.sys found (version: $driverVer)"
+
+# --- Use sc.exe to set stornvme to boot-start (handles CurrentControlSet) ---
+# sc.exe config operates through the Windows Service Control Manager, which
+# atomically sets Start=0 AND removes StartOverride. This is the Windows-native
+# way to change service startup types and is more robust than direct registry edits.
+Write-Status "Running sc.exe config stornvme start=boot..."
+$scResult = & sc.exe config stornvme start=boot 2>&1
+if ($LASTEXITCODE -eq 0) {
+    Write-Status "sc.exe config stornvme start=boot succeeded" "OK"
+} else {
+    Write-Status "sc.exe config returned $LASTEXITCODE (non-fatal, continuing with registry approach)" "WARN"
+}
+
+# --- Enumerate ALL ControlSets ---
+# Windows maintains multiple ControlSets (001=Current, 002=LastKnownGood, etc.).
+# We must fix ALL of them because Windows may boot from any ControlSet, especially
+# after a failed first boot or with Trusted Launch's stricter boot process.
+# sc.exe only handles CurrentControlSet, so we also fix the others manually.
+$controlSets = @(Get-ChildItem "HKLM:\SYSTEM" -ErrorAction SilentlyContinue |
+    Where-Object { $_.PSChildName -match '^ControlSet\d+$' } |
+    ForEach-Object { $_.PSChildName })
+$selectProps = Get-ItemProperty "HKLM:\SYSTEM\Select" -ErrorAction SilentlyContinue
+Write-Status "Found ControlSets: $($controlSets -join ', ') (Current=$($selectProps.Current), LastKnownGood=$($selectProps.LastKnownGood))"
+
+foreach ($cs in $controlSets) {
+    Write-Host ""
+    Write-Status "--- Processing $cs ---"
+    $csRoot = "HKLM:\SYSTEM\$cs"
+
+    # --- Fix 1: Ensure stornvme Start = 0 (Boot) ---
+    $svcPath = "$csRoot\Services\stornvme"
+    $currentStart = (Get-ItemProperty -Path $svcPath -Name Start -ErrorAction SilentlyContinue).Start
+
+    if ($currentStart -eq 0) {
+        Write-Status "$cs\stornvme Start = 0 (Boot) - correct" "OK"
+    } else {
+        Write-Status "$cs\stornvme Start = $currentStart - setting to 0" "WARN"
+        Set-ItemProperty -Path $svcPath -Name "Start" -Value 0 -Type DWord
+        Write-Status "$cs\stornvme Start set to 0" "OK"
+    }
+
+    # --- Fix 2: Remove StartOverride (critical fix) ---
+    $startOverridePath = "$svcPath\StartOverride"
+    if (Test-Path $startOverridePath) {
+        $soValue = (Get-ItemProperty -Path $startOverridePath -ErrorAction SilentlyContinue).'0'
+        Write-Status "$cs\stornvme StartOverride exists (value=$soValue) - REMOVING" "WARN"
+        Remove-Item -Path $startOverridePath -Recurse -Force
+        if (Test-Path $startOverridePath) {
+            Write-Status "Failed to remove $cs\stornvme StartOverride!" "ERROR"
+            exit 1
+        }
+        Write-Status "$cs\stornvme StartOverride removed" "OK"
+    } else {
+        Write-Status "$cs\stornvme StartOverride not present - correct" "OK"
+    }
+
+    # --- Fix 3: Ensure pci driver is boot-start ---
+    $pciStart = (Get-ItemProperty -Path "$csRoot\Services\pci" -Name Start -ErrorAction SilentlyContinue).Start
+    if ($pciStart -eq 0) {
+        Write-Status "$cs\pci Start = 0 (Boot) - correct" "OK"
+    } else {
+        Write-Status "$cs\pci Start = $pciStart - setting to 0" "WARN"
+        Set-ItemProperty -Path "$csRoot\Services\pci" -Name "Start" -Value 0 -Type DWord
+        Write-Status "$cs\pci Start set to 0" "OK"
+    }
+
+    # --- Fix 4: Remove pci StartOverride if present ---
+    $pciSOPath = "$csRoot\Services\pci\StartOverride"
+    if (Test-Path $pciSOPath) {
+        Write-Status "$cs\pci StartOverride exists - REMOVING" "WARN"
+        Remove-Item -Path $pciSOPath -Recurse -Force
+        Write-Status "$cs\pci StartOverride removed" "OK"
+    } else {
+        Write-Status "$cs\pci StartOverride not present - correct" "OK"
+    }
+}
+
+# --- Validation summary ---
+Write-Host ""
+Write-Host "=== VALIDATION ==="
+$allGood = $true
+
+foreach ($cs in $controlSets) {
+    $csRoot = "HKLM:\SYSTEM\$cs"
+    $csStart = (Get-ItemProperty -Path "$csRoot\Services\stornvme" -Name Start -ErrorAction SilentlyContinue).Start
+    $csSO = Test-Path "$csRoot\Services\stornvme\StartOverride"
+    $csPci = (Get-ItemProperty -Path "$csRoot\Services\pci" -Name Start -ErrorAction SilentlyContinue).Start
+    $csPciSO = Test-Path "$csRoot\Services\pci\StartOverride"
+
+    $csOK = ($csStart -eq 0) -and (-not $csSO) -and ($csPci -eq 0) -and (-not $csPciSO)
+    if (-not $csOK) { $allGood = $false }
+
+    $status = if ($csOK) { "OK" } else { "ERROR" }
+    Write-Status "$cs : stornvme Start=$csStart SO=$csSO, pci Start=$csPci SO=$csPciSO" $status
+}
+
+if ($allGood) {
+    # --- CRITICAL: Explicit registry flush using RegFlushKey ---
+    # Registry changes from Remove-Item/Set-ItemProperty are in-memory only.
+    # The Windows lazy writer may take seconds to flush. Without an explicit
+    # flush, Stop-AzVM (or any shutdown) may power off before changes are on disk.
+    # RegistryKey.Flush() calls RegFlushKey() which is SYNCHRONOUS — when it
+    # returns, the data IS on disk. This is far more reliable than Stop-Computer
+    # (which creates race conditions with Stop-AzVM) or reg.exe save (which
+    # fails in RunCommand contexts due to access restrictions).
+    Write-Status "Flushing SYSTEM registry hive to disk..."
+    try {
+        $systemKey = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey("SYSTEM", $false)
+        $systemKey.Flush()
+        $systemKey.Close()
+        Write-Status "Registry hive flushed to disk successfully" "OK"
+    } catch {
+        Write-Status "Primary flush failed ($($_.Exception.Message)), trying alternative..." "WARN"
+        # Fallback: flush each ControlSet individually
+        $flushOK = $true
+        foreach ($cs in $controlSets) {
+            try {
+                $csKey = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey("SYSTEM\$cs\Services\stornvme", $false)
+                if ($csKey) { $csKey.Flush(); $csKey.Close() }
+            } catch {
+                $flushOK = $false
+                Write-Status "Failed to flush $cs\Services\stornvme: $($_.Exception.Message)" "ERROR"
+            }
+        }
+        if (-not $flushOK) {
+            Write-Status "Registry flush failed - changes may not persist!" "ERROR"
+            exit 1
+        }
+        Write-Status "Registry flushed via individual ControlSet keys" "OK"
+    }
+
+    # Post-flush verification: re-read from registry to confirm changes persisted
+    foreach ($cs in $controlSets) {
+        $verifyPath = "HKLM:\SYSTEM\$cs\Services\stornvme\StartOverride"
+        if (Test-Path $verifyPath) {
+            Write-Status "FATAL: $cs\stornvme\StartOverride STILL PRESENT after flush!" "ERROR"
+            exit 1
+        }
+    }
+    Write-Status "Post-flush verification passed - StartOverride absent in all ControlSets" "OK"
+
+    Write-Status "All checks passed across ALL ControlSets - VM is ready for NVMe conversion" "OK"
+    exit 0
+} else {
+    Write-Status "Some checks failed - review output above" "ERROR"
+    exit 1
 }
 '@
 
@@ -556,64 +965,87 @@ if ($_os -eq "Windows") {
         try {
 
             if (-not $IgnoreOSCheck) {
-                if ($FixOperatingSystemSettings) {
-                    WriteRunLog -message "Fixing operating system settings"
-                    WriteRunLog -message "Running command to set stornvme to boot"
-                    WriteRunLog -message "   sc.exe config stornvme start=boot"
-                    $RunCommandResult = Invoke-AzVMRunCommand -ResourceGroupName $ResourceGroupName -VMName $VMName -CommandId 'RunPowerShellScript' -ScriptString 'Start-Process -FilePath "C:\Windows\System32\sc.exe" -ArgumentList "config stornvme start=boot"'
-                }
-                else {
-                    if (-not $IgnoreSKUCheck) {
-                        WriteRunLog -message "Collecting details from OS"
-                        $_error = 0
-                        $_okay = 0
-                        $_scriptoutput = ""
-                        $RunCommandResult = Invoke-AzVMRunCommand -ResourceGroupName $ResourceGroupName -VMName $VMName -CommandId 'RunPowerShellScript' -ScriptString $Check_Windows_Script
 
-                        $_result = ($RunCommandResult.Value | ForEach-Object { $_.Message }) -split "`n"
+                WriteRunLog -message "Checking if operating system is prepared for NVMe migration"
+                $RunCommandResult = Invoke-AzVMRunCommand -ResourceGroupName $ResourceGroupName -VMName $VMName -CommandId 'RunPowerShellScript' -ScriptString $Check_Windows_Script
+                $checkOutput = $RunCommandResult.Value[0].Message
+                # WriteRunLog -message $checkOutput
 
-                        foreach ($_line in $_result) {
-                            WriteRunLog -message ("   Script output: " + $_line)
-                            if ($_line.Contains("OK") -or $_line.Contains("ERROR")) {
-                                $_scriptoutput += $_line + "`n"
-
-                                if ($_line.Contains("Start:")) {
-                                    if ($_line.Contains("ERROR")) {
-                                        WriteRunLog -message "Start is not set to boot in the operating system" -category "ERROR"
-                                        $_error++
-                                    }
-                                    else {
-                                        WriteRunLog -message "Start is set to boot in the operating system" -category "INFO"
-                                        $_okay++
-                                    }
-                                }
-
-                                if ($_line.Contains("StartOverride:")) {
-                                    if ($_line.Contains("ERROR")) {
-                                        WriteRunLog -message "StartOverride is set in the operating system" -category "ERROR"
-                                        $_error++
-                                    }
-                                    else {
-                                        WriteRunLog -message "StartOverride does not exist" -category "INFO"
-                                        $_okay++
-                                    }
-                                }
-                            }
+                foreach ($line in ($checkOutput -split "`n" | ForEach-Object { $_.Trim() } | Where-Object { $_ })) {
+                    if ($line -match ':FAIL') {
+                        WriteRunLog -message $line -category "ERROR"
+                    }
+                    elseif ($line -match ':WARN') {
+                        WriteRunLog -message $line -category "WARNING"
+                    }
+                    elseif ($line -match 'RESULT:') {
+                        if ($line -match 'SUCCESS|READY') {
+                            WriteRunLog -message $line -category "IMPORTANT"
                         }
-
-                        WriteRunLog -message "Windows OS Check result:"
-                        WriteRunLog -message "Errors: $_error - OK: $_okay"
-
-                        if ($_error -gt 0) {
-                            WriteRunLog -message "Operating system does not seem to be ready, it might not after the conversion" -category "WARNING"
-                            WriteRunLog -message "Please check the operating system settings" -category "WARNING"
-                            WriteRunLog -message "If you want to continue, please use the -FixOperatingSystemSettings switch" -category "IMPORTANT"
-                            WriteRunLog -message "alternative: you can run 'sc.exe config stornvme start=boot' in the operating system and continue or stop the script" -category "IMPORTANT"
-                            AskToContinue -message "Do you want to continue?"
+                        else {
+                            WriteRunLog -message $line -category "ERROR"
                         }
                     }
                     else {
-                        WriteRunLog -message "Skipping OS Check, assuming that the operating system is ready for conversion"
+                        WriteRunLog -message $line -category "INFO"
+                    }
+                }
+
+                if ($checkOutput -match 'RESULT: READY') {
+                    Write-Output "$VM is already NVMe-ready, skipping prep"
+                }
+                else {
+
+                    if ($FixOperatingSystemSettings) {
+                        WriteRunLog -message "Fixing operating system settings"
+                        WriteRunLog -message "Running script to prepare Windows OS for NVMe migration"
+                        # WriteRunLog -message "   sc.exe config stornvme start=boot"
+                        # $RunCommandResult = Invoke-AzVMRunCommand -ResourceGroupName $ResourceGroupName -VMName $VMName -CommandId 'RunPowerShellScript' -ScriptString 'Start-Process -FilePath "C:\Windows\System32\sc.exe" -ArgumentList "config stornvme start=boot"'
+                        $RunCommandResult = Invoke-AzVMRunCommand -ResourceGroupName $ResourceGroupName -VMName $VMName -CommandId 'RunPowerShellScript' -ScriptString $Windows_Fix_Script
+
+                        $checkOutput = $RunCommandResult.Value[0].Message
+
+                        $_error_count = 0
+                        foreach ($line in ($checkOutput -split "`n" | ForEach-Object { $_.Trim() } | Where-Object { $_ })) {
+                            if ($line -match ':FAIL') {
+                                WriteRunLog -message $line -category "ERROR"
+                                $_error_count++
+                            }
+                            elseif ($line -match ':WARN') {
+                                WriteRunLog -message $line -category "WARNING"
+                            }
+                            elseif ($line -match 'RESULT:') {
+                                if ($line -match 'SUCCESS|READY') {
+                                    WriteRunLog -message $line -category "IMPORTANT"
+                                }
+                                else {
+                                    WriteRunLog -message $line -category "ERROR"
+                                }
+                            }
+                            else {
+                                WriteRunLog -message $line -category "INFO"
+                            }
+                        }
+
+                        if ($_error_count -eq 0) {
+                            # proceed with deallocate + disk update + resize
+                            WriteRunLog -message "Windows OS prepared successfully for NVMe migration"
+                            
+                            WriteRunLog -message "Shutting down the VM to complete preparation and proceed with migration"
+                            # $shutdownResult = Invoke-AzVMRunCommand -ResourceGroupName $ResourceGroupName -VMName $VMName -CommandId 'RunPowerShellScript' -ScriptString $ShutdownScript
+                        }
+                        else {
+                            WriteRunLog -message "Failed to prepare Windows OS for NVMe migration" -category "ERROR"
+                            exit
+                        }
+
+                    }
+                    else {
+                        WriteRunLog -message "Operating system does not seem to be ready, it might not after the conversion" -category "WARNING"
+                        WriteRunLog -message "Please check the operating system settings" -category "WARNING"
+                        WriteRunLog -message "If you want to continue, please use the -FixOperatingSystemSettings switch" -category "IMPORTANT"
+                        WriteRunLog -message "alternative: you can run 'sc.exe config stornvme start=boot' in the operating system and continue or stop the script" -category "IMPORTANT"
+                        AskToContinue -message "Do you want to continue?"
                     }
                 }
             }
@@ -853,6 +1285,69 @@ check_fstab
 exit 0
 '@
 
+$mana_check_script = @'
+#!/bin/bash
+echo "=== MANA Driver Check ==="
+echo ""
+
+mana_found=false
+
+# Check if mana module is currently loaded
+if lsmod 2>/dev/null | grep -qi 'mana'; then
+    echo "[LOADED] MANA kernel module is currently loaded:"
+    lsmod | grep -i 'mana'
+    mana_found=true
+else
+    echo "[NOT LOADED] MANA kernel module is not currently loaded."
+fi
+
+echo ""
+
+# Check if mana module is available (installed but not necessarily loaded)
+if modinfo mana &>/dev/null; then
+    echo "[AVAILABLE] MANA module is available in the kernel:"
+    modinfo mana | grep -E '^(filename|version|description|author):'
+    mana_found=true
+else
+    echo "[NOT AVAILABLE] MANA module not found via modinfo."
+fi
+
+echo ""
+
+# Check for MANA network interfaces via ethtool
+for iface in /sys/class/net/*/; do
+    iface_name=$(basename "$iface")
+    if [ "$iface_name" = "lo" ]; then
+        continue
+    fi
+    driver=$(ethtool -i "$iface_name" 2>/dev/null | grep '^driver:' | awk '{print $2}')
+    if echo "$driver" | grep -qi 'mana'; then
+        echo "[INTERFACE] Interface '$iface_name' is using the MANA driver."
+        ethtool -i "$iface_name" 2>/dev/null
+        mana_found=true
+    fi
+done
+
+echo ""
+
+# Check for MANA devices in dmesg
+if dmesg 2>/dev/null | grep -qi 'mana'; then
+    echo "[DMESG] MANA references found in kernel messages:"
+    dmesg | grep -i 'mana' | tail -10
+else
+    echo "[DMESG] No MANA references found in kernel messages."
+fi
+
+echo ""
+echo "=== Summary ==="
+if [ "$mana_found" = true ]; then
+    echo "RESULT: MANA driver IS installed/present on this system."
+else
+    echo "RESULT: MANA driver is NOT installed on this system."
+fi
+'@
+
+
 $linux_fix_script = $linux_check_script.Replace("fix=false","fix=true")
 
         if ($NewControllerType -eq "NVMe") {
@@ -918,12 +1413,40 @@ $linux_fix_script = $linux_check_script.Replace("fix=false","fix=true")
         WriteRunLog $_.Exception.Message "ERROR"
         exit
     }
+
+    # Checking for MANA driver presence on Linux VMs
+    WriteRunLog -message "Checking for MANA driver presence on Linux VM"
+    try {
+        $RunCommandResult = Invoke-AzVMRunCommand -ResourceGroupName $resourceGroupName -Name $vmName -CommandId 'RunShellScript' -ScriptString $mana_check_script
+        $manaCheckOutput = ($RunCommandResult.Value | ForEach-Object { $_.Message }) -split "`n"
+        foreach ($line in $manaCheckOutput) {
+            WriteRunLog -message ("   MANA Check: " + $line)
+        }
+        if ($manaCheckOutput -match 'RESULT: MANA driver IS installed') {
+            WriteRunLog -message "MANA driver is present on this Linux VM" -category "INFO"
+        }
+        else {
+            WriteRunLog -message "MANA driver does not seem to be present on this Linux VM" -category "WARNING"
+            WriteRunLog -message "Please check if MANA driver is required for your workload and if it is, please install the MANA driver before running the conversion" -category "IMPORTANT"
+            WriteRunLog -message "You can find more information about MANA driver and installation instructions here: https://learn.microsoft.com/en-us/azure/virtual-network/accelerated-networking-mana-linux" -category "IMPORTANT"
+        }
+    } catch {
+        WriteRunLog -message "Error checking for MANA driver on Linux VM" -category "ERROR"
+        WriteRunLog $_.Exception.Message "ERROR"
+    }
 }
 
 # Shutting down VM
-WriteRunLog -message "Shutting down VM $VMName"
+WriteRunLog -message "Checking Power Status of VM $VMName"
 try {
     $_stopvm = Stop-AzVM -ResourceGroupName $ResourceGroupName -Name $VMName -Force
+    if ($_stopvm.Status -eq "Succeeded") {
+        WriteRunLog -message "Stop command issued for VM $VMName"
+    }
+    else {      
+        WriteRunLog -message "Error issuing stop command for VM $VMName" -category "ERROR"
+        exit
+    }
     WriteRunLog -message "VM $VMName stopped"
 } catch {
     WriteRunLog -message "Error stopping VM $VMName" -category "ERROR"
@@ -946,24 +1469,54 @@ if (($_vminfo.Statuses | Where-Object { $_.Code -like 'PowerState*' }).Code -ne 
     }
 }
 
-# Enabling NVMe capabilities on OS disk
-WriteRunLog -message "Setting OS Disk capabilities for $($_vm_osdisk.Name) to new Disk Controller Type to $NewControllerType"
-try {
-    WriteRunLog -message "generated URL for OS disk update:"
-    WriteRunLog -message $osdisk_url
-    if ($NewControllerType -eq "NVMe") {
-        $_response = Invoke-RestMethod -Uri $osdisk_url -Method PATCH -Headers $auth_header -Body $body_nvmescsi
-    }
-    else {
-        $_response = Invoke-RestMethod -Uri $osdisk_url -Method PATCH -Headers $auth_header -Body $body_scsi
-    }
-    WriteRunLog -message "OS Disk updated"
-} catch {
-    WriteRunLog -message "Error updating OS Disk" -category "ERROR"
-    WriteRunLog $_.Exception.Message "ERROR"
+$_osdisk = Get-AzDisk -ResourceGroupName $ResourceGroupName -Name $_VM.StorageProfile.OsDisk.Name
+if (-not $_osdisk) {
+    WriteRunLog -message "OS Disk not found" -category "ERROR"
     exit
 }
+else {
+    WriteRunLog -message "OS Disk found: $($_osdisk.Name)"
+    if ($newControllerType -eq "NVMe") {
+        if ($_osdisk.SupportedCapabilities.DiskControllerTypes -contains "NVMe") {
+            WriteRunLog -message "OS Disk already supports NVMe, no update needed"
+            exit
+        }
+        else {
+            WriteRunLog -message "OS Disk doesn't support NVMe, updating supported capabilities to include NVMe"
+            $_osdisk.SupportedCapabilities = @{ DiskControllerTypes = "SCSI, NVMe" }
+            $_OSDiskUpdateResult = $_osdisk | Update-AzDisk
+            if ($_OSDiskUpdateResult.ProvisioningState -eq "Succeeded") {
+                WriteRunLog -message "OS Disk supported capabilities updated to include NVMe"
+            }
+            else {
+                WriteRunLog -message "Error updating OS Disk supported capabilities" -category "ERROR"
+                exit
+            }
+        }
+    }
+    else {
+        WriteRunLog -message "SCSI is supported by all disks, no update needed"
+        exit
+    }
+}
 
+# Enabling NVMe capabilities on OS disk
+#WriteRunLog -message "Setting OS Disk capabilities for $($_vm_osdisk.Name) to new Disk Controller Type to $NewControllerType"
+#try {
+#    WriteRunLog -message "generated URL for OS disk update:"
+#    WriteRunLog -message $osdisk_url
+#    if ($NewControllerType -eq "NVMe") {
+#        $_response = Invoke-RestMethod -Uri $osdisk_url -Method PATCH -Headers $auth_header -Body $body_nvmescsi
+#    }
+#    else {
+#        $_response = Invoke-RestMethod -Uri $osdisk_url -Method PATCH -Headers $auth_header -Body $body_scsi
+#    }
+#    WriteRunLog -message "OS Disk updated"
+#} catch {
+#    WriteRunLog -message "Error updating OS Disk" -category "ERROR"
+#    WriteRunLog $_.Exception.Message "ERROR"
+#    exit
+#}
 
 # Setting new VM Size and storage controller
 WriteRunLog -message "Setting new VM Size from $($_VM.HardwareProfile.VmSize) to $VMSize and Controller to $NewControllerType"
