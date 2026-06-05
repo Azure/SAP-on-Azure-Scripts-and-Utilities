@@ -188,7 +188,7 @@ function CheckForNewerVersion {
 # Main Script
 ##############################################################################################################
 
-$_version = "2026052501" # version of the script
+$_version = "2026060501" # version of the script
 
 # creating variable for log file
 $script:_runlog = @()
@@ -1496,7 +1496,6 @@ else {
     }
     else {
         WriteRunLog -message "SCSI is supported by all disks, no update needed"
-        exit
     }
 }
 

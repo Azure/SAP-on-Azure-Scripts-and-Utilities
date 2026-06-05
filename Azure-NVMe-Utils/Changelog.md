@@ -2,6 +2,10 @@
 
 This file contains the change log for the PowerShell script.
 
+## Version 2026060501
+
+* fixing issue where script would exit during move back to SCSI
+
 ## Version 2026052501
 
 * adding new Windows fix script to make migrations to v6 and newer possible
