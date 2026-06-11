@@ -2,6 +2,10 @@
 
 This file contains the change log for the PowerShell script.
 
+## Version 2026061101
+
+* adding warning message for Windows systems when converting from tempdisk to non-tempdisk VMs for swap space configuration
+
 ## Version 2026060501
 
 * fixing issue where script would exit during move back to SCSI

@@ -188,7 +188,7 @@ function CheckForNewerVersion {
 # Main Script
 ##############################################################################################################
 
-$_version = "2026060501" # version of the script
+$_version = "2026061101" # version of the script
 
 # creating variable for log file
 $script:_runlog = @()
@@ -495,6 +495,13 @@ if (-not $IgnoreSKUCheck) {
         else {
             WriteRunLog -message "Resource disk support matches between original VM size and new VM size."
         }
+    }
+
+    # for Windows VMs we need to check if the original VM size has resource disk support and the new VM size doesn't have resource disk support, if that's the case user needs to take care of swap space
+    if ($_originalVMHasResourceDisk -and -not $_newVMHasResourceDisk -and $_os -eq "Windows") {
+        WriteRunLog -message "Original VM size $script:_original_vm_size has resource disk support, but new VM size $VMSize does not have resource disk support." -category "IMPORTANT"
+        WriteRunLog -message "   Please make sure to adjust your swap space / pagefile configuration after migration." -category "IMPORTANT"
+        WriteRunLog -message "   Local temporary disks will show up as RAW disks in the new VM." -category "IMPORTANT"
     }
 
     if ($_VMSKU) {
