@@ -1,5 +1,9 @@
 # Changelog
 
+# Archived — End of Support (June 30, 2026)
+* This tool is archived and no longer maintained. No further updates, bug fixes, or support will be provided.
+* Please migrate to the new Configuration Checks tool: https://github.com/Azure/sap-automation-qa
+
 # Version 2026030601
 * FIX: operator precedence bug in NFS address IP check.
 

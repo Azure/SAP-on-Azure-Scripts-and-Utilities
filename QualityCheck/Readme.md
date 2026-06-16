@@ -1,12 +1,12 @@
-### ⚠️ Important Notice: New Version Available ⚠️
+### 🚫 Archived — End of Support: June 30, 2026 🚫
+
+> **This tool is archived and no longer maintained.** No further updates, bug fixes, or support will be provided. This directory is frozen — please do not submit pull requests or issues for QualityCheck.
 
 **A new version of Quality Check called "Configuration Checks" is now available!**
 
-🔗 **[Access the new Configuration Checks tool here](https://github.com/Azure/sap-automation-qa)**
+🔗 **[Migrate to the new Configuration Checks tool →](https://github.com/Azure/sap-automation-qa)**
 
-**⏰ End of Support:** This QualityCheck tool will no longer be supported after **June 30, 2026**. Please migrate to the new Configuration Checks solution to continue receiving updates, bug fixes, and support.
-
-**Why switch?** The new Configuration Checks tool offers enhanced features, better performance, and ongoing development support.
+The new Configuration Checks tool offers enhanced features, better performance, and ongoing development support.
 
 # Quality Check for SAP workloads on Azure
 
