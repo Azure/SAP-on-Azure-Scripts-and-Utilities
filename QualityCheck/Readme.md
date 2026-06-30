@@ -1,6 +1,6 @@
 ### 🚫 Archived — End of Support: June 30, 2026 🚫
 
-> **This tool is archived and no longer maintained.** No further updates, bug fixes, or support will be provided. This directory is frozen — please do not submit pull requests or issues for QualityCheck.
+> **This tool is archived and no longer maintained.** No further updates, bug fixes, or support will be provided. The QualityCheck tool is frozen; pull requests and issues for QualityCheck may be closed without action — please use Configuration Checks instead.
 
 **A new version of Quality Check called "Configuration Checks" is now available!**
 
