@@ -6,6 +6,8 @@
 
 🔗 **[Migrate to the new Configuration Checks tool →](https://github.com/Azure/sap-automation-qa)**
 
+🔗 **[Legacy Quality Check Mapping with new Configuration Checks →](https://github.com/Azure/sap-automation-qa/blob/main/docs/QUALITY_CHECK_MAPPING.md)**
+
 The new Configuration Checks tool offers enhanced features, better performance, and ongoing development support.
 
 # Quality Check for SAP workloads on Azure
