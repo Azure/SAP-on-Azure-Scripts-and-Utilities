@@ -188,7 +188,7 @@ function CheckForNewerVersion {
 # Main Script
 ##############################################################################################################
 
-$_version = "2026061101" # version of the script
+$_version = "2026070101" # version of the script
 
 # creating variable for log file
 $script:_runlog = @()
@@ -974,8 +974,26 @@ if ($_os -eq "Windows") {
             if (-not $IgnoreOSCheck) {
 
                 WriteRunLog -message "Checking if operating system is prepared for NVMe migration"
-                $RunCommandResult = Invoke-AzVMRunCommand -ResourceGroupName $ResourceGroupName -VMName $VMName -CommandId 'RunPowerShellScript' -ScriptString $Check_Windows_Script
+                try {
+                    $RunCommandResult = Invoke-AzVMRunCommand -ResourceGroupName $ResourceGroupName -VMName $VMName -CommandId 'RunPowerShellScript' -ScriptString $Check_Windows_Script -ErrorAction Stop
+                }
+                catch {
+                    WriteRunLog -message "Failed to run command on VM '$VMName'. Please verify the VM is running and that you have the required permissions (e.g. 'Virtual Machine Contributor')." -category "ERROR"
+                    WriteRunLog -message $_.Exception.Message -category "ERROR"
+                    exit 1
+                }
+
+                if ($null -eq $RunCommandResult -or $null -eq $RunCommandResult.Value -or $RunCommandResult.Value.Count -eq 0) {
+                    WriteRunLog -message "Run command on VM '$VMName' did not return any result. Please verify the VM is running and that you have the required permissions." -category "ERROR"
+                    exit 1
+                }
+
                 $checkOutput = $RunCommandResult.Value[0].Message
+
+                if ([string]::IsNullOrWhiteSpace($checkOutput)) {
+                    WriteRunLog -message "Run command on VM '$VMName' returned an empty result. The script may not have executed successfully." -category "ERROR"
+                    exit 1
+                }
                 # WriteRunLog -message $checkOutput
 
                 foreach ($line in ($checkOutput -split "`n" | ForEach-Object { $_.Trim() } | Where-Object { $_ })) {
@@ -1008,9 +1026,26 @@ if ($_os -eq "Windows") {
                         WriteRunLog -message "Running script to prepare Windows OS for NVMe migration"
                         # WriteRunLog -message "   sc.exe config stornvme start=boot"
                         # $RunCommandResult = Invoke-AzVMRunCommand -ResourceGroupName $ResourceGroupName -VMName $VMName -CommandId 'RunPowerShellScript' -ScriptString 'Start-Process -FilePath "C:\Windows\System32\sc.exe" -ArgumentList "config stornvme start=boot"'
-                        $RunCommandResult = Invoke-AzVMRunCommand -ResourceGroupName $ResourceGroupName -VMName $VMName -CommandId 'RunPowerShellScript' -ScriptString $Windows_Fix_Script
+                        try {
+                            $RunCommandResult = Invoke-AzVMRunCommand -ResourceGroupName $ResourceGroupName -VMName $VMName -CommandId 'RunPowerShellScript' -ScriptString $Windows_Fix_Script -ErrorAction Stop
+                        }
+                        catch {
+                            WriteRunLog -message "Failed to run command on VM '$VMName'. Please verify the VM is running and that you have the required permissions (e.g. 'Virtual Machine Contributor')." -category "ERROR"
+                            WriteRunLog -message $_.Exception.Message -category "ERROR"
+                            exit 1
+                        }
+
+                        if ($null -eq $RunCommandResult -or $null -eq $RunCommandResult.Value -or $RunCommandResult.Value.Count -eq 0) {
+                            WriteRunLog -message "Run command on VM '$VMName' did not return any result. Please verify the VM is running and that you have the required permissions." -category "ERROR"
+                            exit 1
+                        }
 
                         $checkOutput = $RunCommandResult.Value[0].Message
+
+                        if ([string]::IsNullOrWhiteSpace($checkOutput)) {
+                            WriteRunLog -message "Run command on VM '$VMName' returned an empty result. The script may not have executed successfully." -category "ERROR"
+                            exit 1
+                        }
 
                         $_error_count = 0
                         foreach ($line in ($checkOutput -split "`n" | ForEach-Object { $_.Trim() } | Where-Object { $_ })) {

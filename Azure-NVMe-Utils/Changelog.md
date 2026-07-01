@@ -2,6 +2,10 @@
 
 This file contains the change log for the PowerShell script.
 
+## Version 2026070101
+
+* adding a check if Azure RunCommand was successfully executed
+
 ## Version 2026061101
 
 * adding warning message for Windows systems when converting from tempdisk to non-tempdisk VMs for swap space configuration
