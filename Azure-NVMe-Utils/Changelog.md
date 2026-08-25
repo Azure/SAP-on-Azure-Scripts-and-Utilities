@@ -2,6 +2,19 @@
 
 This file contains the change log for the PowerShell script.
 
+## Version 2026082514
+
+* fix Windows starting with BSOD after conversion by adding additional registry keys, thanks to @yiwasaki
+* PPGs: adding details to logs for VMs running in PPGs including other VMs part of PPG, detailed message that allocations can fail if new VM SKU is placed outside PPG scope
+* AvSet: adding details to logs for VMs running in AvSets including other VMs part of AvSet, detailed message that allocations will fail as VMs in same AvSet are living on same cluster, all VMs need to be deallocated to successfully convert
+* adding log output for existing VM details
+* fix error of Update-AzVM because of readonly objects by replacing it with a direct ARM command that does the resize
+* adding post conversion command to fix IoTimeout getting reset after first boot on NVMe
+* adding post conversion info when not using -StartVM to manually mitigate the IoTimeout parameter after first start
+* cleaning up old code blocks that were commented out
+* update standalone preparation script
+* exit script and avoid the ask if Linux OS is not ready
+
 ## Version 2026070101
 
 * adding a check if Azure RunCommand was successfully executed

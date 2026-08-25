@@ -7,10 +7,11 @@
     the stornvme driver will load at boot time when the VM is resized to an NVMe-only
     Azure VM size (e.g., Standard_E8s_v6).
 
-    Root cause: Windows sets stornvme StartOverride registry key (value 0=3) which
-    overrides the driver's Start=0 (boot) setting with Start=3 (demand-start),
-    preventing the NVMe driver from loading during early boot. This key exists in
-    ALL ControlSets on Windows Server (both Current and LastKnownGood).
+    Root cause: Windows can set StartOverride=3 on both stornvme and vpci.
+    stornvme is the NVMe storage driver. vpci is the Hyper-V Virtual PCI Bus
+    driver that exposes Azure's virtual NVMe controller over VMBUS. If either
+    driver is prevented from loading during early boot, the boot disk is not
+    enumerated and Windows stops with INACCESSIBLE_BOOT_DEVICE.
 
     CRITICAL: The fix MUST be applied to ALL ControlSets (not just CurrentControlSet).
     Windows Server maintains multiple ControlSets. If LastKnownGood (typically
@@ -50,11 +51,11 @@
 .EXAMPLE
     # Via Azure RunCommand (recommended):
     Invoke-AzVMRunCommand -ResourceGroupName "myRG" -VMName "myVM" `
-        -CommandId 'RunPowerShellScript' -ScriptPath ".\windows-manual-nvme-prepare.ps1"
+        -CommandId 'RunPowerShellScript' -ScriptPath ".\nvme-prepare-os.ps1"
     # Then immediately: Stop-AzVM, update disk caps, convert, start.
 
     # Via RDP/PowerShell remoting:
-    .\windows-manual-nvme-prepare.ps1
+    .\nvme-prepare-os.ps1
     # Then immediately deallocate, convert, and start the VM.
 #>
 
@@ -68,6 +69,19 @@ function Write-Status { param([string]$msg, [string]$level = "INFO")
 # --- Detect OS version ---
 $os = Get-CimInstance Win32_OperatingSystem
 Write-Status "OS: $($os.Caption) ($($os.Version))"
+
+# Win32_OperatingSystem.ProductType has exactly three documented values:
+#   1 = Workstation (Windows client, such as Windows 10 or Windows 11)
+#   2 = Domain Controller
+#   3 = Server (member or standalone server)
+# This is only a CIM-result sanity check. It does not determine whether the
+# Windows release/build supports Azure NVMe conversion. A null or any value
+# outside 1-3 indicates an unexpected/invalid Win32_OperatingSystem response.
+if ($null -eq $os -or $os.ProductType -notin 1, 2, 3) {
+    $productType = if ($null -eq $os) { "<null OS result>" } else { $os.ProductType }
+    Write-Status "Unexpected Win32_OperatingSystem.ProductType: $productType (expected 1=Workstation, 2=Domain Controller, or 3=Server)" "ERROR"
+    exit 1
+}
 
 # --- Check stornvme driver file exists ---
 $driverPath = "$env:SystemRoot\System32\drivers\stornvme.sys"
@@ -90,6 +104,17 @@ if ($LASTEXITCODE -eq 0) {
     Write-Status "sc.exe config returned $LASTEXITCODE (non-fatal, continuing with registry approach)" "WARN"
 }
 
+# vpci exposes the Azure virtual PCI bus over VMBUS. On SCSI-only source VMs,
+# Windows may set vpci StartOverride=3 because no virtual PCI device is present.
+# The NVMe controller cannot be enumerated at boot unless vpci is boot-start.
+Write-Status "Running sc.exe config vpci start=boot..."
+$scResult = & sc.exe config vpci start=boot 2>&1
+if ($LASTEXITCODE -eq 0) {
+    Write-Status "sc.exe config vpci start=boot succeeded" "OK"
+} else {
+    Write-Status "sc.exe config vpci returned $LASTEXITCODE (non-fatal, continuing with registry approach)" "WARN"
+}
+
 # --- Enumerate ALL ControlSets ---
 # Windows maintains multiple ControlSets (001=Current, 002=LastKnownGood, etc.).
 # We must fix ALL of them because Windows may boot from any ControlSet, especially
@@ -99,6 +124,10 @@ $controlSets = @(Get-ChildItem "HKLM:\SYSTEM" -ErrorAction SilentlyContinue |
     Where-Object { $_.PSChildName -match '^ControlSet\d+$' } |
     ForEach-Object { $_.PSChildName })
 $selectProps = Get-ItemProperty "HKLM:\SYSTEM\Select" -ErrorAction SilentlyContinue
+if ($controlSets.Count -eq 0 -or $null -eq $selectProps) {
+    Write-Status "Unable to enumerate SYSTEM ControlSets or SYSTEM\Select" "ERROR"
+    exit 1
+}
 Write-Status "Found ControlSets: $($controlSets -join ', ') (Current=$($selectProps.Current), LastKnownGood=$($selectProps.LastKnownGood))"
 
 foreach ($cs in $controlSets) {
@@ -133,7 +162,74 @@ foreach ($cs in $controlSets) {
         Write-Status "$cs\stornvme StartOverride not present - correct" "OK"
     }
 
-    # --- Fix 3: Ensure pci driver is boot-start ---
+    # --- Fix 3: Set the StorPort/NVMe driver parameters ---
+    $parametersPath = "$svcPath\Parameters"
+    if (-not (Test-Path $parametersPath)) {
+        New-Item -Path $parametersPath -Force | Out-Null
+    }
+
+    $requiredParameters = [ordered]@{
+        IoTimeoutValue = 240
+        BusType = 17
+        StorageSupportedFeatures = 3
+    }
+    foreach ($parameter in $requiredParameters.GetEnumerator()) {
+        $currentValue = (Get-ItemProperty -Path $parametersPath -Name $parameter.Key `
+            -ErrorAction SilentlyContinue).($parameter.Key)
+        if ($currentValue -eq $parameter.Value) {
+            Write-Status "$cs\stornvme Parameters\$($parameter.Key) = $($parameter.Value) - correct" "OK"
+        } else {
+            Write-Status "$cs\stornvme Parameters\$($parameter.Key) = $currentValue - setting to $($parameter.Value)" "WARN"
+            Set-ItemProperty -Path $parametersPath -Name $parameter.Key `
+                -Value $parameter.Value -Type DWord
+            Write-Status "$cs\stornvme Parameters\$($parameter.Key) set to $($parameter.Value)" "OK"
+        }
+    }
+
+    $pnpInterfacePath = "$parametersPath\PnpInterface"
+    if (-not (Test-Path $pnpInterfacePath)) {
+        New-Item -Path $pnpInterfacePath -Force | Out-Null
+    }
+    $pnpInterface = (Get-ItemProperty -Path $pnpInterfacePath -Name 5 `
+        -ErrorAction SilentlyContinue).'5'
+    if ($pnpInterface -ne 1) {
+        Write-Status "$cs\stornvme Parameters\PnpInterface\5 = $pnpInterface - setting to 1" "WARN"
+        Set-ItemProperty -Path $pnpInterfacePath -Name 5 -Value 1 -Type DWord
+    } else {
+        Write-Status "$cs\stornvme Parameters\PnpInterface\5 = 1 - correct" "OK"
+    }
+
+    # --- Fix 4: Ensure vpci is boot-start and has no StartOverride ---
+    $vpciPath = "$csRoot\Services\vpci"
+    if (-not (Test-Path $vpciPath)) {
+        Write-Status "$cs\vpci service is missing - NVMe controller cannot be enumerated" "ERROR"
+        exit 1
+    }
+
+    $vpciStart = (Get-ItemProperty -Path $vpciPath -Name Start -ErrorAction SilentlyContinue).Start
+    if ($vpciStart -eq 0) {
+        Write-Status "$cs\vpci Start = 0 (Boot) - correct" "OK"
+    } else {
+        Write-Status "$cs\vpci Start = $vpciStart - setting to 0" "WARN"
+        Set-ItemProperty -Path $vpciPath -Name Start -Value 0 -Type DWord
+        Write-Status "$cs\vpci Start set to 0" "OK"
+    }
+
+    $vpciSOPath = "$vpciPath\StartOverride"
+    if (Test-Path $vpciSOPath) {
+        $vpciSOValue = (Get-ItemProperty -Path $vpciSOPath -ErrorAction SilentlyContinue).'0'
+        Write-Status "$cs\vpci StartOverride exists (value=$vpciSOValue) - REMOVING" "WARN"
+        Remove-Item -Path $vpciSOPath -Recurse -Force
+        if (Test-Path $vpciSOPath) {
+            Write-Status "Failed to remove $cs\vpci StartOverride!" "ERROR"
+            exit 1
+        }
+        Write-Status "$cs\vpci StartOverride removed" "OK"
+    } else {
+        Write-Status "$cs\vpci StartOverride not present - correct" "OK"
+    }
+
+    # --- Fix 5: Ensure pci driver is boot-start ---
     $pciStart = (Get-ItemProperty -Path "$csRoot\Services\pci" -Name Start -ErrorAction SilentlyContinue).Start
     if ($pciStart -eq 0) {
         Write-Status "$cs\pci Start = 0 (Boot) - correct" "OK"
@@ -143,14 +239,18 @@ foreach ($cs in $controlSets) {
         Write-Status "$cs\pci Start set to 0" "OK"
     }
 
-    # --- Fix 4: Remove pci StartOverride if present ---
+    # pci StartOverride is intentionally not removed. Native Azure NVMe VMs
+    # commonly have pci StartOverride=3 and boot correctly because Azure's
+    # virtual PCI bus is exposed by vpci. Only vpci and stornvme overrides are
+    # blockers for this conversion.
     $pciSOPath = "$csRoot\Services\pci\StartOverride"
     if (Test-Path $pciSOPath) {
-        Write-Status "$cs\pci StartOverride exists - REMOVING" "WARN"
-        Remove-Item -Path $pciSOPath -Recurse -Force
-        Write-Status "$cs\pci StartOverride removed" "OK"
+        $pciSOValues = ((Get-ItemProperty -Path $pciSOPath -ErrorAction SilentlyContinue).PSObject.Properties |
+            Where-Object { $_.Name -notmatch '^PS' } |
+            ForEach-Object { $_.Name + '=' + $_.Value }) -join ', '
+        Write-Status "$cs\pci StartOverride present ($pciSOValues) - allowed on native NVMe" "OK"
     } else {
-        Write-Status "$cs\pci StartOverride not present - correct" "OK"
+        Write-Status "$cs\pci StartOverride not present - also valid" "OK"
     }
 }
 
@@ -163,14 +263,24 @@ foreach ($cs in $controlSets) {
     $csRoot = "HKLM:\SYSTEM\$cs"
     $csStart = (Get-ItemProperty -Path "$csRoot\Services\stornvme" -Name Start -ErrorAction SilentlyContinue).Start
     $csSO = Test-Path "$csRoot\Services\stornvme\StartOverride"
+    $csTimeout = (Get-ItemProperty -Path "$csRoot\Services\stornvme\Parameters" -Name IoTimeoutValue -ErrorAction SilentlyContinue).IoTimeoutValue
+    $csBusType = (Get-ItemProperty -Path "$csRoot\Services\stornvme\Parameters" -Name BusType -ErrorAction SilentlyContinue).BusType
+    $csFeatures = (Get-ItemProperty -Path "$csRoot\Services\stornvme\Parameters" -Name StorageSupportedFeatures -ErrorAction SilentlyContinue).StorageSupportedFeatures
+    $csPnp = (Get-ItemProperty -Path "$csRoot\Services\stornvme\Parameters\PnpInterface" -Name 5 -ErrorAction SilentlyContinue).'5'
+    $csVpci = (Get-ItemProperty -Path "$csRoot\Services\vpci" -Name Start -ErrorAction SilentlyContinue).Start
+    $csVpciSO = Test-Path "$csRoot\Services\vpci\StartOverride"
     $csPci = (Get-ItemProperty -Path "$csRoot\Services\pci" -Name Start -ErrorAction SilentlyContinue).Start
     $csPciSO = Test-Path "$csRoot\Services\pci\StartOverride"
 
-    $csOK = ($csStart -eq 0) -and (-not $csSO) -and ($csPci -eq 0) -and (-not $csPciSO)
+    $csOK = ($csStart -eq 0) -and (-not $csSO) -and
+        ($csTimeout -eq 240) -and ($csBusType -eq 17) -and
+        ($csFeatures -eq 3) -and ($csPnp -eq 1) -and
+        ($csVpci -eq 0) -and (-not $csVpciSO) -and
+        ($csPci -eq 0)
     if (-not $csOK) { $allGood = $false }
 
     $status = if ($csOK) { "OK" } else { "ERROR" }
-    Write-Status "$cs : stornvme Start=$csStart SO=$csSO, pci Start=$csPci SO=$csPciSO" $status
+    Write-Status "$cs : stornvme Start=$csStart SO=$csSO IoTimeout=$csTimeout BusType=$csBusType Features=$csFeatures Pnp5=$csPnp, vpci Start=$csVpci SO=$csVpciSO, pci Start=$csPci SO=$csPciSO" $status
 }
 
 if ($allGood) {
@@ -190,15 +300,24 @@ if ($allGood) {
         Write-Status "Registry hive flushed to disk successfully" "OK"
     } catch {
         Write-Status "Primary flush failed ($($_.Exception.Message)), trying alternative..." "WARN"
-        # Fallback: flush each ControlSet individually
+        # Fallback: flush every service key changed in each ControlSet.
         $flushOK = $true
         foreach ($cs in $controlSets) {
-            try {
-                $csKey = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey("SYSTEM\$cs\Services\stornvme", $false)
-                if ($csKey) { $csKey.Flush(); $csKey.Close() }
-            } catch {
-                $flushOK = $false
-                Write-Status "Failed to flush $cs\Services\stornvme: $($_.Exception.Message)" "ERROR"
+            foreach ($service in @("stornvme", "vpci", "pci")) {
+                try {
+                    $serviceKey = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey(
+                        "SYSTEM\$cs\Services\$service", $false)
+                    if ($serviceKey) {
+                        $serviceKey.Flush()
+                        $serviceKey.Close()
+                    } else {
+                        $flushOK = $false
+                        Write-Status "Failed to open $cs\Services\$service for flushing" "ERROR"
+                    }
+                } catch {
+                    $flushOK = $false
+                    Write-Status "Failed to flush $cs\Services\${service}: $($_.Exception.Message)" "ERROR"
+                }
             }
         }
         if (-not $flushOK) {
@@ -215,16 +334,41 @@ if ($allGood) {
             Write-Status "FATAL: $cs\stornvme\StartOverride STILL PRESENT after flush!" "ERROR"
             exit 1
         }
+        $verifyTimeout = (Get-ItemProperty -Path "HKLM:\SYSTEM\$cs\Services\stornvme\Parameters" `
+            -Name IoTimeoutValue -ErrorAction SilentlyContinue).IoTimeoutValue
+        if ($verifyTimeout -ne 240) {
+            Write-Status "FATAL: $cs\stornvme\Parameters\IoTimeoutValue is $verifyTimeout after flush!" "ERROR"
+            exit 1
+        }
+        $verifyBusType = (Get-ItemProperty -Path "HKLM:\SYSTEM\$cs\Services\stornvme\Parameters" `
+            -Name BusType -ErrorAction SilentlyContinue).BusType
+        $verifyFeatures = (Get-ItemProperty -Path "HKLM:\SYSTEM\$cs\Services\stornvme\Parameters" `
+            -Name StorageSupportedFeatures -ErrorAction SilentlyContinue).StorageSupportedFeatures
+        $verifyPnp = (Get-ItemProperty -Path "HKLM:\SYSTEM\$cs\Services\stornvme\Parameters\PnpInterface" `
+            -Name 5 -ErrorAction SilentlyContinue).'5'
+        if ($verifyBusType -ne 17 -or $verifyFeatures -ne 3 -or $verifyPnp -ne 1) {
+            Write-Status "FATAL: $cs\stornvme parameter verification failed after flush (BusType=$verifyBusType Features=$verifyFeatures Pnp5=$verifyPnp)" "ERROR"
+            exit 1
+        }
+        $verifyVpciStart = (Get-ItemProperty -Path "HKLM:\SYSTEM\$cs\Services\vpci" `
+            -Name Start -ErrorAction SilentlyContinue).Start
+        $verifyVpciSO = Test-Path "HKLM:\SYSTEM\$cs\Services\vpci\StartOverride"
+        if ($verifyVpciStart -ne 0 -or $verifyVpciSO) {
+            Write-Status "FATAL: $cs\vpci verification failed after flush (Start=$verifyVpciStart SO=$verifyVpciSO)" "ERROR"
+            exit 1
+        }
     }
-    Write-Status "Post-flush verification passed - StartOverride absent in all ControlSets" "OK"
+    Write-Status "Post-flush verification passed - stornvme and vpci are boot-ready in all ControlSets" "OK"
 
     Write-Status "All checks passed across ALL ControlSets - VM is ready for NVMe conversion" "OK"
-    Write-Host ""
-    Write-Host "Next steps:"
-    Write-Host "  1. Stop-AzVM -Force (graceful ACPI shutdown + deallocate)"
-    Write-Host "  2. Update OS disk: supportedCapabilities.diskControllerTypes = 'SCSI, NVMe'"
-    Write-Host "  3. Update VM: HardwareProfile.VmSize and StorageProfile.DiskControllerType = 'NVMe'"
-    Write-Host "  4. Start-AzVM"
+    if (-not $SuppressNextSteps) {
+        Write-Host ""
+        Write-Host "Next steps:"
+        Write-Host "  1. Stop-AzVM -Force (graceful ACPI shutdown + deallocate)"
+        Write-Host "  2. Update OS disk: supportedCapabilities.diskControllerTypes = 'SCSI, NVMe'"
+        Write-Host "  3. Update VM: HardwareProfile.VmSize and StorageProfile.DiskControllerType = 'NVMe'"
+        Write-Host "  4. Start-AzVM"
+    }
     exit 0
 } else {
     Write-Status "Some checks failed - review output above" "ERROR"
