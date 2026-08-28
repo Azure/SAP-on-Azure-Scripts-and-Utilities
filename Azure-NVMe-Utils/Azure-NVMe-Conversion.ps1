@@ -892,7 +892,7 @@ if (-not $IgnoreSKUCheck) {
             if ($_resource_provider.RegistrationState -ne "Registered") {
                 WriteRunLog -message "Mismatch in SCSI resource disk support between original VM size ($script:_original_vm_size) and new VM size ($VMSize)." -category "ERROR"
 
-                WriteRunLog -message "The Azure subscription is not registered for the feature VMTempDiskResizePreview, which is required to resize Windows VMs between sizes with different SCSI resource disk support." -category "ERROR"
+                WriteRunLog -message "The Azure subscription is not registered for the feature VMTempDiskResizePreview, which is required to resize Windows VMs between SCSI and NVMe resource disks." -category "ERROR"
                 WriteRunLog -message "This includes resizing from a VM with a SCSI temporary disk to a VM with an NVMe temporary disk, because Azure evaluates them as different disk types." -category "ERROR"
                 WriteRunLog -message "Please register the subscription for the feature using the following command and try again:" -category "ERROR"
                 WriteRunLog -message "   Register-AzProviderFeature -FeatureName VMTempDiskResizePreview -ProviderNamespace Microsoft.Compute" -category "ERROR"
